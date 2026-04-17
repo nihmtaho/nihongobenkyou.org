@@ -1,11 +1,47 @@
 # documentation
 docs/**
+specs/**
+
+# datasets (never push to remote — git-workflow rule)
+datasets/**
 
 # local files
 *.local.*
 
-# Editor file
+# Build output
+dist/
+dist-ssr/
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+
+# Editor files
+.vscode/**
+.zed/**
+
+# macOS
+.DS_Store
 
 # Secrets
+.env
+.env.local
+*.key
 
+# Local tool configs
+.specify/init-options.json
+.specify/workflows/
+
+# Public generated data (never push)
+public/data/
+public/audio/
+
+# Local configs and generated files
+*.local
+routeTree.gen.ts
 
