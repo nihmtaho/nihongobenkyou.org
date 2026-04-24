@@ -2,28 +2,27 @@ export interface Example {
   ja: string
   en: string
   vi: string
-  audio?: string
 }
 
-export type PitchType = 'heiban' | 'atamadaka' | 'nakadaka' | 'odaka'
+export type PitchType = 'heiban' | 'atamadaka' | 'nakadaka' | 'odaka' | 'odd' | null
 
 export interface VocabItem {
   vocab_id: string
-  word: string
-  reading: string
-  romaji: string | null
-  meaning_vi: string[]
-  meaning_en: string[]
+  word: string | null // kanji form; null if none
+  reading: string // kana
+  romaji: string
+  meaning_en: string
+  meaning_vi: string
   pitch_pattern: number | null
-  pitch_type: PitchType | null
+  pitch_type: PitchType
   audio_filename: string | null
-  pos: string | null
-  jlpt_level: 'N5' | 'N4' | 'N3' | 'N2' | 'N1' | null
+  pos: string[]
+  jlpt_level: number | null
   book_source: string
   lesson_number: number
-  examples: Example[] | null
-  tags: string[] | null
-  deprecated: boolean | null
+  examples: Example[]
+  tags: string[]
+  deprecated: boolean
 }
 
 export interface VocabWithSRS extends VocabItem {

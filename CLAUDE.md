@@ -179,6 +179,13 @@ TanStack Query v5 has no Intent skills yet. `@tanstack/react-start` and `@tansta
 ## Active Technologies
 - TypeScript 5.x (strict mode), Node.js 22.x (pinned via `.nvmrc`) + React 19, Vite 6, TanStack Router v1, TanStack Query v5, Zustand v5, Tailwind CSS v4, DaisyUI v5, Dexie.js v4, Framer Motion v11, `@antfu/eslint-config` (ESLint v9 flat config), Husky v9, lint-staged, Vitest, `@testing-library/react`, `fake-indexeddb`, Playwright, `vite-plugin-pwa` (001-prd-phase1-specs)
 - IndexedDB via Dexie.js v4 (schema-only in this phase; no Supabase) (001-prd-phase1-specs)
+- TypeScript 5.x (strict mode), Node.js 22.x (pinned via `.nvmrc`) + Dexie.js v4 (IndexedDB), `fake-indexeddb` (testing), Vitest (testing), yaml (npm), js-yaml (002-data-pipeline)
+- `public/data/{book_id}/lesson-{NN}.json` + `manifest.json` (local filesystem); Dexie IndexedDB (client runtime) (002-data-pipeline)
 
 ## Recent Changes
 - 001-prd-phase1-specs: Added TypeScript 5.x (strict mode), Node.js 22.x (pinned via `.nvmrc`) + React 19, Vite 6, TanStack Router v1, TanStack Query v5, Zustand v5, Tailwind CSS v4, DaisyUI v5, Dexie.js v4, Framer Motion v11, `@antfu/eslint-config` (ESLint v9 flat config), Husky v9, lint-staged, Vitest, `@testing-library/react`, `fake-indexeddb`, Playwright, `vite-plugin-pwa`
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

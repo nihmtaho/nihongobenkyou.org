@@ -1,5 +1,3 @@
-export type DatasetId = string & { readonly _brand: 'DatasetId' }
-
 export interface DatasetConfig {
   id: string
   title: string
@@ -7,10 +5,13 @@ export interface DatasetConfig {
   source_file: string
   lesson_key_prefix: string
   lesson_range: [number, number]
-  jlpt_level: 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
+  jlpt_level: number | null
   version: string
+  book_code_prefix: string
   output_dir: string
   enabled: boolean
+  kanjium_file?: string
+  jitendex_file?: string
 }
 
 export interface LessonMeta {
@@ -22,12 +23,25 @@ export interface LessonMeta {
 }
 
 export interface Manifest {
+  schema_version: '1.0'
+  built_at: string
+  built_by: string
+  built_from: string
+  datasets: DatasetManifest[]
+}
+
+export interface DatasetManifest {
+  id: string
   version: string
+  book_code_prefix: string
+  lesson_count: number
+  vocab_count: number
   checksum: string
-  datasets: Array<{
-    id: string
-    version: string
-    lesson_count: number
-  }>
-  generated_at: string
+  files: FileEntry[]
+}
+
+export interface FileEntry {
+  filename: string
+  size_bytes: number
+  checksum: string
 }

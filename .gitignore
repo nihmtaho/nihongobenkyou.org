@@ -4,6 +4,14 @@ specs/**
 
 # datasets (never push to remote — git-workflow rule)
 datasets/**
+dataset/
+
+# Pipeline intermediate artifacts
+.build/
+
+# Local resource files (Kanjium, Jitendex — gitignored per quickstart.md)
+.kanjium/
+.jitendex/
 
 # local files
 *.local.*
@@ -11,6 +19,7 @@ datasets/**
 # Build output
 dist/
 dist-ssr/
+tsconfig.tsbuildinfo
 
 # Dependencies
 node_modules/
