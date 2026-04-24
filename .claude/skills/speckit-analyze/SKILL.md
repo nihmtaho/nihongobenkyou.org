@@ -235,8 +235,6 @@ After reporting, check if `.specify/extensions.yml` exists in the project root.
     **Automatic Hook**: {extension}
     Executing: `/{command}`
     EXECUTE_COMMAND: {command}
-
-    Wait for the result of the hook command before proceeding to the next phase.
     ```
 - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
 
