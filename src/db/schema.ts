@@ -2,6 +2,7 @@ import type { EntityTable } from 'dexie'
 import type { LessonMeta } from '../types/dataset'
 import type { KanjiCardState, KanjiItem } from '../types/kanji'
 import type { CardState } from '../types/srs'
+import type { StudySession } from '../types/study'
 import type { VocabItem } from '../types/vocabulary'
 import Dexie from 'dexie'
 
@@ -34,6 +35,7 @@ export class NihongoDB extends Dexie {
   settings!: EntityTable<SettingsItem, 'key'>
   kanji!: EntityTable<KanjiItem, 'char'>
   kanji_cards!: EntityTable<KanjiCardState, never>
+  sessions!: EntityTable<StudySession, 'id'>
 
   constructor() {
     super('NihongoDB')
@@ -46,6 +48,9 @@ export class NihongoDB extends Dexie {
       settings: 'key',
       kanji: 'char, jlpt_level, radical, stroke_count',
       kanji_cards: '[userId+char], due_date, pending_sync',
+    })
+    this.version(2).stores({
+      sessions: '++id, user_id, mode, studied_at, [user_id+studied_at]',
     })
   }
 }
