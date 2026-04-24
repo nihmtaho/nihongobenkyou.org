@@ -10,7 +10,7 @@ export function useDueCards(userId: string) {
       return db.user_cards
         .where('due_date')
         .belowOrEqual(now)
-        .filter(card => card.userId === userId)
+        .filter(card => card.userId === userId && !card.is_known)
         .toArray()
     },
     staleTime: 0,

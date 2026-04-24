@@ -17,7 +17,7 @@ interface SettingsItem {
   value: unknown
 }
 
-interface StreakData {
+export interface StreakData {
   date: string
   userId: string
   cards_reviewed: number

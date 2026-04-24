@@ -12,6 +12,16 @@ export default defineConfig({
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          {
+            urlPattern: /\/audio\/.+\.(mp3|ogg|wav)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'audio-cache',
+              expiration: { maxEntries: 500 },
+            },
+          },
+        ],
       },
       manifest: {
         name: 'NihongoBenkyou',
