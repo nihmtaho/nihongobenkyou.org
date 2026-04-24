@@ -3,20 +3,29 @@
 @plugin "daisyui/theme" {
   name: "brutalist-mnn1";
   default: true;
+  color-scheme: light;
   --color-base-100: oklch(91% 0.012 80);
   --color-base-200: oklch(93% 0.010 80);
   --color-base-300: oklch(86% 0.012 80);
   --color-base-content: oklch(13% 0.001 0);
   --color-primary: oklch(68% 0.12 195);
+  --color-primary-content: oklch(13% 0.001 0);
+  --color-neutral: oklch(43% 0.010 75);
+  --color-neutral-content: oklch(91% 0.012 80);
+  --color-error: oklch(60% 0.18 35);
+  --color-warning: oklch(75% 0.15 65);
+  --color-success: oklch(63% 0.15 150);
+  --color-info: oklch(65% 0.12 240);
   --radius-selector: 0;
   --radius-field: 0;
   --radius-box: 0;
   --border: 1px;
   --depth: 0;
+  --noise: 0;
 }
 
 :root {
   --br-jp-font: 'Noto Sans JP', sans-serif;
-  --br-heading-font: 'Barlow Condensed', sans-serif;
-  --br-mono-font: 'IBM Plex Mono', monospace;
+  --br-heading-font: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --br-mono-font: 'IBM Plex Mono', 'Courier New', monospace;
 }
