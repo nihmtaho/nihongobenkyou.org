@@ -19,14 +19,14 @@ export function calculateNextReview(card: CardState, rating: SRSRating): ReviewR
         ease = Math.max(MIN_EASE, ease - 0.2)
         break
       case 1:
-        interval = Math.ceil(card.interval_days * 1.2)
+        interval = Math.max(1, Math.floor(card.interval_days * 1.2))
         ease = Math.max(MIN_EASE, ease - 0.15)
         break
       case 2:
-        interval = Math.ceil(card.interval_days * ease)
+        interval = Math.max(1, Math.round(card.interval_days * ease))
         break
       case 3:
-        interval = Math.ceil(card.interval_days * ease * 1.3)
+        interval = Math.max(1, Math.round(card.interval_days * ease * 1.3))
         ease = ease + 0.15
         break
     }

@@ -6,10 +6,10 @@ export function useDueCards(userId: string) {
   return useQuery<CardState[]>({
     queryKey: ['due-cards', userId],
     queryFn: async () => {
-      const now = new Date().toISOString()
+      const today = new Date().toISOString().slice(0, 10)
       return db.user_cards
         .where('due_date')
-        .belowOrEqual(now)
+        .belowOrEqual(today)
         .filter(card => card.userId === userId && !card.is_known)
         .toArray()
     },

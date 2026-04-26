@@ -15,22 +15,25 @@ test.describe('study session — flashcard flow', () => {
     await expect(studyBtn).toBeAttached()
   })
 
-  test('unauthenticated access to /study/flashcard redirects to /auth/login', async ({ page }) => {
+  // Phase 1: anonymous users are isAuthenticated=true so no redirect occurs.
+  // Re-enable in Phase 2 when Supabase Auth is wired up.
+  test.fixme('unauthenticated access to /study/flashcard redirects to /auth/login', async ({ page }) => {
     await page.goto('/study/flashcard')
     await expect(page).toHaveURL(/\/auth\/login/)
   })
 
-  test('unauthenticated access to /study/quiz redirects to /auth/login', async ({ page }) => {
+  test.fixme('unauthenticated access to /study/quiz redirects to /auth/login', async ({ page }) => {
     await page.goto('/study/quiz')
     await expect(page).toHaveURL(/\/auth\/login/)
   })
 
-  test('unauthenticated access to /study/type-input redirects to /auth/login', async ({ page }) => {
+  test.fixme('unauthenticated access to /study/type-input redirects to /auth/login', async ({ page }) => {
     await page.goto('/study/type-input')
     await expect(page).toHaveURL(/\/auth\/login/)
   })
 
-  test('login page renders', async ({ page }) => {
+  // Phase 1: /auth/login redirects anonymous users to / (isAuthenticated = true).
+  test.fixme('login page renders', async ({ page }) => {
     await page.goto('/auth/login')
     await expect(page).toHaveURL('/auth/login')
   })

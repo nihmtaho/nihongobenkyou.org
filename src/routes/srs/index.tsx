@@ -8,6 +8,7 @@ import { SessionSummary } from '../../components/study/SessionSummary'
 import { db } from '../../db/schema'
 import { useDueCards } from '../../hooks/useDueCards'
 import { useSRSMutation } from '../../hooks/useSRSMutation'
+import { useStreak } from '../../hooks/useStreak'
 import { useAuthStore } from '../../stores/authStore'
 import { useSettingsStore } from '../../stores/settingsStore'
 
@@ -19,7 +20,16 @@ export const Route = createFileRoute('/srs/')({
   component: SrsPage,
 })
 
+const MAX_AGAIN_REQUEUES = 3
+
 type SrsState = 'loading' | 'empty' | 'pre-session' | 'active' | 'complete'
+
+interface SrsStats {
+  correct: number
+  total: number
+  startTime: Date
+  ratingCounts: Record<SRSRating, number>
+}
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60)
@@ -40,19 +50,26 @@ function nextDueLabel(cards: { due_date: string }[]): string {
   return `${hours} giờ nữa`
 }
 
+function makeInitialStats(): SrsStats {
+  return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 0: 0, 1: 0, 2: 0, 3: 0 } }
+}
+
 function SrsPage() {
   const userId = useAuthStore(s => s.userId)
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage)
   const { data: dueCards, isLoading } = useDueCards(userId ?? '')
+  const { data: streak } = useStreak(userId ?? '')
   const srsM = useSRSMutation()
 
   const [phase, setPhase] = useState<SrsState>('loading')
   const [queue, setQueue] = useState<VocabWithSRS[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [stats, setStats] = useState(() => ({ correct: 0, total: 0, startTime: new Date() }))
+  const [stats, setStats] = useState<SrsStats>(makeInitialStats)
   const [elapsed, setElapsed] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const sessionWrittenRef = useRef(false)
+  // Tracks how many times each card has been re-queued via Again in this session
+  const againCountRef = useRef<Map<string, number>>(new Map())
 
   // These two queries only activate in the empty phase to differentiate the two empty states
   const { data: futureCards } = useQuery({
@@ -60,7 +77,7 @@ function SrsPage() {
     queryFn: async () =>
       db.user_cards
         .where('due_date')
-        .above(new Date().toISOString())
+        .above(new Date().toISOString().slice(0, 10))
         .filter(c => c.userId === userId && !c.is_known)
         .toArray(),
     enabled: !!userId && phase === 'empty',
@@ -155,9 +172,10 @@ function SrsPage() {
       }))
       setQueue(merged)
       setCurrentIndex(0)
-      setStats({ correct: 0, total: 0, startTime: new Date() })
+      setStats(makeInitialStats())
       setElapsed(0)
       sessionWrittenRef.current = false
+      againCountRef.current = new Map()
       setPhase('active')
     }).catch(console.error)
   }
@@ -169,20 +187,27 @@ function SrsPage() {
     if (!card)
       return
 
-    srsM.mutate({ userId, card, rating })
     const isCorrect = rating >= 2
     setStats(s => ({
       ...s,
       correct: isCorrect ? s.correct + 1 : s.correct,
       total: s.total + 1,
+      ratingCounts: { ...s.ratingCounts, [rating]: s.ratingCounts[rating] + 1 },
     }))
 
     if (rating === 0) {
-      // Re-queue at end of session so user reviews it again before completing
-      setQueue(q => [...q, card])
-      setCurrentIndex(i => i + 1)
-      return
+      const count = againCountRef.current.get(card.vocab_id) ?? 0
+      if (count < MAX_AGAIN_REQUEUES) {
+        // Re-queue at end of session without changing Dexie until final rating
+        againCountRef.current.set(card.vocab_id, count + 1)
+        setQueue(q => [...q, card])
+        setCurrentIndex(i => i + 1)
+        return
+      }
+      // 4th Again: write to Dexie as due tomorrow and remove from session
     }
+
+    srsM.mutate({ userId, card, rating })
 
     const next = currentIndex + 1
     if (next >= queue.length) {
@@ -272,6 +297,8 @@ function SrsPage() {
           wrongCards: [],
         }}
         mode="flashcard"
+        ratingCounts={stats.ratingCounts}
+        streak={streak?.current_streak}
       />
     )
   }

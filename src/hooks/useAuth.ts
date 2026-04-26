@@ -18,15 +18,23 @@ export function useAuth() {
         })
       }
       else {
-        useAuthStore.setState({
-          userId: null,
-          email: null,
-          isAuthenticated: false,
-          isLoading: false,
-          displayName: null,
-          avatarUrl: null,
-        })
-        queryClient.clear()
+        // In Phase 1, anonymous user ID is set by initAnonymousUser() before React renders.
+        // Only clear auth state when there is truly no identity (no Supabase session AND no anonymous ID).
+        const existingUserId = useAuthStore.getState().userId
+        if (!existingUserId) {
+          useAuthStore.setState({
+            userId: null,
+            email: null,
+            isAuthenticated: false,
+            isLoading: false,
+            displayName: null,
+            avatarUrl: null,
+          })
+          queryClient.clear()
+        }
+        else {
+          useAuthStore.setState({ isLoading: false })
+        }
       }
     })
     return () => subscription.unsubscribe()

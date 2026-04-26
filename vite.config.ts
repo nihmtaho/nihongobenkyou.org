@@ -11,10 +11,30 @@ export default defineConfig({
     react(),
     TanStackRouterVite(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        navigateFallback: 'index.html',
         runtimeCaching: [
+          {
+            urlPattern: /\/data\/manifest\.json$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'manifest-cache',
+              networkTimeoutSeconds: 10,
+              expiration: { maxAgeSeconds: 300 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /\/data\/.+\.json$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'lessons-cache',
+              expiration: { maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
           {
             urlPattern: /\/audio\/.+\.(mp3|ogg|wav)$/i,
             handler: 'CacheFirst',
@@ -28,8 +48,17 @@ export default defineConfig({
       manifest: {
         name: 'NihongoBenkyou',
         short_name: 'Nihongo',
+        description: 'Japanese vocabulary SRS for Vietnamese learners',
+        lang: 'vi',
         theme_color: '#e8e6df',
+        background_color: '#e8e6df',
         display: 'standalone',
+        start_url: '/',
+        orientation: 'portrait-primary',
+        icons: [
+          { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+        ],
       },
     }),
   ],
