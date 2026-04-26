@@ -1,17 +1,37 @@
 import type { StudyMode } from '../../../types/study'
+import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { FlipCard } from '../../../components/study/FlipCard'
+import { ListeningCard } from '../../../components/study/ListeningCard'
+import { PitchDiscriminationCard } from '../../../components/study/PitchDiscriminationCard'
 import { QuizCard } from '../../../components/study/QuizCard'
+import { ReadingComprehensionCard } from '../../../components/study/ReadingComprehensionCard'
+import { SentenceFlashcard } from '../../../components/study/SentenceFlashcard'
 import { SessionSummary } from '../../../components/study/SessionSummary'
 import { TypeInputCard } from '../../../components/study/TypeInputCard'
 import { db } from '../../../db/schema'
+import { usePassages } from '../../../hooks/usePassages'
 import { useSRSMutation } from '../../../hooks/useSRSMutation'
 import { useAuthStore } from '../../../stores/authStore'
 import { useSettingsStore } from '../../../stores/settingsStore'
 import { useStudySessionStore } from '../../../stores/studySessionStore'
 
-const VALID_MODES: StudyMode[] = ['flashcard', 'quiz', 'type-input']
+const VALID_MODES: StudyMode[] = [
+  'flashcard',
+  'quiz',
+  'type-input',
+  'sentence-flashcard',
+  'listening',
+  'reading-comprehension',
+  'pitch-discrimination',
+]
+
+function sampleDistractors(queue: VocabWithSRS[], currentIndex: number, count: number): VocabWithSRS[] {
+  const pool = queue.filter((_, i) => i !== currentIndex)
+  const shuffled = [...pool].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, count)
+}
 
 export const Route = createFileRoute('/_authenticated/study/$mode')({
   component: StudyPage,
@@ -80,6 +100,13 @@ function StudyPage() {
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage)
   const srsm = useSRSMutation()
   const sessionWrittenRef = useRef(false)
+  const [playbackRate, setPlaybackRate] = useState(1.0)
+
+  const firstCard = queue[0]
+  const passagesQuery = usePassages(
+    firstCard?.book_source ?? '',
+    firstCard?.lesson_number ?? 0,
+  )
 
   const isValidMode = VALID_MODES.includes(mode as StudyMode)
 
@@ -129,6 +156,9 @@ function StudyPage() {
     handleRate(isCorrect ? 2 : 0)
   }
 
+  const passages = passagesQuery.data ?? []
+  const currentPassage = passages.find(p => p.vocab_ids.includes(currentCard?.vocab_id ?? '')) ?? passages[0] ?? null
+
   return (
     <div className="flex flex-col min-h-screen p-4 pt-8">
       <ProgressBar current={currentIndex} total={queue.length} />
@@ -157,6 +187,54 @@ function StudyPage() {
           key={`${currentCard.vocab_id}-${currentIndex}`}
           card={currentCard}
           onAnswer={handleAnswer}
+        />
+      )}
+
+      {mode === 'sentence-flashcard' && (
+        <SentenceFlashcard
+          key={`${currentCard.vocab_id}-${currentIndex}`}
+          card={currentCard}
+          meaningLanguage={meaningLanguage}
+          onRate={handleRate}
+        />
+      )}
+
+      {mode === 'listening' && (
+        <ListeningCard
+          key={`${currentCard.vocab_id}-${currentIndex}`}
+          card={currentCard}
+          distractors={sampleDistractors(queue, currentIndex, 3)}
+          playbackRate={playbackRate}
+          onRateChange={setPlaybackRate}
+          onRate={handleRate}
+        />
+      )}
+
+      {mode === 'reading-comprehension' && (
+        currentPassage
+          ? (
+              <ReadingComprehensionCard
+                key={`${currentCard.vocab_id}-${currentIndex}`}
+                passage={currentPassage}
+                card={currentCard}
+                onRate={handleRate}
+              />
+            )
+          : (
+              <SentenceFlashcard
+                key={`${currentCard.vocab_id}-${currentIndex}`}
+                card={currentCard}
+                meaningLanguage={meaningLanguage}
+                onRate={handleRate}
+              />
+            )
+      )}
+
+      {mode === 'pitch-discrimination' && (
+        <PitchDiscriminationCard
+          key={`${currentCard.vocab_id}-${currentIndex}`}
+          card={currentCard}
+          onRate={handleRate}
         />
       )}
     </div>

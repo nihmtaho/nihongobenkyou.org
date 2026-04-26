@@ -51,13 +51,23 @@ export function StudyConfigModal({
         <div className="form-control gap-1">
           <label className="label-text font-semibold">Mode</label>
           <div className="flex gap-2 flex-wrap">
-            {(['flashcard', 'quiz', 'type-input'] as StudyMode[]).map(m => (
+            {(
+              [
+                { value: 'flashcard', label: 'Thẻ từ' },
+                { value: 'quiz', label: 'Trắc nghiệm' },
+                { value: 'type-input', label: 'Gõ từ' },
+                { value: 'sentence-flashcard', label: 'Thẻ câu' },
+                { value: 'listening', label: 'Nghe hiểu' },
+                { value: 'reading-comprehension', label: 'Đọc hiểu' },
+                { value: 'pitch-discrimination', label: 'Thanh điệu' },
+              ] as { value: StudyMode, label: string }[]
+            ).map(({ value: m, label }) => (
               <button
                 key={m}
-                className={`btn btn-sm ${mode === m ? 'btn-primary' : 'btn-outline'}`}
+                className={`btn btn-sm font-[var(--br-mono-font)] ${mode === m ? 'btn-primary' : 'btn-outline'}`}
                 onClick={() => setMode(m)}
               >
-                {m}
+                {label}
               </button>
             ))}
           </div>

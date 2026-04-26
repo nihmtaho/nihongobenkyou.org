@@ -1,6 +1,20 @@
 import type { LessonMeta, Manifest } from '../types/dataset'
+import type { Passage } from '../types/passages'
 import type { VocabItem } from '../types/vocabulary'
 import { db } from './schema'
+
+interface LessonFile {
+  vocabulary: VocabItem[]
+  passages: Passage[]
+}
+
+function parseLessonFile(raw: unknown): LessonFile {
+  if (Array.isArray(raw)) {
+    return { vocabulary: raw as VocabItem[], passages: [] }
+  }
+  const file = raw as LessonFile
+  return { vocabulary: file.vocabulary ?? [], passages: file.passages ?? [] }
+}
 
 export class SeedError extends Error {
   constructor(message: string, cause?: unknown) {
@@ -38,12 +52,15 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
     return 'up-to-date'
 
   const vocabItems: VocabItem[] = []
+  const passages: Passage[] = []
   const lessonMetas: LessonMeta[] = []
 
   try {
     for (const file of dataset.files) {
-      const items = await fetchJson<VocabItem[]>(`/data/${dataset.book_code_prefix}/${file.filename}`)
-      vocabItems.push(...items)
+      const raw = await fetchJson<unknown>(`/data/${dataset.book_code_prefix}/${file.filename}`)
+      const lessonFile = parseLessonFile(raw)
+      vocabItems.push(...lessonFile.vocabulary)
+      passages.push(...lessonFile.passages)
     }
 
     // Derive lesson metadata from vocab items — group by lesson_number
@@ -69,12 +86,15 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   }
 
   try {
-    await db.transaction('rw', [db.vocabulary, db.lessons, db.settings], async () => {
+    await db.transaction('rw', [db.vocabulary, db.lessons, db.passages, db.settings], async () => {
       await db.vocabulary.clear()
       await db.lessons.clear()
+      await db.passages.clear()
       await db.vocabulary.bulkPut(vocabItems)
       if (lessonMetas.length > 0)
         await db.lessons.bulkPut(lessonMetas)
+      if (passages.length > 0)
+        await db.passages.bulkPut(passages)
       await db.settings.put({ key: 'manifest_checksum', value: dataset.checksum })
     })
   }

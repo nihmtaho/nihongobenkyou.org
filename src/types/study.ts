@@ -1,6 +1,13 @@
 import type { VocabItem } from './vocabulary'
 
-export type StudyMode = 'flashcard' | 'quiz' | 'type-input'
+export type StudyMode
+  = | 'flashcard'
+    | 'quiz'
+    | 'type-input'
+    | 'sentence-flashcard'
+    | 'listening'
+    | 'reading-comprehension'
+    | 'pitch-discrimination'
 
 export type FontSize = 'sm' | 'md' | 'lg'
 
