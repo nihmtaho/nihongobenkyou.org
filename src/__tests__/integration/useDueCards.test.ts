@@ -88,6 +88,7 @@ describe('useDueCards', () => {
       last_rating: null,
       pending_sync: false,
       updated_at: PAST_DATE,
+      is_known: false,
     })
 
     const { result } = renderHook(() => useDueCards(TEST_USER_ID), {

@@ -54,6 +54,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
           last_rating: null,
           pending_sync: false,
           updated_at: NOW_ISO(),
+          is_known: false,
         }
       })
 

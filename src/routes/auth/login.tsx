@@ -1,16 +1,65 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { AuthForm } from '../../components/auth/AuthForm'
+import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton'
+import { useAuth } from '../../hooks/useAuth'
+import { useAuthStore } from '../../stores/authStore'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
 })
 
 function LoginPage() {
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated)
+  const { loginMutation } = useAuth()
+
+  if (isAuthenticated) {
+    navigate({ to: '/' })
+    return null
+  }
+
+  function handleSubmit(email: string, password: string) {
+    loginMutation.mutate({ email, password }, {
+      onSuccess: () => navigate({ to: '/' }),
+    })
+  }
+
+  const error = loginMutation.error?.message ?? null
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="card bg-base-100 shadow-xl w-full max-w-sm">
-        <div className="card-body">
-          <h1 className="card-title text-2xl">Login</h1>
-          <p className="text-base-content/60">Authentication coming in Phase 2.</p>
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="card bg-base-100 border border-base-content/10 w-full max-w-sm">
+        <div className="card-body gap-4">
+          <h1 className="card-title font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
+            ĐĂNG NHẬP
+          </h1>
+
+          <AuthForm
+            onSubmit={handleSubmit}
+            isLoading={loginMutation.isPending}
+            error={error}
+            submitLabel="Đăng nhập"
+          />
+
+          <div className="divider font-[var(--br-mono-font)] text-[11px] uppercase my-0">HOẶC</div>
+
+          <GoogleSignInButton />
+
+          <div className="flex flex-col gap-2 text-center">
+            <Link
+              to="/auth/forgot-password"
+              className="text-sm font-[var(--br-mono-font)] text-primary underline"
+            >
+              Quên mật khẩu?
+            </Link>
+            <p className="text-sm text-base-content/60">
+              Chưa có tài khoản?
+              {' '}
+              <Link to="/auth/register" className="text-primary underline">
+                Đăng ký
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

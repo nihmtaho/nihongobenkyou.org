@@ -4,15 +4,15 @@ import { motion } from 'framer-motion'
 import { DueCardsWidget } from '../components/home/DueCardsWidget'
 import { StreakWidget } from '../components/home/StreakWidget'
 import { useDueCards } from '../hooks/useDueCards'
+import { useAuthStore } from '../stores/authStore'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
-const PLACEHOLDER_USER_ID = ''
-
 function HomePage() {
-  const { data: dueCards } = useDueCards(PLACEHOLDER_USER_ID)
+  const userId = useAuthStore(s => s.userId) ?? ''
+  const { data: dueCards } = useDueCards(userId)
   const hasDueCards = (dueCards?.length ?? 0) > 0
 
   return (
@@ -27,8 +27,8 @@ function HomePage() {
       </h1>
 
       <div className="flex flex-col gap-4">
-        <DueCardsWidget userId={PLACEHOLDER_USER_ID} />
-        <StreakWidget userId={PLACEHOLDER_USER_ID} />
+        <DueCardsWidget userId={userId} />
+        <StreakWidget userId={userId} />
 
         <Link
           to={hasDueCards ? '/srs' : '/books'}

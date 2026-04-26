@@ -9,6 +9,8 @@ export default antfu(
       '.github/copilot-instructions.md',
       '.specify/**',
       '.claude/**',
+      '.agents/**',
+      '.playwright-mcp/**',
       'CLAUDE.md',
       'STRUCTURE.md',
       'node_modules/**',

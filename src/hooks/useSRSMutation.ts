@@ -25,6 +25,7 @@ export function useSRSMutation() {
           last_rating: card.last_rating,
           pending_sync: card.pending_sync,
           updated_at: card.updated_at,
+          is_known: card.is_known ?? false,
         },
         rating,
       )
@@ -39,6 +40,7 @@ export function useSRSMutation() {
         last_rating: rating,
         pending_sync: true,
         updated_at: new Date().toISOString(),
+        is_known: false,
       })
 
       flushPendingSync().catch(() => {})

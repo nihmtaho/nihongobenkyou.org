@@ -12,6 +12,7 @@ const baseCard: CardState = {
   last_rating: null,
   pending_sync: false,
   updated_at: '2026-01-01T00:00:00Z',
+  is_known: false,
 }
 
 describe('calculateNextReview', () => {

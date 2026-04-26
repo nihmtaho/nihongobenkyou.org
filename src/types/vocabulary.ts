@@ -33,5 +33,5 @@ export interface VocabWithSRS extends VocabItem {
   last_rating: 0 | 1 | 2 | 3 | null
   pending_sync: boolean
   updated_at: string
-  is_known?: boolean
+  is_known: boolean
 }

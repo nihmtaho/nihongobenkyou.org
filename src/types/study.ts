@@ -2,6 +2,8 @@ import type { VocabItem } from './vocabulary'
 
 export type StudyMode = 'flashcard' | 'quiz' | 'type-input'
 
+export type FontSize = 'sm' | 'md' | 'lg'
+
 export type MeaningLanguage = 'vi' | 'en' | 'both'
 
 export type QuizQuestionType = 'word→meaning' | 'meaning→word' | 'word→reading'
