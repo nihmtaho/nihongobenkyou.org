@@ -46,7 +46,10 @@ describe('calculateNextReview', () => {
   })
 
   describe('hard (rating 1)', () => {
-    it('multiplies interval by 1.2', () => {
+    it('uses floor(interval × 1.2) — interval=6 gives 7 not 8', () => {
+      expect(calculateNextReview({ ...baseCard, interval_days: 6 }, 1).new_interval).toBe(7)
+    })
+    it('multiplies interval by 1.2 (exact result)', () => {
       expect(calculateNextReview({ ...baseCard, interval_days: 10 }, 1).new_interval).toBe(12)
     })
     it('reduces ease by 0.15', () => {
@@ -55,12 +58,18 @@ describe('calculateNextReview', () => {
     it('clamps ease at 1.3', () => {
       expect(calculateNextReview({ ...baseCard, ease_factor: 1.3 }, 1).new_ease).toBe(1.3)
     })
+    it('clamps ease when ease_factor=1.35 → 1.3 minimum', () => {
+      expect(calculateNextReview({ ...baseCard, ease_factor: 1.35 }, 1).new_ease).toBe(1.3)
+    })
   })
 
   describe('good (rating 2)', () => {
     it('multiplies interval by ease', () => {
       const result = calculateNextReview({ ...baseCard, interval_days: 4, ease_factor: 2.5 }, 2)
       expect(result.new_interval).toBe(10)
+    })
+    it('interval=6, ease=2.5 gives 15 (round(6×2.5)=15, not 16)', () => {
+      expect(calculateNextReview({ ...baseCard, interval_days: 6, ease_factor: 2.5 }, 2).new_interval).toBe(15)
     })
     it('does not change ease', () => {
       expect(calculateNextReview({ ...baseCard, ease_factor: 2.5 }, 2).new_ease).toBe(2.5)

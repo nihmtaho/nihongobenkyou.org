@@ -18,7 +18,7 @@ async function fetchJson<T>(url: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export async function seedDatabase(): Promise<void> {
+export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   let manifest: Manifest
   try {
     manifest = await fetchJson<Manifest>('/data/manifest.json')
@@ -35,7 +35,7 @@ export async function seedDatabase(): Promise<void> {
 
   const storedChecksum = await db.settings.get('manifest_checksum')
   if (storedChecksum?.value === dataset.checksum)
-    return
+    return 'up-to-date'
 
   const vocabItems: VocabItem[] = []
   const lessonMetas: LessonMeta[] = []
@@ -81,4 +81,6 @@ export async function seedDatabase(): Promise<void> {
   catch (err) {
     throw new SeedError('Seed transaction failed — database may be in a partial state', err)
   }
+
+  return 'seeded'
 }

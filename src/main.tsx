@@ -4,6 +4,7 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { seedDatabase } from './db/seed'
 import { flushPendingSync } from './db/sync'
+import { initAnonymousUser } from './lib/anonymous-user'
 import { routeTree } from './routeTree.gen'
 import './app.css'
 
@@ -11,11 +12,7 @@ window.addEventListener('online', () => {
   flushPendingSync().catch(() => {})
 })
 
-// Seed Dexie from public/data on first load; skipped if checksum matches
-seedDatabase().catch(console.error)
-
 const queryClient = new QueryClient()
-
 const router = createRouter({ routeTree })
 
 declare module '@tanstack/react-router' {
@@ -26,10 +23,22 @@ declare module '@tanstack/react-router' {
 
 const rootElement = document.getElementById('root')!
 
-ReactDOM.createRoot(rootElement).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  </StrictMode>,
-)
+async function bootstrap() {
+  await initAnonymousUser()
+
+  seedDatabase().then((result) => {
+    if (result === 'seeded') {
+      window.dispatchEvent(new CustomEvent('dataset-updated'))
+    }
+  }).catch(console.error)
+
+  ReactDOM.createRoot(rootElement).render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </StrictMode>,
+  )
+}
+
+bootstrap().catch(console.error)

@@ -128,6 +128,39 @@ describe('sc-004 — card transition performance', () => {
   })
 })
 
+describe('again re-queue limit (FR-004)', () => {
+  it('4th Again rates card with interval=1 and sets pending_sync', async () => {
+    const vocab = sampleVocabulary[0]
+    await db.vocabulary.put(vocab)
+    await db.user_cards.put(makeCard(0))
+
+    const { result } = renderHook(() => useSRSMutation(), { wrapper: makeWrapper() })
+
+    const card = {
+      ...vocab,
+      userId: TEST_USER_ID,
+      vocabId: vocab.vocab_id,
+      interval_days: 10,
+      ease_factor: 2.5,
+      due_date: PAST_DATE,
+      review_count: 5,
+      last_rating: 2 as const,
+      pending_sync: false,
+      updated_at: PAST_DATE,
+      is_known: false,
+    }
+
+    // Simulate 4th Again (the mutation itself is stateless — just verify the Dexie write)
+    result.current.mutate({ userId: TEST_USER_ID, card, rating: 0 })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    const stored = await db.user_cards.get([TEST_USER_ID, vocab.vocab_id])
+    expect(stored?.interval_days).toBe(1)
+    expect(stored?.pending_sync).toBe(true)
+    expect(stored?.last_rating).toBe(0)
+  })
+})
+
 describe('useSRSMutation', () => {
   async function seedCardAndVocab(vocabIdx: number) {
     const vocab = sampleVocabulary[vocabIdx]

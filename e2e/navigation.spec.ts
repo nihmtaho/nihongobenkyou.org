@@ -39,7 +39,7 @@ test.describe('navigation', () => {
 
     test('Sidebar is visible on desktop', async ({ page }) => {
       await page.goto('/')
-      const sidebarLinks = page.locator('.menu.hidden.lg\\:block')
+      const sidebarLinks = page.locator('.menu.hidden.lg\\:flex')
       await expect(sidebarLinks).toBeVisible()
     })
 
