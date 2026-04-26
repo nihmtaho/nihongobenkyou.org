@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 interface AudioButtonProps {
   audioFilename: string | null
   vocabId: string
+  rate?: number
 }
 
-export function AudioButton({ audioFilename, vocabId }: AudioButtonProps) {
+export function AudioButton({ audioFilename, vocabId, rate = 1.0 }: AudioButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const soundRef = useRef<Howl | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -41,6 +42,7 @@ export function AudioButton({ audioFilename, vocabId }: AudioButtonProps) {
     if (!soundRef.current || isPlaying)
       return
     setIsPlaying(true)
+    soundRef.current.rate(rate)
     soundRef.current.play()
   }
 

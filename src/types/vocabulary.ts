@@ -16,6 +16,7 @@ export interface VocabItem {
   pitch_pattern: number | null
   pitch_type: PitchType
   audio_filename: string | null
+  audio_filename_alt?: string | null
   pos: string[]
   jlpt_level: number | null
   book_source: string

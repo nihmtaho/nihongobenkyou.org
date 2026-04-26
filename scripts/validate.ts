@@ -1,4 +1,5 @@
 import type { DatasetConfig } from '../src/types/dataset'
+import type { Passage } from '../src/types/passages'
 import { readFileSync, writeFileSync } from 'node:fs'
 import process from 'node:process'
 
@@ -66,6 +67,40 @@ export function validateEntries(entries: EntryWithAudio[]): ValidationError[] {
         if (!ex.vi || ex.vi.trim() === '')
           errors.push({ index: i, field: `examples[${j}].vi`, value: ex.vi, entry })
       }
+    }
+  }
+
+  return errors
+}
+
+interface PassageValidationError {
+  passage_id: string
+  field: string
+  message: string
+}
+
+export function validatePassages(passages: Passage[], knownVocabIds: Set<string>): PassageValidationError[] {
+  const errors: PassageValidationError[] = []
+
+  for (const passage of passages) {
+    for (const vocabId of passage.vocab_ids) {
+      if (!knownVocabIds.has(vocabId)) {
+        errors.push({ passage_id: passage.passage_id, field: 'vocab_ids', message: `Unknown vocab_id: ${vocabId}` })
+      }
+    }
+
+    for (let i = 0; i < passage.questions.length; i++) {
+      const q = passage.questions[i]
+      if (q.options.length < 2 || q.options.length > 4) {
+        errors.push({ passage_id: passage.passage_id, field: `questions[${i}].options`, message: `options length must be 2–4, got ${q.options.length}` })
+      }
+      if (q.correct_index < 0 || q.correct_index >= q.options.length) {
+        errors.push({ passage_id: passage.passage_id, field: `questions[${i}].correct_index`, message: `correct_index ${q.correct_index} out of bounds for options length ${q.options.length}` })
+      }
+    }
+
+    if (passage.questions.length < 2 || passage.questions.length > 3) {
+      errors.push({ passage_id: passage.passage_id, field: 'questions', message: `questions length must be 2–3, got ${passage.questions.length}` })
     }
   }
 

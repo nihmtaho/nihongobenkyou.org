@@ -1,8 +1,14 @@
 import type { DatasetConfig, LessonMeta } from '../src/types/dataset'
+import type { Passage } from '../src/types/passages'
 import type { PitchType, VocabItem } from '../src/types/vocabulary'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
+
+export interface LessonFile {
+  vocabulary: VocabItem[]
+  passages: Passage[]
+}
 
 interface ValidatedEntry {
   vocab_id: string
@@ -47,7 +53,7 @@ function zeroPad(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-export async function run(inputPath: string, config: DatasetConfig): Promise<void> {
+export async function run(inputPath: string, config: DatasetConfig, passageMap: Map<number, Passage[]> = new Map()): Promise<void> {
   const entries: ValidatedEntry[] = JSON.parse(readFileSync(inputPath, 'utf-8'))
 
   const grouped = new Map<number, ValidatedEntry[]>()
@@ -87,7 +93,11 @@ export async function run(inputPath: string, config: DatasetConfig): Promise<voi
     }))
 
     const lessonFile = path.join(outputBase, `lesson-${zeroPad(lessonNum)}.json`)
-    writeFileSync(lessonFile, JSON.stringify(vocabItems, null, 2), 'utf-8')
+    const lessonOutput: LessonFile = {
+      vocabulary: vocabItems,
+      passages: passageMap.get(lessonNum) ?? [],
+    }
+    writeFileSync(lessonFile, JSON.stringify(lessonOutput, null, 2), 'utf-8')
 
     lessonMetas.push({
       lesson_id: `${config.id}_${lessonNum}`,

@@ -192,5 +192,5 @@ TanStack Query v5 has no Intent skills yet. `@tanstack/react-start` and `@tansta
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan at
-`specs/010-custom-deck/plan.md`
+`specs/011-advanced-study-modes/plan.md`
 <!-- SPECKIT END -->
