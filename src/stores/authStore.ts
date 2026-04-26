@@ -8,4 +8,5 @@ export const useAuthStore = create<AuthState>()(() => ({
   isLoading: false,
   displayName: null,
   avatarUrl: null,
+  reactivationBannerVisible: false,
 }))

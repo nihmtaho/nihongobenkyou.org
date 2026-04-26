@@ -183,12 +183,14 @@ TanStack Query v5 has no Intent skills yet. `@tanstack/react-start` and `@tansta
 - `public/data/{book_id}/lesson-{NN}.json` + `manifest.json` (local filesystem); Dexie IndexedDB (client runtime) (002-data-pipeline)
 - TypeScript 5.x / Node.js 22.x + React 19, TanStack Router v1, TanStack Query v5, Zustand v5 (with `persist` middleware), DaisyUI v5 / Tailwind CSS v4, Dexie.js v4, @supabase/supabase-js (015-complete-ui)
 - Dexie.js v4 (primary local store), Supabase PostgreSQL (SRS index sync), Supabase Storage (avatar uploads, bucket: `avatars`) (015-complete-ui)
+- TypeScript 5.x (strict mode), Node.js 22.x + React 19, TanStack Router v1, TanStack Query v5, Zustand v5, `@supabase/supabase-js`, Dexie.js v4 (006-auth-user-accounts)
+- Supabase PostgreSQL (`profiles`, `user_cards`), Supabase Storage (`avatars` bucket), Dexie.js IndexedDB (`user_cards`, `settings`) (006-auth-user-accounts)
 
 ## Recent Changes
 - 001-prd-phase1-specs: Added TypeScript 5.x (strict mode), Node.js 22.x (pinned via `.nvmrc`) + React 19, Vite 6, TanStack Router v1, TanStack Query v5, Zustand v5, Tailwind CSS v4, DaisyUI v5, Dexie.js v4, Framer Motion v11, `@antfu/eslint-config` (ESLint v9 flat config), Husky v9, lint-staged, Vitest, `@testing-library/react`, `fake-indexeddb`, Playwright, `vite-plugin-pwa`
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
-at `specs/005-srs-pwa/plan.md`.
+shell commands, and other important information, read the current plan at
+`specs/006-auth-user-accounts/plan.md`
 <!-- SPECKIT END -->

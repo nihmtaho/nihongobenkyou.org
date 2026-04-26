@@ -1,5 +1,7 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { OfflineAuthNotice } from '../components/auth/OfflineAuthNotice'
+import { ReactivationBanner } from '../components/auth/ReactivationBanner'
 import { BottomDock } from '../components/navigation/BottomDock'
 import { Sidebar } from '../components/navigation/Sidebar'
 import { OfflineIndicator } from '../components/offline/OfflineIndicator'
@@ -48,6 +50,8 @@ function RootLayout() {
 
   return (
     <>
+      <OfflineAuthNotice />
+      <ReactivationBanner />
       <OfflineIndicator />
       {datasetUpdated && (
         <div className="toast toast-top toast-center z-50">
