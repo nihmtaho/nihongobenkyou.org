@@ -1,8 +1,8 @@
-import { signInWithGoogle } from '../../api/auth'
+import { signInWithOAuth } from '../../api/auth'
 
 export function GoogleSignInButton() {
   function handleClick() {
-    signInWithGoogle().catch(console.error)
+    signInWithOAuth('google').catch(console.error)
   }
 
   return (

@@ -1,8 +1,11 @@
+import type { OAuthProvider } from '../../types/user'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { AuthForm } from '../../components/auth/AuthForm'
 import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton'
 import { useAuth } from '../../hooks/useAuth'
 import { useAuthStore } from '../../stores/authStore'
+
+const OAUTH_PROVIDERS: OAuthProvider[] = ['google']
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
@@ -43,7 +46,7 @@ function LoginPage() {
 
           <div className="divider font-[var(--br-mono-font)] text-[11px] uppercase my-0">HOẶC</div>
 
-          <GoogleSignInButton />
+          {OAUTH_PROVIDERS.includes('google') && <GoogleSignInButton />}
 
           <div className="flex flex-col gap-2 text-center">
             <Link

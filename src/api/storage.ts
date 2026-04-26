@@ -11,13 +11,9 @@ export async function uploadAvatar(userId: string, file: File): Promise<string> 
   if (error)
     throw new Error(error.message)
 
-  const { data } = await supabase.storage
-    .from('avatars')
-    .createSignedUrl(path, 3600)
-
-  if (!data?.signedUrl)
-    throw new Error('Không thể tạo URL avatar')
-  return data.signedUrl
+  // Return the storage path, NOT a signed URL.
+  // Callers use getSignedAvatarUrl(path) from src/api/profiles.ts to derive a signed URL on demand.
+  return path
 }
 
 export async function deleteAvatar(userId: string): Promise<void> {
