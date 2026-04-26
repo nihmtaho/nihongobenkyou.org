@@ -1,15 +1,24 @@
-import type { MeaningLanguage } from '../types/study'
+import type { FontSize, MeaningLanguage } from '../types/study'
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface SettingsState {
   activeTheme: string
   language: 'vi' | 'en'
   meaningLanguage: MeaningLanguage
+  fontSize: FontSize
+  darkMode: boolean
 }
 
-// NOTE: persist middleware added in spec-003
-export const useSettingsStore = create<SettingsState>()(() => ({
-  activeTheme: 'brutalist-mnn1',
-  language: 'vi',
-  meaningLanguage: 'vi',
-}))
+export const useSettingsStore = create<SettingsState>()(
+  persist(
+    (): SettingsState => ({
+      activeTheme: 'brutalist-mnn1',
+      language: 'vi',
+      meaningLanguage: 'vi',
+      fontSize: 'md',
+      darkMode: false,
+    }),
+    { name: 'nihongo-settings' },
+  ),
+)

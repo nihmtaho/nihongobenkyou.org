@@ -1,12 +1,12 @@
 {
   "env": {
-    "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1",
-    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_1M_CONTEXT": "0",
+    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "0",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "0",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
     "ENABLE_LSP_TOOL": "1"
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true
   }

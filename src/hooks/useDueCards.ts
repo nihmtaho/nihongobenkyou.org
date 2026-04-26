@@ -13,6 +13,7 @@ export function useDueCards(userId: string) {
         .filter(card => card.userId === userId && !card.is_known)
         .toArray()
     },
+    enabled: !!userId,
     staleTime: 0,
   })
 }

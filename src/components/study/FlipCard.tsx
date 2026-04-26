@@ -1,12 +1,19 @@
 import type { SRSRating } from '../../types/srs'
-import type { MeaningLanguage } from '../../types/study'
+import type { FontSize, MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { useState } from 'react'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
+import { useSettingsStore } from '../../stores/settingsStore'
 import { AudioButton } from '../vocabulary/AudioButton'
 import { PitchAccentBars } from '../vocabulary/PitchAccentBars'
+
+const JP_SIZE: Record<FontSize, string> = {
+  sm: 'text-3xl',
+  md: 'text-4xl',
+  lg: 'text-5xl',
+}
 
 interface FlipCardProps {
   card: VocabWithSRS
@@ -35,6 +42,8 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
   const [showButtons, setShowButtons] = useState(false)
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-300, 0, 300], [-12, 0, 12])
+  const fontSize = useSettingsStore(s => s.fontSize)
+  const jpSize = JP_SIZE[fontSize]
 
   const word = card.word ?? card.reading
   const morae = moraCount(card.reading)
@@ -81,7 +90,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
               style={{ backfaceVisibility: 'hidden' }}
               className="card bg-base-100 border-2 border-base-content shadow-xl absolute inset-0 flex flex-col items-center justify-center p-6 gap-3"
             >
-              <span className="text-4xl font-bold" style={{ fontFamily: 'var(--br-jp-font)' }}>
+              <span className={`${jpSize} font-bold`} style={{ fontFamily: 'var(--br-jp-font)' }}>
                 {word}
               </span>
               <PitchAccentBars pattern={pitchPattern} kana={card.reading} />

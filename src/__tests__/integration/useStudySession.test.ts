@@ -16,6 +16,7 @@ function makeCard(vocab: (typeof sampleVocabulary)[number]): VocabWithSRS {
     last_rating: null,
     pending_sync: false,
     updated_at: NOW,
+    is_known: false,
   }
 }
 

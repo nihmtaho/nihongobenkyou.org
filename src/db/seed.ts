@@ -46,11 +46,21 @@ export async function seedDatabase(): Promise<void> {
       vocabItems.push(...items)
     }
 
-    const metaResponse = await fetch(`/data/${dataset.book_code_prefix}/lessons-meta.json`)
-    if (metaResponse.ok) {
-      const metas = await metaResponse.json() as LessonMeta[]
-      lessonMetas.push(...metas)
+    // Derive lesson metadata from vocab items — group by lesson_number
+    const lessonMap = new Map<number, LessonMeta>()
+    for (const v of vocabItems) {
+      if (!lessonMap.has(v.lesson_number)) {
+        lessonMap.set(v.lesson_number, {
+          lesson_id: `${v.book_source}:${v.lesson_number}`,
+          book_source: v.book_source,
+          lesson_number: v.lesson_number,
+          title: '',
+          vocab_count: 0,
+        })
+      }
+      lessonMap.get(v.lesson_number)!.vocab_count++
     }
+    lessonMetas.push(...Array.from(lessonMap.values()).sort((a, b) => a.lesson_number - b.lesson_number))
   }
   catch (err) {
     if (err instanceof SeedError)

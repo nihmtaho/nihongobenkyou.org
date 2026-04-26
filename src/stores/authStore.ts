@@ -6,4 +6,6 @@ export const useAuthStore = create<AuthState>()(() => ({
   email: null,
   isAuthenticated: false,
   isLoading: false,
+  displayName: null,
+  avatarUrl: null,
 }))

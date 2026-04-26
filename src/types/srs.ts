@@ -10,7 +10,7 @@ export interface CardState {
   last_rating: SRSRating | null
   pending_sync: boolean
   updated_at: string
-  is_known?: boolean
+  is_known: boolean
 }
 
 export interface ReviewResult {

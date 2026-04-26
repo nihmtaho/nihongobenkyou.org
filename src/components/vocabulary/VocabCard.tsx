@@ -1,9 +1,17 @@
 import type { CardState } from '../../types/srs'
+import type { FontSize } from '../../types/study'
 import type { VocabItem } from '../../types/vocabulary'
 
 import { useKnownCards } from '../../hooks/useKnownCards'
+import { useSettingsStore } from '../../stores/settingsStore'
 import { AudioButton } from './AudioButton'
 import { PitchAccentBars } from './PitchAccentBars'
+
+const JP_SIZE: Record<FontSize, string> = {
+  sm: 'text-4xl',
+  md: 'text-5xl',
+  lg: 'text-6xl',
+}
 
 interface VocabCardProps {
   item: VocabItem
@@ -15,6 +23,8 @@ interface VocabCardProps {
 export function VocabCard({ item, card, moraPattern, userId }: VocabCardProps) {
   const { toggleKnown } = useKnownCards()
   const isKnown = card?.is_known === true
+  const fontSize = useSettingsStore(s => s.fontSize)
+  const jpSize = JP_SIZE[fontSize]
 
   function handleToggleKnown() {
     toggleKnown(userId, item.vocab_id, isKnown)
@@ -37,7 +47,7 @@ export function VocabCard({ item, card, moraPattern, userId }: VocabCardProps) {
           </p>
         )}
 
-        <p className="text-5xl font-bold font-[var(--br-jp-font)] text-base-content leading-none">
+        <p className={`${jpSize} font-bold font-[var(--br-jp-font)] text-base-content leading-none`}>
           {item.reading}
         </p>
 

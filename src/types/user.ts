@@ -11,6 +11,8 @@ export interface AuthState {
   email: string | null
   isAuthenticated: boolean
   isLoading: boolean
+  displayName: string | null
+  avatarUrl: string | null
 }
 
 export interface LeaderboardEntry {
