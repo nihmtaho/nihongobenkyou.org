@@ -13,6 +13,8 @@ export interface StudyConfig {
   cardCount: number | 'all'
   order: 'random' | 'sequential'
   lessonIds: string[]
+  source?: 'textbook' | 'custom'
+  deckId?: string
 }
 
 export interface SessionStats {

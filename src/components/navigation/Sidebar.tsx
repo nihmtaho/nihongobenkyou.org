@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/', label: 'Home' },
   { to: '/books', label: 'Books' },
   { to: '/srs', label: 'Study' },
+  { to: '/custom', label: 'My Decks' },
   { to: '/profile', label: 'Profile' },
   { to: '/settings', label: 'Settings' },
 ] as const

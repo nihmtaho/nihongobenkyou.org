@@ -1,4 +1,5 @@
 import type { EntityTable } from 'dexie'
+import type { CustomDeck, CustomVocabItem } from '../types/custom-deck'
 import type { LessonMeta } from '../types/dataset'
 import type { KanjiCardState, KanjiItem } from '../types/kanji'
 import type { CardState } from '../types/srs'
@@ -36,6 +37,8 @@ export class NihongoDB extends Dexie {
   kanji!: EntityTable<KanjiItem, 'char'>
   kanji_cards!: EntityTable<KanjiCardState, never>
   sessions!: EntityTable<StudySession, 'id'>
+  custom_decks!: EntityTable<CustomDeck, 'id'>
+  custom_vocabulary!: EntityTable<CustomVocabItem, 'id'>
 
   constructor() {
     super('NihongoDB')
@@ -51,6 +54,10 @@ export class NihongoDB extends Dexie {
     })
     this.version(2).stores({
       sessions: '++id, user_id, mode, studied_at, [user_id+studied_at]',
+    })
+    this.version(3).stores({
+      custom_decks: 'id, user_id, share_code',
+      custom_vocabulary: 'id, deck_id, user_id',
     })
   }
 }
