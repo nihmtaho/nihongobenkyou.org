@@ -14,6 +14,7 @@ interface RawVocabEntry {
   jlpt: number | null
   examples: Array<{ ja: string, en: string, vi: string, fr?: string }>
   lesson_number: number
+  han_viet: string | null
 }
 
 interface YamlLesson {
@@ -42,6 +43,7 @@ interface YamlEntry {
   romaji: string
   meaning: { en: string, vi: string, fr?: string }
   examples?: YamlExample[]
+  han_viet?: string | null
 }
 
 export async function run(yamlPath: string, outputPath: string, config: DatasetConfig): Promise<void> {
@@ -106,6 +108,7 @@ export async function run(yamlPath: string, outputPath: string, config: DatasetC
           ...(ex.fr ? { fr: ex.fr } : {}),
         })),
         lesson_number: lessonId,
+        han_viet: entry.han_viet ?? null,
       })
     }
   }

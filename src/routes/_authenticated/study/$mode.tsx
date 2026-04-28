@@ -2,7 +2,6 @@ import type { StudyMode } from '../../../types/study'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
-import { FlipCard } from '../../../components/study/FlipCard'
 import { ListeningCard } from '../../../components/study/ListeningCard'
 import { PitchDiscriminationCard } from '../../../components/study/PitchDiscriminationCard'
 import { QuizCard } from '../../../components/study/QuizCard'
@@ -10,6 +9,7 @@ import { ReadingComprehensionCard } from '../../../components/study/ReadingCompr
 import { SentenceFlashcard } from '../../../components/study/SentenceFlashcard'
 import { SessionSummary } from '../../../components/study/SessionSummary'
 import { TypeInputCard } from '../../../components/study/TypeInputCard'
+import { VocabFlipCard } from '../../../components/study/VocabFlipCard'
 import { db } from '../../../db/schema'
 import { usePassages } from '../../../hooks/usePassages'
 import { useSRS } from '../../../hooks/useSRS'
@@ -237,7 +237,7 @@ function StudyPage() {
       </div>
 
       {mode === 'flashcard' && (
-        <FlipCard
+        <VocabFlipCard
           key={`${currentCard.vocab_id}-${currentIndex}`}
           card={currentCard}
           meaningLanguage={meaningLanguage}

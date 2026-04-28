@@ -63,9 +63,16 @@ export function VocabCard({ item, card, moraPattern, userId }: VocabCardProps) {
         </p>
 
         {item.word && (
-          <p className="text-2xl font-bold font-[var(--br-jp-font)] text-base-content">
-            {item.word}
-          </p>
+          <div className="flex flex-col gap-0.5">
+            <p className="text-2xl font-bold font-[var(--br-jp-font)] text-base-content">
+              {item.word}
+            </p>
+            {item.han_viet && (
+              <span className="text-[11px] font-[var(--br-mono-font)] text-primary uppercase tracking-[0.12em]">
+                {item.han_viet}
+              </span>
+            )}
+          </div>
         )}
 
         <p className={`${jpSize} font-bold font-[var(--br-jp-font)] text-base-content leading-none`}>

@@ -15,6 +15,7 @@ interface PitchedEntry {
   examples: Array<{ ja: string, en: string, vi: string }>
   lesson_number: number
   pitch_pattern: number | null
+  han_viet: string | null
 }
 
 interface EntryWithId extends PitchedEntry {

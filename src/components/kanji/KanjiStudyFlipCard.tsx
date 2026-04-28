@@ -16,18 +16,18 @@ const RATING_CLASSES: Record<SRSRating, string> = {
   3: 'btn-info',
 }
 
-// Grid-overlay flip: both faces occupy gridArea 1/1 so container auto-heights
-// to the taller face — no fixed minHeight needed.
 const GRID_FACE: React.CSSProperties = { gridArea: '1 / 1' }
-const GRID_FACE_BACK: React.CSSProperties = {
-  ...GRID_FACE,
-  transform: 'rotateY(180deg)',
-}
+const GRID_FACE_BACK: React.CSSProperties = { ...GRID_FACE, transform: 'rotateY(180deg)' }
 
 export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false)
+  const [hintRevealed, setHintRevealed] = useState(false)
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-300, 0, 300], [-12, 0, 12])
+
+  const hintText = kanji.meaning_vi[0] ?? null
+  const relatedVocab = kanji.related_vocab?.slice(0, 4) ?? []
+  const examples = kanji.examples?.slice(0, 2) ?? []
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -36,6 +36,11 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
       if (e.code === 'Space') {
         e.preventDefault()
         setIsFlipped(f => !f)
+        return
+      }
+      if ((e.key === 'h' || e.key === 'H') && !isFlipped) {
+        e.preventDefault()
+        setHintRevealed(h => !h)
         return
       }
       if (!isFlipped)
@@ -60,11 +65,13 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
       x.set(0)
   }
 
-  const relatedVocab = kanji.related_vocab?.slice(0, 4) ?? []
-  const examples = kanji.examples?.slice(0, 2) ?? []
+  function handleHint(e: React.MouseEvent) {
+    e.stopPropagation()
+    setHintRevealed(h => !h)
+  }
 
   return (
-    <div className="flex flex-col items-center gap-3 w-full max-w-[580px] mx-auto">
+    <div className="flex flex-col items-center gap-3 w-full max-w-[580px] mx-auto px-3 sm:px-0">
       <motion.div
         drag={isFlipped ? 'x' : false}
         dragConstraints={{ left: 0, right: 0 }}
@@ -76,7 +83,6 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
         onClick={() => setIsFlipped(f => !f)}
       >
         <div style={{ perspective: 1200 }} className="w-full">
-          {/* Grid overlay: container height = max(front, back) */}
           <motion.div
             animate={{ rotateY: isFlipped ? 180 : 0 }}
             transition={{ duration: 0.25 }}
@@ -86,25 +92,51 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
             {/* ── Front ───────────────────────────── */}
             <div
               style={{ backfaceVisibility: 'hidden', ...GRID_FACE }}
-              className="card bg-base-100 border-2 border-base-content shadow-xl flex flex-col items-center justify-center p-10 gap-4 min-h-56"
+              className="card bg-base-100 border-2 border-base-content shadow-xl flex flex-col min-h-[280px]"
             >
-              <span
-                className="text-[7rem] font-bold leading-none"
-                style={{ fontFamily: 'var(--br-jp-font)' }}
-              >
-                {kanji.char}
-              </span>
-              <span className="text-[11px] text-base-content/40 font-[var(--br-mono-font)] uppercase tracking-widest">
-                Space / tap to reveal
-              </span>
+              <div className="flex-1 flex flex-col items-center justify-center px-10 pt-10 pb-4 gap-4">
+                <span
+                  className="text-[7rem] font-bold leading-none"
+                  style={{ fontFamily: 'var(--br-jp-font)' }}
+                >
+                  {kanji.char}
+                </span>
+
+                {hintRevealed && hintText
+                  ? (
+                      <p className="text-base font-[var(--br-heading-font)] uppercase tracking-wide text-primary">
+                        {hintText}
+                      </p>
+                    )
+                  : (
+                      <span className="text-[11px] text-base-content/40 font-[var(--br-mono-font)] uppercase tracking-widest">
+                        Space / tap to reveal
+                      </span>
+                    )}
+              </div>
+
+              {/* Hint button bar */}
+              <div className="flex items-center justify-between px-4 pb-3 shrink-0">
+                <span className="text-[9px] text-base-content/20 font-[var(--br-mono-font)] uppercase tracking-widest">
+                  [H]
+                </span>
+                <button
+                  type="button"
+                  className={`btn btn-xs font-[var(--br-mono-font)] uppercase text-[9px] ${hintRevealed ? 'btn-primary' : 'btn-ghost border border-base-content/20'}`}
+                  onClick={handleHint}
+                  aria-label="Toggle meaning hint"
+                >
+                  {hintRevealed ? 'HIDE' : 'HINT'}
+                </button>
+              </div>
             </div>
 
             {/* ── Back ────────────────────────────── */}
             <div
               style={{ backfaceVisibility: 'hidden', ...GRID_FACE_BACK }}
-              className="card bg-base-100 border-2 border-primary shadow-xl overflow-hidden flex flex-col"
+              className="card bg-base-100 border-2 border-primary shadow-xl overflow-hidden flex flex-col min-h-[280px]"
             >
-              {/* Header zone — accent top bar + main identity */}
+              {/* Header zone */}
               <div className="h-1 bg-primary w-full shrink-0" />
               <div className="px-5 pt-4 pb-3 flex items-start gap-4 border-b border-base-content/10">
                 <span
@@ -117,7 +149,10 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
                   <p className="text-3xl font-black font-[var(--br-heading-font)] uppercase tracking-tighter leading-none text-primary">
                     {kanji.han_viet ?? '—'}
                   </p>
-                  <p className="text-sm font-[var(--br-jp-font)] text-neutral leading-snug">
+                  <p
+                    className="text-sm text-neutral leading-snug"
+                    style={{ fontFamily: 'var(--br-jp-font)' }}
+                  >
                     {kanji.meaning_vi.slice(0, 3).join(' · ')}
                   </p>
                 </div>
@@ -128,14 +163,28 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
                 <div className="px-5 py-2.5 flex gap-6 border-b border-base-content/10 bg-base-200/50">
                   {kanji.onyomi.length > 0 && (
                     <div className="flex items-baseline gap-2">
-                      <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">ON</span>
-                      <p className="text-sm font-[var(--br-jp-font)]">{kanji.onyomi.join('・')}</p>
+                      <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+                        ON
+                      </span>
+                      <p
+                        className="text-sm"
+                        style={{ fontFamily: 'var(--br-jp-font)' }}
+                      >
+                        {kanji.onyomi.join('・')}
+                      </p>
                     </div>
                   )}
                   {kanji.kunyomi.length > 0 && (
                     <div className="flex items-baseline gap-2">
-                      <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">KUN</span>
-                      <p className="text-sm font-[var(--br-jp-font)]">{kanji.kunyomi.join('・')}</p>
+                      <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+                        KUN
+                      </span>
+                      <p
+                        className="text-sm"
+                        style={{ fontFamily: 'var(--br-jp-font)' }}
+                      >
+                        {kanji.kunyomi.join('・')}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -145,7 +194,10 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
               <div className="px-5 py-3 flex flex-col gap-3">
                 {kanji.mnemonic_vi && (
                   <div className="border-l-4 border-primary pl-3">
-                    <p className="text-xs font-[var(--br-jp-font)] text-base-content/70 leading-relaxed italic">
+                    <p
+                      className="text-xs text-base-content/70 leading-relaxed italic"
+                      style={{ fontFamily: 'var(--br-jp-font)' }}
+                    >
                       {kanji.mnemonic_vi}
                     </p>
                   </div>
@@ -184,15 +236,24 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
                     </p>
                     {examples.map((ex, i) => (
                       <div key={ex.ja} className={i > 0 ? 'mt-2' : ''}>
-                        <p className="text-sm font-[var(--br-jp-font)] leading-snug">{ex.ja}</p>
-                        <p className="text-xs text-neutral font-[var(--br-jp-font)]">{ex.vi}</p>
+                        <p
+                          className="text-sm leading-snug"
+                          style={{ fontFamily: 'var(--br-jp-font)' }}
+                        >
+                          {ex.ja}
+                        </p>
+                        <p
+                          className="text-xs text-neutral"
+                          style={{ fontFamily: 'var(--br-jp-font)' }}
+                        >
+                          {ex.vi}
+                        </p>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* Subtle flip-back hint */}
               <div className="px-5 pb-3 pt-1 mt-auto">
                 <p className="text-[9px] font-[var(--br-mono-font)] text-base-content/20 uppercase tracking-widest text-right">
                   tap / space to flip back
@@ -224,7 +285,7 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
       )}
 
       <p className="text-[10px] text-base-content/25 font-[var(--br-mono-font)] tracking-wide">
-        {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · swipe'}
+        {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · [h] hint'}
       </p>
     </div>
   )

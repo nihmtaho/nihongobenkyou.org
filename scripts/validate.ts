@@ -17,6 +17,7 @@ interface EntryWithAudio {
   lesson_number: number
   pitch_pattern: number | null
   audio_filename: string | null
+  han_viet: string | null
 }
 
 interface ValidationError {

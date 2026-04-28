@@ -113,8 +113,8 @@ function LessonPage() {
   const lessonMeta = [{ lesson_id: `${book}:${lessonNumber}`, lesson_number: lessonNumber }]
 
   return (
-    <div>
-      <div className="sticky top-0 z-10 bg-base-100 border-b border-base-content/10">
+    <div className="lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
+      <div className="sticky top-0 z-10 bg-base-100 border-b border-base-content/10 shrink-0">
         {/* Main header */}
         <div className="p-4 flex items-end justify-between">
           <div>
@@ -233,12 +233,14 @@ function LessonPage() {
         )}
       </div>
 
-      <VocabList
-        items={nonDeprecated}
-        cards={cards}
-        userId={userId}
-        isLoading={isLoading}
-      />
+      <div className="lg:flex-1 lg:min-h-0">
+        <VocabList
+          items={nonDeprecated}
+          cards={cards}
+          userId={userId}
+          isLoading={isLoading}
+        />
+      </div>
 
       {showConfig && (
         <StudyConfigModal

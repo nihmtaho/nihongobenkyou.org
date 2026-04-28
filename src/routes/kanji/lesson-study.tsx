@@ -1,4 +1,4 @@
-import type { KanjiCardState, KanjiItem } from '../../types/kanji'
+import type { KanjiCardState, KanjiItem, RelatedVocabItem } from '../../types/kanji'
 import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
@@ -8,10 +8,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { KanjiQuizCard } from '../../components/kanji/KanjiQuizCard'
 import { KanjiStudyFlipCard } from '../../components/kanji/KanjiStudyFlipCard'
 import { KanjiTypeInputCard } from '../../components/kanji/KanjiTypeInputCard'
-import { FlipCard } from '../../components/study/FlipCard'
+import { KanjiVocabFlipCard } from '../../components/kanji/KanjiVocabFlipCard'
 import { QuizCard } from '../../components/study/QuizCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
-import { getAllKanji, getKanjiByChars, getKanjiCardsForChars, getVocabContainingChars } from '../../db/kanji'
+import { getAllKanji, getKanjiByChars, getKanjiCardsForChars } from '../../db/kanji'
 import { useSRS } from '../../hooks/useSRS'
 import { useUserCards } from '../../hooks/useUserCards'
 import { useAuthStore } from '../../stores/authStore'
@@ -103,34 +103,42 @@ function useVocabLessonData(userId: string, lesson: number) {
     staleTime: Infinity,
   })
 
-  const chars = useMemo(() => kanjiQuery.data?.map(k => k.char) ?? [], [kanjiQuery.data])
+  // Extract unique related_vocab items from all kanji in this lesson
+  const relatedVocabItems = useMemo<RelatedVocabItem[]>(() => {
+    const seen = new Set<string>()
+    const items: RelatedVocabItem[] = []
+    for (const k of kanjiQuery.data ?? []) {
+      for (const rv of k.related_vocab ?? []) {
+        const key = `${rv.word ?? rv.kana}:${rv.kana}`
+        if (!seen.has(key)) {
+          seen.add(key)
+          items.push(rv)
+        }
+      }
+    }
+    return items
+  }, [kanjiQuery.data])
 
-  const vocabQuery = useQuery({
-    queryKey: ['kanji-lesson-vocab', lesson],
-    queryFn: () => getVocabContainingChars(chars),
-    enabled: chars.length > 0,
-    staleTime: Infinity,
-  })
-
-  const vocabItems = useMemo(() => vocabQuery.data ?? [], [vocabQuery.data])
-  const vocabIds = useMemo(() => vocabItems.map(v => v.vocab_id), [vocabItems])
+  const vocabIds = useMemo(
+    () => relatedVocabItems.map(rv => `rv_${rv.word ?? rv.kana}_${rv.kana}`),
+    [relatedVocabItems],
+  )
 
   const { data: cards } = useUserCards(userId, vocabIds)
 
-  // Collect unique kanji chars across all vocab words for han_viet lookup
+  // Collect unique kanji chars across all related_vocab words for per-char han_viet lookup
   const kanjiCharsInVocab = useMemo(() => {
     const set = new Set<string>()
-    vocabItems.forEach((v) => {
-      if (v.word) {
-        for (const ch of v.word) {
-          // CJK Unified Ideographs range
+    for (const rv of relatedVocabItems) {
+      if (rv.word) {
+        for (const ch of rv.word) {
           if (ch >= '一' && ch <= '鿿')
             set.add(ch)
         }
       }
-    })
+    }
     return [...set]
-  }, [vocabItems])
+  }, [relatedVocabItems])
 
   const { data: kanjiForHanViet } = useQuery({
     queryKey: ['kanji-han-viet', kanjiCharsInVocab],
@@ -148,60 +156,64 @@ function useVocabLessonData(userId: string, lesson: number) {
     return map
   }, [kanjiForHanViet])
 
-  // Stable timestamp: computed once per hook instantiation (not each render)
   const sessionTimestamp = useMemo(() => new Date().toISOString(), [])
   const sessionToday = sessionTimestamp.slice(0, 10)
 
   const merged = useMemo<VocabWithSRS[]>(
-    () => {
-      function computeHanViet(word: string | null): string | null {
-        if (!word)
-          return null
-        const parts: string[] = []
-        for (const ch of word) {
-          const hv = hanVietMap.get(ch)
-          if (hv)
-            parts.push(hv)
-        }
-        return parts.length > 0 ? parts.join(' ') : null
+    () => relatedVocabItems.map((rv) => {
+      const vocabId = `rv_${rv.word ?? rv.kana}_${rv.kana}`
+      const c = cards?.get(vocabId)
+      const base = {
+        vocab_id: vocabId,
+        word: rv.word,
+        reading: rv.kana,
+        romaji: '',
+        meaning_en: '',
+        meaning_vi: rv.meaning_vi,
+        pitch_pattern: null,
+        pitch_type: null as null,
+        audio_filename: null,
+        pos: [] as string[],
+        jlpt_level: null as null,
+        book_source: '',
+        lesson_number: lesson,
+        examples: rv.example ? [{ ja: rv.example.ja, en: '', vi: rv.example.vi }] : [],
+        tags: [] as string[],
+        deprecated: false,
+        han_viet: rv.han_viet,
       }
-      return vocabItems.map((v) => {
-        const c = cards?.get(v.vocab_id)
-        const han_viet = computeHanViet(v.word)
-        if (c) {
-          return {
-            ...v,
-            han_viet,
-            interval_days: c.interval_days,
-            ease_factor: c.ease_factor,
-            due_date: c.due_date,
-            review_count: c.review_count,
-            last_rating: c.last_rating,
-            pending_sync: c.pending_sync,
-            updated_at: c.updated_at,
-            is_known: c.is_known ?? false,
-          }
-        }
+      if (c) {
         return {
-          ...v,
-          han_viet,
-          interval_days: 1,
-          ease_factor: 2.5,
-          due_date: sessionToday,
-          review_count: 0,
-          last_rating: null,
-          pending_sync: false,
-          updated_at: sessionTimestamp,
-          is_known: false,
+          ...base,
+          interval_days: c.interval_days,
+          ease_factor: c.ease_factor,
+          due_date: c.due_date,
+          review_count: c.review_count,
+          last_rating: c.last_rating,
+          pending_sync: c.pending_sync,
+          updated_at: c.updated_at,
+          is_known: c.is_known ?? false,
         }
-      })
-    },
-    [vocabItems, cards, hanVietMap, sessionToday, sessionTimestamp],
+      }
+      return {
+        ...base,
+        interval_days: 1,
+        ease_factor: 2.5,
+        due_date: sessionToday,
+        review_count: 0,
+        last_rating: null,
+        pending_sync: false,
+        updated_at: sessionTimestamp,
+        is_known: false,
+      }
+    }),
+    [relatedVocabItems, cards, lesson, sessionToday, sessionTimestamp],
   )
 
   return {
     vocab: merged,
-    isLoading: kanjiQuery.isLoading || (chars.length > 0 && vocabQuery.isLoading),
+    hanVietMap,
+    isLoading: kanjiQuery.isLoading,
   }
 }
 
@@ -430,9 +442,10 @@ function KanjiLessonStudyPage() {
     if (vocab) {
       if (mode === 'flashcard') {
         activeCard = (
-          <FlipCard
+          <KanjiVocabFlipCard
             key={vocab.vocab_id}
             card={vocab}
+            hanVietMap={vocabData.hanVietMap}
             meaningLanguage={'vi' as MeaningLanguage}
             onRate={handleVocabRate}
           />

@@ -12,6 +12,7 @@ interface RawVocabEntry {
   jlpt: number | null
   examples: Array<{ ja: string, en: string, vi: string }>
   lesson_number: number
+  han_viet: string | null
 }
 
 interface PitchedEntry extends RawVocabEntry {
