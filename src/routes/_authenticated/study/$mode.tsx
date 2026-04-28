@@ -12,7 +12,7 @@ import { SessionSummary } from '../../../components/study/SessionSummary'
 import { TypeInputCard } from '../../../components/study/TypeInputCard'
 import { db } from '../../../db/schema'
 import { usePassages } from '../../../hooks/usePassages'
-import { useSRSMutation } from '../../../hooks/useSRSMutation'
+import { useSRS } from '../../../hooks/useSRS'
 import { useAuthStore } from '../../../stores/authStore'
 import { useSettingsStore } from '../../../stores/settingsStore'
 import { useStudySessionStore } from '../../../stores/studySessionStore'
@@ -27,6 +27,16 @@ const VALID_MODES: StudyMode[] = [
   'pitch-discrimination',
 ]
 
+const MODE_LABELS: Record<StudyMode, string> = {
+  'flashcard': 'THẺ TỪ',
+  'quiz': 'TRẮC NGHIỆM',
+  'type-input': 'GÕ TỪ',
+  'sentence-flashcard': 'THẺ CÂU',
+  'listening': 'NGHE HIỂU',
+  'reading-comprehension': 'ĐỌC HIỂU',
+  'pitch-discrimination': 'THANH ĐIỆU',
+}
+
 function sampleDistractors(queue: VocabWithSRS[], currentIndex: number, count: number): VocabWithSRS[] {
   const pool = queue.filter((_, i) => i !== currentIndex)
   const shuffled = [...pool].sort(() => Math.random() - 0.5)
@@ -37,19 +47,40 @@ export const Route = createFileRoute('/_authenticated/study/$mode')({
   component: StudyPage,
 })
 
-function ProgressBar({ current, total }: { current: number, total: number }) {
+function ProgressBar({ current, total, modeName, lessonNumber }: {
+  current: number
+  total: number
+  modeName: string
+  lessonNumber?: number
+}) {
+  const pct = total > 0 ? (current / total) * 100 : 0
   return (
-    <div className="flex items-center justify-between mb-6">
-      <span className="text-[11px] font-[var(--br-mono-font)] text-neutral">
-        {current + 1}
-        {' '}
-        /
-        {total}
-      </span>
-      <div className="h-0.5 w-32 bg-base-300">
+    <div className="flex flex-col gap-2 mb-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">{modeName}</span>
+          {lessonNumber !== undefined && (
+            <>
+              <span className="text-base-content/20 text-[10px]">·</span>
+              <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">
+                BÀI
+                {' '}
+                {String(lessonNumber).padStart(2, '0')}
+              </span>
+            </>
+          )}
+        </div>
+        <span className="text-[11px] font-[var(--br-mono-font)] text-neutral tabular-nums">
+          {current + 1}
+          {' '}
+          /
+          {total}
+        </span>
+      </div>
+      <div className="h-0.5 w-full bg-base-300">
         <div
-          className="bg-primary h-0.5 transition-all"
-          style={{ width: `${(current / total) * 100}%` }}
+          className="bg-primary h-0.5 transition-all duration-300"
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>
@@ -95,10 +126,10 @@ function StudyPage() {
   const { mode } = Route.useParams()
   const navigate = useNavigate()
   const { userId } = useAuthStore()
-  const { queue, currentIndex, stats, mode: sessionMode, markCorrect, markWrong, advanceCard }
+  const { queue, currentIndex, stats, mode: sessionMode, typeInputSubMode, markCorrect, markWrong, markAttempted, advanceCard }
     = useStudySessionStore()
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage)
-  const srsm = useSRSMutation()
+  const srs = useSRS('vocab', userId ?? '')
   const sessionWrittenRef = useRef(false)
   const [playbackRate, setPlaybackRate] = useState(1.0)
 
@@ -137,15 +168,25 @@ function StudyPage() {
     return <EmptySessionScreen onNavigate={() => navigate({ to: '/books' })} />
   }
 
+  // Derive lesson context from the session queue for "back to lesson" navigation
+  const lessonContext = firstCard
+    ? { book: firstCard.book_source, lesson: firstCard.lesson_number }
+    : undefined
+
   if (isComplete) {
-    return <SessionSummary stats={stats} mode={(sessionMode ?? 'flashcard') as StudyMode} />
+    return (
+      <SessionSummary
+        stats={stats}
+        mode={(sessionMode ?? 'flashcard') as StudyMode}
+        lessonContext={lessonContext}
+      />
+    )
   }
 
   const currentCard = queue[currentIndex]
 
   function handleRate(rating: 0 | 1 | 2 | 3) {
-    if (userId)
-      srsm.mutate({ userId, card: currentCard, rating })
+    srs.rate(currentCard, rating)
     if (rating === 0)
       markWrong(currentCard)
     else markCorrect()
@@ -153,15 +194,47 @@ function StudyPage() {
   }
 
   function handleAnswer(isCorrect: boolean) {
-    handleRate(isCorrect ? 2 : 0)
+    if (mode !== 'type-input') {
+      handleRate(isCorrect ? 2 : 0)
+      return
+    }
+
+    const { rating, shouldRequeue } = srs.answerTypeInput(currentCard, isCorrect)
+
+    if (shouldRequeue) {
+      markWrong(currentCard)
+      advanceCard()
+    }
+    else if (rating === 0) {
+      markAttempted()
+      advanceCard()
+    }
+    else {
+      markCorrect()
+      advanceCard()
+    }
   }
 
   const passages = passagesQuery.data ?? []
   const currentPassage = passages.find(p => p.vocab_ids.includes(currentCard?.vocab_id ?? '')) ?? passages[0] ?? null
+  const isTypeInput = mode === 'type-input'
+  const modeName = MODE_LABELS[mode as StudyMode] ?? mode.toUpperCase()
+
+  // type-input stays full-width (two-column grid); other modes center on desktop
+  const outerClass = isTypeInput
+    ? 'flex flex-col min-h-screen'
+    : 'flex flex-col min-h-screen max-w-2xl mx-auto'
 
   return (
-    <div className="flex flex-col min-h-screen p-4 pt-8">
-      <ProgressBar current={currentIndex} total={queue.length} />
+    <div className={outerClass}>
+      <div className={isTypeInput ? 'px-4 pt-4' : 'p-4 pt-6'}>
+        <ProgressBar
+          current={currentIndex}
+          total={queue.length}
+          modeName={modeName}
+          lessonNumber={firstCard?.lesson_number}
+        />
+      </div>
 
       {mode === 'flashcard' && (
         <FlipCard
@@ -186,6 +259,7 @@ function StudyPage() {
         <TypeInputCard
           key={`${currentCard.vocab_id}-${currentIndex}`}
           card={currentCard}
+          subMode={typeInputSubMode}
           onAnswer={handleAnswer}
         />
       )}

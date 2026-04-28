@@ -5,6 +5,7 @@ import { generateVocabId } from '../src/lib/vocab-id'
 
 interface PitchedEntry {
   id: [number, number]
+  edition?: number[]
   kanji: string | null
   kana: string
   romaji: string

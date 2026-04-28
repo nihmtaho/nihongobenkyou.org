@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { seedDatabase } from './db/seed'
+import { seedDatabase, seedKanji } from './db/seed'
 import { flushPendingSync } from './db/sync'
 import { initAnonymousUser } from './lib/anonymous-user'
 import { routeTree } from './routeTree.gen'
@@ -29,6 +29,12 @@ async function bootstrap() {
   seedDatabase().then((result) => {
     if (result === 'seeded') {
       window.dispatchEvent(new CustomEvent('dataset-updated'))
+    }
+  }).catch(console.error)
+
+  seedKanji().then((result) => {
+    if (result === 'seeded') {
+      window.dispatchEvent(new CustomEvent('kanji-seeded'))
     }
   }).catch(console.error)
 

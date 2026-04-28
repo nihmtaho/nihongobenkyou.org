@@ -14,5 +14,6 @@ export const datasets: DatasetConfig[] = [
     output_dir: 'public/data/mnn1',
     enabled: true,
     kanjium_file: '.kanjium/data/accents.txt',
+    edition_filter: [2],
   },
 ]

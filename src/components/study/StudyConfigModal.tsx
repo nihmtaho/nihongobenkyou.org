@@ -1,4 +1,4 @@
-import type { MeaningLanguage, StudyConfig, StudyMode } from '../../types/study'
+import type { MeaningLanguage, StudyConfig, StudyMode, TypeInputSubMode } from '../../types/study'
 import { useState } from 'react'
 import { useSettingsStore } from '../../stores/settingsStore'
 
@@ -12,6 +12,11 @@ interface StudyConfigModalProps {
   onConfirm: (config: StudyConfig) => void
   onClose: () => void
 }
+
+const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string, desc: string }[] = [
+  { value: 'word→hira', label: 'Từ vựng → Hiragana', desc: 'Nhìn chữ Nhật, gõ cách đọc' },
+  { value: 'vi→hira', label: 'Tiếng Việt → Hiragana', desc: 'Nhìn nghĩa tiếng Việt, gõ hiragana' },
+]
 
 export function StudyConfigModal({
   availableLessons,
@@ -27,6 +32,7 @@ export function StudyConfigModal({
   const [order, setOrder] = useState<'random' | 'sequential'>('random')
   const [lessonIds, setLessonIds] = useState<string[]>(defaultLessonIds)
   const [lang, setLang] = useState<MeaningLanguage>(meaningLanguage)
+  const [typeInputSubMode, setTypeInputSubMode] = useState<TypeInputSubMode>('word→hira')
 
   function toggleLesson(id: string) {
     setLessonIds(prev => prev.includes(id) ? prev.filter(l => l !== id) : [...prev, id])
@@ -39,6 +45,7 @@ export function StudyConfigModal({
       cardCount: cardCount === 'all' ? 'all' : cardCount,
       order,
       lessonIds,
+      typeInputSubMode: mode === 'type-input' ? typeInputSubMode : undefined,
     })
   }
 
@@ -72,6 +79,30 @@ export function StudyConfigModal({
             ))}
           </div>
         </div>
+
+        {/* Type-input sub-mode */}
+        {mode === 'type-input' && (
+          <div className="form-control gap-2">
+            <label className="label-text font-semibold">Hướng gõ</label>
+            <div className="flex flex-col gap-2">
+              {TYPE_INPUT_SUB_MODES.map(({ value, label, desc }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`flex flex-col items-start p-3 border text-left transition-colors ${
+                    typeInputSubMode === value
+                      ? 'border-primary bg-primary/10 border-l-4'
+                      : 'border-base-content/20 hover:border-base-content/40'
+                  }`}
+                  onClick={() => setTypeInputSubMode(value)}
+                >
+                  <span className="text-sm font-semibold font-[var(--br-mono-font)]">{label}</span>
+                  <span className="text-[11px] text-neutral mt-0.5">{desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Card count */}
         <div className="form-control gap-1">

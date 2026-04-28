@@ -1,9 +1,25 @@
-import type { DatasetConfig, FileEntry, Manifest } from '../src/types/dataset'
+import type { DatasetConfig, FileEntry, KanjiManifestSection, Manifest } from '../src/types/dataset'
 import { Buffer } from 'node:buffer'
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
+
+function buildKanjiSection(outputBase: string): KanjiManifestSection | undefined {
+  const kanjiPath = path.join(outputBase, 'kanji', 'n5-kanji.json')
+  if (!existsSync(kanjiPath))
+    return undefined
+
+  const content = readFileSync(kanjiPath)
+  const n5Checksum = createHash('sha256').update(content as Buffer).digest('hex')
+  const items: unknown[] = JSON.parse(content.toString('utf-8'))
+
+  return {
+    n5_checksum: n5Checksum,
+    n5_count: items.length,
+    generated_at: new Date().toISOString(),
+  }
+}
 
 function sha256(content: string | Buffer): string {
   return createHash('sha256').update(content).digest('hex')
@@ -50,6 +66,8 @@ export async function run(config: DatasetConfig): Promise<void> {
 
   const vocabCount = lessonMeta.reduce((sum, m) => sum + m.vocab_count, 0)
 
+  const kanjiSection = buildKanjiSection(path.join(process.cwd(), 'public', 'data'))
+
   const manifest: Manifest = {
     schema_version: '1.0',
     built_at: new Date().toISOString(),
@@ -66,6 +84,7 @@ export async function run(config: DatasetConfig): Promise<void> {
         files,
       },
     ],
+    ...(kanjiSection && { kanji: kanjiSection }),
   }
 
   const manifestPath = path.join(process.cwd(), 'public', 'data', 'manifest.json')

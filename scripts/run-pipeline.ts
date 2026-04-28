@@ -2,6 +2,7 @@ import { existsSync, mkdirSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 import { datasets } from '../src/lib/datasets.config'
+import { run as buildKanji } from './build-kanji'
 import { run as enrichPitch } from './enrich-pitch'
 import { run as generateVocabId } from './generate-vocab-id'
 import { run as mapAudio } from './map-audio'
@@ -64,6 +65,9 @@ async function runPipeline(): Promise<void> {
   }
 
   process.stdout.write('\nAll datasets built.\n')
+
+  // Kanji pipeline (requires external source data — skipped if not present)
+  await runStep('build-kanji', () => buildKanji())
 }
 
 runPipeline().catch((err) => {

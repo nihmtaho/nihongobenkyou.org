@@ -5,6 +5,7 @@ import { useAuthStore } from '../../stores/authStore'
 const NAV_ITEMS = [
   { to: '/', label: 'Home' },
   { to: '/books', label: 'Books' },
+  { to: '/kanji', label: 'Kanji' },
   { to: '/srs', label: 'Study' },
   { to: '/custom', label: 'My Decks' },
   { to: '/profile', label: 'Profile' },
@@ -21,7 +22,7 @@ export function Sidebar() {
   const initials = nameLabel.slice(0, 2).toUpperCase()
 
   return (
-    <ul className="menu bg-base-100 border-r border-base-content/10 w-56 min-h-full p-2 hidden lg:flex lg:flex-col">
+    <ul className="menu bg-base-100 border-r border-base-content/10 w-56 min-h-full p-2 hidden lg:flex lg:flex-col lg:h-screen lg:overflow-y-auto lg:flex-shrink-0">
       <li className="mb-4 px-2">
         <div className="flex items-center gap-3">
           <div className="avatar placeholder">

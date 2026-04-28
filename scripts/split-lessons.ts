@@ -12,6 +12,8 @@ export interface LessonFile {
 
 interface ValidatedEntry {
   vocab_id: string
+  id: [number, number]
+  edition?: number[]
   kanji: string | null
   kana: string
   romaji: string
@@ -90,6 +92,8 @@ export async function run(inputPath: string, config: DatasetConfig, passageMap: 
       examples: entry.examples,
       tags: [],
       deprecated: false,
+      edition: entry.edition,
+      sort_order: entry.id[1],
     }))
 
     const lessonFile = path.join(outputBase, `lesson-${zeroPad(lessonNum)}.json`)

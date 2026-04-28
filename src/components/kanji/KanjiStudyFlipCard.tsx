@@ -1,0 +1,231 @@
+import type { KanjiItem } from '../../types/kanji'
+import type { SRSRating } from '../../types/srs'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { useEffect, useState } from 'react'
+
+interface KanjiStudyFlipCardProps {
+  kanji: KanjiItem
+  onRate: (rating: SRSRating) => void
+}
+
+const RATING_LABELS: Record<SRSRating, string> = { 0: 'Again', 1: 'Hard', 2: 'Good', 3: 'Easy' }
+const RATING_CLASSES: Record<SRSRating, string> = {
+  0: 'btn-error',
+  1: 'btn-warning',
+  2: 'btn-success',
+  3: 'btn-info',
+}
+
+// Grid-overlay flip: both faces occupy gridArea 1/1 so container auto-heights
+// to the taller face — no fixed minHeight needed.
+const GRID_FACE: React.CSSProperties = { gridArea: '1 / 1' }
+const GRID_FACE_BACK: React.CSSProperties = {
+  ...GRID_FACE,
+  transform: 'rotateY(180deg)',
+}
+
+export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
+  const [isFlipped, setIsFlipped] = useState(false)
+  const x = useMotionValue(0)
+  const rotate = useTransform(x, [-300, 0, 300], [-12, 0, 12])
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+        return
+      if (e.code === 'Space') {
+        e.preventDefault()
+        setIsFlipped(f => !f)
+        return
+      }
+      if (!isFlipped)
+        return
+      if (e.key >= '1' && e.key <= '4') {
+        const ratings: SRSRating[] = [0, 1, 2, 3]
+        onRate(ratings[Number(e.key) - 1])
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [isFlipped, onRate])
+
+  function handleDragEnd(_: unknown, info: { offset: { x: number } }) {
+    if (!isFlipped)
+      return
+    if (info.offset.x > 100)
+      onRate(2)
+    else if (info.offset.x < -100)
+      onRate(0)
+    else
+      x.set(0)
+  }
+
+  const relatedVocab = kanji.related_vocab?.slice(0, 4) ?? []
+  const examples = kanji.examples?.slice(0, 2) ?? []
+
+  return (
+    <div className="flex flex-col items-center gap-3 w-full max-w-[580px] mx-auto">
+      <motion.div
+        drag={isFlipped ? 'x' : false}
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.7}
+        dragMomentum={false}
+        style={{ x, rotate }}
+        onDragEnd={handleDragEnd}
+        className="w-full cursor-pointer select-none"
+        onClick={() => setIsFlipped(f => !f)}
+      >
+        <div style={{ perspective: 1200 }} className="w-full">
+          {/* Grid overlay: container height = max(front, back) */}
+          <motion.div
+            animate={{ rotateY: isFlipped ? 180 : 0 }}
+            transition={{ duration: 0.25 }}
+            style={{ transformStyle: 'preserve-3d', display: 'grid' }}
+            className="w-full"
+          >
+            {/* ── Front ───────────────────────────── */}
+            <div
+              style={{ backfaceVisibility: 'hidden', ...GRID_FACE }}
+              className="card bg-base-100 border-2 border-base-content shadow-xl flex flex-col items-center justify-center p-10 gap-4 min-h-56"
+            >
+              <span
+                className="text-[7rem] font-bold leading-none"
+                style={{ fontFamily: 'var(--br-jp-font)' }}
+              >
+                {kanji.char}
+              </span>
+              <span className="text-[11px] text-base-content/40 font-[var(--br-mono-font)] uppercase tracking-widest">
+                Space / tap to reveal
+              </span>
+            </div>
+
+            {/* ── Back ────────────────────────────── */}
+            <div
+              style={{ backfaceVisibility: 'hidden', ...GRID_FACE_BACK }}
+              className="card bg-base-100 border-2 border-primary shadow-xl overflow-hidden flex flex-col"
+            >
+              {/* Header zone — accent top bar + main identity */}
+              <div className="h-1 bg-primary w-full shrink-0" />
+              <div className="px-5 pt-4 pb-3 flex items-start gap-4 border-b border-base-content/10">
+                <span
+                  className="text-6xl font-bold leading-none shrink-0 mt-0.5"
+                  style={{ fontFamily: 'var(--br-jp-font)' }}
+                >
+                  {kanji.char}
+                </span>
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <p className="text-3xl font-black font-[var(--br-heading-font)] uppercase tracking-tighter leading-none text-primary">
+                    {kanji.han_viet ?? '—'}
+                  </p>
+                  <p className="text-sm font-[var(--br-jp-font)] text-neutral leading-snug">
+                    {kanji.meaning_vi.slice(0, 3).join(' · ')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Readings row */}
+              {(kanji.onyomi.length > 0 || kanji.kunyomi.length > 0) && (
+                <div className="px-5 py-2.5 flex gap-6 border-b border-base-content/10 bg-base-200/50">
+                  {kanji.onyomi.length > 0 && (
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">ON</span>
+                      <p className="text-sm font-[var(--br-jp-font)]">{kanji.onyomi.join('・')}</p>
+                    </div>
+                  )}
+                  {kanji.kunyomi.length > 0 && (
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">KUN</span>
+                      <p className="text-sm font-[var(--br-jp-font)]">{kanji.kunyomi.join('・')}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Content zone */}
+              <div className="px-5 py-3 flex flex-col gap-3">
+                {kanji.mnemonic_vi && (
+                  <div className="border-l-4 border-primary pl-3">
+                    <p className="text-xs font-[var(--br-jp-font)] text-base-content/70 leading-relaxed italic">
+                      {kanji.mnemonic_vi}
+                    </p>
+                  </div>
+                )}
+
+                {relatedVocab.length > 0 && (
+                  <div>
+                    <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-2">
+                      Từ liên quan
+                    </p>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {relatedVocab.map(v => (
+                        <div
+                          key={v.word ?? v.kana}
+                          className="bg-base-200 border border-base-content/10 px-2 py-1.5 flex flex-col gap-0.5"
+                        >
+                          <span
+                            className="text-base font-bold leading-tight"
+                            style={{ fontFamily: 'var(--br-jp-font)' }}
+                          >
+                            {v.word ?? v.kana}
+                          </span>
+                          <span className="text-[9px] font-[var(--br-mono-font)] text-neutral leading-tight line-clamp-2">
+                            {v.meaning_vi}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {examples.length > 0 && (
+                  <div className="border-l-4 border-base-content/10 pl-3">
+                    <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-1.5">
+                      Ví dụ
+                    </p>
+                    {examples.map((ex, i) => (
+                      <div key={ex.ja} className={i > 0 ? 'mt-2' : ''}>
+                        <p className="text-sm font-[var(--br-jp-font)] leading-snug">{ex.ja}</p>
+                        <p className="text-xs text-neutral font-[var(--br-jp-font)]">{ex.vi}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Subtle flip-back hint */}
+              <div className="px-5 pb-3 pt-1 mt-auto">
+                <p className="text-[9px] font-[var(--br-mono-font)] text-base-content/20 uppercase tracking-widest text-right">
+                  tap / space to flip back
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Rating bar */}
+      {isFlipped && (
+        <div className="join w-full">
+          {([0, 1, 2, 3] as SRSRating[]).map((r, idx) => (
+            <button
+              key={r}
+              type="button"
+              className={`btn join-item flex-1 ${RATING_CLASSES[r]} font-[var(--br-mono-font)] text-[11px] flex flex-col gap-0.5 py-2`}
+              onClick={(e) => {
+                e.stopPropagation()
+                onRate(r)
+              }}
+            >
+              <span className="font-bold">{RATING_LABELS[r]}</span>
+              <span className="opacity-50 text-[9px]">{`[${idx + 1}]`}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <p className="text-[10px] text-base-content/25 font-[var(--br-mono-font)] tracking-wide">
+        {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · swipe'}
+      </p>
+    </div>
+  )
+}

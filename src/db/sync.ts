@@ -1,3 +1,4 @@
+import { flushKanjiCards } from '../api/kanji-cards'
 import { supabase } from '../api/supabase'
 import { useAuthStore } from '../stores/authStore'
 import { db } from './schema'
@@ -51,6 +52,8 @@ export async function flushPendingSync(): Promise<void> {
     .where('[userId+vocabId]')
     .anyOf(pending.map(c => [c.userId, c.vocabId]))
     .modify({ pending_sync: false })
+
+  await flushKanjiCards(userId).catch(() => {})
 
   window.dispatchEvent(new Event('sync-complete'))
 }

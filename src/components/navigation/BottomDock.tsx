@@ -2,6 +2,8 @@ import { Link, useRouterState } from '@tanstack/react-router'
 
 const NAV_ITEMS = [
   { to: '/', label: 'HOME', icon: '⌂', ariaLabel: 'Home' },
+  { to: '/books', label: 'BOOKS', icon: '◫', ariaLabel: 'Books' },
+  { to: '/kanji', label: 'KANJI', icon: '字', ariaLabel: 'Kanji' },
   { to: '/srs', label: 'STUDY', icon: '◈', ariaLabel: 'Study' },
   { to: '/profile', label: 'PROFILE', icon: '◉', ariaLabel: 'Profile' },
 ] as const

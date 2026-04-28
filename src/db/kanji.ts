@@ -1,0 +1,93 @@
+import type { KanjiCardState, KanjiItem } from '../types/kanji'
+import type { VocabItem } from '../types/vocabulary'
+import Dexie from 'dexie'
+import { db } from './schema'
+
+interface KanjiFilters {
+  jlpt_level?: KanjiItem['jlpt_level']
+  lesson_number?: number
+  radical?: string
+  stroke_count?: number
+}
+
+export async function getKanji(char: string): Promise<KanjiItem | undefined> {
+  return db.kanji.get(char)
+}
+
+export async function getAllKanji(filters?: KanjiFilters): Promise<KanjiItem[]> {
+  let collection = db.kanji.toCollection()
+
+  if (filters?.lesson_number !== undefined) {
+    collection = db.kanji.where('lesson_number').equals(filters.lesson_number)
+  }
+  else if (filters?.jlpt_level) {
+    collection = db.kanji.where('jlpt_level').equals(filters.jlpt_level)
+  }
+
+  const results = await collection.toArray()
+
+  return results.filter((k) => {
+    if (filters?.radical && k.radical !== filters.radical)
+      return false
+    if (filters?.stroke_count !== undefined && k.stroke_count !== filters.stroke_count)
+      return false
+    return true
+  })
+}
+
+export async function getKanjiLessons(): Promise<number[]> {
+  const all = await db.kanji.toArray()
+  const nums = [...new Set(all.map(k => k.lesson_number).filter((n): n is number => n !== null))]
+  return nums.sort((a, b) => a - b)
+}
+
+export async function upsertKanjiCard(userId: string, char: string): Promise<void> {
+  const existing = await db.kanji_cards.get([userId, char])
+  if (existing)
+    return
+
+  const today = new Date().toISOString().slice(0, 10)
+  await db.kanji_cards.put({
+    userId,
+    char,
+    interval_days: 0,
+    ease_factor: 2.5,
+    due_date: today,
+    review_count: 0,
+    last_rating: null,
+    pending_sync: true,
+    updated_at: new Date().toISOString(),
+  })
+}
+
+export async function updateKanjiCard(card: KanjiCardState): Promise<void> {
+  await db.kanji_cards.put(card)
+}
+
+export async function getDueKanjiCards(userId: string, today: string): Promise<KanjiCardState[]> {
+  return db.kanji_cards
+    .where('[userId+due_date]')
+    .between([userId, Dexie.minKey], [userId, today], true, true)
+    .toArray()
+}
+
+export async function getKanjiCardsForChars(userId: string, chars: string[]): Promise<KanjiCardState[]> {
+  const charSet = new Set(chars)
+  const all = await db.kanji_cards
+    .where('[userId+char]')
+    .between([userId, Dexie.minKey], [userId, Dexie.maxKey], true, true)
+    .toArray()
+  return all.filter(c => charSet.has(c.char))
+}
+
+export async function getKanjiByChars(chars: string[]): Promise<KanjiItem[]> {
+  if (chars.length === 0)
+    return []
+  const results = await db.kanji.bulkGet(chars)
+  return results.filter((k): k is KanjiItem => k !== undefined)
+}
+
+export async function getVocabContainingChars(chars: string[]): Promise<VocabItem[]> {
+  const all = await db.vocabulary.toArray()
+  return all.filter(v => v.word != null && chars.some(c => v.word!.includes(c)))
+}
