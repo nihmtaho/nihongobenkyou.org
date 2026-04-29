@@ -1,4 +1,5 @@
 import type { SRSStats } from '../../components/common/SRSProgressBar'
+import type { LessonStats } from './KanjiStudyModal'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
@@ -31,12 +32,7 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
     staleTime: Infinity,
   })
 
-  const [studyLesson, setStudyLesson] = useState<{
-    num: number
-    total: number
-    studied: number
-    mature: number
-  } | null>(null)
+  const [studyLesson, setStudyLesson] = useState<({ num: number } & LessonStats) | null>(null)
 
   const total = allKanji?.length ?? 0
   const studied = allKanji?.filter(k => k.card !== undefined).length ?? 0
@@ -159,7 +155,7 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
       {studyLesson !== null && (
         <KanjiStudyModal
           lessonNum={studyLesson.num}
-          stats={{ total: studyLesson.total, studied: studyLesson.studied, mature: studyLesson.mature }}
+          stats={{ total: studyLesson.total, new: studyLesson.new, learning: studyLesson.learning, review: studyLesson.review, mature: studyLesson.mature }}
           onClose={() => setStudyLesson(null)}
         />
       )}
@@ -184,7 +180,7 @@ function LessonAccordionRow({
   lessonNum: number
   kanjiInLesson: KanjiEntry[]
   rowIndex: number
-  onStudy: (stats: { total: number, studied: number, mature: number }) => void
+  onStudy: (stats: { total: number, new: number, learning: number, review: number, mature: number }) => void
 }) {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
@@ -246,7 +242,7 @@ function LessonAccordionRow({
               className="btn btn-primary btn-xs font-[var(--br-mono-font)] uppercase text-[10px]"
               onClick={(e) => {
                 e.stopPropagation()
-                onStudy({ total, studied, mature })
+                onStudy({ total, new: Math.max(0, total - studied), learning, review, mature })
               }}
             >
               Học

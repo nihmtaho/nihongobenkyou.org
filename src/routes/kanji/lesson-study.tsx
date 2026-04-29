@@ -1,3 +1,4 @@
+import type { VocabTypeSubMode } from '../../components/kanji/KanjiVocabTypeInputCard'
 import type { KanjiCardState, KanjiItem, RelatedVocabItem } from '../../types/kanji'
 import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage } from '../../types/study'
@@ -9,6 +10,7 @@ import { KanjiQuizCard } from '../../components/kanji/KanjiQuizCard'
 import { KanjiStudyFlipCard } from '../../components/kanji/KanjiStudyFlipCard'
 import { KanjiTypeInputCard } from '../../components/kanji/KanjiTypeInputCard'
 import { KanjiVocabFlipCard } from '../../components/kanji/KanjiVocabFlipCard'
+import { KanjiVocabTypeInputCard } from '../../components/kanji/KanjiVocabTypeInputCard'
 import { QuizCard } from '../../components/study/QuizCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
 import { getAllKanji, getKanjiByChars, getKanjiCardsForChars } from '../../db/kanji'
@@ -20,6 +22,7 @@ interface LessonStudySearch {
   lesson: number
   type: 'kanji' | 'vocab'
   mode: 'flashcard' | 'quiz' | 'type'
+  vocabSubMode?: VocabTypeSubMode
 }
 
 export const Route = createFileRoute('/kanji/lesson-study')({
@@ -33,6 +36,9 @@ export const Route = createFileRoute('/kanji/lesson-study')({
     mode: (search.mode === 'flashcard' || search.mode === 'quiz' || search.mode === 'type')
       ? search.mode
       : 'flashcard',
+    vocabSubMode: (['word→hira', 'vi→hira', 'word→vi+hanviet'] as const).includes(search.vocabSubMode as VocabTypeSubMode)
+      ? search.vocabSubMode as VocabTypeSubMode
+      : undefined,
   }),
   component: KanjiLessonStudyPage,
 })
@@ -220,7 +226,7 @@ function useVocabLessonData(userId: string, lesson: number) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 function KanjiLessonStudyPage() {
-  const { lesson, type, mode } = Route.useSearch()
+  const { lesson, type, mode, vocabSubMode } = Route.useSearch()
   const userId = useAuthStore(s => s.userId) ?? ''
 
   const kanjiSRS = useSRS('kanji', userId)
@@ -428,7 +434,6 @@ function KanjiLessonStudyPage() {
         activeCard = (
           <KanjiTypeInputCard
             key={item.kanji.char}
-            subMode="han-viet"
             prompt={item.kanji.char}
             answer={item.kanji.han_viet ?? ''}
             onAnswer={handleKanjiAnswer}
@@ -463,12 +468,13 @@ function KanjiLessonStudyPage() {
         )
       }
       else if (mode === 'type') {
+        const subMode = vocabSubMode ?? 'word→hira'
         activeCard = (
-          <KanjiTypeInputCard
-            key={vocab.vocab_id}
-            subMode="hiragana"
-            prompt={vocab.meaning_vi}
-            answer={vocab.reading}
+          <KanjiVocabTypeInputCard
+            key={`${vocab.vocab_id}:${subMode}`}
+            card={vocab}
+            hanVietMap={vocabData.hanVietMap}
+            subMode={subMode}
             onAnswer={handleVocabAnswer}
           />
         )
