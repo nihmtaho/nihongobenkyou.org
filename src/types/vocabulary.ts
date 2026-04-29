@@ -2,6 +2,7 @@ export interface Example {
   ja: string
   en: string
   vi: string
+  fr?: string
 }
 
 export type PitchType = 'heiban' | 'atamadaka' | 'nakadaka' | 'odaka' | 'odd' | null
@@ -24,6 +25,9 @@ export interface VocabItem {
   examples: Example[]
   tags: string[]
   deprecated: boolean
+  edition?: number[]
+  sort_order?: number
+  han_viet?: string | null
 }
 
 export interface VocabWithSRS extends VocabItem {

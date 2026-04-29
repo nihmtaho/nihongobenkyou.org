@@ -8,6 +8,8 @@ dataset/
 
 # Pipeline intermediate artifacts
 .build/
+.playwright-mcp/
+.tanstack/
 
 # Local resource files (Kanjium, Jitendex — gitignored per quickstart.md)
 .kanjium/
@@ -54,3 +56,14 @@ public/audio/
 *.local
 routeTree.gen.ts
 
+# Agent and AI tooling (local only)
+.agents/
+.claude/agent-memory/
+.claude/skills/supabase
+.claude/skills/supabase-postgres-best-practices
+
+# Supabase CLI temp files
+supabase/.temp/
+
+# Debug screenshots
+*.png

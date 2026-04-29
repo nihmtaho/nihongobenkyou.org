@@ -1,7 +1,9 @@
 import type { FontSize } from '../../types/study'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { signOut } from '../../api/auth'
+import { supabase } from '../../api/supabase'
 import { db } from '../../db/schema'
 import { useAuthStore } from '../../stores/authStore'
 import { useSettingsStore } from '../../stores/settingsStore'
@@ -22,11 +24,15 @@ const FONT_SIZE_OPTIONS: { value: FontSize, label: string }[] = [
 
 function SettingsPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const userId = useAuthStore(s => s.userId)
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage)
   const fontSize = useSettingsStore(s => s.fontSize)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
+  const [showResetModal, setShowResetModal] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   function handleLanguageChange(value: 'vi' | 'en') {
     useSettingsStore.setState({ meaningLanguage: value })
@@ -34,6 +40,39 @@ function SettingsPage() {
 
   function handleFontSizeChange(value: FontSize) {
     useSettingsStore.setState({ fontSize: value })
+  }
+
+  async function handleResetData() {
+    if (!userId)
+      return
+    setIsResetting(true)
+    try {
+      await db.user_cards.clear()
+      await db.kanji_cards.clear()
+      await db.streaks.clear()
+      await db.sync_queue.clear()
+
+      // Best-effort Supabase delete — non-blocking, offline safe
+      await Promise.allSettled([
+        supabase.from('user_cards').delete().eq('user_id', userId),
+        supabase.from('kanji_cards').delete().eq('user_id', userId),
+      ])
+
+      queryClient.invalidateQueries({ queryKey: ['due-cards', userId] })
+      queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
+      queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] })
+      queryClient.invalidateQueries({ queryKey: ['streak', userId] })
+      queryClient.invalidateQueries({ queryKey: ['total-user-cards', userId] })
+      queryClient.invalidateQueries({ queryKey: ['future-due-cards', userId] })
+
+      setShowResetModal(false)
+    }
+    catch (err) {
+      console.error(err)
+    }
+    finally {
+      setIsResetting(false)
+    }
   }
 
   async function handleLogout() {
@@ -84,6 +123,33 @@ function SettingsPage() {
       <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
         CÀI ĐẶT
       </h1>
+
+      {/* Data attribution — required by KanjiVG (CC BY-SA 3.0) and KANJIDIC2 (CC BY-SA 3.0) */}
+      <div className="card bg-base-200 border border-base-content/10 p-4">
+        <h2 className="text-[11px] font-bold uppercase font-[var(--br-mono-font)] mb-3 text-neutral">
+          DATA CREDITS
+        </h2>
+        <div className="flex flex-col gap-2 text-xs font-[var(--br-mono-font)] text-neutral">
+          <p>
+            Kanji stroke data:
+            <strong>KanjiVG</strong>
+            {' '}
+            — Ulrich Apel (CC BY-SA 3.0)
+          </p>
+          <p>
+            Kanji dictionary:
+            <strong>KANJIDIC2</strong>
+            {' '}
+            — The Electronic Dictionary Research and Development Group (CC BY-SA 3.0)
+          </p>
+          <p>
+            Vocabulary source:
+            <strong>Minna no Nihongo</strong>
+            {' '}
+            — 3A Corporation
+          </p>
+        </div>
+      </div>
 
       {/* Meaning Language */}
       <div className="card bg-base-200 border border-base-content/10 p-4">
@@ -144,6 +210,23 @@ function SettingsPage() {
         </label>
       </div>
 
+      {/* Reset data */}
+      <div className="card bg-base-200 border border-base-content/10 p-4">
+        <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-2">
+          ĐẶT LẠI DỮ LIỆU
+        </h2>
+        <p className="text-xs text-neutral font-[var(--br-mono-font)] mb-4 uppercase">
+          Xóa toàn bộ tiến trình ôn tập và streak. Tài khoản vẫn được giữ lại.
+        </p>
+        <button
+          type="button"
+          onClick={() => setShowResetModal(true)}
+          className="btn btn-warning btn-outline w-full font-[var(--br-heading-font)] uppercase"
+        >
+          Đặt lại tiến trình
+        </button>
+      </div>
+
       {/* Account */}
       <div className="card bg-base-200 border border-base-content/10 p-4">
         <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">
@@ -164,6 +247,47 @@ function SettingsPage() {
           </button>
         </div>
       </div>
+
+      {/* Reset data modal */}
+      {showResetModal && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box border border-base-content/10">
+            <h3 className="font-[var(--br-heading-font)] text-xl uppercase font-bold mb-4">
+              ĐẶT LẠI TIẾN TRÌNH
+            </h3>
+            <p className="text-sm text-base-content/70 mb-2">
+              Hành động này sẽ xóa:
+            </p>
+            <ul className="text-sm text-base-content/70 mb-4 list-disc list-inside font-[var(--br-mono-font)] space-y-1">
+              <li>Toàn bộ thẻ ôn tập từ vựng và kanji</li>
+              <li>Lịch sử streak học tập</li>
+            </ul>
+            <p className="text-sm text-warning font-[var(--br-mono-font)] uppercase mb-4">
+              Dữ liệu từ vựng và tài khoản không bị ảnh hưởng.
+            </p>
+            <div className="modal-action">
+              <button
+                type="button"
+                onClick={() => setShowResetModal(false)}
+                className="btn btn-ghost font-[var(--br-mono-font)] uppercase"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleResetData}
+                disabled={isResetting}
+                className="btn btn-warning font-[var(--br-heading-font)] uppercase"
+              >
+                {isResetting
+                  ? <span className="loading loading-spinner loading-sm" />
+                  : 'Xác nhận đặt lại'}
+              </button>
+            </div>
+          </div>
+          <div className="modal-backdrop" onClick={() => setShowResetModal(false)} />
+        </dialog>
+      )}
 
       {/* Delete account modal */}
       {showDeleteModal && (

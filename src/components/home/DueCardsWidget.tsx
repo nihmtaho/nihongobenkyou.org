@@ -63,7 +63,7 @@ export function DueCardsWidget({ userId }: DueCardsWidgetProps) {
       queue = queue.sort(() => Math.random() - 0.5)
     if (config.cardCount !== 'all')
       queue = queue.slice(0, config.cardCount)
-    initSession(queue, config.mode)
+    initSession(queue, config.mode, config.typeInputSubMode)
     navigate({ to: '/study/$mode', params: { mode: config.mode } })
   }
 

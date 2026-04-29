@@ -1,0 +1,140 @@
+import type { CardState } from '../../types/srs'
+import type { VocabItem } from '../../types/vocabulary'
+
+import { useKnownCards } from '../../hooks/useKnownCards'
+import { AudioButton } from './AudioButton'
+import { PitchAccentBars } from './PitchAccentBars'
+
+// eslint-disable-next-line regexp/no-obscure-range
+const KANJI_RE = /[一-龯]/
+
+interface VocabDetailPanelProps {
+  item: VocabItem
+  card: CardState | null
+  moraPattern: ('H' | 'L')[] | null
+  userId: string
+  index: number
+  total: number
+}
+
+export function VocabDetailPanel({ item, card, moraPattern, userId, index, total }: VocabDetailPanelProps) {
+  const { toggleKnown } = useKnownCards()
+  const isKnown = card?.is_known === true
+  const firstKanjiChar = item.word ? (item.word.match(KANJI_RE) ?? [])[0] : null
+
+  function handleToggleKnown() {
+    toggleKnown(userId, item.vocab_id, isKnown)
+  }
+
+  return (
+    <div className="h-full overflow-auto">
+      <div className="min-h-full flex flex-col">
+        <div className="h-1 bg-primary w-full shrink-0" />
+
+        <div className="flex-1 p-8 xl:p-12 flex flex-col gap-6">
+          {/* Metadata strip */}
+          <div className="flex items-center justify-between">
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-neutral tracking-wider">
+              {item.pos.join(' · ')}
+              {' '}
+              · LESSON
+              {' '}
+              {String(item.lesson_number).padStart(2, '0')}
+            </span>
+            <div className="flex items-center gap-3">
+              {item.edition && item.edition.length > 0 && (
+                <div className="flex gap-1">
+                  {item.edition.map(ed => (
+                    <span
+                      key={ed}
+                      className="badge badge-outline font-[var(--br-mono-font)] text-[9px]"
+                      title={`第${ed}版`}
+                    >
+                      {ed}
+                      版
+                    </span>
+                  ))}
+                </div>
+              )}
+              <span className="font-[var(--br-mono-font)] text-[11px] text-neutral/40 tabular-nums">
+                {String(index + 1).padStart(2, '0')}
+                {' '}
+                /
+                {' '}
+                {String(total).padStart(2, '0')}
+              </span>
+            </div>
+          </div>
+
+          {/* Main Japanese display — poster-scale */}
+          <div className="flex flex-col gap-2">
+            {item.word && (
+              <div className="flex flex-col gap-1">
+                <p className="text-7xl xl:text-8xl font-bold font-[var(--br-jp-font)] text-base-content leading-none break-all">
+                  {item.word}
+                </p>
+                {item.han_viet && (
+                  <span className="font-[var(--br-mono-font)] text-[11px] text-primary uppercase tracking-[0.15em]">
+                    {item.han_viet}
+                  </span>
+                )}
+              </div>
+            )}
+            <p className={`font-bold font-[var(--br-jp-font)] leading-none ${item.word ? 'text-3xl text-neutral' : 'text-7xl xl:text-8xl text-base-content'}`}>
+              {item.reading}
+            </p>
+            <p className="font-[var(--br-jp-font)] text-lg text-neutral">{item.romaji}</p>
+          </div>
+
+          {/* Pitch accent + audio */}
+          <div className="flex flex-col gap-3">
+            <PitchAccentBars pattern={moraPattern} kana={item.reading} />
+            <AudioButton audioFilename={item.audio_filename} vocabId={item.vocab_id} />
+          </div>
+
+          <div className="divider my-0 opacity-20" />
+
+          {/* Meanings */}
+          <div className="flex flex-col gap-2">
+            <p className="text-2xl font-bold font-[var(--br-jp-font)]">{item.meaning_vi}</p>
+            <p className="text-sm text-neutral font-[var(--br-jp-font)]">{item.meaning_en}</p>
+          </div>
+
+          {/* Examples */}
+          {item.examples.length > 0 && (
+            <div className="border-l-4 border-primary pl-4">
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral mb-2 tracking-wider">EXAMPLE</p>
+              <p className="text-sm font-[var(--br-jp-font)] leading-relaxed">{item.examples[0].ja}</p>
+              <p className="text-xs text-neutral font-[var(--br-jp-font)] mt-1">{item.examples[0].vi}</p>
+              <p className="text-xs text-neutral font-[var(--br-jp-font)] opacity-70">{item.examples[0].en}</p>
+              {item.examples[0].fr && (
+                <p className="text-xs text-neutral font-[var(--br-jp-font)] opacity-70">{item.examples[0].fr}</p>
+              )}
+            </div>
+          )}
+
+          {/* Action buttons pinned to bottom */}
+          <div className="mt-auto pt-6 border-t border-base-content/10 flex gap-2">
+            <button
+              className={`btn btn-sm font-[var(--br-mono-font)] ${isKnown ? 'btn-primary' : 'btn-outline'}`}
+              onClick={handleToggleKnown}
+              type="button"
+            >
+              {isKnown ? '✓ ĐÃ BIẾT' : 'ĐÃ BIẾT?'}
+            </button>
+            {firstKanjiChar && (
+              <button
+                className="btn btn-sm btn-outline font-[var(--br-mono-font)]"
+                type="button"
+                onClick={() => window.location.assign(`/kanji/${firstKanjiChar}`)}
+                aria-label={`View kanji ${firstKanjiChar}`}
+              >
+                漢字
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

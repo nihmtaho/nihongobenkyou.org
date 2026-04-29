@@ -15,6 +15,8 @@ export type MeaningLanguage = 'vi' | 'en' | 'both'
 
 export type QuizQuestionType = 'word→meaning' | 'meaning→word' | 'word→reading'
 
+export type TypeInputSubMode = 'word→hira' | 'vi→hira' | 'word→vi'
+
 export interface StudyConfig {
   mode: StudyMode
   cardCount: number | 'all'
@@ -22,6 +24,7 @@ export interface StudyConfig {
   lessonIds: string[]
   source?: 'textbook' | 'custom'
   deckId?: string
+  typeInputSubMode?: TypeInputSubMode
 }
 
 export interface SessionStats {

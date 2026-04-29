@@ -3,6 +3,7 @@ import { validateEntries } from './validate'
 
 const BASE_ENTRY = {
   vocab_id: 'mnn1_abc123def456abcd',
+  id: [1, 1] as [number, number],
   kanji: null,
   kana: 'わたし',
   romaji: 'watashi',
@@ -13,6 +14,7 @@ const BASE_ENTRY = {
   lesson_number: 1,
   pitch_pattern: null,
   audio_filename: null,
+  han_viet: null,
 }
 
 describe('validateEntries', () => {

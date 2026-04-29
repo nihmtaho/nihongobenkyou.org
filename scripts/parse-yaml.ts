@@ -5,14 +5,16 @@ import { load } from 'js-yaml'
 
 interface RawVocabEntry {
   id: [number, number]
+  edition?: number[]
   kanji: string | null
   kana: string
   romaji: string
   meaning: { en: string, vi: string, fr?: string }
   pos: string[]
   jlpt: number | null
-  examples: Array<{ ja: string, en: string, vi: string }>
+  examples: Array<{ ja: string, en: string, vi: string, fr?: string }>
   lesson_number: number
+  han_viet: string | null
 }
 
 interface YamlLesson {
@@ -26,12 +28,22 @@ interface YamlDoc {
   [lessonKey: string]: unknown
 }
 
+interface YamlExample {
+  ja: string
+  en: string
+  vi: string
+  fr?: string
+}
+
 interface YamlEntry {
   id: [number, number] | number[]
+  edition?: number[]
   kanji?: string | null
   kana: string
   romaji: string
   meaning: { en: string, vi: string, fr?: string }
+  examples?: YamlExample[]
+  han_viet?: string | null
 }
 
 export async function run(yamlPath: string, outputPath: string, config: DatasetConfig): Promise<void> {
@@ -62,9 +74,23 @@ export async function run(yamlPath: string, outputPath: string, config: DatasetC
     if (!lessonEntries)
       continue
 
-    for (const entry of lessonEntries) {
+    // Filter by edition if config specifies one
+    const editionFilter = config.edition_filter
+    const filtered = editionFilter
+      ? lessonEntries.filter((entry) => {
+          if (!entry.edition)
+            return true // no edition tag → include always
+          return entry.edition.some(e => editionFilter.includes(e))
+        })
+      : lessonEntries
+
+    // Sort by id[1] (index within lesson)
+    const sorted = [...filtered].sort((a, b) => (a.id[1] ?? 0) - (b.id[1] ?? 0))
+
+    for (const entry of sorted) {
       entries.push({
         id: [entry.id[0], entry.id[1]],
+        edition: entry.edition,
         kanji: entry.kanji ?? null,
         kana: entry.kana,
         romaji: entry.romaji,
@@ -75,8 +101,14 @@ export async function run(yamlPath: string, outputPath: string, config: DatasetC
         },
         pos: [],
         jlpt: null,
-        examples: [],
+        examples: (entry.examples ?? []).map(ex => ({
+          ja: ex.ja,
+          en: ex.en,
+          vi: ex.vi,
+          ...(ex.fr ? { fr: ex.fr } : {}),
+        })),
         lesson_number: lessonId,
+        han_viet: entry.han_viet ?? null,
       })
     }
   }

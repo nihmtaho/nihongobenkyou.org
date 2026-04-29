@@ -1,4 +1,5 @@
 import type { LessonMeta, Manifest } from '../types/dataset'
+import type { KanjiItem } from '../types/kanji'
 import type { Passage } from '../types/passages'
 import type { VocabItem } from '../types/vocabulary'
 import { db } from './schema'
@@ -100,6 +101,44 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   }
   catch (err) {
     throw new SeedError('Seed transaction failed — database may be in a partial state', err)
+  }
+
+  return 'seeded'
+}
+
+export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> {
+  let manifest: Manifest
+  try {
+    manifest = await fetchJson<Manifest>('/data/manifest.json')
+  }
+  catch {
+    return 'skipped'
+  }
+
+  if (!manifest.kanji)
+    return 'skipped'
+
+  const storedChecksum = await db.settings.get('kanji_n5_checksum')
+  if (storedChecksum?.value === manifest.kanji.n5_checksum)
+    return 'up-to-date'
+
+  let kanjiItems: KanjiItem[]
+  try {
+    kanjiItems = await fetchJson<KanjiItem[]>('/data/kanji/n5-kanji.json')
+  }
+  catch (err) {
+    throw new SeedError('Failed to fetch n5-kanji.json', err)
+  }
+
+  try {
+    await db.transaction('rw', [db.kanji, db.settings], async () => {
+      await db.kanji.clear()
+      await db.kanji.bulkPut(kanjiItems)
+      await db.settings.put({ key: 'kanji_n5_checksum', value: manifest.kanji!.n5_checksum })
+    })
+  }
+  catch (err) {
+    throw new SeedError('Kanji seed transaction failed — database may be in a partial state', err)
   }
 
   return 'seeded'

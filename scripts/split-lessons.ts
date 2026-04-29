@@ -12,6 +12,8 @@ export interface LessonFile {
 
 interface ValidatedEntry {
   vocab_id: string
+  id: [number, number]
+  edition?: number[]
   kanji: string | null
   kana: string
   romaji: string
@@ -22,6 +24,7 @@ interface ValidatedEntry {
   lesson_number: number
   pitch_pattern: number | null
   audio_filename: string | null
+  han_viet: string | null
 }
 
 // Small kana that do not count as separate morae (combined with preceding character)
@@ -90,6 +93,9 @@ export async function run(inputPath: string, config: DatasetConfig, passageMap: 
       examples: entry.examples,
       tags: [],
       deprecated: false,
+      edition: entry.edition,
+      sort_order: entry.id[1],
+      han_viet: entry.han_viet ?? null,
     }))
 
     const lessonFile = path.join(outputBase, `lesson-${zeroPad(lessonNum)}.json`)

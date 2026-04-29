@@ -1,13 +1,14 @@
 import type { SRSRating } from '../../types/srs'
+import type { TypeInputSubMode } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { FlipCard } from '../../components/study/FlipCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
+import { TypeInputCard } from '../../components/study/TypeInputCard'
 import { db } from '../../db/schema'
-import { useDueCards } from '../../hooks/useDueCards'
-import { useSRSMutation } from '../../hooks/useSRSMutation'
+import { useSRS } from '../../hooks/useSRS'
 import { useStreak } from '../../hooks/useStreak'
 import { useAuthStore } from '../../stores/authStore'
 import { useSettingsStore } from '../../stores/settingsStore'
@@ -57,19 +58,24 @@ function makeInitialStats(): SrsStats {
 function SrsPage() {
   const userId = useAuthStore(s => s.userId)
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage)
-  const { data: dueCards, isLoading } = useDueCards(userId ?? '')
+  const srs = useSRS('vocab', userId ?? '')
+  const { data: dueCards, isLoading } = srs.dueCards
   const { data: streak } = useStreak(userId ?? '')
-  const srsM = useSRSMutation()
 
   const [phase, setPhase] = useState<SrsState>('loading')
+  const [startError, setStartError] = useState<string | null>(null)
+  const [srsMode, setSrsMode] = useState<'flashcard' | 'type-input'>('flashcard')
+  const [typeInputSubMode, setTypeInputSubMode] = useState<TypeInputSubMode>('word→hira')
   const [queue, setQueue] = useState<VocabWithSRS[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [stats, setStats] = useState<SrsStats>(makeInitialStats)
   const [elapsed, setElapsed] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const sessionWrittenRef = useRef(false)
-  // Tracks how many times each card has been re-queued via Again in this session
+  // Tracks how many times each card has been re-queued via Again in this session (flashcard mode)
   const againCountRef = useRef<Map<string, number>>(new Map())
+  const [vocabLoadFailed, setVocabLoadFailed] = useState(false)
+  const vocabItemsRef = useRef<{ vocab_id: string }[] | undefined>(undefined)
 
   // These two queries only activate in the empty phase to differentiate the two empty states
   const { data: futureCards } = useQuery({
@@ -90,6 +96,34 @@ function SrsPage() {
     enabled: !!userId && phase === 'empty',
     staleTime: 0,
   })
+
+  const vocabIds = (dueCards ?? []).map(c => c.vocabId)
+  const { data: vocabItems } = useQuery({
+    queryKey: ['srs-vocab-prefetch', vocabIds],
+    queryFn: () => db.vocabulary.where('vocab_id').anyOf(vocabIds).toArray(),
+    enabled: phase === 'pre-session' && vocabIds.length > 0 && !vocabLoadFailed,
+    staleTime: 0,
+    // Poll every 2s if vocabulary still empty (seed running in background). Stops once vocabLoadFailed.
+    refetchInterval: query =>
+      !vocabLoadFailed && (!query.state.data || query.state.data.length === 0) ? 2000 : false,
+  })
+  vocabItemsRef.current = vocabItems
+
+  const vocabIdsKey = vocabIds.join(',')
+
+  // After 8s with no vocabulary found, stop polling and surface a clear error.
+  useEffect(() => {
+    if (phase !== 'pre-session' || vocabIds.length === 0) {
+      // eslint-disable-next-line react/set-state-in-effect
+      setVocabLoadFailed(false)
+      return
+    }
+    const timer = setTimeout(() => {
+      if (!vocabItemsRef.current || vocabItemsRef.current.length === 0)
+        setVocabLoadFailed(true)
+    }, 8000)
+    return () => clearTimeout(timer)
+  }, [phase, vocabIdsKey, vocabIds.length])
 
   useEffect(() => {
     if (isLoading)
@@ -127,7 +161,7 @@ function SrsPage() {
     async function writeRecords() {
       await db.sessions.add({
         user_id: userId!,
-        mode: 'flashcard',
+        mode: srsMode,
         lesson_ids: [],
         cards_reviewed: total,
         correct_count: correct,
@@ -156,28 +190,35 @@ function SrsPage() {
     }
 
     writeRecords().catch(console.error)
-  }, [phase, userId, stats, elapsed])
+  }, [phase, userId, stats, elapsed, srsMode])
 
   function handleStart() {
-    if (!dueCards)
+    if (!dueCards || dueCards.length === 0 || !vocabItems || vocabItems.length === 0)
       return
-    const vocabIds = dueCards.map(c => c.vocabId)
 
-    db.vocabulary.where('vocab_id').anyOf(vocabIds).toArray().then((vocabItems) => {
-      const cardMap = new Map(dueCards.map(c => [c.vocabId, c]))
-      const merged: VocabWithSRS[] = vocabItems.map(v => ({
+    const cardMap = new Map(dueCards.map(c => [c.vocabId, c]))
+    const merged: VocabWithSRS[] = vocabItems
+      .filter(v => cardMap.has(v.vocab_id))
+      .map(v => ({
         ...v,
         ...cardMap.get(v.vocab_id)!,
         is_known: cardMap.get(v.vocab_id)?.is_known ?? false,
       }))
-      setQueue(merged)
-      setCurrentIndex(0)
-      setStats(makeInitialStats())
-      setElapsed(0)
-      sessionWrittenRef.current = false
-      againCountRef.current = new Map()
-      setPhase('active')
-    }).catch(console.error)
+
+    if (merged.length === 0) {
+      setStartError('Không tìm thấy dữ liệu thẻ. Vui lòng thử lại.')
+      return
+    }
+
+    setStartError(null)
+    setQueue(merged)
+    setCurrentIndex(0)
+    setStats(makeInitialStats())
+    setElapsed(0)
+    sessionWrittenRef.current = false
+    againCountRef.current = new Map()
+    srs.resetTypeInputTracking()
+    setPhase('active')
   }
 
   function handleRate(rating: SRSRating) {
@@ -207,7 +248,7 @@ function SrsPage() {
       // 4th Again: write to Dexie as due tomorrow and remove from session
     }
 
-    srsM.mutate({ userId, card, rating })
+    srs.rate(card, rating)
 
     const next = currentIndex + 1
     if (next >= queue.length) {
@@ -215,6 +256,33 @@ function SrsPage() {
     }
     else {
       setCurrentIndex(next)
+    }
+  }
+
+  function handleAnswer(isCorrect: boolean) {
+    const card = queue[currentIndex]
+    if (!card)
+      return
+
+    const { rating, shouldRequeue } = srs.answerTypeInput(card, isCorrect)
+
+    setStats(s => ({
+      ...s,
+      correct: rating >= 2 ? s.correct + 1 : s.correct,
+      total: s.total + 1,
+      ratingCounts: { ...s.ratingCounts, [rating]: s.ratingCounts[rating] + 1 },
+    }))
+
+    if (shouldRequeue) {
+      setQueue(q => [...q, card])
+      setCurrentIndex(i => i + 1)
+    }
+    else {
+      const next = currentIndex + 1
+      if (next >= queue.length)
+        setPhase('complete')
+      else
+        setCurrentIndex(next)
     }
   }
 
@@ -277,11 +345,74 @@ function SrsPage() {
           {' '}
           thẻ đến hạn
         </p>
+
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <p className="font-[var(--br-mono-font)] text-[11px] uppercase text-base-content/50">Chế độ ôn tập</p>
+          <div className="join w-full">
+            <button
+              type="button"
+              onClick={() => setSrsMode('flashcard')}
+              className={`btn join-item flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${srsMode === 'flashcard' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              Lật thẻ
+            </button>
+            <button
+              type="button"
+              onClick={() => setSrsMode('type-input')}
+              className={`btn join-item flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${srsMode === 'type-input' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              Gõ từ
+            </button>
+          </div>
+
+          {srsMode === 'type-input' && (
+            <div className="flex flex-col gap-2 w-full">
+              {(
+                [
+                  { value: 'word→hira' as TypeInputSubMode, label: 'Từ → Đọc' },
+                  { value: 'vi→hira' as TypeInputSubMode, label: 'Nghĩa → Đọc' },
+                  { value: 'word→vi' as TypeInputSubMode, label: 'Từ → Nghĩa Việt' },
+                ]
+              ).map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setTypeInputSubMode(value)}
+                  className={`btn w-full font-[var(--br-mono-font)] text-[11px] uppercase ${typeInputSubMode === value ? 'btn-neutral' : 'btn-outline'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {startError && (
+          <div className="alert alert-warning max-w-sm w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase">{startError}</span>
+          </div>
+        )}
+
+        {vocabLoadFailed && (
+          <div className="alert alert-error max-w-sm w-full">
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase">
+              Không tìm thấy dữ liệu từ vựng cho các thẻ này. Thẻ có thể thuộc custom deck hoặc dữ liệu bị lỗi — hãy làm mới trang.
+            </span>
+          </div>
+        )}
+
         <button
+          type="button"
           onClick={handleStart}
+          disabled={!vocabItems || vocabItems.length === 0}
           className="btn btn-primary btn-lg font-[var(--br-heading-font)] uppercase tracking-wide"
         >
-          Bắt đầu ôn tập
+          {!vocabItems?.length && !vocabLoadFailed ? 'Đang tải...' : 'Bắt đầu ôn tập'}
         </button>
       </div>
     )
@@ -308,8 +439,8 @@ function SrsPage() {
   const progress = currentIndex + 1
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <div className="flex items-center justify-between">
+    <div className={`flex flex-col gap-4 ${srsMode === 'type-input' ? 'pt-4' : 'p-4'}`}>
+      <div className={`flex items-center justify-between ${srsMode === 'type-input' ? 'px-4' : ''}`}>
         <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-base-content/60">
           {progress}
           {' '}
@@ -322,18 +453,29 @@ function SrsPage() {
       </div>
 
       <progress
-        className="progress progress-primary h-0.5 w-full"
+        className={`progress progress-primary h-0.5 w-full ${srsMode === 'type-input' ? 'px-4' : ''}`}
         value={progress}
         max={queue.length}
       />
 
-      {card && (
-        <FlipCard
-          card={card}
-          meaningLanguage={meaningLanguage}
-          onRate={handleRate}
-        />
-      )}
+      {!card
+        ? <div className="skeleton h-64 w-full max-w-sm mx-auto" />
+        : srsMode === 'type-input'
+          ? (
+              <TypeInputCard
+                key={`${card.vocab_id}-${currentIndex}`}
+                card={card}
+                subMode={typeInputSubMode}
+                onAnswer={handleAnswer}
+              />
+            )
+          : (
+              <FlipCard
+                card={card}
+                meaningLanguage={meaningLanguage}
+                onRate={handleRate}
+              />
+            )}
     </div>
   )
 }

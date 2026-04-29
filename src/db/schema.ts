@@ -64,6 +64,12 @@ export class NihongoDB extends Dexie {
     this.version(4).stores({
       passages: 'passage_id, book_source, lesson_number, [book_source+lesson_number]',
     })
+    this.version(5).stores({
+      kanji: 'char, jlpt_level, radical, stroke_count, lesson_number',
+    })
+    this.version(6).stores({
+      kanji_cards: '[userId+char], due_date, pending_sync, [userId+due_date]',
+    })
   }
 }
 

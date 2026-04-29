@@ -67,4 +67,33 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules'))
+            return
+          if (id.includes('@supabase'))
+            return 'vendor-supabase'
+          if (id.includes('dexie'))
+            return 'vendor-dexie'
+          if (id.includes('framer-motion') || id.includes('motion/dist'))
+            return 'vendor-motion'
+          if (id.includes('howler'))
+            return 'vendor-audio'
+          // Group React + TanStack + small React-coupled libs together to avoid circular chunks
+          if (
+            id.includes('/react/')
+            || id.includes('/react-dom/')
+            || id.includes('@tanstack')
+            || id.includes('zustand')
+            || id.includes('wanakana')
+            || id.includes('scheduler')
+          ) {
+            return 'vendor-react'
+          }
+        },
+      },
+    },
+  },
 })

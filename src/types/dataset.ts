@@ -12,6 +12,8 @@ export interface DatasetConfig {
   enabled: boolean
   kanjium_file?: string
   jitendex_file?: string
+  /** Which textbook editions to include. Omit to include all editions. */
+  edition_filter?: number[]
 }
 
 export interface LessonMeta {
@@ -22,12 +24,19 @@ export interface LessonMeta {
   vocab_count: number
 }
 
+export interface KanjiManifestSection {
+  n5_checksum: string
+  n5_count: number
+  generated_at: string
+}
+
 export interface Manifest {
   schema_version: '1.0'
   built_at: string
   built_by: string
   built_from: string
   datasets: DatasetManifest[]
+  kanji?: KanjiManifestSection
 }
 
 export interface DatasetManifest {
