@@ -366,21 +366,23 @@ function SrsPage() {
           </div>
 
           {srsMode === 'type-input' && (
-            <div className="join w-full">
-              <button
-                type="button"
-                onClick={() => setTypeInputSubMode('word→hira')}
-                className={`btn join-item flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${typeInputSubMode === 'word→hira' ? 'btn-neutral' : 'btn-outline'}`}
-              >
-                Từ → Đọc
-              </button>
-              <button
-                type="button"
-                onClick={() => setTypeInputSubMode('vi→hira')}
-                className={`btn join-item flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${typeInputSubMode === 'vi→hira' ? 'btn-neutral' : 'btn-outline'}`}
-              >
-                Nghĩa → Đọc
-              </button>
+            <div className="flex flex-col gap-2 w-full">
+              {(
+                [
+                  { value: 'word→hira' as TypeInputSubMode, label: 'Từ → Đọc' },
+                  { value: 'vi→hira' as TypeInputSubMode, label: 'Nghĩa → Đọc' },
+                  { value: 'word→vi' as TypeInputSubMode, label: 'Từ → Nghĩa Việt' },
+                ]
+              ).map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setTypeInputSubMode(value)}
+                  className={`btn w-full font-[var(--br-mono-font)] text-[11px] uppercase ${typeInputSubMode === value ? 'btn-neutral' : 'btn-outline'}`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           )}
         </div>

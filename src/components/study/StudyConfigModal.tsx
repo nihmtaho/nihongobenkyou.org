@@ -16,6 +16,7 @@ interface StudyConfigModalProps {
 const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string, desc: string }[] = [
   { value: 'word→hira', label: 'Từ vựng → Hiragana', desc: 'Nhìn chữ Nhật, gõ cách đọc' },
   { value: 'vi→hira', label: 'Tiếng Việt → Hiragana', desc: 'Nhìn nghĩa tiếng Việt, gõ hiragana' },
+  { value: 'word→vi', label: 'Từ vựng → Tiếng Việt', desc: 'Nhìn chữ Nhật, gõ nghĩa tiếng Việt' },
 ]
 
 export function StudyConfigModal({
