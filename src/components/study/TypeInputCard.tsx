@@ -49,7 +49,9 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
         return
       setWasSkipped(false)
       setWrongMorae([])
-      commit(answer === canonicalViMeaning)
+      // Accept any comma-separated segment of the meaning
+      const segments = canonicalViMeaning.split(',').map(s => s.trim()).filter(Boolean)
+      commit(segments.includes(answer))
       return
     }
 
@@ -185,40 +187,46 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
             style={subMode !== 'word→vi' ? { fontFamily: 'var(--br-jp-font)' } : undefined}
           />
 
-          {/* Correct answer on wrong */}
-          {phase === 'result' && !isCorrect && (
+          {/* word→vi: always show meaning_vi after check, coloured by result */}
+          {phase === 'result' && subMode === 'word→vi' && (
+            <div className="flex flex-col items-center gap-2 py-2">
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+                {isCorrect ? 'NGHĨA ĐÚNG' : 'ĐÁP ÁN ĐÚNG'}
+              </p>
+              <p className={`text-xl lg:text-2xl font-bold text-center ${isCorrect ? 'text-success' : 'text-error'}`}>
+                {card.meaning_vi}
+              </p>
+            </div>
+          )}
+
+          {/* Kana modes: only show correct answer on wrong */}
+          {phase === 'result' && !isCorrect && subMode !== 'word→vi' && (
             <div className="flex flex-col items-center gap-2 py-2">
               <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
                 ĐÁP ÁN ĐÚNG
               </p>
-              {subMode === 'word→vi'
+              {wasSkipped
                 ? (
-                    <p className="text-xl lg:text-2xl font-bold text-base-content text-center">
-                      {card.meaning_vi}
+                    <p
+                      className="text-2xl lg:text-3xl font-bold text-base-content"
+                      style={{ fontFamily: 'var(--br-jp-font)' }}
+                    >
+                      {canonicalReading}
                     </p>
                   )
-                : wasSkipped
-                  ? (
-                      <p
-                        className="text-2xl lg:text-3xl font-bold text-base-content"
-                        style={{ fontFamily: 'var(--br-jp-font)' }}
-                      >
-                        {canonicalReading}
-                      </p>
-                    )
-                  : (
-                      <div className="flex gap-px justify-center flex-wrap">
-                        {moraChars.map(({ char, key, i }) => (
-                          <span
-                            key={key}
-                            className={`text-2xl lg:text-3xl font-bold ${wrongMorae.includes(i) ? 'text-error' : 'text-success'}`}
-                            style={{ fontFamily: 'var(--br-jp-font)' }}
-                          >
-                            {char}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                : (
+                    <div className="flex gap-px justify-center flex-wrap">
+                      {moraChars.map(({ char, key, i }) => (
+                        <span
+                          key={key}
+                          className={`text-2xl lg:text-3xl font-bold ${wrongMorae.includes(i) ? 'text-error' : 'text-success'}`}
+                          style={{ fontFamily: 'var(--br-jp-font)' }}
+                        >
+                          {char}
+                        </span>
+                      ))}
+                    </div>
+                  )}
             </div>
           )}
 
