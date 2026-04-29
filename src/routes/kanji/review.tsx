@@ -44,13 +44,15 @@ function KanjiReviewPage() {
 
   const chars = queue.map(c => c.char)
 
-  // Load kanji content for the review queue — staleTime:0 so a race with seedKanji
-  // (kanji table empty at first query) auto-corrects on next mount/focus.
-  const { data: kanjiItems, isLoading: kanjiLoading } = useQuery({
+  // Load kanji content for the review queue. Polls every 2s when empty so a race with
+  // seedKanji (kanji table not yet seeded) auto-corrects without user action.
+  const { data: kanjiItems } = useQuery({
     queryKey: ['kanji-review-items', chars],
     queryFn: () => db.kanji.where('char').anyOf(chars).toArray(),
     enabled: chars.length > 0,
     staleTime: 0,
+    refetchInterval: query =>
+      chars.length > 0 && (!query.state.data || query.state.data.length === 0) ? 2000 : false,
   })
 
   // Transition out of loading phase once due cards are known
@@ -168,8 +170,7 @@ function KanjiReviewPage() {
   const char = currentCard?.char
   const kanji = kanjiItems?.find(k => k.char === char)
 
-  // Show skeleton while kanji content is loading or not yet found
-  const isCardReady = !kanjiLoading && kanji !== undefined
+  const isCardReady = kanji !== undefined
 
   return (
     <div className="flex flex-col gap-4 p-4">

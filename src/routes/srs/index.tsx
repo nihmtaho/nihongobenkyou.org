@@ -23,7 +23,7 @@ export const Route = createFileRoute('/srs/')({
 
 const MAX_AGAIN_REQUEUES = 3
 
-type SrsState = 'loading' | 'starting' | 'empty' | 'pre-session' | 'active' | 'complete'
+type SrsState = 'loading' | 'empty' | 'pre-session' | 'active' | 'complete'
 
 interface SrsStats {
   correct: number
@@ -74,6 +74,8 @@ function SrsPage() {
   const sessionWrittenRef = useRef(false)
   // Tracks how many times each card has been re-queued via Again in this session (flashcard mode)
   const againCountRef = useRef<Map<string, number>>(new Map())
+  const [vocabLoadFailed, setVocabLoadFailed] = useState(false)
+  const vocabItemsRef = useRef<{ vocab_id: string }[] | undefined>(undefined)
 
   // These two queries only activate in the empty phase to differentiate the two empty states
   const { data: futureCards } = useQuery({
@@ -94,6 +96,34 @@ function SrsPage() {
     enabled: !!userId && phase === 'empty',
     staleTime: 0,
   })
+
+  const vocabIds = (dueCards ?? []).map(c => c.vocabId)
+  const { data: vocabItems } = useQuery({
+    queryKey: ['srs-vocab-prefetch', vocabIds],
+    queryFn: () => db.vocabulary.where('vocab_id').anyOf(vocabIds).toArray(),
+    enabled: phase === 'pre-session' && vocabIds.length > 0 && !vocabLoadFailed,
+    staleTime: 0,
+    // Poll every 2s if vocabulary still empty (seed running in background). Stops once vocabLoadFailed.
+    refetchInterval: query =>
+      !vocabLoadFailed && (!query.state.data || query.state.data.length === 0) ? 2000 : false,
+  })
+  vocabItemsRef.current = vocabItems
+
+  const vocabIdsKey = vocabIds.join(',')
+
+  // After 8s with no vocabulary found, stop polling and surface a clear error.
+  useEffect(() => {
+    if (phase !== 'pre-session' || vocabIds.length === 0) {
+      // eslint-disable-next-line react/set-state-in-effect
+      setVocabLoadFailed(false)
+      return
+    }
+    const timer = setTimeout(() => {
+      if (!vocabItemsRef.current || vocabItemsRef.current.length === 0)
+        setVocabLoadFailed(true)
+    }, 8000)
+    return () => clearTimeout(timer)
+  }, [phase, vocabIdsKey, vocabIds.length])
 
   useEffect(() => {
     if (isLoading)
@@ -163,44 +193,32 @@ function SrsPage() {
   }, [phase, userId, stats, elapsed, srsMode])
 
   function handleStart() {
-    if (!dueCards || dueCards.length === 0)
+    if (!dueCards || dueCards.length === 0 || !vocabItems || vocabItems.length === 0)
       return
-    setStartError(null)
-    setPhase('starting')
-    const vocabIds = dueCards.map(c => c.vocabId)
 
-    db.vocabulary.where('vocab_id').anyOf(vocabIds).toArray().then((vocabItems) => {
-      if (vocabItems.length === 0) {
-        // Vocabulary not seeded yet (seed still running in background) — let user retry
-        setPhase('pre-session')
-        setStartError('Dữ liệu từ vựng chưa sẵn sàng. Vui lòng thử lại.')
-        return
-      }
-      const cardMap = new Map(dueCards.map(c => [c.vocabId, c]))
-      const merged: VocabWithSRS[] = vocabItems
-        .filter(v => cardMap.has(v.vocab_id))
-        .map(v => ({
-          ...v,
-          ...cardMap.get(v.vocab_id)!,
-          is_known: cardMap.get(v.vocab_id)?.is_known ?? false,
-        }))
-      if (merged.length === 0) {
-        setPhase('pre-session')
-        setStartError('Không tìm thấy dữ liệu thẻ. Vui lòng thử lại.')
-        return
-      }
-      setQueue(merged)
-      setCurrentIndex(0)
-      setStats(makeInitialStats())
-      setElapsed(0)
-      sessionWrittenRef.current = false
-      againCountRef.current = new Map()
-      srs.resetTypeInputTracking()
-      setPhase('active')
-    }).catch(() => {
-      setPhase('pre-session')
-      setStartError('Lỗi tải dữ liệu. Vui lòng thử lại.')
-    })
+    const cardMap = new Map(dueCards.map(c => [c.vocabId, c]))
+    const merged: VocabWithSRS[] = vocabItems
+      .filter(v => cardMap.has(v.vocab_id))
+      .map(v => ({
+        ...v,
+        ...cardMap.get(v.vocab_id)!,
+        is_known: cardMap.get(v.vocab_id)?.is_known ?? false,
+      }))
+
+    if (merged.length === 0) {
+      setStartError('Không tìm thấy dữ liệu thẻ. Vui lòng thử lại.')
+      return
+    }
+
+    setStartError(null)
+    setQueue(merged)
+    setCurrentIndex(0)
+    setStats(makeInitialStats())
+    setElapsed(0)
+    sessionWrittenRef.current = false
+    againCountRef.current = new Map()
+    srs.resetTypeInputTracking()
+    setPhase('active')
   }
 
   function handleRate(rating: SRSRating) {
@@ -268,7 +286,7 @@ function SrsPage() {
     }
   }
 
-  if (phase === 'loading' || phase === 'starting') {
+  if (phase === 'loading') {
     return (
       <div className="p-4 flex flex-col gap-4">
         <div className="skeleton h-8 w-48" />
@@ -377,12 +395,22 @@ function SrsPage() {
             <span className="font-[var(--br-mono-font)] text-[11px] uppercase">{startError}</span>
           </div>
         )}
+
+        {vocabLoadFailed && (
+          <div className="alert alert-error max-w-sm w-full">
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase">
+              Không tìm thấy dữ liệu từ vựng cho các thẻ này. Thẻ có thể thuộc custom deck hoặc dữ liệu bị lỗi — hãy làm mới trang.
+            </span>
+          </div>
+        )}
+
         <button
           type="button"
           onClick={handleStart}
+          disabled={!vocabItems || vocabItems.length === 0}
           className="btn btn-primary btn-lg font-[var(--br-heading-font)] uppercase tracking-wide"
         >
-          Bắt đầu ôn tập
+          {!vocabItems?.length && !vocabLoadFailed ? 'Đang tải...' : 'Bắt đầu ôn tập'}
         </button>
       </div>
     )
