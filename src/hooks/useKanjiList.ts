@@ -1,6 +1,7 @@
 import type { KanjiCardState, KanjiItem } from '../types/kanji'
 import { useQuery } from '@tanstack/react-query'
 import { getAllKanji, getDueKanjiCards } from '../db/kanji'
+import { db } from '../db/schema'
 
 export interface KanjiWithSRS extends KanjiItem {
   card?: KanjiCardState
@@ -25,8 +26,6 @@ export function useKanjiList(userId: string, filters?: KanjiFilters) {
 
       const cardMap = new Map(cards.map(c => [c.char, c]))
 
-      // Also fetch all kanji_cards (not just due) for mastery badge
-      const { db } = await import('../db/schema')
       const allCards = await db.kanji_cards
         .where('userId')
         .equals(userId)
