@@ -1,5 +1,5 @@
 import type { SRSRating } from '../types/srs'
-import type { TypeInputSubMode } from '../types/study'
+import type { MeaningLanguage, TypeInputSubMode } from '../types/study'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
@@ -39,7 +39,7 @@ export interface UseSrsSessionReturn {
   vocabItems: { vocab_id: string }[] | undefined
   isVocabReady: boolean
   streak: number | undefined
-  meaningLanguage: string
+  meaningLanguage: MeaningLanguage
 }
 
 const MAX_AGAIN_REQUEUES = 3
