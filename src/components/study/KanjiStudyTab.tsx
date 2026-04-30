@@ -1,0 +1,237 @@
+import type { KanjiLessonStats } from '../../hooks/useKanjiLessonStats'
+
+import { Link } from '@tanstack/react-router'
+
+import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
+import { useNextKanjiDue } from '../../hooks/useNextKanjiDue'
+import { SRSProgressBar } from '../common/SRSProgressBar'
+
+import { DueCard } from './shared/DueCard'
+import { EmptyState } from './shared/EmptyState'
+import { NextReviewCard } from './shared/NextReviewCard'
+import { SectionLabel } from './shared/SectionLabel'
+import { SkeletonRows } from './shared/SkeletonRows'
+import { StatPip } from './shared/StatPip'
+import { StatsGrid } from './shared/StatsGrid'
+import { UnstartedCollapse } from './shared/UnstartedCollapse'
+
+export function KanjiStudyTab({ userId }: { userId: string }) {
+  const { data: lessons, isLoading } = useKanjiLessonStats(userId)
+  const { data: nextKanjiDue } = useNextKanjiDue(userId)
+
+  const activeLessons = lessons?.filter(
+    l => l.kanji.learning + l.kanji.review + l.kanji.mature + l.vocab.learning + l.vocab.review + l.vocab.mature > 0,
+  ) ?? []
+  const unstartedLessons = lessons?.filter(
+    l => l.kanji.learning + l.kanji.review + l.kanji.mature + l.vocab.learning + l.vocab.review + l.vocab.mature === 0,
+  ) ?? []
+
+  const kanjiTotals = lessons?.reduce(
+    (acc, l) => ({
+      due: acc.due + l.kanji.due + l.vocab.due,
+      new: acc.new + l.kanji.new + l.vocab.new,
+      learning: acc.learning + l.kanji.learning + l.vocab.learning,
+      review: acc.review + l.kanji.review + l.vocab.review,
+      mature: acc.mature + l.kanji.mature + l.vocab.mature,
+      studied: acc.studied + l.kanji.learning + l.kanji.review + l.kanji.mature
+        + l.vocab.learning + l.vocab.review + l.vocab.mature,
+    }),
+    { due: 0, new: 0, learning: 0, review: 0, mature: 0, studied: 0 },
+  )
+
+  return (
+    <div className="p-4 lg:p-6 xl:p-8 max-w-5xl mx-auto">
+      <StatsGrid
+        items={[
+          { label: 'ĐẾN HẠN', value: kanjiTotals?.due ?? 0, color: 'text-error' },
+          { label: 'MỚI', value: kanjiTotals?.new ?? 0, color: 'text-base-content/50' },
+          { label: 'ĐANG HỌC', value: kanjiTotals?.learning ?? 0, color: 'text-warning' },
+          { label: 'ÔN TẬP', value: kanjiTotals?.review ?? 0, color: 'text-info' },
+          { label: 'ĐÃ THUỘC', value: kanjiTotals?.mature ?? 0, color: 'text-success' },
+          { label: 'ĐÃ HỌC QUA', value: kanjiTotals?.studied ?? 0, color: 'text-base-content' },
+        ]}
+        isLoading={isLoading}
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
+        <DueCard
+          count={kanjiTotals?.due ?? 0}
+          label="THẺ HÁN TỰ CẦN ÔN HÔM NAY"
+          reviewLink="/kanji/review"
+        />
+        <NextReviewCard nextDueDate={nextKanjiDue ?? null} />
+      </div>
+
+      {isLoading
+        ? <SkeletonRows count={4} />
+        : (
+            <>
+              {activeLessons.length > 0 && (
+                <div className="mb-4">
+                  <SectionLabel label="BÀI ĐANG HỌC" count={activeLessons.length} />
+                  <div className="border border-base-content/10">
+                    {activeLessons.map((lesson, i) => (
+                      <KanjiLessonRow key={lesson.lessonNumber} lesson={lesson} animDelay={i * 0.04} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeLessons.length === 0 && (
+                <EmptyState
+                  jp="まだ漢字を学習していません"
+                  label="Chưa bắt đầu học hán tự"
+                  hint="Khám phá danh sách hán tự để bắt đầu ôn tập"
+                  cta="KHÁM PHÁ HÁN TỰ"
+                  ctaLink="/kanji"
+                />
+              )}
+
+              {unstartedLessons.length > 0 && activeLessons.length > 0 && (
+                <UnstartedCollapse count={unstartedLessons.length} label="BÀI CHƯA HỌC">
+                  {unstartedLessons.map(lesson => (
+                    <div
+                      key={lesson.lessonNumber}
+                      className="flex items-center justify-between border-b border-base-content/10 last:border-b-0 px-4 py-2.5"
+                    >
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-[var(--br-heading-font)] text-sm font-bold uppercase">
+                          BÀI
+                          {' '}
+                          {String(lesson.lessonNumber).padStart(2, '0')}
+                        </span>
+                        <span className="text-[10px] font-[var(--br-mono-font)] text-neutral">
+                          {lesson.kanji.total}
+                          {' '}
+                          chữ ·
+                          {' '}
+                          {lesson.vocab.total}
+                          {' '}
+                          từ
+                        </span>
+                      </div>
+                      <Link
+                        to="/kanji/lesson-study"
+                        search={{ lesson: lesson.lessonNumber, type: 'kanji', mode: 'flashcard' }}
+                        className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+                      >
+                        BẮT ĐẦU
+                      </Link>
+                    </div>
+                  ))}
+                </UnstartedCollapse>
+              )}
+            </>
+          )}
+    </div>
+  )
+}
+
+function KanjiLessonRow({ lesson, animDelay }: { lesson: KanjiLessonStats, animDelay: number }) {
+  const { lessonNumber, kanji, vocab } = lesson
+  const totalDue = kanji.due + vocab.due
+
+  return (
+    <div
+      className={[
+        'border-b border-base-content/10 last:border-b-0 p-3 lg:p-4',
+        totalDue > 0 ? 'border-l-4 border-l-primary' : 'border-l-4 border-l-transparent',
+      ].join(' ')}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-[var(--br-heading-font)] text-sm font-bold uppercase tracking-tight">
+          BÀI
+          {' '}
+          {String(lessonNumber).padStart(2, '0')}
+        </span>
+        {totalDue > 0 && (
+          <span className="badge badge-error font-[var(--br-mono-font)] text-[10px]">
+            {totalDue}
+            {' '}
+            ĐH
+          </span>
+        )}
+      </div>
+
+      {kanji.total > 0 && (
+        <KanjiSubRow
+          label="単漢字"
+          labelVi="Hán tự đơn"
+          stats={kanji}
+          animDelay={animDelay}
+          lessonNumber={lessonNumber}
+          cardType="kanji"
+        />
+      )}
+      {vocab.total > 0 && (
+        <KanjiSubRow
+          label="語彙"
+          labelVi="Từ vựng hán tự"
+          stats={vocab}
+          animDelay={animDelay + 0.04}
+          lessonNumber={lessonNumber}
+          cardType="vocab"
+        />
+      )}
+    </div>
+  )
+}
+
+function KanjiSubRow({
+  label,
+  labelVi,
+  stats,
+  animDelay,
+  lessonNumber,
+  cardType,
+}: {
+  label: string
+  labelVi: string
+  stats: KanjiLessonStats['kanji']
+  animDelay: number
+  lessonNumber: number
+  cardType: 'kanji' | 'vocab'
+}) {
+  const { total, new: newCount, learning, review, mature, due } = stats
+
+  return (
+    <div className="flex items-center gap-3 py-1.5">
+      <div className="flex-none w-[72px]">
+        <p className="text-[11px] font-[var(--br-jp-font)] text-base-content/80">{label}</p>
+        <p className="text-[9px] font-[var(--br-mono-font)] text-neutral/60">{labelVi}</p>
+      </div>
+      <div className="flex-1 min-w-0">
+        <SRSProgressBar
+          stats={{ total, new: newCount, learning, review, mature }}
+          height="h-1"
+          animDelay={animDelay}
+        />
+        <div className="flex gap-2 mt-1">
+          <StatPip count={learning} label="HỌC" className="text-warning" />
+          <StatPip count={review} label="ÔN" className="text-info" />
+          <StatPip count={mature} label="THUỘC" className="text-success" />
+        </div>
+      </div>
+      <div className="flex gap-1.5 flex-none">
+        {due > 0 && (
+          <Link
+            to="/kanji/lesson-study"
+            search={{ lesson: lessonNumber, type: cardType, mode: 'flashcard' }}
+            className="btn btn-primary btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+          >
+            ÔN (
+            {due}
+            )
+          </Link>
+        )}
+        <Link
+          to="/kanji/lesson-study"
+          search={{ lesson: lessonNumber, type: cardType, mode: 'flashcard' }}
+          className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+        >
+          HỌC
+        </Link>
+      </div>
+    </div>
+  )
+}
