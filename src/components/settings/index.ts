@@ -1,0 +1,7 @@
+export { AccountSection } from './AccountSection'
+export { BackupSection } from './BackupSection'
+export { DarkModeSection } from './DarkModeSection'
+export { FontSizeSection } from './FontSizeSection'
+export { LanguageSection } from './LanguageSection'
+export { ProfileSection } from './ProfileSection'
+export { SyncSection } from './SyncSection'
