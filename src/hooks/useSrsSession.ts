@@ -289,7 +289,7 @@ export function useSrsSession(): UseSrsSessionReturn {
     handleAnswer,
     startError,
     vocabLoadFailed,
-    isVocabReady: !!(vocabItems && vocabItems.length > 0) || vocabLoadFailed,
+    isVocabReady: !!(vocabItems && vocabItems.length > 0),
     dueCards: dueCards as VocabWithSRS[] | undefined,
     futureCards: futureCards as { due_date: string }[] | undefined,
     totalCardCount,
