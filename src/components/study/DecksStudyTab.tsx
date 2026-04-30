@@ -7,30 +7,6 @@ import { EmptyState } from './shared/EmptyState'
 import { SectionLabel } from './shared/SectionLabel'
 import { SkeletonRows } from './shared/SkeletonRows'
 
-function CustomDeckRow({ deck }: { deck: CustomDeck }) {
-  return (
-    <div className="flex items-center justify-between border-b border-base-content/10 last:border-b-0 p-3 lg:p-4">
-      <div className="min-w-0">
-        <p className="font-[var(--br-heading-font)] text-sm font-bold uppercase tracking-tight truncate">
-          {deck.title}
-        </p>
-        <p className="text-[10px] font-[var(--br-mono-font)] text-neutral">
-          {deck.word_count}
-          {' '}
-          THẺ
-        </p>
-      </div>
-      <Link
-        to="/custom/$deckId"
-        params={{ deckId: deck.id }}
-        className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
-      >
-        XEM BỘ THẺ
-      </Link>
-    </div>
-  )
-}
-
 export function DecksStudyTab({ userId }: { userId: string }) {
   const { data: decks, isLoading } = useCustomDecks(userId)
 
@@ -64,6 +40,30 @@ export function DecksStudyTab({ userId }: { userId: string }) {
           <CustomDeckRow key={deck.id} deck={deck} />
         ))}
       </div>
+    </div>
+  )
+}
+
+function CustomDeckRow({ deck }: { deck: CustomDeck }) {
+  return (
+    <div className="flex items-center justify-between border-b border-base-content/10 last:border-b-0 p-3 lg:p-4">
+      <div className="min-w-0">
+        <p className="font-[var(--br-heading-font)] text-sm font-bold uppercase tracking-tight truncate">
+          {deck.title}
+        </p>
+        <p className="text-[10px] font-[var(--br-mono-font)] text-neutral">
+          {deck.word_count}
+          {' '}
+          THẺ
+        </p>
+      </div>
+      <Link
+        to="/custom/$deckId"
+        params={{ deckId: deck.id }}
+        className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+      >
+        XEM BỘ THẺ
+      </Link>
     </div>
   )
 }
