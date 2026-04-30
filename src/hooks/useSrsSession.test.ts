@@ -5,36 +5,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { createElement } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { db } from '../db/schema'
 
 import { useSrsSession } from './useSrsSession'
-
-// --- Mocks ---
-
-vi.mock('../db/schema', () => ({
-  db: {
-    user_cards: {
-      where: vi.fn().mockReturnValue({
-        above: vi.fn().mockReturnValue({
-          filter: vi.fn().mockReturnValue({ toArray: vi.fn().mockResolvedValue([]) }),
-        }),
-      }),
-      equals: vi.fn().mockReturnValue({ count: vi.fn().mockResolvedValue(0) }),
-    },
-    vocabulary: {
-      where: vi.fn().mockReturnValue({
-        anyOf: vi.fn().mockReturnValue({ toArray: vi.fn().mockResolvedValue([]) }),
-      }),
-    },
-    sessions: { add: vi.fn().mockResolvedValue(undefined) },
-    streaks: {
-      get: vi.fn().mockResolvedValue(undefined),
-      put: vi.fn().mockResolvedValue(undefined),
-      where: vi.fn().mockReturnValue({
-        equals: vi.fn().mockReturnValue({ first: vi.fn().mockResolvedValue(undefined) }),
-      }),
-    },
-  },
-}))
 
 const mockDueCardsQuery = vi.fn()
 const mockResetTypeInputTracking = vi.fn()
@@ -137,9 +110,14 @@ function makeLoadingResult(): UseQueryResult<CardState[]> {
   })
 }
 
-function makeVocabWithSRS(overrides: Partial<VocabWithSRS> = {}): VocabWithSRS {
+// VocabWithSRS extends VocabItem (vocab_id), but useSrsSession reads vocabId (CardState)
+// when extracting ids for the vocab prefetch query. The cast in tests must include vocabId.
+type VocabWithSRSAndCardId = VocabWithSRS & { vocabId: string }
+
+function makeVocabWithSRS(overrides: Partial<VocabWithSRS> = {}): VocabWithSRSAndCardId {
   return {
     vocab_id: 'mnn1_test0000001',
+    vocabId: 'mnn1_test0000001',
     word: '食べる',
     reading: 'たべる',
     romaji: 'taberu',
@@ -170,10 +148,14 @@ function makeVocabWithSRS(overrides: Partial<VocabWithSRS> = {}): VocabWithSRS {
 // --- Tests ---
 
 describe('useSrsSession', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks()
     mockStreakQuery.mockReturnValue({ data: null })
     mockMeaningLanguage.mockReturnValue('vi')
+    await db.vocabulary.clear()
+    await db.user_cards.clear()
+    await db.sessions.clear()
+    await db.streaks.clear()
   })
 
   describe('phase transitions', () => {
@@ -354,12 +336,24 @@ describe('useSrsSession', () => {
         makeDueCardsResult({ data: [dueCard] as unknown as CardState[], isLoading: false }),
       )
 
-      const { db } = await import('../db/schema')
-      vi.mocked(db.vocabulary.where).mockReturnValue({
-        anyOf: vi.fn().mockReturnValue({
-          toArray: vi.fn().mockResolvedValue([{ vocab_id: dueCard.vocab_id }]),
-        }),
-      } as unknown as ReturnType<typeof db.vocabulary.where>)
+      await db.vocabulary.put({
+        vocab_id: dueCard.vocab_id,
+        word: dueCard.word,
+        reading: dueCard.reading,
+        romaji: dueCard.romaji,
+        meaning_en: dueCard.meaning_en,
+        meaning_vi: dueCard.meaning_vi,
+        pitch_pattern: dueCard.pitch_pattern,
+        pitch_type: dueCard.pitch_type,
+        audio_filename: dueCard.audio_filename,
+        pos: dueCard.pos,
+        jlpt_level: dueCard.jlpt_level,
+        book_source: dueCard.book_source,
+        lesson_number: dueCard.lesson_number,
+        examples: dueCard.examples,
+        tags: dueCard.tags,
+        deprecated: dueCard.deprecated,
+      })
 
       const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
 
