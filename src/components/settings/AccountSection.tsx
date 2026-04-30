@@ -56,27 +56,30 @@ export function AccountSection() {
       await db.settings.delete('review_log_cursor')
       await db.settings.delete('sync_package_version')
 
-      await Promise.allSettled([
-        markProgressReset(userId),
-        supabase.from('user_card_snapshots').delete().eq('user_id', userId),
-        supabase.from('user_sync_packages').delete().eq('user_id', userId),
-        supabase.from('user_cards').delete().eq('user_id', userId),
-        supabase.from('kanji_cards').delete().eq('user_id', userId),
-      ])
+      if (isRealUser) {
+        // Mark reset in Supabase so new-device onboarding skips pre-reset events
+        await Promise.allSettled([
+          markProgressReset(userId),
+          supabase.from('user_card_snapshots').delete().eq('user_id', userId),
+          supabase.from('user_sync_packages').delete().eq('user_id', userId),
+          supabase.from('user_cards').delete().eq('user_id', userId),
+          supabase.from('kanji_cards').delete().eq('user_id', userId),
+        ])
 
-      try {
-        const { data } = await supabase
-          .from('review_log')
-          .select('id')
-          .eq('user_id', userId)
-          .order('id', { ascending: false })
-          .limit(1)
-          .maybeSingle()
-        if (data?.id)
-          await db.settings.put({ key: 'review_log_cursor', value: data.id })
-      }
-      catch {
-        // Offline — progress_reset_at filter in downloadNewReviews handles this
+        try {
+          const { data } = await supabase
+            .from('review_log')
+            .select('id')
+            .eq('user_id', userId)
+            .order('id', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+          if (data?.id)
+            await db.settings.put({ key: 'review_log_cursor', value: data.id })
+        }
+        catch {
+          // Offline — progress_reset_at filter in downloadNewReviews handles this
+        }
       }
 
       queryClient.invalidateQueries({ queryKey: ['due-cards', userId] })
