@@ -4,6 +4,7 @@ import { createElement } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { db } from '../db/schema'
+import { generateVocabId } from '../lib/vocab-id'
 import { useLaunchVocabSession } from './useLaunchVocabSession'
 
 const mockNavigate = vi.fn()
@@ -20,6 +21,14 @@ vi.mock('../stores/studySessionStore', () => ({
 const TEST_USER = 'test-launch-session-user'
 const BOOK_SOURCE = 'minna_shokyuu_1'
 const LESSON_NUMBER = 1
+const PREFIX = 'mnn1'
+
+// Computed via the frozen generateVocabId algorithm — never hardcoded strings.
+const VOCAB_ID_1 = generateVocabId(PREFIX, BOOK_SOURCE, LESSON_NUMBER, null, 'てすと1')
+const VOCAB_ID_2 = generateVocabId(PREFIX, BOOK_SOURCE, LESSON_NUMBER, null, 'てすと2')
+const VOCAB_ID_3 = generateVocabId(PREFIX, BOOK_SOURCE, LESSON_NUMBER, null, 'てすと3')
+const VOCAB_ID_4 = generateVocabId(PREFIX, BOOK_SOURCE, LESSON_NUMBER, null, 'てすと4')
+const VOCAB_ID_5 = generateVocabId(PREFIX, BOOK_SOURCE, LESSON_NUMBER, null, 'てすと5')
 
 function makeWrapper() {
   const queryClient = new QueryClient({
@@ -100,8 +109,8 @@ describe('useLaunchVocabSession', () => {
 
   it('launches session with all vocab when dueOnly=false and no user_cards exist', async () => {
     await db.vocabulary.bulkAdd([
-      makeVocabItem('mnn1_aaa000000001'),
-      makeVocabItem('mnn1_aaa000000002'),
+      makeVocabItem(VOCAB_ID_1),
+      makeVocabItem(VOCAB_ID_2),
     ])
 
     const { result } = renderHook(() => useLaunchVocabSession(TEST_USER), {
@@ -128,8 +137,8 @@ describe('useLaunchVocabSession', () => {
   })
 
   it('filters to only due cards when dueOnly=true', async () => {
-    const dueVocabId = 'mnn1_aaa000000003'
-    const notDueVocabId = 'mnn1_aaa000000004'
+    const dueVocabId = VOCAB_ID_3
+    const notDueVocabId = VOCAB_ID_4
 
     await db.vocabulary.bulkAdd([
       makeVocabItem(dueVocabId),
@@ -156,7 +165,7 @@ describe('useLaunchVocabSession', () => {
   })
 
   it('does not navigate when dueOnly=true but no cards are due', async () => {
-    const vocabId = 'mnn1_aaa000000005'
+    const vocabId = VOCAB_ID_5
 
     await db.vocabulary.add(makeVocabItem(vocabId))
     // Card is due tomorrow — not due today.
