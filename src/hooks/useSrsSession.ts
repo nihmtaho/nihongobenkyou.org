@@ -37,6 +37,7 @@ export interface UseSrsSessionReturn {
   futureCards: { due_date: string }[] | undefined
   totalCardCount: number | undefined
   vocabItems: { vocab_id: string }[] | undefined
+  isVocabReady: boolean
   streak: number | undefined
   meaningLanguage: string
 }
@@ -288,8 +289,9 @@ export function useSrsSession(): UseSrsSessionReturn {
     handleAnswer,
     startError,
     vocabLoadFailed,
+    isVocabReady: !!(vocabItems && vocabItems.length > 0) || vocabLoadFailed,
     dueCards: dueCards as VocabWithSRS[] | undefined,
-    futureCards,
+    futureCards: futureCards as { due_date: string }[] | undefined,
     totalCardCount,
     vocabItems,
     streak: streak?.current_streak,
