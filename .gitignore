@@ -1,3 +1,6 @@
+# git worktrees
+.worktrees/
+
 # documentation
 docs/**
 specs/**
@@ -67,3 +70,6 @@ supabase/.temp/
 
 # Debug screenshots
 *.png
+
+# Supperpower
+.supperpower/
