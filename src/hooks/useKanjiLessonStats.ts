@@ -9,6 +9,7 @@ export interface KanjiLessonSRSStats {
   review: number
   mature: number
   due: number
+  next_due_date: string | null
 }
 
 export interface KanjiLessonStats {
@@ -50,7 +51,7 @@ export function useKanjiLessonStats(userId: string) {
         const ids: string[] = []
         for (const k of kanjiItems) {
           for (const rv of k.related_vocab ?? []) {
-            const id = `rv_${rv.word ?? rv.kana}_${rv.kana}`
+            const id = `rv_${lesson}_${rv.word ?? rv.kana}_${rv.kana}`
             if (!seen.has(id)) {
               seen.add(id)
               ids.push(id)
@@ -83,6 +84,10 @@ export function useKanjiLessonStats(userId: string) {
           review: cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21).length,
           mature: cardList.filter(c => c.interval_days >= 21).length,
           due: cardList.filter(c => c.due_date <= today).length,
+          next_due_date: cardList
+            .filter(c => c.due_date > today)
+            .map(c => c.due_date)
+            .sort()[0] ?? null,
         }
       }
 
@@ -98,6 +103,10 @@ export function useKanjiLessonStats(userId: string) {
           review: cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21 && !c.is_known).length,
           mature: cardList.filter(c => c.interval_days >= 21 || c.is_known).length,
           due: cardList.filter(c => !c.is_known && c.due_date <= today).length,
+          next_due_date: cardList
+            .filter(c => !c.is_known && c.due_date > today)
+            .map(c => c.due_date)
+            .sort()[0] ?? null,
         }
       }
 
