@@ -1,3 +1,4 @@
+import type { LessonStats } from '../../types/study'
 import type { SRSStats } from '../common/SRSProgressBar'
 import type { VocabTypeSubMode } from './KanjiVocabTypeInputCard'
 import { useNavigate } from '@tanstack/react-router'
@@ -33,13 +34,7 @@ function modeKey(m: ModeOption): string {
   return m.vocabSubMode ? `${m.mode}:${m.vocabSubMode}` : m.mode
 }
 
-export interface LessonStats {
-  total: number
-  new: number
-  learning: number
-  review: number
-  mature: number
-}
+export type { LessonStats } from '../../types/study'
 
 interface ModeRowProps {
   type: StudyType

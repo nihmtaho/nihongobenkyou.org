@@ -41,7 +41,7 @@ describe('vocabStudyModal', () => {
   it('renders SRS stat legend when stats prop provided', () => {
     const stats = { total: 23, new: 5, learning: 8, review: 6, mature: 4 }
     render(<VocabStudyModal {...defaultProps} stats={stats} />)
-    // Each stat renders its count as a bold span
+    expect(screen.getByText('5')).toBeInTheDocument() // new count
     expect(screen.getByText('8')).toBeInTheDocument() // learning count
     expect(screen.getByText('6')).toBeInTheDocument() // review count
     expect(screen.getByText('4')).toBeInTheDocument() // mature count

@@ -1,16 +1,15 @@
-import type { StudyMode, TypeInputSubMode } from '../../types/study'
-import type { LessonStats } from '../kanji/KanjiStudyModal'
+import type { LessonStats, StudyMode, TypeInputSubMode } from '../../types/study'
 import { useEffect } from 'react'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 
-interface VocabStudyModalProps {
-  title: string
-  context: 'all' | 'due'
-  dueCount?: number
+type VocabStudyModalProps = {
   stats?: LessonStats
   onLaunch: (mode: StudyMode, subMode?: TypeInputSubMode) => void
   onClose: () => void
-}
+} & (
+  | { context: 'all', title: string, dueCount?: never }
+  | { context: 'due', title: string, dueCount: number }
+)
 
 interface ModeOption {
   mode: StudyMode
