@@ -27,11 +27,13 @@ async function setLocalVersion(version: number): Promise<void> {
 }
 
 export async function buildPackage(userId: string): Promise<SyncPackagePayload> {
-  const [userCards, kanjiCards, customDecks, customVocab] = await Promise.all([
+  const [userCards, kanjiCards, customDecks, customVocab, reviewLog, streaks] = await Promise.all([
     db.user_cards.toCollection().filter(c => c.userId === userId).toArray(),
     db.kanji_cards.toCollection().filter(c => c.userId === userId).toArray(),
     db.custom_decks.where('user_id').equals(userId).toArray(),
     db.custom_vocabulary.where('user_id').equals(userId).toArray(),
+    db.review_log.filter(e => e.userId === userId).toArray(),
+    db.streaks.where('userId').equals(userId).toArray(),
   ])
 
   return {
@@ -39,8 +41,8 @@ export async function buildPackage(userId: string): Promise<SyncPackagePayload> 
     kanji_cards: kanjiCards,
     custom_decks: customDecks,
     custom_vocabulary: customVocab,
-    review_log: [],
-    streaks: [],
+    review_log: reviewLog,
+    streaks,
   }
 }
 
@@ -87,6 +89,35 @@ export async function mergePackageIntoDexie(
     const local = await db.custom_vocabulary.get(remote.id)
     if (!local) {
       await db.custom_vocabulary.put(remote)
+      imported++
+    }
+  }
+
+  // review_log: append-only — dedup by (vocabId, cardType, reviewedAt).
+  // Build a Set of existing natural keys to avoid a per-entry async lookup.
+  const existingKeys = new Set(
+    (await db.review_log.filter(e => e.userId === userId).toArray())
+      .map(e => `${e.vocabId}:${e.cardType}:${e.reviewedAt}`),
+  )
+  for (const remote of payload.review_log ?? []) {
+    if (remote.userId !== userId)
+      continue
+    const key = `${remote.vocabId}:${remote.cardType}:${remote.reviewedAt}`
+    if (!existingKeys.has(key)) {
+      const { id: _id, ...entry } = remote
+      await db.review_log.add({ ...entry, pendingSync: false })
+      existingKeys.add(key)
+      imported++
+    }
+  }
+
+  // streaks: upsert by date — keep whichever has the higher current_streak.
+  for (const remote of payload.streaks ?? []) {
+    if (remote.userId !== userId)
+      continue
+    const local = await db.streaks.get(remote.date)
+    if (!local || remote.current_streak > local.current_streak) {
+      await db.streaks.put({ ...remote, userId })
       imported++
     }
   }
