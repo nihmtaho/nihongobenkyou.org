@@ -1,6 +1,6 @@
 import type { SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { db } from '../db/schema'
 import { uploadPendingReviews } from '../db/sync'
 import { calculateNextReview } from '../lib/srs'
@@ -15,6 +15,7 @@ interface SRSMutationVars {
 }
 
 export function useSRSMutation() {
+  const queryClient = useQueryClient()
   return useMutation<void, Error, SRSMutationVars>({
     mutationFn: async ({ userId, card, rating }) => {
       const result = calculateNextReview(
@@ -67,6 +68,9 @@ export function useSRSMutation() {
       })
 
       uploadPendingReviews().catch(() => {})
+    },
+    onSuccess: (_data, { userId }) => {
+      queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
     },
     retry: 0,
   })

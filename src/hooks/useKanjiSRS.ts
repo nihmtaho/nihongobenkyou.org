@@ -75,6 +75,7 @@ export function useKanjiSRS(userId: string) {
       uploadPendingReviews().catch(() => {})
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
       queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
       queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] })
     },

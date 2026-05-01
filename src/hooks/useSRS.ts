@@ -166,6 +166,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
       if (subject === 'kanji') {
         queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
         queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] })
