@@ -1,5 +1,7 @@
 import type { LessonVocabStats } from '../../hooks/useVocabLessonStats'
+import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import { useQueries } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useLaunchVocabSession } from '../../hooks/useLaunchVocabSession'
 import { useNextVocabDue } from '../../hooks/useNextVocabDue'
 import { useStreak } from '../../hooks/useStreak'
@@ -13,6 +15,7 @@ import { SectionLabel } from './shared/SectionLabel'
 import { SkeletonRows } from './shared/SkeletonRows'
 import { StatPip } from './shared/StatPip'
 import { StatsGrid } from './shared/StatsGrid'
+import { VocabStudyModal } from './VocabStudyModal'
 
 export function VocabStudyTab({ userId }: { userId: string }) {
   const enabledBooks = datasets.filter(d => d.enabled)
@@ -31,6 +34,12 @@ export function VocabStudyTab({ userId }: { userId: string }) {
   const { data: nextDueDate } = useNextVocabDue(userId)
   const { data: streak } = useStreak(userId)
   const launchSession = useLaunchVocabSession(userId)
+
+  const [activeModal, setActiveModal] = useState<{
+    bookId: string
+    lesson: LessonVocabStats
+    context: 'all' | 'due'
+  } | null>(null)
 
   const bookGroups = enabledBooks
     .map((book, i) => {
@@ -93,8 +102,8 @@ export function VocabStudyTab({ userId }: { userId: string }) {
                       key={lesson.lesson_number}
                       lesson={lesson}
                       animDelay={i * 0.04}
-                      onReview={() => launchSession(book.id, lesson.lesson_number, true)}
-                      onStudy={() => launchSession(book.id, lesson.lesson_number, false)}
+                      onReview={() => setActiveModal({ bookId: book.id, lesson, context: 'due' })}
+                      onStudy={() => setActiveModal({ bookId: book.id, lesson, context: 'all' })}
                     />
                   ))}
                 </div>
@@ -109,6 +118,27 @@ export function VocabStudyTab({ userId }: { userId: string }) {
                 ctaLink="/books"
               />
             )}
+      {activeModal && (
+        <VocabStudyModal
+          title={`Bài ${String(activeModal.lesson.lesson_number).padStart(2, '0')}`}
+          {...(activeModal.context === 'due'
+            ? { context: 'due' as const, dueCount: activeModal.lesson.due }
+            : { context: 'all' as const })}
+          stats={{
+            total: activeModal.lesson.vocab_count,
+            new: activeModal.lesson.new,
+            learning: activeModal.lesson.learning,
+            review: activeModal.lesson.review,
+            mature: activeModal.lesson.mature,
+          }}
+          onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode) => {
+            const { bookId, lesson, context } = activeModal
+            setActiveModal(null)
+            launchSession(bookId, lesson.lesson_number, context === 'due', mode, subMode)
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
     </div>
   )
 }
