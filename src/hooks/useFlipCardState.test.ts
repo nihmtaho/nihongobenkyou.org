@@ -66,4 +66,41 @@ describe('useFlipCardState', () => {
       expect(result.current.rotate).toBeDefined()
     })
   })
+
+  describe('keyboard handler', () => {
+    it('flips card on Space key', () => {
+      const { result } = renderHook(() => useFlipCardState(vi.fn()))
+      act(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }))
+      })
+      expect(result.current.isFlipped).toBe(true)
+    })
+
+    it('calls onRate with correct rating on keys 1-4 when flipped', () => {
+      const mockOnRate = vi.fn()
+      const { result } = renderHook(() => useFlipCardState(mockOnRate))
+      act(() => result.current.setIsFlipped(true))
+
+      const keys = ['1', '2', '3', '4'] as const
+      const expectedRatings = [0, 1, 2, 3] as const
+
+      keys.forEach((key, i) => {
+        mockOnRate.mockClear()
+        act(() => {
+          window.dispatchEvent(new KeyboardEvent('keydown', { key }))
+        })
+        expect(mockOnRate).toHaveBeenCalledWith(expectedRatings[i])
+      })
+    })
+
+    it('does not call onRate on keys 1-4 when not flipped', () => {
+      const mockOnRate = vi.fn()
+      renderHook(() => useFlipCardState(mockOnRate))
+
+      act(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: '1' }))
+      })
+      expect(mockOnRate).not.toHaveBeenCalled()
+    })
+  })
 })
