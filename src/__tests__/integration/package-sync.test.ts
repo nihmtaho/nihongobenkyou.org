@@ -1,17 +1,15 @@
+import type { StreakData } from '../../db/schema'
+
+import type { ReviewLogEntry } from '../../types/review-log'
 import type { SyncPackagePayload } from '../../types/sync-package'
-import { describe, expect, it } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 
 describe('syncPackagePayload shape', () => {
-  it('includes review_log and streaks arrays', () => {
-    const payload: SyncPackagePayload = {
-      user_cards: [],
-      kanji_cards: [],
-      custom_decks: [],
-      custom_vocabulary: [],
-      review_log: [],
-      streaks: [],
-    }
-    expect(Array.isArray(payload.review_log)).toBe(true)
-    expect(Array.isArray(payload.streaks)).toBe(true)
+  it('review_log is typed as ReviewLogEntry[]', () => {
+    expectTypeOf<SyncPackagePayload['review_log']>().toEqualTypeOf<ReviewLogEntry[]>()
+  })
+
+  it('streaks is typed as StreakData[]', () => {
+    expectTypeOf<SyncPackagePayload['streaks']>().toEqualTypeOf<StreakData[]>()
   })
 })
