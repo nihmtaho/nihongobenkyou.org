@@ -110,10 +110,10 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-2 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
 
       {/* ── LEFT: Prompt panel ── */}
-      <div className="bg-base-200 p-6 lg:p-10 flex flex-col justify-center gap-4 border-b lg:border-b-0 lg:border-r border-base-content/10 min-h-[38vh] lg:min-h-[52vh]">
+      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           {card.pos.join(' · ')}
           {' '}
@@ -124,13 +124,13 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
 
         {subMode === 'word→hira' || subMode === 'word→vi'
           ? (
-              <p className="text-5xl lg:text-7xl font-bold font-[var(--br-jp-font)] leading-tight break-all">
+              <p className="text-6xl font-bold font-[var(--br-jp-font)] leading-tight break-all">
                 {word}
               </p>
             )
           : (
               <div className="flex flex-col gap-2">
-                <p className="text-3xl lg:text-4xl font-bold leading-snug">
+                <p className="text-3xl font-bold leading-snug">
                   {card.meaning_vi}
                 </p>
                 <p className="text-sm text-neutral">{card.meaning_en}</p>
@@ -155,7 +155,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
       </div>
 
       {/* ── RIGHT: Input panel ── */}
-      <div className="p-6 lg:p-10 flex flex-col justify-center gap-5 min-h-[38vh] lg:min-h-[52vh]">
+      <div className="p-6 flex flex-col gap-5">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           {subMode === 'word→hira'
             ? 'GÕ CÁCH ĐỌC (HIRAGANA)'
