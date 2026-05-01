@@ -1,21 +1,14 @@
 import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useFlipCardState } from '../../hooks/useFlipCardState'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
 import { useSettingsStore } from '../../stores/settingsStore'
 import { AudioButton } from '../vocabulary/AudioButton'
 import { PitchAccentBars } from '../vocabulary/PitchAccentBars'
-
-const RATING_LABELS: Record<SRSRating, string> = { 0: 'Again', 1: 'Hard', 2: 'Good', 3: 'Easy' }
-const RATING_CLASSES: Record<SRSRating, string> = {
-  0: 'btn-error',
-  1: 'btn-warning',
-  2: 'btn-success',
-  3: 'btn-info',
-}
+import { RatingBar } from './shared/RatingBar'
 
 // Grid-overlay flip: both faces occupy gridArea 1/1 — container auto-heights
 const GRID_FACE: React.CSSProperties = { gridArea: '1 / 1' }
@@ -33,9 +26,7 @@ interface FlipCardProps {
 }
 
 export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
-  const [isFlipped, setIsFlipped] = useState(false)
-  const x = useMotionValue(0)
-  const rotate = useTransform(x, [-300, 0, 300], [-12, 0, 12])
+  const { isFlipped, setIsFlipped, x, rotate, handleDragEnd } = useFlipCardState(onRate)
   const fontSize = useSettingsStore(s => s.fontSize)
 
   const word = card.word ?? card.reading
@@ -45,37 +36,6 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
 
   const primaryMeaning = meaningLanguage === 'en' ? card.meaning_en : card.meaning_vi
   const secondaryMeaning = meaningLanguage === 'both' ? card.meaning_en : null
-
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
-        return
-      if (e.code === 'Space') {
-        e.preventDefault()
-        setIsFlipped(f => !f)
-        return
-      }
-      if (!isFlipped)
-        return
-      if (e.key >= '1' && e.key <= '4') {
-        const ratings: SRSRating[] = [0, 1, 2, 3]
-        onRate(ratings[Number(e.key) - 1])
-      }
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [isFlipped, onRate])
-
-  function handleDragEnd(_: unknown, info: { offset: { x: number } }) {
-    if (!isFlipped)
-      return
-    if (info.offset.x > 100)
-      onRate(2)
-    else if (info.offset.x < -100)
-      onRate(0)
-    else
-      x.set(0)
-  }
 
   const examples = card.examples.slice(0, 2)
 
@@ -202,24 +162,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
       </motion.div>
 
       {/* Rating bar */}
-      {isFlipped && (
-        <div className="join w-full">
-          {([0, 1, 2, 3] as SRSRating[]).map((r, idx) => (
-            <button
-              key={r}
-              type="button"
-              className={`btn join-item flex-1 ${RATING_CLASSES[r]} font-[var(--br-mono-font)] text-[11px] flex flex-col gap-0.5 py-2`}
-              onClick={(e) => {
-                e.stopPropagation()
-                onRate(r)
-              }}
-            >
-              <span className="font-bold">{RATING_LABELS[r]}</span>
-              <span className="opacity-50 text-[9px]">{`[${idx + 1}]`}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      {isFlipped && <RatingBar onRate={onRate} />}
 
       <p className="text-[10px] text-base-content/25 font-[var(--br-mono-font)] tracking-wide">
         {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · swipe'}
