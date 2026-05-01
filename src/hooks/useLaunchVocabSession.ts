@@ -1,3 +1,4 @@
+import type { StudyMode, TypeInputSubMode } from '../types/study'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -9,7 +10,13 @@ export function useLaunchVocabSession(userId: string) {
   const initSession = useStudySessionStore(s => s.initSession)
   const [isLaunching, setIsLaunching] = useState(false)
 
-  async function launch(bookSource: string, lessonNumber: number, dueOnly: boolean) {
+  async function launch(
+    bookSource: string,
+    lessonNumber: number,
+    dueOnly: boolean,
+    mode: StudyMode = 'flashcard',
+    subMode?: TypeInputSubMode,
+  ) {
     if (isLaunching || !userId)
       return
     setIsLaunching(true)
@@ -64,8 +71,8 @@ export function useLaunchVocabSession(userId: string) {
       if (queue.length === 0)
         return
 
-      initSession(queue, 'flashcard')
-      navigate({ to: '/study/$mode', params: { mode: 'flashcard' } })
+      initSession(queue, mode, subMode)
+      navigate({ to: '/study/$mode', params: { mode } })
     }
     finally {
       setIsLaunching(false)

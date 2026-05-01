@@ -182,4 +182,36 @@ describe('useLaunchVocabSession', () => {
     expect(mockInitSession).not.toHaveBeenCalled()
     expect(mockNavigate).not.toHaveBeenCalled()
   })
+
+  it('passes mode to initSession when mode is specified', async () => {
+    await db.vocabulary.add(makeVocabItem(VOCAB_ID_1))
+
+    const { result } = renderHook(() => useLaunchVocabSession(TEST_USER), {
+      wrapper: makeWrapper(),
+    })
+
+    await act(async () => {
+      await result.current(BOOK_SOURCE, LESSON_NUMBER, false, 'quiz')
+    })
+
+    expect(mockInitSession).toHaveBeenCalledOnce()
+    expect(mockInitSession.mock.calls[0][1]).toBe('quiz')
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/study/$mode', params: { mode: 'quiz' } })
+  })
+
+  it('passes subMode to initSession when subMode is specified', async () => {
+    await db.vocabulary.add(makeVocabItem(VOCAB_ID_2))
+
+    const { result } = renderHook(() => useLaunchVocabSession(TEST_USER), {
+      wrapper: makeWrapper(),
+    })
+
+    await act(async () => {
+      await result.current(BOOK_SOURCE, LESSON_NUMBER, false, 'type-input', 'word→hira')
+    })
+
+    expect(mockInitSession).toHaveBeenCalledOnce()
+    expect(mockInitSession.mock.calls[0][1]).toBe('type-input')
+    expect(mockInitSession.mock.calls[0][2]).toBe('word→hira')
+  })
 })
