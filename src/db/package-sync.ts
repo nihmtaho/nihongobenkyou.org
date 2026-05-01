@@ -51,7 +51,7 @@ export async function mergePackageIntoDexie(
   userId: string,
   payload: SyncPackagePayload,
 ): Promise<number> {
-  return db.transaction<number>('rw', [
+  return db.transaction('rw', [
     'user_cards',
     'kanji_cards',
     'custom_decks',
