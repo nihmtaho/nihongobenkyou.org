@@ -182,18 +182,18 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
                 </button>
                 <button
                   className="btn btn-ghost w-full font-[var(--br-mono-font)] uppercase text-[11px]"
-                  onClick={() => navigate({ to: '/' })}
+                  onClick={() => navigate({ to: '/study' })}
                 >
-                  Về trang chủ
+                  Về Study
                 </button>
               </>
             )
           : (
               <button
                 className="btn btn-primary w-full font-[var(--br-heading-font)] uppercase tracking-wide"
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => navigate({ to: '/study' })}
               >
-                VỀ TRANG CHỦ
+                VỀ STUDY
               </button>
             )}
       </div>

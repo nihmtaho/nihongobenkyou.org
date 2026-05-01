@@ -165,7 +165,7 @@ function StudyPage() {
   }, [isComplete, userId, queue, sessionMode, stats])
 
   if (queue.length === 0) {
-    return <EmptySessionScreen onNavigate={() => navigate({ to: '/books' })} />
+    return <EmptySessionScreen onNavigate={() => navigate({ to: '/study' })} />
   }
 
   // Derive lesson context from the session queue for "back to lesson" navigation
