@@ -7,7 +7,7 @@ import { db } from '../../db/schema'
 import { useDueCards } from '../../hooks/useDueCards'
 import { useSRSMutation } from '../../hooks/useSRSMutation'
 
-vi.mock('../../db/sync', () => ({ flushPendingSync: vi.fn().mockResolvedValue(undefined) }))
+vi.mock('../../db/sync', () => ({ uploadPendingReviews: vi.fn().mockResolvedValue(undefined), downloadNewReviews: vi.fn().mockResolvedValue(undefined) }))
 
 const TEST_USER_ID = 'test-user-srs'
 const PAST_DATE = '2020-01-01T00:00:00.000Z'
@@ -41,11 +41,13 @@ function makeCard(vocabIdx: number, overrides: Partial<Parameters<typeof db.user
 beforeEach(async () => {
   await db.user_cards.clear()
   await db.vocabulary.clear()
+  await db.review_log.clear()
 })
 
 afterEach(async () => {
   await db.user_cards.clear()
   await db.vocabulary.clear()
+  await db.review_log.clear()
 })
 
 describe('useDueCards', () => {
@@ -129,7 +131,7 @@ describe('sc-004 — card transition performance', () => {
 })
 
 describe('again re-queue limit (FR-004)', () => {
-  it('4th Again rates card with interval=1 and sets pending_sync', async () => {
+  it('4th Again rates card with interval=1 (review_log tracks sync)', async () => {
     const vocab = sampleVocabulary[0]
     await db.vocabulary.put(vocab)
     await db.user_cards.put(makeCard(0))
@@ -156,7 +158,7 @@ describe('again re-queue limit (FR-004)', () => {
 
     const stored = await db.user_cards.get([TEST_USER_ID, vocab.vocab_id])
     expect(stored?.interval_days).toBe(1)
-    expect(stored?.pending_sync).toBe(true)
+    expect(stored?.pending_sync).toBe(false)
     expect(stored?.last_rating).toBe(0)
   })
 })
@@ -169,7 +171,7 @@ describe('useSRSMutation', () => {
     return vocab
   }
 
-  it('good rating (2): sets pending_sync, advances interval, future due_date', async () => {
+  it('good rating (2): advances interval, future due_date, review_log entry created', async () => {
     const vocab = await seedCardAndVocab(0)
 
     const { result } = renderHook(() => useSRSMutation(), { wrapper: makeWrapper() })
@@ -193,14 +195,14 @@ describe('useSRSMutation', () => {
 
     const stored = await db.user_cards.get([TEST_USER_ID, vocab.vocab_id])
     expect(stored).toBeDefined()
-    expect(stored!.pending_sync).toBe(true)
+    expect(stored!.pending_sync).toBe(false)
     expect(stored!.interval_days).toBeGreaterThan(1)
     expect(new Date(stored!.due_date).getTime()).toBeGreaterThan(Date.now())
     expect(stored!.review_count).toBe(2)
     expect(stored!.last_rating).toBe(2)
   })
 
-  it('again rating (0): resets interval to 1, sets pending_sync', async () => {
+  it('again rating (0): resets interval to 1, review_log entry created', async () => {
     const vocab = await seedCardAndVocab(1)
 
     const { result } = renderHook(() => useSRSMutation(), { wrapper: makeWrapper() })
@@ -224,7 +226,7 @@ describe('useSRSMutation', () => {
 
     const stored = await db.user_cards.get([TEST_USER_ID, vocab.vocab_id])
     expect(stored).toBeDefined()
-    expect(stored!.pending_sync).toBe(true)
+    expect(stored!.pending_sync).toBe(false)
     expect(stored!.interval_days).toBe(1)
     expect(stored!.last_rating).toBe(0)
   })

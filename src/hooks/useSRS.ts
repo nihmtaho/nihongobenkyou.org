@@ -4,10 +4,9 @@ import type { CardState, SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRef } from 'react'
-import { flushKanjiCards } from '../api/kanji-cards'
 import { getDueKanjiCards, updateKanjiCard } from '../db/kanji'
 import { db } from '../db/schema'
-import { flushPendingSync } from '../db/sync'
+import { uploadPendingReviews } from '../db/sync'
 import { calculateNextReview } from '../lib/srs'
 
 const KNOWN_MIN_INTERVAL = 21
@@ -105,7 +104,24 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       const newReviewCount = cardState.review_count + 1
       const is_known = result.new_interval >= KNOWN_MIN_INTERVAL && newReviewCount >= KNOWN_MIN_REVIEWS
 
+      const now = new Date().toISOString()
+
       if ('vocab_id' in card) {
+        await db.review_log.add({
+          userId,
+          vocabId: card.vocab_id,
+          bookSource: card.book_source ?? 'minna_shokyuu_1',
+          cardType: 'vocab',
+          rating,
+          intervalDays: result.new_interval,
+          easeFactor: result.new_ease,
+          dueDate: result.due_date,
+          reviewCount: newReviewCount,
+          isKnown: is_known,
+          reviewedAt: now,
+          pendingSync: true,
+          remoteId: null,
+        })
         await db.user_cards.put({
           userId,
           vocabId: card.vocab_id,
@@ -114,13 +130,28 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
           due_date: result.due_date,
           review_count: newReviewCount,
           last_rating: rating,
-          pending_sync: true,
-          updated_at: new Date().toISOString(),
+          pending_sync: false,
+          updated_at: now,
           is_known,
         })
-        flushPendingSync().catch(() => {})
+        uploadPendingReviews().catch(() => {})
       }
       else {
+        await db.review_log.add({
+          userId,
+          vocabId: card.char,
+          bookSource: 'kanji',
+          cardType: 'kanji',
+          rating,
+          intervalDays: result.new_interval,
+          easeFactor: result.new_ease,
+          dueDate: result.due_date,
+          reviewCount: newReviewCount,
+          isKnown: false,
+          reviewedAt: now,
+          pendingSync: true,
+          remoteId: null,
+        })
         await updateKanjiCard({
           ...card,
           interval_days: result.new_interval,
@@ -128,10 +159,10 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
           due_date: result.due_date,
           review_count: newReviewCount,
           last_rating: rating,
-          pending_sync: true,
-          updated_at: new Date().toISOString(),
+          pending_sync: false,
+          updated_at: now,
         })
-        flushKanjiCards(userId).catch(() => {})
+        uploadPendingReviews().catch(() => {})
       }
     },
     onSuccess: () => {

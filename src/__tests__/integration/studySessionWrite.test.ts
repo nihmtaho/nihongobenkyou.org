@@ -7,7 +7,7 @@ import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import { db } from '../../db/schema'
 import { useSRSMutation } from '../../hooks/useSRSMutation'
 
-vi.mock('../../db/sync', () => ({ flushPendingSync: vi.fn().mockResolvedValue(undefined) }))
+vi.mock('../../db/sync', () => ({ uploadPendingReviews: vi.fn().mockResolvedValue(undefined), downloadNewReviews: vi.fn().mockResolvedValue(undefined) }))
 
 const TEST_USER_ID = 'test-user-001'
 
@@ -169,11 +169,13 @@ describe('per-rating Dexie writes — ratingCounts data coverage (T031)', () => 
   beforeEach(async () => {
     await db.user_cards.clear()
     await db.vocabulary.clear()
+    await db.review_log.clear()
   })
 
   afterEach(async () => {
     await db.user_cards.clear()
     await db.vocabulary.clear()
+    await db.review_log.clear()
   })
 
   const ratingCases: Array<{ rating: SRSRating, label: string }> = [
@@ -184,7 +186,7 @@ describe('per-rating Dexie writes — ratingCounts data coverage (T031)', () => 
   ]
 
   for (const { rating, label } of ratingCases) {
-    it(`${label} (rating=${rating}): writes last_rating=${rating} with pending_sync=true`, async () => {
+    it(`${label} (rating=${rating}): writes last_rating=${rating} and pending_sync=false (review_log tracks sync)`, async () => {
       const vocab = await seedCard(rating)
       const { result } = renderHook(() => useSRSMutation(), { wrapper: makeWrapper() })
 
@@ -194,7 +196,7 @@ describe('per-rating Dexie writes — ratingCounts data coverage (T031)', () => 
       const stored = await db.user_cards.get([TEST_USER, vocab.vocab_id])
       expect(stored).toBeDefined()
       expect(stored!.last_rating).toBe(rating)
-      expect(stored!.pending_sync).toBe(true)
+      expect(stored!.pending_sync).toBe(false)
     })
   }
 

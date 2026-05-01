@@ -18,7 +18,7 @@ function classifyError(error: { message: string, status?: number, code?: string 
 export async function fetchProfile(userId: string): Promise<UserProfile> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('user_id, display_name, avatar_url, created_at, updated_at, deleted_at')
+    .select('user_id, display_name, avatar_url, created_at, updated_at, deleted_at, progress_reset_at')
     .eq('user_id', userId)
     .single()
 
@@ -29,6 +29,16 @@ export async function fetchProfile(userId: string): Promise<UserProfile> {
   }
 
   return data as UserProfile
+}
+
+export async function markProgressReset(userId: string): Promise<void> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ progress_reset_at: new Date().toISOString() })
+    .eq('user_id', userId)
+
+  if (error)
+    classifyError(error)
 }
 
 export async function updateProfile(
@@ -46,7 +56,7 @@ export async function updateProfile(
   const { data, error } = await supabase
     .from('profiles')
     .upsert({ user_id: userId, ...updates }, { onConflict: 'user_id' })
-    .select('user_id, display_name, avatar_url, created_at, updated_at, deleted_at')
+    .select('user_id, display_name, avatar_url, created_at, updated_at, deleted_at, progress_reset_at')
     .single()
 
   if (error)
