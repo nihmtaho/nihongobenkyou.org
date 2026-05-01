@@ -71,11 +71,12 @@ function DeckDetailPage() {
   }
 
   function launchDeckSession(mode: StudyMode, subMode?: TypeInputSubMode) {
-    if (!userId || !words.length)
+    if (!words.length)
       return
     const today = new Date().toISOString().slice(0, 10)
     const timestamp = new Date().toISOString()
-    const queue = words.map(w => ({
+    // userId is guaranteed by the _authenticated route guard
+    const queue: VocabWithSRS[] = words.map((w): VocabWithSRS => ({
       vocab_id: w.id,
       word: w.kanji,
       reading: w.kana,
@@ -96,11 +97,11 @@ function DeckDetailPage() {
       ease_factor: 2.5,
       due_date: today,
       review_count: 0,
-      last_rating: null as null,
+      last_rating: null,
       pending_sync: false,
       updated_at: timestamp,
       is_known: false,
-    })) as VocabWithSRS[]
+    }))
     initSession(queue, mode, subMode)
     navigate({ to: '/study/$mode', params: { mode } })
   }
