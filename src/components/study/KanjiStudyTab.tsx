@@ -1,10 +1,12 @@
 import type { KanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 
-import { Link } from '@tanstack/react-router'
+import type { LessonStats } from '../../types/study'
+import { useState } from 'react'
 
 import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import { useNextKanjiDue } from '../../hooks/useNextKanjiDue'
 import { SRSProgressBar } from '../common/SRSProgressBar'
+import { KanjiStudyModal } from '../kanji/KanjiStudyModal'
 
 import { DueCard } from './shared/DueCard'
 import { EmptyState } from './shared/EmptyState'
@@ -18,6 +20,13 @@ import { UnstartedCollapse } from './shared/UnstartedCollapse'
 export function KanjiStudyTab({ userId }: { userId: string }) {
   const { data: lessons, isLoading } = useKanjiLessonStats(userId)
   const { data: nextKanjiDue } = useNextKanjiDue(userId)
+
+  const [openModal, setOpenModal] = useState<{
+    lessonNum: number
+    stats: LessonStats
+  } | null>(null)
+
+  const openLesson = openModal
 
   const activeLessons = lessons?.filter(
     l => l.kanji.learning + l.kanji.review + l.kanji.mature + l.vocab.learning + l.vocab.review + l.vocab.mature > 0,
@@ -71,7 +80,12 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                   <SectionLabel label="BÀI ĐANG HỌC" count={activeLessons.length} />
                   <div className="border border-base-content/10">
                     {activeLessons.map((lesson, i) => (
-                      <KanjiLessonRow key={lesson.lessonNumber} lesson={lesson} animDelay={i * 0.04} />
+                      <KanjiLessonRow
+                        key={lesson.lessonNumber}
+                        lesson={lesson}
+                        animDelay={i * 0.04}
+                        onOpenModal={stats => setOpenModal({ lessonNum: lesson.lessonNumber, stats })}
+                      />
                     ))}
                   </div>
                 </div>
@@ -110,26 +124,59 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                           từ
                         </span>
                       </div>
-                      <Link
-                        to="/kanji/lesson-study"
-                        search={{ lesson: lesson.lessonNumber, type: 'kanji', mode: 'flashcard' }}
+                      <button
                         className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+                        onClick={() =>
+                          setOpenModal({
+                            lessonNum: lesson.lessonNumber,
+                            stats: {
+                              total: lesson.kanji.total + lesson.vocab.total,
+                              new: lesson.kanji.new + lesson.vocab.new,
+                              learning: 0,
+                              review: 0,
+                              mature: 0,
+                            },
+                          })}
                       >
                         BẮT ĐẦU
-                      </Link>
+                      </button>
                     </div>
                   ))}
                 </UnstartedCollapse>
               )}
             </>
           )}
+
+      {openLesson && (
+        <KanjiStudyModal
+          lessonNum={openLesson.lessonNum}
+          stats={openLesson.stats}
+          onClose={() => setOpenModal(null)}
+        />
+      )}
     </div>
   )
 }
 
-function KanjiLessonRow({ lesson, animDelay }: { lesson: KanjiLessonStats, animDelay: number }) {
+function KanjiLessonRow({
+  lesson,
+  animDelay,
+  onOpenModal,
+}: {
+  lesson: KanjiLessonStats
+  animDelay: number
+  onOpenModal: (stats: LessonStats) => void
+}) {
   const { lessonNumber, kanji, vocab } = lesson
   const totalDue = kanji.due + vocab.due
+
+  const combinedStats: LessonStats = {
+    total: kanji.total + vocab.total,
+    new: kanji.new + vocab.new,
+    learning: kanji.learning + vocab.learning,
+    review: kanji.review + vocab.review,
+    mature: kanji.mature + vocab.mature,
+  }
 
   return (
     <div
@@ -159,8 +206,7 @@ function KanjiLessonRow({ lesson, animDelay }: { lesson: KanjiLessonStats, animD
           labelVi="Hán tự đơn"
           stats={kanji}
           animDelay={animDelay}
-          lessonNumber={lessonNumber}
-          cardType="kanji"
+          onOpenModal={() => onOpenModal(combinedStats)}
         />
       )}
       {vocab.total > 0 && (
@@ -169,8 +215,7 @@ function KanjiLessonRow({ lesson, animDelay }: { lesson: KanjiLessonStats, animD
           labelVi="Từ vựng hán tự"
           stats={vocab}
           animDelay={animDelay + 0.04}
-          lessonNumber={lessonNumber}
-          cardType="vocab"
+          onOpenModal={() => onOpenModal(combinedStats)}
         />
       )}
     </div>
@@ -182,15 +227,13 @@ function KanjiSubRow({
   labelVi,
   stats,
   animDelay,
-  lessonNumber,
-  cardType,
+  onOpenModal,
 }: {
   label: string
   labelVi: string
   stats: KanjiLessonStats['kanji']
   animDelay: number
-  lessonNumber: number
-  cardType: 'kanji' | 'vocab'
+  onOpenModal: () => void
 }) {
   const { total, new: newCount, learning, review, mature, due } = stats
 
@@ -214,23 +257,21 @@ function KanjiSubRow({
       </div>
       <div className="flex gap-1.5 flex-none">
         {due > 0 && (
-          <Link
-            to="/kanji/lesson-study"
-            search={{ lesson: lessonNumber, type: cardType, mode: 'flashcard' }}
+          <button
             className="btn btn-primary btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+            onClick={onOpenModal}
           >
             ÔN (
             {due}
             )
-          </Link>
+          </button>
         )}
-        <Link
-          to="/kanji/lesson-study"
-          search={{ lesson: lessonNumber, type: cardType, mode: 'flashcard' }}
+        <button
           className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+          onClick={onOpenModal}
         >
           HỌC
-        </Link>
+        </button>
       </div>
     </div>
   )
