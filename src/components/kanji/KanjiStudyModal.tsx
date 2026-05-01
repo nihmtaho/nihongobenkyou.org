@@ -88,10 +88,11 @@ function ModeRow({ type, modeOpt, index, onSelect }: ModeRowProps) {
 interface KanjiStudyModalProps {
   lessonNum: number
   stats: LessonStats
+  type?: 'kanji' | 'vocab'
   onClose: () => void
 }
 
-export function KanjiStudyModal({ lessonNum, stats, onClose }: KanjiStudyModalProps) {
+export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyModalProps) {
   const { total, new: newCount, learning, review, mature } = stats
   const studied = learning + review + mature
   const navigate = useNavigate()
@@ -191,48 +192,52 @@ export function KanjiStudyModal({ lessonNum, stats, onClose }: KanjiStudyModalPr
         </div>
 
         {/* ── 単漢字 section ── */}
-        <div>
-          <div className="flex items-center gap-2 px-5 py-2 border-y border-base-content/10 bg-base-300/50">
-            <div className="w-0.5 h-3.5 bg-primary shrink-0" />
-            <span
-              className="text-[13px] font-bold leading-none"
-              style={{ fontFamily: 'var(--br-jp-font)' }}
-            >
-              単漢字
-            </span>
-            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-neutral ml-1">
-              KANJI ĐƠN
-            </span>
-            <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/25 ml-auto">
-              {KANJI_MODES.length}
-            </span>
+        {(type === undefined || type === 'kanji') && (
+          <div>
+            <div className="flex items-center gap-2 px-5 py-2 border-y border-base-content/10 bg-base-300/50">
+              <div className="w-0.5 h-3.5 bg-primary shrink-0" />
+              <span
+                className="text-[13px] font-bold leading-none"
+                style={{ fontFamily: 'var(--br-jp-font)' }}
+              >
+                単漢字
+              </span>
+              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-neutral ml-1">
+                KANJI ĐƠN
+              </span>
+              <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/25 ml-auto">
+                {KANJI_MODES.length}
+              </span>
+            </div>
+            {KANJI_MODES.map((m, i) => (
+              <ModeRow key={modeKey(m)} type="kanji" modeOpt={m} index={i + 1} onSelect={go} />
+            ))}
           </div>
-          {KANJI_MODES.map((m, i) => (
-            <ModeRow key={modeKey(m)} type="kanji" modeOpt={m} index={i + 1} onSelect={go} />
-          ))}
-        </div>
+        )}
 
         {/* ── Từ vựng kanji section ── */}
-        <div>
-          <div className="flex items-center gap-2 px-5 py-2 border-y border-base-content/10 bg-base-300/50">
-            <div className="w-0.5 h-3.5 bg-primary shrink-0" />
-            <span
-              className="text-[13px] font-bold leading-none"
-              style={{ fontFamily: 'var(--br-jp-font)' }}
-            >
-              語彙
-            </span>
-            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-neutral ml-1">
-              TỪ VỰNG KANJI
-            </span>
-            <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/25 ml-auto">
-              {VOCAB_MODES.length}
-            </span>
+        {(type === undefined || type === 'vocab') && (
+          <div>
+            <div className="flex items-center gap-2 px-5 py-2 border-y border-base-content/10 bg-base-300/50">
+              <div className="w-0.5 h-3.5 bg-primary shrink-0" />
+              <span
+                className="text-[13px] font-bold leading-none"
+                style={{ fontFamily: 'var(--br-jp-font)' }}
+              >
+                語彙
+              </span>
+              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-neutral ml-1">
+                TỪ VỰNG KANJI
+              </span>
+              <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/25 ml-auto">
+                {VOCAB_MODES.length}
+              </span>
+            </div>
+            {VOCAB_MODES.map((m, i) => (
+              <ModeRow key={modeKey(m)} type="vocab" modeOpt={m} index={i + 1} onSelect={go} />
+            ))}
           </div>
-          {VOCAB_MODES.map((m, i) => (
-            <ModeRow key={modeKey(m)} type="vocab" modeOpt={m} index={i + 1} onSelect={go} />
-          ))}
-        </div>
+        )}
 
         {/* ── Footer ── */}
         <div className="px-5 py-2 bg-base-200 border-t border-base-content/10">

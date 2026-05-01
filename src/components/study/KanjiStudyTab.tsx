@@ -24,6 +24,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
   const [openModal, setOpenModal] = useState<{
     lessonNum: number
     stats: LessonStats
+    type?: 'kanji' | 'vocab'
   } | null>(null)
 
   const openLesson = openModal
@@ -84,7 +85,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                         key={lesson.lessonNumber}
                         lesson={lesson}
                         animDelay={i * 0.04}
-                        onOpenModal={stats => setOpenModal({ lessonNum: lesson.lessonNumber, stats })}
+                        onOpenModal={(type, stats) => setOpenModal({ lessonNum: lesson.lessonNumber, stats, type })}
                       />
                     ))}
                   </div>
@@ -151,6 +152,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
         <KanjiStudyModal
           lessonNum={openLesson.lessonNum}
           stats={openLesson.stats}
+          type={openLesson.type}
           onClose={() => setOpenModal(null)}
         />
       )}
@@ -165,18 +167,10 @@ function KanjiLessonRow({
 }: {
   lesson: KanjiLessonStats
   animDelay: number
-  onOpenModal: (stats: LessonStats) => void
+  onOpenModal: (type: 'kanji' | 'vocab', stats: LessonStats) => void
 }) {
   const { lessonNumber, kanji, vocab } = lesson
   const totalDue = kanji.due + vocab.due
-
-  const combinedStats: LessonStats = {
-    total: kanji.total + vocab.total,
-    new: kanji.new + vocab.new,
-    learning: kanji.learning + vocab.learning,
-    review: kanji.review + vocab.review,
-    mature: kanji.mature + vocab.mature,
-  }
 
   return (
     <div
@@ -206,7 +200,7 @@ function KanjiLessonRow({
           labelVi="Hán tự đơn"
           stats={kanji}
           animDelay={animDelay}
-          onOpenModal={() => onOpenModal(combinedStats)}
+          onOpenModal={() => onOpenModal('kanji', { total: kanji.total, new: kanji.new, learning: kanji.learning, review: kanji.review, mature: kanji.mature })}
         />
       )}
       {vocab.total > 0 && (
@@ -215,7 +209,7 @@ function KanjiLessonRow({
           labelVi="Từ vựng hán tự"
           stats={vocab}
           animDelay={animDelay + 0.04}
-          onOpenModal={() => onOpenModal(combinedStats)}
+          onOpenModal={() => onOpenModal('vocab', { total: vocab.total, new: vocab.new, learning: vocab.learning, review: vocab.review, mature: vocab.mature })}
         />
       )}
     </div>
