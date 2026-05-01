@@ -137,11 +137,7 @@ export async function deleteAccount(): Promise<void> {
   if (!session?.user)
     throw new AuthError('Phải đăng nhập để xóa tài khoản')
 
-  const { error } = await supabase
-    .from('profiles')
-    .update({ deleted_at: new Date().toISOString() })
-    .eq('user_id', session.user.id)
-
+  const { error } = await supabase.functions.invoke('delete-account')
   if (error)
     throw new NetworkError(error.message)
 

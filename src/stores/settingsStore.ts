@@ -8,6 +8,7 @@ interface SettingsState {
   meaningLanguage: MeaningLanguage
   fontSize: FontSize
   darkMode: boolean
+  syncEnabled: boolean
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -18,6 +19,7 @@ export const useSettingsStore = create<SettingsState>()(
       meaningLanguage: 'vi',
       fontSize: 'md',
       darkMode: false,
+      syncEnabled: true,
     }),
     { name: 'nihongo-settings' },
   ),

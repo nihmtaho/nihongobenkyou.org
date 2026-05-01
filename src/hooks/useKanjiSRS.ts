@@ -1,8 +1,9 @@
 import type { KanjiCardState } from '../types/kanji'
 import type { SRSRating } from '../types/srs'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { flushKanjiCards } from '../api/kanji-cards'
-import { getDueKanjiCards, updateKanjiCard } from '../db/kanji'
+import { getDueKanjiCards } from '../db/kanji'
+import { db } from '../db/schema'
+import { uploadPendingReviews } from '../db/sync'
 import { calculateNextReview } from '../lib/srs'
 
 interface KanjiReviewVars {
@@ -25,7 +26,6 @@ export function useKanjiSRS(userId: string) {
 
   const reviewMutation = useMutation<void, Error, KanjiReviewVars>({
     mutationFn: async ({ card, rating }) => {
-      // calculateNextReview expects CardState shape — adapt char→vocabId for the pure function
       const result = calculateNextReview(
         {
           userId: card.userId,
@@ -42,21 +42,40 @@ export function useKanjiSRS(userId: string) {
         rating,
       )
 
-      const updated: KanjiCardState = {
+      const now = new Date().toISOString()
+      const newReviewCount = card.review_count + 1
+
+      await db.review_log.add({
+        userId: card.userId,
+        vocabId: card.char,
+        bookSource: 'kanji',
+        cardType: 'kanji',
+        rating,
+        intervalDays: result.new_interval,
+        easeFactor: result.new_ease,
+        dueDate: result.due_date,
+        reviewCount: newReviewCount,
+        isKnown: false,
+        reviewedAt: now,
+        pendingSync: true,
+        remoteId: null,
+      })
+
+      await db.kanji_cards.put({
         ...card,
         interval_days: result.new_interval,
         ease_factor: result.new_ease,
         due_date: result.due_date,
-        review_count: card.review_count + 1,
+        review_count: newReviewCount,
         last_rating: rating,
-        pending_sync: true,
-        updated_at: new Date().toISOString(),
-      }
+        pending_sync: false,
+        updated_at: now,
+      })
 
-      await updateKanjiCard(updated)
-      flushKanjiCards(userId).catch(() => {})
+      uploadPendingReviews().catch(() => {})
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
       queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
       queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] })
     },

@@ -1,12 +1,16 @@
+import type { StudyMode, TypeInputSubMode } from '../../../types/study'
+import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { CsvImport } from '../../../components/custom-decks/CsvImport'
 import { DeckEditor } from '../../../components/custom-decks/DeckEditor'
 import { WordEntry } from '../../../components/custom-decks/WordEntry'
+import { VocabStudyModal } from '../../../components/study/VocabStudyModal'
 import { useCustomDeckMutations } from '../../../hooks/useCustomDeckMutations'
 import { useCustomDecks } from '../../../hooks/useCustomDecks'
 import { useCustomVocabulary } from '../../../hooks/useCustomVocabulary'
 import { useAuthStore } from '../../../stores/authStore'
+import { useStudySessionStore } from '../../../stores/studySessionStore'
 
 export const Route = createFileRoute('/_authenticated/custom/$deckId')({
   component: DeckDetailPage,
@@ -16,6 +20,9 @@ function DeckDetailPage() {
   const { deckId } = Route.useParams()
   const { userId } = useAuthStore()
   const navigate = useNavigate()
+
+  const [showStudyModal, setShowStudyModal] = useState(false)
+  const initSession = useStudySessionStore(s => s.initSession)
 
   const { data: decks = [] } = useCustomDecks(userId ?? '')
   const { data: words = [], isLoading: wordsLoading, schedulePitchRefresh } = useCustomVocabulary(deckId)
@@ -63,6 +70,42 @@ function DeckDetailPage() {
     )
   }
 
+  function launchDeckSession(mode: StudyMode, subMode?: TypeInputSubMode) {
+    if (!words.length)
+      return
+    const today = new Date().toISOString().slice(0, 10)
+    const timestamp = new Date().toISOString()
+    // userId is guaranteed by the _authenticated route guard
+    const queue: VocabWithSRS[] = words.map((w): VocabWithSRS => ({
+      vocab_id: w.id,
+      word: w.kanji,
+      reading: w.kana,
+      romaji: '',
+      meaning_en: w.meaning_en ?? '',
+      meaning_vi: w.meaning_vi,
+      pitch_pattern: w.pitch_pattern,
+      pitch_type: null,
+      audio_filename: null,
+      pos: [],
+      jlpt_level: null,
+      book_source: 'custom',
+      lesson_number: 0,
+      examples: [],
+      tags: [],
+      deprecated: false,
+      interval_days: 0,
+      ease_factor: 2.5,
+      due_date: today,
+      review_count: 0,
+      last_rating: null,
+      pending_sync: false,
+      updated_at: timestamp,
+      is_known: false,
+    }))
+    initSession(queue, mode, subMode)
+    navigate({ to: '/study/$mode', params: { mode } })
+  }
+
   function handleTogglePublic() {
     mutations.updateDeck.mutate({ deckId, updates: { is_public: !deck!.is_public } })
   }
@@ -104,14 +147,13 @@ function DeckDetailPage() {
           <button className="btn btn-ghost btn-sm" onClick={() => setShowEditor(true)}>
             Chỉnh sửa
           </button>
-          <Link
-            to="/study/$mode"
-            params={{ mode: 'flashcard' }}
-            search={{ source: 'custom', deckId }}
+          <button
             className="btn btn-primary btn-sm"
+            disabled={wordsLoading || !words.length}
+            onClick={() => setShowStudyModal(true)}
           >
             Học
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -245,6 +287,18 @@ function DeckDetailPage() {
           onDelete={handleDeleteDeck}
           onClose={() => setShowEditor(false)}
           isPending={mutations.updateDeck.isPending || mutations.deleteDeck.isPending}
+        />
+      )}
+
+      {showStudyModal && (
+        <VocabStudyModal
+          title={deck.title}
+          context="all"
+          onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode) => {
+            setShowStudyModal(false)
+            launchDeckSession(mode, subMode)
+          }}
+          onClose={() => setShowStudyModal(false)}
         />
       )}
     </div>

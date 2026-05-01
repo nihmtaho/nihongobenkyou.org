@@ -4,6 +4,7 @@ import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
 import { gradeReading } from '../../lib/mora'
 import { normalizeViMeaning, removeDiacritics } from '../../lib/text-utils'
+import { AnnotatedWord } from './AnnotatedWord'
 
 export type VocabTypeSubMode = 'word→hira' | 'vi→hira' | 'word→vi+hanviet'
 
@@ -12,43 +13,6 @@ interface KanjiVocabTypeInputCardProps {
   hanVietMap: Map<string, string>
   subMode: VocabTypeSubMode
   onAnswer: (correct: boolean) => void
-}
-
-const RT_STYLE: React.CSSProperties = {
-  fontFamily: 'var(--br-mono-font)',
-  fontSize: '9px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  color: 'var(--color-primary)',
-}
-
-function AnnotatedWord({
-  word,
-  hanVietMap,
-  className = '',
-}: {
-  word: string
-  hanVietMap: Map<string, string>
-  className?: string
-}) {
-  return (
-    <span className={className} style={{ fontFamily: 'var(--br-jp-font)' }}>
-      {[...word].map((char, i) => {
-        const hv = hanVietMap.get(char)
-        const charKey = `${i}-${char}`
-        if (!hv)
-          return <span key={charKey}>{char}</span>
-        return (
-          <ruby key={charKey}>
-            {char}
-            <rt style={RT_STYLE}>{hv}</rt>
-          </ruby>
-        )
-      })}
-    </span>
-  )
 }
 
 function normalizeCanonical(text: string): string {
@@ -137,10 +101,10 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-2 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
 
-      {/* ── LEFT: Prompt panel ── */}
-      <div className="bg-base-200 p-6 lg:p-10 flex flex-col justify-center gap-4 border-b lg:border-b-0 lg:border-r border-base-content/10 min-h-[38vh] lg:min-h-[52vh]">
+      {/* ── Prompt panel ── */}
+      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           {subMode === 'vi→hira' ? 'NGHĨA TIẾNG VIỆT' : 'TỪ VỰNG KANJI'}
         </p>
@@ -148,7 +112,7 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
         {subMode === 'vi→hira'
           ? (
               <div className="flex flex-col gap-2">
-                <p className="text-3xl lg:text-4xl font-bold leading-snug">{card.meaning_vi}</p>
+                <p className="text-3xl font-bold leading-snug">{card.meaning_vi}</p>
               </div>
             )
           : hasAnnotations
@@ -156,12 +120,12 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
                 <AnnotatedWord
                   word={word}
                   hanVietMap={hanVietMap}
-                  className="text-5xl lg:text-7xl font-bold leading-tight break-all"
+                  className="text-6xl font-bold leading-tight break-all text-center"
                 />
               )
             : (
                 <p
-                  className="text-5xl lg:text-7xl font-bold leading-tight break-all"
+                  className="text-6xl font-bold leading-tight break-all"
                   style={{ fontFamily: 'var(--br-jp-font)' }}
                 >
                   {word}
@@ -189,8 +153,8 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
         )}
       </div>
 
-      {/* ── RIGHT: Input panel ── */}
-      <div className="p-6 lg:p-10 flex flex-col justify-center gap-5 min-h-[38vh] lg:min-h-[52vh]">
+      {/* ── Input panel ── */}
+      <div className="p-6 flex flex-col gap-5">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           GÕ CÁCH ĐỌC (HIRAGANA)
         </p>
@@ -368,10 +332,10 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-2 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
 
-      {/* ── LEFT: Prompt panel ── */}
-      <div className="bg-base-200 p-6 lg:p-10 flex flex-col justify-center gap-4 border-b lg:border-b-0 lg:border-r border-base-content/10 min-h-[38vh] lg:min-h-[52vh]">
+      {/* ── Prompt panel ── */}
+      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">TỪ VỰNG KANJI</p>
 
         {hasAnnotations
@@ -379,12 +343,12 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
               <AnnotatedWord
                 word={word}
                 hanVietMap={hanVietMap}
-                className="text-5xl lg:text-7xl font-bold leading-tight break-all"
+                className="text-6xl font-bold leading-tight break-all text-center"
               />
             )
           : (
               <p
-                className="text-5xl lg:text-7xl font-bold leading-tight break-all"
+                className="text-6xl font-bold leading-tight break-all"
                 style={{ fontFamily: 'var(--br-jp-font)' }}
               >
                 {word}
@@ -398,8 +362,8 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
         </div>
       </div>
 
-      {/* ── RIGHT: Dual input panel ── */}
-      <div className="p-6 lg:p-10 flex flex-col justify-center gap-5 min-h-[38vh] lg:min-h-[52vh]">
+      {/* ── Input panel ── */}
+      <div className="p-6 flex flex-col gap-5">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           GÕ NGHĨA + HÁN VIỆT
         </p>

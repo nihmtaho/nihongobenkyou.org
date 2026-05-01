@@ -44,3 +44,11 @@ export interface StudySession {
   duration_sec: number
   studied_at: Date
 }
+
+export interface LessonStats {
+  total: number
+  new: number
+  learning: number
+  review: number
+  mature: number
+}

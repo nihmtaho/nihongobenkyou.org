@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { db } from '../../db/schema'
 import { useKanjiSRS } from '../../hooks/useKanjiSRS'
 
+vi.mock('../../db/sync', () => ({ uploadPendingReviews: vi.fn().mockResolvedValue(undefined), downloadNewReviews: vi.fn().mockResolvedValue(undefined) }))
 vi.mock('../../api/kanji-cards', () => ({
   flushKanjiCards: vi.fn().mockResolvedValue(undefined),
 }))
@@ -23,10 +24,12 @@ function makeWrapper() {
 
 beforeEach(async () => {
   await db.kanji_cards.clear()
+  await db.review_log.clear()
 })
 
 afterEach(async () => {
   await db.kanji_cards.clear()
+  await db.review_log.clear()
 })
 
 describe('useKanjiSRS', () => {
@@ -67,7 +70,7 @@ describe('useKanjiSRS', () => {
     expect(result.current.dueCards.data).toHaveLength(0)
   })
 
-  it('sets pending_sync=true and advances due_date after Good rating', async () => {
+  it('sets pending_sync=false and creates review_log entry after Good rating', async () => {
     await db.kanji_cards.put({
       userId: TEST_USER,
       char: '水',
@@ -91,7 +94,7 @@ describe('useKanjiSRS', () => {
     await waitFor(() => expect(result.current.reviewMutation.isSuccess).toBe(true))
 
     const updated = await db.kanji_cards.get([TEST_USER, '水'])
-    expect(updated?.pending_sync).toBe(true)
+    expect(updated?.pending_sync).toBe(false)
     expect(updated?.due_date).not.toBe(PAST)
     expect((updated?.due_date ?? '') > TODAY).toBe(true)
     expect(updated?.review_count).toBe(2)

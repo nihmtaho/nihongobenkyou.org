@@ -5,6 +5,7 @@ export interface UserProfile {
   created_at: string
   updated_at: string
   deleted_at: string | null
+  progress_reset_at: string | null
 }
 
 export interface AuthState {

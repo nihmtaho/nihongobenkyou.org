@@ -3,6 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { db } from '../../db/schema'
 import { migrateAnonymousData } from '../../lib/auth-migration'
 
+vi.mock('../../db/sync', () => ({
+  uploadPendingReviews: vi.fn().mockResolvedValue(undefined),
+  downloadNewReviews: vi.fn().mockResolvedValue(undefined),
+}))
+
 const ANON_ID = 'anon-user-uuid-1234'
 const AUTH_ID = 'auth-user-uuid-5678'
 
@@ -23,6 +28,7 @@ function makeCard(vocabId: string): CardState {
 
 beforeEach(async () => {
   await db.user_cards.clear()
+  await db.review_log.clear()
   await db.settings.clear()
 })
 
@@ -45,14 +51,22 @@ describe('migrateAnonymousData', () => {
     expect(migrated).toHaveLength(3)
   })
 
-  it('marks all migrated cards as pending_sync=true', async () => {
+  it('creates review_log entries for migrated cards with pendingSync=true', async () => {
     await db.user_cards.bulkPut(['vocab-001', 'vocab-002'].map(makeCard))
     await db.settings.put({ key: 'anonymous_user_id', value: ANON_ID })
 
     await migrateAnonymousData(ANON_ID, AUTH_ID)
 
+    const logEntries = await db.review_log
+      .toCollection()
+      .filter(e => e.userId === AUTH_ID && e.pendingSync === true)
+      .toArray()
+    expect(logEntries).toHaveLength(2)
+    expect(logEntries.every(e => e.remoteId === null)).toBe(true)
+
+    // user_cards should have pending_sync=false (review_log drives sync now)
     const migrated = await db.user_cards.where('userId').equals(AUTH_ID).toArray()
-    expect(migrated.every(c => c.pending_sync === true)).toBe(true)
+    expect(migrated.every(c => c.pending_sync === false)).toBe(true)
   })
 
   it('deletes settings[anonymous_user_id] after migration', async () => {

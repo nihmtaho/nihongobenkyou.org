@@ -1,13 +1,11 @@
 import type { SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { db } from '../db/schema'
-import { flushPendingSync } from '../db/sync'
+import { uploadPendingReviews } from '../db/sync'
 import { calculateNextReview } from '../lib/srs'
 
-// A card is considered "known" when it has been reviewed enough times
-// and its interval is long enough to indicate durable retention.
-const KNOWN_MIN_INTERVAL = 21 // days — roughly Anki's "mature" threshold
+const KNOWN_MIN_INTERVAL = 21
 const KNOWN_MIN_REVIEWS = 5
 
 interface SRSMutationVars {
@@ -17,6 +15,7 @@ interface SRSMutationVars {
 }
 
 export function useSRSMutation() {
+  const queryClient = useQueryClient()
   return useMutation<void, Error, SRSMutationVars>({
     mutationFn: async ({ userId, card, rating }) => {
       const result = calculateNextReview(
@@ -37,6 +36,23 @@ export function useSRSMutation() {
 
       const newReviewCount = (card.review_count ?? 0) + 1
       const is_known = result.new_interval >= KNOWN_MIN_INTERVAL && newReviewCount >= KNOWN_MIN_REVIEWS
+      const now = new Date().toISOString()
+
+      await db.review_log.add({
+        userId,
+        vocabId: card.vocab_id,
+        bookSource: card.book_source ?? 'minna_shokyuu_1',
+        cardType: 'vocab',
+        rating,
+        intervalDays: result.new_interval,
+        easeFactor: result.new_ease,
+        dueDate: result.due_date,
+        reviewCount: newReviewCount,
+        isKnown: is_known,
+        reviewedAt: now,
+        pendingSync: true,
+        remoteId: null,
+      })
 
       await db.user_cards.put({
         userId,
@@ -46,12 +62,15 @@ export function useSRSMutation() {
         due_date: result.due_date,
         review_count: newReviewCount,
         last_rating: rating,
-        pending_sync: true,
-        updated_at: new Date().toISOString(),
+        pending_sync: false,
+        updated_at: now,
         is_known,
       })
 
-      flushPendingSync().catch(() => {})
+      uploadPendingReviews().catch(() => {})
+    },
+    onSuccess: (_data, { userId }) => {
+      queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
     },
     retry: 0,
   })

@@ -60,21 +60,21 @@ export function KanjiTypeInputCard({ prompt, answer, onAnswer }: KanjiTypeInputC
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-2 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
 
-      {/* ── LEFT: Prompt panel ── */}
-      <div className="bg-base-200 p-6 lg:p-10 flex flex-col justify-center gap-4 border-b lg:border-b-0 lg:border-r border-base-content/10 min-h-[38vh] lg:min-h-[52vh]">
+      {/* ── Prompt panel ── */}
+      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">HÁN TỰ</p>
         <p
-          className="text-8xl lg:text-[9rem] font-bold leading-none"
+          className="text-8xl font-bold leading-none"
           style={{ fontFamily: 'var(--br-jp-font)' }}
         >
           {prompt}
         </p>
       </div>
 
-      {/* ── RIGHT: Input panel ── */}
-      <div className="p-6 lg:p-10 flex flex-col justify-center gap-5 min-h-[38vh] lg:min-h-[52vh]">
+      {/* ── Input panel ── */}
+      <div className="p-6 flex flex-col gap-5">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">GÕ HÁN VIỆT</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">

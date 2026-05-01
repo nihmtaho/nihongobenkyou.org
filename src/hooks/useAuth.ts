@@ -3,13 +3,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import {
   checkAccountStatus,
+  NetworkError,
   reactivateAccount,
   signIn,
   signOut,
   signUp,
 } from '../api/auth'
 import { supabase } from '../api/supabase'
+import { onboardNewDevice } from '../db/onboarding'
+import { downloadPackageForNewDevice } from '../db/package-sync'
 import { db } from '../db/schema'
+import { SeedError } from '../db/seed'
 import { migrateAnonymousData } from '../lib/auth-migration'
 import { useAuthStore } from '../stores/authStore'
 
@@ -33,7 +37,26 @@ async function handleFirstSignIn(userId: string, queryClient: QueryClient): Prom
     // NetworkError during status check — do not block login
   }
 
-  // 3. Trigger profile hydration query
+  // 3. Fetch remote SRS state and seed required datasets on this device
+  try {
+    await onboardNewDevice(userId, queryClient)
+  }
+  catch (err) {
+    if (err instanceof SeedError)
+      throw err
+    console.error('onboardNewDevice failed (non-blocking):', err)
+  }
+
+  // 4. Download sync package (includes custom_decks + custom_vocabulary)
+  try {
+    await downloadPackageForNewDevice(userId)
+  }
+  catch (err) {
+    if (!(err instanceof NetworkError))
+      console.error('downloadPackageForNewDevice failed (non-blocking):', err)
+  }
+
+  // 5. Trigger profile hydration query
   await queryClient.invalidateQueries({ queryKey: ['profile', userId] })
 }
 
