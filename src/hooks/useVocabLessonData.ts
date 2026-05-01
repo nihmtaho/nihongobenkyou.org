@@ -29,8 +29,8 @@ export function useVocabLessonData(userId: string, lesson: number) {
   }, [kanjiQuery.data])
 
   const vocabIds = useMemo(
-    () => relatedVocabItems.map(rv => `rv_${rv.word ?? rv.kana}_${rv.kana}`),
-    [relatedVocabItems],
+    () => relatedVocabItems.map(rv => `rv_${lesson}_${rv.word ?? rv.kana}_${rv.kana}`),
+    [relatedVocabItems, lesson],
   )
 
   const { data: cards } = useUserCards(userId, vocabIds)
@@ -84,7 +84,7 @@ export function useVocabLessonData(userId: string, lesson: number) {
 
   const merged = useMemo<VocabWithSRS[]>(
     () => relatedVocabItems.map((rv) => {
-      const vocabId = `rv_${rv.word ?? rv.kana}_${rv.kana}`
+      const vocabId = `rv_${lesson}_${rv.word ?? rv.kana}_${rv.kana}`
       const c = cards?.get(vocabId)
       const base = {
         vocab_id: vocabId,
