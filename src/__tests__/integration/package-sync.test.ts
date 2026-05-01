@@ -137,6 +137,17 @@ describe('mergePackageIntoDexie — review_log', () => {
     expect(await db.review_log.count()).toBe(2)
   })
 
+  it('treats same vocabId+reviewedAt with different cardType as distinct entries', async () => {
+    await db.review_log.add(makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'))
+    const pkg = makeEmptyPkg({
+      review_log: [{ ...makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'), cardType: 'kanji' }],
+    })
+
+    await mergePackageIntoDexie(UID, pkg)
+
+    expect(await db.review_log.count()).toBe(2)
+  })
+
   it('imported entry has pendingSync=false', async () => {
     const entry = { ...makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'), pendingSync: true }
     const pkg = makeEmptyPkg({ review_log: [entry] })
@@ -174,5 +185,18 @@ describe('mergePackageIntoDexie — streaks', () => {
     await mergePackageIntoDexie(UID, pkg)
 
     expect((await db.streaks.get('2026-05-01'))?.current_streak).toBe(10)
+  })
+
+  it('preserves local max_streak when remote current_streak wins but has lower max_streak', async () => {
+    await db.streaks.put({ date: '2026-05-01', userId: UID, cards_reviewed: 5, current_streak: 10, max_streak: 15 })
+    const pkg = makeEmptyPkg({
+      streaks: [{ date: '2026-05-01', userId: UID, cards_reviewed: 8, current_streak: 12, max_streak: 12 }],
+    })
+
+    await mergePackageIntoDexie(UID, pkg)
+
+    const s = await db.streaks.get('2026-05-01')
+    expect(s?.current_streak).toBe(12)
+    expect(s?.max_streak).toBe(15) // local max preserved
   })
 })

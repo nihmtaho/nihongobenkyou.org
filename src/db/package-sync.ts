@@ -126,7 +126,11 @@ export async function mergePackageIntoDexie(
         continue
       const local = await db.streaks.get(remote.date)
       if (!local || remote.current_streak > local.current_streak) {
-        await db.streaks.put({ ...remote, userId })
+        await db.streaks.put({
+          ...remote,
+          userId,
+          max_streak: local ? Math.max(local.max_streak, remote.max_streak) : remote.max_streak,
+        })
         imported++
       }
     }
