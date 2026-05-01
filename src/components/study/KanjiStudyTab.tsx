@@ -1,6 +1,6 @@
 import type { KanjiLessonStats } from '../../hooks/useKanjiLessonStats'
-
 import type { LessonStats } from '../../types/study'
+
 import { useState } from 'react'
 
 import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
