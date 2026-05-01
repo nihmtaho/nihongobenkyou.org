@@ -1,4 +1,5 @@
 import type { SyncPackagePayload } from '../types/sync-package'
+
 import { AuthError, NetworkError } from '../api/auth'
 import { supabase } from '../api/supabase'
 import { fetchRemotePackage, uploadSyncPackage } from '../api/sync-package'
@@ -50,79 +51,88 @@ export async function mergePackageIntoDexie(
   userId: string,
   payload: SyncPackagePayload,
 ): Promise<number> {
-  let imported = 0
+  return db.transaction<number>('rw', [
+    'user_cards',
+    'kanji_cards',
+    'custom_decks',
+    'custom_vocabulary',
+    'review_log',
+    'streaks',
+  ], async () => {
+    let imported = 0
 
-  for (const remote of payload.user_cards ?? []) {
-    if (remote.userId !== userId)
-      continue
-    const local = await db.user_cards.get([userId, remote.vocabId])
-    if (!local || remote.updated_at > local.updated_at) {
-      await db.user_cards.put({ ...remote, pending_sync: false })
-      imported++
+    for (const remote of payload.user_cards ?? []) {
+      if (remote.userId !== userId)
+        continue
+      const local = await db.user_cards.get([userId, remote.vocabId])
+      if (!local || remote.updated_at > local.updated_at) {
+        await db.user_cards.put({ ...remote, pending_sync: false })
+        imported++
+      }
     }
-  }
 
-  for (const remote of payload.kanji_cards ?? []) {
-    if (remote.userId !== userId)
-      continue
-    const local = await db.kanji_cards.get([userId, remote.char])
-    if (!local || (remote.updated_at ?? '') > (local.updated_at ?? '')) {
-      await db.kanji_cards.put({ ...remote, pending_sync: false })
-      imported++
+    for (const remote of payload.kanji_cards ?? []) {
+      if (remote.userId !== userId)
+        continue
+      const local = await db.kanji_cards.get([userId, remote.char])
+      if (!local || (remote.updated_at ?? '') > (local.updated_at ?? '')) {
+        await db.kanji_cards.put({ ...remote, pending_sync: false })
+        imported++
+      }
     }
-  }
 
-  for (const remote of payload.custom_decks ?? []) {
-    if (remote.user_id !== userId)
-      continue
-    const local = await db.custom_decks.get(remote.id)
-    if (!local || remote.updated_at > local.updated_at) {
-      await db.custom_decks.put(remote)
-      imported++
+    for (const remote of payload.custom_decks ?? []) {
+      if (remote.user_id !== userId)
+        continue
+      const local = await db.custom_decks.get(remote.id)
+      if (!local || remote.updated_at > local.updated_at) {
+        await db.custom_decks.put(remote)
+        imported++
+      }
     }
-  }
 
-  // custom_vocabulary: append-only — add items that don't exist locally
-  for (const remote of payload.custom_vocabulary ?? []) {
-    if (remote.user_id !== userId)
-      continue
-    const local = await db.custom_vocabulary.get(remote.id)
-    if (!local) {
-      await db.custom_vocabulary.put(remote)
-      imported++
+    // custom_vocabulary: append-only — add items that don't exist locally
+    for (const remote of payload.custom_vocabulary ?? []) {
+      if (remote.user_id !== userId)
+        continue
+      const local = await db.custom_vocabulary.get(remote.id)
+      if (!local) {
+        await db.custom_vocabulary.put(remote)
+        imported++
+      }
     }
-  }
 
-  // review_log: append-only — dedup by (vocabId, cardType, reviewedAt).
-  // Build a Set of existing natural keys to avoid a per-entry async lookup.
-  const existingKeys = new Set(
-    (await db.review_log.filter(e => e.userId === userId).toArray())
-      .map(e => `${e.vocabId}:${e.cardType}:${e.reviewedAt}`),
-  )
-  for (const remote of payload.review_log ?? []) {
-    if (remote.userId !== userId)
-      continue
-    const key = `${remote.vocabId}:${remote.cardType}:${remote.reviewedAt}`
-    if (!existingKeys.has(key)) {
-      const { id: _id, ...entry } = remote
-      await db.review_log.add({ ...entry, pendingSync: false })
-      existingKeys.add(key)
-      imported++
+    // review_log: append-only — dedup by (vocabId, cardType, reviewedAt).
+    // Build a Set of existing natural keys to avoid a per-entry async lookup.
+    const existingKeys = new Set(
+      (await db.review_log.filter(e => e.userId === userId).toArray())
+        .map(e => `${e.vocabId}:${e.cardType}:${e.reviewedAt}`),
+    )
+    for (const remote of payload.review_log ?? []) {
+      if (remote.userId !== userId)
+        continue
+      const key = `${remote.vocabId}:${remote.cardType}:${remote.reviewedAt}`
+      if (!existingKeys.has(key)) {
+        const { id: _id, ...entry } = remote
+        await db.review_log.add({ ...entry, pendingSync: false })
+        existingKeys.add(key)
+        imported++
+      }
     }
-  }
 
-  // streaks: upsert by date — keep whichever has the higher current_streak.
-  for (const remote of payload.streaks ?? []) {
-    if (remote.userId !== userId)
-      continue
-    const local = await db.streaks.get(remote.date)
-    if (!local || remote.current_streak > local.current_streak) {
-      await db.streaks.put({ ...remote, userId })
-      imported++
+    // streaks: upsert by date — keep whichever has the higher current_streak.
+    for (const remote of payload.streaks ?? []) {
+      if (remote.userId !== userId)
+        continue
+      const local = await db.streaks.get(remote.date)
+      if (!local || remote.current_streak > local.current_streak) {
+        await db.streaks.put({ ...remote, userId })
+        imported++
+      }
     }
-  }
 
-  return imported
+    return imported
+  })
 }
 
 let isSyncing = false
