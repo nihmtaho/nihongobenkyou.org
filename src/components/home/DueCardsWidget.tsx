@@ -64,7 +64,7 @@ export function DueCardsWidget({ userId }: DueCardsWidgetProps) {
     if (config.cardCount !== 'all')
       queue = queue.slice(0, config.cardCount)
     initSession(queue, config.mode, config.typeInputSubMode)
-    navigate({ to: '/study/$mode', params: { mode: config.mode } })
+    navigate({ to: '/study/$mode', params: { mode: config.mode }, search: { returnTab: 'vocab' } })
   }
 
   if (isLoading) {

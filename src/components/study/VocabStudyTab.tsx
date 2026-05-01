@@ -134,9 +134,9 @@ export function VocabStudyTab({ userId }: { userId: string }) {
             review: modal.lesson.review,
             mature: modal.lesson.mature,
           }}
-          onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode) => {
+          onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode, order?: 'random' | 'sequential') => {
             setActiveModal(null)
-            launchSession(modal.bookId, modal.lesson.lesson_number, modal.context === 'due', mode, subMode)
+            launchSession(modal.bookId, modal.lesson.lesson_number, modal.context === 'due', mode, subMode, order, 'vocab')
           }}
           onClose={() => setActiveModal(null)}
         />

@@ -43,6 +43,7 @@ function HomePage() {
           {/* Quick start */}
           <Link
             to="/study"
+            search={{ tab: undefined }}
             className="btn btn-primary btn-lg font-[var(--br-heading-font)] uppercase tracking-wide w-full lg:w-auto lg:self-start"
           >
             {dueCount > 0
