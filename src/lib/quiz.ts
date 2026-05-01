@@ -1,6 +1,7 @@
+import type { KanjiItem } from '../types/kanji'
 import type { VocabItem } from '../types/vocabulary'
 
-function shuffle<T>(arr: T[]): T[] {
+export function shuffle<T>(arr: T[]): T[] {
   const out = [...arr]
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -33,4 +34,11 @@ export function selectDistractors(
   }
 
   return shuffle(candidates).slice(0, count)
+}
+
+export function selectKanjiDistractors(target: KanjiItem, pool: KanjiItem[], count = 3): KanjiItem[] {
+  const candidates = pool.filter(k => k.char !== target.char && k.han_viet != null)
+  const sameLevel = candidates.filter(k => k.jlpt_level === target.jlpt_level)
+  const rest = candidates.filter(k => k.jlpt_level !== target.jlpt_level)
+  return [...shuffle(sameLevel), ...shuffle(rest)].slice(0, count)
 }
