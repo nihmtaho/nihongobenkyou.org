@@ -39,49 +39,59 @@ export async function buildPackage(userId: string): Promise<SyncPackagePayload> 
     kanji_cards: kanjiCards,
     custom_decks: customDecks,
     custom_vocabulary: customVocab,
+    review_log: [],
+    streaks: [],
   }
 }
 
 export async function mergePackageIntoDexie(
   userId: string,
   payload: SyncPackagePayload,
-): Promise<void> {
-  for (const remote of payload.user_cards) {
+): Promise<number> {
+  let imported = 0
+
+  for (const remote of payload.user_cards ?? []) {
     if (remote.userId !== userId)
       continue
     const local = await db.user_cards.get([userId, remote.vocabId])
     if (!local || remote.updated_at > local.updated_at) {
       await db.user_cards.put({ ...remote, pending_sync: false })
+      imported++
     }
   }
 
-  for (const remote of payload.kanji_cards) {
+  for (const remote of payload.kanji_cards ?? []) {
     if (remote.userId !== userId)
       continue
     const local = await db.kanji_cards.get([userId, remote.char])
     if (!local || (remote.updated_at ?? '') > (local.updated_at ?? '')) {
       await db.kanji_cards.put({ ...remote, pending_sync: false })
+      imported++
     }
   }
 
-  for (const remote of payload.custom_decks) {
+  for (const remote of payload.custom_decks ?? []) {
     if (remote.user_id !== userId)
       continue
     const local = await db.custom_decks.get(remote.id)
     if (!local || remote.updated_at > local.updated_at) {
       await db.custom_decks.put(remote)
+      imported++
     }
   }
 
   // custom_vocabulary: append-only — add items that don't exist locally
-  for (const remote of payload.custom_vocabulary) {
+  for (const remote of payload.custom_vocabulary ?? []) {
     if (remote.user_id !== userId)
       continue
     const local = await db.custom_vocabulary.get(remote.id)
     if (!local) {
       await db.custom_vocabulary.put(remote)
+      imported++
     }
   }
+
+  return imported
 }
 
 let isSyncing = false

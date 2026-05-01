@@ -7,6 +7,7 @@ export function BackupSection() {
   const { userId } = useAuthStore()
   const queryClient = useQueryClient()
   const [importError, setImportError] = useState<string | null>(null)
+  const [importSuccess, setImportSuccess] = useState<string | null>(null)
   const [isImporting, setIsImporting] = useState(false)
   const importInputRef = useRef<HTMLInputElement>(null)
 
@@ -26,18 +27,36 @@ export function BackupSection() {
 
   async function handleImportBackup(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (!file || !userId)
+    if (!file)
       return
+    if (!userId) {
+      setImportError('Cần đăng nhập để nhập dữ liệu sao lưu.')
+      if (importInputRef.current)
+        importInputRef.current.value = ''
+      return
+    }
     setImportError(null)
+    setImportSuccess(null)
     setIsImporting(true)
     try {
       const text = await file.text()
       const parsed = JSON.parse(text) as Record<string, unknown>
-      const payload = (parsed.data ?? parsed) as Parameters<typeof mergePackageIntoDexie>[1]
-      await mergePackageIntoDexie(userId, payload)
+      const raw = (parsed.data ?? parsed) as Parameters<typeof mergePackageIntoDexie>[1]
+      // Remap all stored userIds to the current userId so backup files
+      // created under a different session/device still import correctly.
+      const payload = {
+        user_cards: (raw.user_cards ?? []).map(c => ({ ...c, userId })),
+        kanji_cards: (raw.kanji_cards ?? []).map(c => ({ ...c, userId })),
+        custom_decks: (raw.custom_decks ?? []).map(d => ({ ...d, user_id: userId })),
+        custom_vocabulary: (raw.custom_vocabulary ?? []).map(v => ({ ...v, user_id: userId })),
+        review_log: [],
+        streaks: [],
+      }
+      const count = await mergePackageIntoDexie(userId, payload)
       queryClient.invalidateQueries({ queryKey: ['due-cards', userId] })
       queryClient.invalidateQueries({ queryKey: ['user-cards', userId] })
       queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
+      setImportSuccess(`Đã nhập ${count} mục thành công.`)
     }
     catch (err) {
       setImportError((err as Error).message ?? 'File không hợp lệ')
@@ -85,6 +104,9 @@ export function BackupSection() {
           />
           {importError && (
             <p className="text-error text-xs font-[var(--br-mono-font)] mt-1">{importError}</p>
+          )}
+          {importSuccess && (
+            <p className="text-success text-xs font-[var(--br-mono-font)] mt-1">{importSuccess}</p>
           )}
         </div>
       </div>
