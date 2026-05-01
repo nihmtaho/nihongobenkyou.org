@@ -112,7 +112,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
   return (
     <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
 
-      {/* ── LEFT: Prompt panel ── */}
+      {/* ── Prompt panel ── */}
       <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           {card.pos.join(' · ')}
@@ -154,7 +154,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
         )}
       </div>
 
-      {/* ── RIGHT: Input panel ── */}
+      {/* ── Input panel ── */}
       <div className="p-6 flex flex-col gap-5">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           {subMode === 'word→hira'
