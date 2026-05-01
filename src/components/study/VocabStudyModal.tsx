@@ -61,7 +61,7 @@ export function VocabStudyModal({ title, context, dueCount, stats, onLaunch, onC
               <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-1">
                 Chọn chế độ học
               </p>
-              <h2 className="font-[var(--br-heading-font)] font-black text-4xl uppercase tracking-tighter leading-none">
+              <h2 className="font-[var(--br-jp-font)] font-black text-4xl uppercase tracking-tighter leading-none">
                 {title}
               </h2>
             </div>

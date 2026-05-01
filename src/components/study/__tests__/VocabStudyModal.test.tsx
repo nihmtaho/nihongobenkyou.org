@@ -38,11 +38,19 @@ describe('vocabStudyModal', () => {
     expect(screen.getByText(/8/)).toBeInTheDocument()
   })
 
-  it('renders SRS progress stats when stats prop provided', () => {
+  it('renders SRS stat legend when stats prop provided', () => {
     const stats = { total: 23, new: 5, learning: 8, review: 6, mature: 4 }
     render(<VocabStudyModal {...defaultProps} stats={stats} />)
-    // NOTE: /8/ matches both learning count "8" and studied total "18" — use getAllByText
-    expect(screen.getAllByText(/8/).length).toBeGreaterThan(0)
+    // Each stat renders its count as a bold span
+    expect(screen.getByText('8')).toBeInTheDocument() // learning count
+    expect(screen.getByText('6')).toBeInTheDocument() // review count
+    expect(screen.getByText('4')).toBeInTheDocument() // mature count
+  })
+
+  it('does not render stat legend when stats prop is absent', () => {
+    render(<VocabStudyModal {...defaultProps} />)
+    expect(screen.queryByText('đang học')).not.toBeInTheDocument()
+    expect(screen.queryByText('ôn tập')).not.toBeInTheDocument()
   })
 
   it('calls onLaunch("flashcard", undefined) when Flashcard row clicked', async () => {
