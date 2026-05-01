@@ -48,21 +48,29 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
   const isJpPrompt = questionType === 'word→meaning'
 
   return (
-    <div className="max-w-sm mx-auto w-full border border-base-content/20 overflow-hidden">
-      <div className="h-0.5 bg-primary w-full" />
-      <div className="bg-base-200 px-[18px] pt-4 pb-3 border-b border-base-content/10 text-center">
-        <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-3">
-          {questionType}
-        </p>
-        <span
-          className="text-[32px] font-bold leading-tight"
-          style={isJpPrompt ? { fontFamily: 'var(--br-jp-font)' } : undefined}
-        >
-          {prompt}
-        </span>
-      </div>
-      <div className="px-[18px] py-[14px]">
-        <QuizOptions options={options} correctId={correctId} onAnswer={onAnswer} />
+    <div className="p-4 pt-6 w-full max-w-4xl mx-auto">
+      <div className="border border-base-content/20 overflow-hidden">
+        <div className="h-0.5 bg-primary w-full" />
+        <div className="lg:grid lg:grid-cols-2 lg:divide-x lg:divide-base-content/10">
+          {/* Question — left on desktop, top on mobile */}
+          <div className="bg-base-200 px-[18px] pt-4 pb-4 border-b border-base-content/10 text-center
+                          lg:border-b-0 lg:flex lg:flex-col lg:items-center lg:justify-center lg:py-12 lg:px-10"
+          >
+            <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-3">
+              {questionType}
+            </p>
+            <span
+              className="text-[32px] lg:text-5xl font-bold leading-tight"
+              style={isJpPrompt ? { fontFamily: 'var(--br-jp-font)' } : undefined}
+            >
+              {prompt}
+            </span>
+          </div>
+          {/* Options — right on desktop, bottom on mobile */}
+          <div className="px-[18px] py-[14px] lg:flex lg:flex-col lg:justify-center lg:py-8 lg:px-8">
+            <QuizOptions options={options} correctId={correctId} onAnswer={onAnswer} />
+          </div>
+        </div>
       </div>
     </div>
   )

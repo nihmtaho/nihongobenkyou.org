@@ -220,8 +220,8 @@ function StudyPage() {
   const isTypeInput = mode === 'type-input'
   const modeName = MODE_LABELS[mode as StudyMode] ?? mode.toUpperCase()
 
-  // type-input stays full-width (two-column grid); other modes center on desktop
-  const outerClass = isTypeInput
+  // type-input and quiz handle their own width; other modes center at max-w-2xl
+  const outerClass = isTypeInput || mode === 'quiz'
     ? 'flex flex-col min-h-screen'
     : 'flex flex-col min-h-screen max-w-2xl mx-auto'
 
