@@ -41,6 +41,9 @@ export function VocabStudyTab({ userId }: { userId: string }) {
     context: 'all' | 'due'
   } | null>(null)
 
+  // Capture stable reference before JSX render to avoid stale closure in onLaunch
+  const modal = activeModal
+
   const bookGroups = enabledBooks
     .map((book, i) => {
       const activeLessons = (bookQueries[i]?.data ?? []).filter(
@@ -118,23 +121,22 @@ export function VocabStudyTab({ userId }: { userId: string }) {
                 ctaLink="/books"
               />
             )}
-      {activeModal && (
+      {modal && (
         <VocabStudyModal
-          title={`Bài ${String(activeModal.lesson.lesson_number).padStart(2, '0')}`}
-          {...(activeModal.context === 'due'
-            ? { context: 'due' as const, dueCount: activeModal.lesson.due }
+          title={`Bài ${String(modal.lesson.lesson_number).padStart(2, '0')}`}
+          {...(modal.context === 'due'
+            ? { context: 'due' as const, dueCount: modal.lesson.due }
             : { context: 'all' as const })}
           stats={{
-            total: activeModal.lesson.vocab_count,
-            new: activeModal.lesson.new,
-            learning: activeModal.lesson.learning,
-            review: activeModal.lesson.review,
-            mature: activeModal.lesson.mature,
+            total: modal.lesson.vocab_count,
+            new: modal.lesson.new,
+            learning: modal.lesson.learning,
+            review: modal.lesson.review,
+            mature: modal.lesson.mature,
           }}
           onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode) => {
-            const { bookId, lesson, context } = activeModal
             setActiveModal(null)
-            launchSession(bookId, lesson.lesson_number, context === 'due', mode, subMode)
+            launchSession(modal.bookId, modal.lesson.lesson_number, modal.context === 'due', mode, subMode)
           }}
           onClose={() => setActiveModal(null)}
         />
