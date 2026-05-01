@@ -1,10 +1,10 @@
 import type { LessonStats, StudyMode, TypeInputSubMode } from '../../types/study'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 
 type VocabStudyModalProps = {
   stats?: LessonStats
-  onLaunch: (mode: StudyMode, subMode?: TypeInputSubMode) => void
+  onLaunch: (mode: StudyMode, subMode?: TypeInputSubMode, order?: 'random' | 'sequential') => void
   onClose: () => void
 } & (
   | { context: 'all', title: string, dueCount?: never }
@@ -35,6 +35,8 @@ function modeKey(m: ModeOption) {
 }
 
 export function VocabStudyModal({ title, context, dueCount, stats, onLaunch, onClose }: VocabStudyModalProps) {
+  const [order, setOrder] = useState<'random' | 'sequential'>('random')
+
   useEffect(() => {
     function handleEsc(e: KeyboardEvent) {
       if (e.key === 'Escape')
@@ -74,8 +76,8 @@ export function VocabStudyModal({ title, context, dueCount, stats, onLaunch, onC
             </button>
           </div>
 
-          {/* Context badge */}
-          <div className="mb-2">
+          {/* Context badge + order toggle */}
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             {context === 'due'
               ? (
                   <span className="inline-flex items-center gap-1.5 font-[var(--br-mono-font)] text-[9px] uppercase tracking-widest px-2 py-1 bg-error/10 text-error border border-error/30">
@@ -95,6 +97,22 @@ export function VocabStudyModal({ title, context, dueCount, stats, onLaunch, onC
                     THẺ
                   </span>
                 )}
+            <div className="join ml-auto">
+              <button
+                type="button"
+                className={`btn btn-xs join-item font-[var(--br-mono-font)] min-h-0 h-6 px-2 ${order === 'random' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setOrder('random')}
+              >
+                NGẪU NHIÊN
+              </button>
+              <button
+                type="button"
+                className={`btn btn-xs join-item font-[var(--br-mono-font)] min-h-0 h-6 px-2 ${order === 'sequential' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setOrder('sequential')}
+              >
+                TUẦN TỰ
+              </button>
+            </div>
           </div>
 
           {/* SRS progress bar + stat legend */}
@@ -160,7 +178,7 @@ export function VocabStudyModal({ title, context, dueCount, stats, onLaunch, onC
                 className={`group w-full flex items-center gap-3 border-b border-base-content/10
                   hover:bg-primary hover:text-primary-content transition-colors text-left
                   ${m.isSubMode ? 'pl-9 pr-4 py-2.5' : 'px-5 py-3'}`}
-                onClick={() => onLaunch(m.mode, m.subMode)}
+                onClick={() => onLaunch(m.mode, m.subMode, order)}
               >
                 <span className="font-[var(--br-mono-font)] text-[10px] text-base-content/25 group-hover:text-primary-content/50 transition-colors w-4 shrink-0 tabular-nums leading-none">
                   {m.isSubMode ? '—' : String(m.idx ?? 0).padStart(2, '0')}
