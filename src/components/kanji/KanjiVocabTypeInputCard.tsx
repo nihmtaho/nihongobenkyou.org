@@ -4,6 +4,7 @@ import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
 import { gradeReading } from '../../lib/mora'
 import { normalizeViMeaning, removeDiacritics } from '../../lib/text-utils'
+import { AnnotatedWord } from './AnnotatedWord'
 
 export type VocabTypeSubMode = 'word→hira' | 'vi→hira' | 'word→vi+hanviet'
 
@@ -12,43 +13,6 @@ interface KanjiVocabTypeInputCardProps {
   hanVietMap: Map<string, string>
   subMode: VocabTypeSubMode
   onAnswer: (correct: boolean) => void
-}
-
-const RT_STYLE: React.CSSProperties = {
-  fontFamily: 'var(--br-mono-font)',
-  fontSize: '9px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  color: 'var(--color-primary)',
-}
-
-function AnnotatedWord({
-  word,
-  hanVietMap,
-  className = '',
-}: {
-  word: string
-  hanVietMap: Map<string, string>
-  className?: string
-}) {
-  return (
-    <span className={className} style={{ fontFamily: 'var(--br-jp-font)' }}>
-      {[...word].map((char, i) => {
-        const hv = hanVietMap.get(char)
-        const charKey = `${i}-${char}`
-        if (!hv)
-          return <span key={charKey}>{char}</span>
-        return (
-          <ruby key={charKey}>
-            {char}
-            <rt style={RT_STYLE}>{hv}</rt>
-          </ruby>
-        )
-      })}
-    </span>
-  )
 }
 
 function normalizeCanonical(text: string): string {

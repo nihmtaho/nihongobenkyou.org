@@ -1,21 +1,16 @@
 import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { useFlipCardState } from '../../hooks/useFlipCardState'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { RatingBar } from '../study/shared/RatingBar'
 import { AudioButton } from '../vocabulary/AudioButton'
 import { PitchAccentBars } from '../vocabulary/PitchAccentBars'
-
-const RATING_LABELS: Record<SRSRating, string> = { 0: 'Again', 1: 'Hard', 2: 'Good', 3: 'Easy' }
-const RATING_CLASSES: Record<SRSRating, string> = {
-  0: 'btn-error',
-  1: 'btn-warning',
-  2: 'btn-success',
-  3: 'btn-info',
-}
+import { AnnotatedWord } from './AnnotatedWord'
 
 const GRID_FACE: React.CSSProperties = { gridArea: '1 / 1' }
 const GRID_FACE_BACK: React.CSSProperties = { ...GRID_FACE, transform: 'rotateY(180deg)' }
@@ -29,50 +24,9 @@ interface KanjiVocabFlipCardProps {
   onRate: (rating: SRSRating) => void
 }
 
-interface AnnotatedWordProps {
-  word: string
-  hanVietMap: Map<string, string>
-  className?: string
-}
-
-// Renders each kanji character with its Sino-Vietnamese reading as ruby annotation
-function AnnotatedWord({ word, hanVietMap, className = '' }: AnnotatedWordProps) {
-  return (
-    <span className={className} style={{ fontFamily: 'var(--br-jp-font)' }}>
-      {[...word].map((char, i) => {
-        const hv = hanVietMap.get(char)
-        const charKey = `${i}-${char}`
-        if (!hv) {
-          return <span key={charKey}>{char}</span>
-        }
-        return (
-          <ruby key={charKey}>
-            {char}
-            <rt
-              style={{
-                fontFamily: 'var(--br-mono-font)',
-                fontSize: '9px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                fontStyle: 'normal',
-                fontWeight: 700,
-                color: 'var(--color-primary)',
-              }}
-            >
-              {hv}
-            </rt>
-          </ruby>
-        )
-      })}
-    </span>
-  )
-}
-
 export function KanjiVocabFlipCard({ card, hanVietMap, meaningLanguage, onRate }: KanjiVocabFlipCardProps) {
-  const [isFlipped, setIsFlipped] = useState(false)
+  const { isFlipped, setIsFlipped, x, rotate, handleDragEnd } = useFlipCardState(onRate)
   const [hintRevealed, setHintRevealed] = useState(false)
-  const x = useMotionValue(0)
-  const rotate = useTransform(x, [-300, 0, 300], [-12, 0, 12])
   const fontSize = useSettingsStore(s => s.fontSize)
 
   const word = card.word ?? card.reading
@@ -88,37 +42,14 @@ export function KanjiVocabFlipCard({ card, hanVietMap, meaningLanguage, onRate }
     function handleKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
         return
-      if (e.code === 'Space') {
-        e.preventDefault()
-        setIsFlipped(f => !f)
-        return
-      }
       if ((e.key === 'h' || e.key === 'H') && !isFlipped) {
         e.preventDefault()
         setHintRevealed(h => !h)
-        return
-      }
-      if (!isFlipped)
-        return
-      if (e.key >= '1' && e.key <= '4') {
-        const ratings: SRSRating[] = [0, 1, 2, 3]
-        onRate(ratings[Number(e.key) - 1])
       }
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [isFlipped, onRate])
-
-  function handleDragEnd(_: unknown, info: { offset: { x: number } }) {
-    if (!isFlipped)
-      return
-    if (info.offset.x > 100)
-      onRate(2)
-    else if (info.offset.x < -100)
-      onRate(0)
-    else
-      x.set(0)
-  }
+  }, [isFlipped])
 
   function handleHint(e: React.MouseEvent) {
     e.stopPropagation()
@@ -286,25 +217,7 @@ export function KanjiVocabFlipCard({ card, hanVietMap, meaningLanguage, onRate }
         </div>
       </motion.div>
 
-      {/* Rating bar */}
-      {isFlipped && (
-        <div className="join w-full">
-          {([0, 1, 2, 3] as SRSRating[]).map((r, idx) => (
-            <button
-              key={r}
-              type="button"
-              className={`btn join-item flex-1 ${RATING_CLASSES[r]} font-[var(--br-mono-font)] text-[11px] flex flex-col gap-0.5 py-2`}
-              onClick={(e) => {
-                e.stopPropagation()
-                onRate(r)
-              }}
-            >
-              <span className="font-bold">{RATING_LABELS[r]}</span>
-              <span className="opacity-50 text-[9px]">{`[${idx + 1}]`}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      {isFlipped && <RatingBar onRate={onRate} />}
 
       <p className="text-[10px] text-base-content/25 font-[var(--br-mono-font)] tracking-wide">
         {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · [h] hint'}
