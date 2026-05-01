@@ -1,5 +1,5 @@
 import type { KanjiItem } from '../../types/kanji'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { selectKanjiDistractors, shuffle } from '../../lib/quiz'
 import { QuizOptions } from '../study/QuizOptions'
 
@@ -10,6 +10,19 @@ interface KanjiQuizCardProps {
 }
 
 export function KanjiQuizCard({ kanji, pool, onAnswer }: KanjiQuizCardProps) {
+  const [showHint, setShowHint] = useState(false)
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+        return
+      if (e.key === 'h' || e.key === 'H')
+        setShowHint(prev => !prev)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
+
   const [{ options, correctId }] = useState(() => {
     const distractors = selectKanjiDistractors(kanji, pool)
     const allItems = shuffle([kanji, ...distractors])
@@ -37,6 +50,32 @@ export function KanjiQuizCard({ kanji, pool, onAnswer }: KanjiQuizCardProps) {
             >
               {kanji.char}
             </span>
+            {/* Hint area — onyomi + kunyomi, toggled with [H] */}
+            <div className="mt-3 min-h-[28px] flex flex-col items-center justify-center gap-1">
+              {showHint && (
+                <div className="flex items-center gap-3 flex-wrap justify-center">
+                  {kanji.onyomi.length > 0 && (
+                    <span className="font-[var(--br-jp-font)] text-sm text-neutral">
+                      <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/30 mr-1">音</span>
+                      {kanji.onyomi.join('・')}
+                    </span>
+                  )}
+                  {kanji.kunyomi.length > 0 && (
+                    <span className="font-[var(--br-jp-font)] text-sm text-neutral">
+                      <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/30 mr-1">訓</span>
+                      {kanji.kunyomi.join('・')}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              className="mt-1 font-[var(--br-mono-font)] text-[9px] uppercase tracking-widest text-base-content/25 hover:text-base-content/50 transition-colors"
+              onClick={() => setShowHint(prev => !prev)}
+            >
+              {showHint ? '[H] Ẩn' : '[H] Cách đọc'}
+            </button>
           </div>
           {/* Options — right on desktop, bottom on mobile */}
           <div className="px-[18px] py-[14px] lg:flex lg:flex-col lg:justify-center lg:py-8 lg:px-8">

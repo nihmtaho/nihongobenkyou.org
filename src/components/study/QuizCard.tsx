@@ -1,6 +1,6 @@
 import type { MeaningLanguage, QuizQuestionType } from '../../types/study'
 import type { VocabItem, VocabWithSRS } from '../../types/vocabulary'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { selectDistractors, shuffle } from '../../lib/quiz'
 import { QuizOptions } from './QuizOptions'
 
@@ -44,6 +44,20 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
     }
   })
 
+  const [showHint, setShowHint] = useState(false)
+  const canShowHint = questionType !== 'word→reading'
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+        return
+      if ((e.key === 'h' || e.key === 'H') && canShowHint)
+        setShowHint(prev => !prev)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [canShowHint])
+
   const prompt = getQuestionLabel(questionType, card, meaningLanguage)
   const isJpPrompt = questionType === 'word→meaning'
 
@@ -65,6 +79,28 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
             >
               {prompt}
             </span>
+            {/* Hint area — reading + romaji, toggled with [H] */}
+            <div className="mt-3 h-8 flex flex-col items-center justify-center">
+              {showHint && (
+                <span className="font-[var(--br-jp-font)] text-sm text-neutral leading-snug">
+                  {card.reading}
+                  {card.romaji && (
+                    <span className="ml-2 font-[var(--br-mono-font)] text-[11px] text-base-content/40">
+                      {card.romaji}
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
+            {canShowHint && (
+              <button
+                type="button"
+                className="mt-1 font-[var(--br-mono-font)] text-[9px] uppercase tracking-widest text-base-content/25 hover:text-base-content/50 transition-colors"
+                onClick={() => setShowHint(prev => !prev)}
+              >
+                {showHint ? '[H] Ẩn' : '[H] Cách đọc'}
+              </button>
+            )}
           </div>
           {/* Options — right on desktop, bottom on mobile */}
           <div className="px-[18px] py-[14px] lg:flex lg:flex-col lg:justify-center lg:py-8 lg:px-8">
