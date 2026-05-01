@@ -1,6 +1,6 @@
 import type { KanjiItem } from '../../types/kanji'
 import { useState } from 'react'
-import { selectKanjiDistractors } from '../../lib/quiz'
+import { selectKanjiDistractors, shuffle } from '../../lib/quiz'
 import { QuizOptions } from '../study/QuizOptions'
 
 interface KanjiQuizCardProps {
@@ -12,7 +12,7 @@ interface KanjiQuizCardProps {
 export function KanjiQuizCard({ kanji, pool, onAnswer }: KanjiQuizCardProps) {
   const [{ options, correctId }] = useState(() => {
     const distractors = selectKanjiDistractors(kanji, pool)
-    const allItems = [kanji, ...distractors].sort(() => Math.random() - 0.5)
+    const allItems = shuffle([kanji, ...distractors])
     return {
       options: allItems.map(k => ({ id: k.char, label: k.han_viet ?? '—' })),
       correctId: kanji.char,

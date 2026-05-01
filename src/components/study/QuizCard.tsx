@@ -1,7 +1,7 @@
 import type { MeaningLanguage, QuizQuestionType } from '../../types/study'
 import type { VocabItem, VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
-import { selectDistractors } from '../../lib/quiz'
+import { selectDistractors, shuffle } from '../../lib/quiz'
 import { QuizOptions } from './QuizOptions'
 
 const QUESTION_TYPES: QuizQuestionType[] = ['word→meaning', 'meaning→word', 'word→reading']
@@ -33,7 +33,7 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
   const [{ questionType, options, correctId }] = useState(() => {
     const type = QUESTION_TYPES[Math.floor(Math.random() * QUESTION_TYPES.length)]
     const distractors = selectDistractors(card, pool)
-    const allItems = [card, ...distractors].sort(() => Math.random() - 0.5)
+    const allItems = shuffle([card, ...distractors])
     return {
       questionType: type,
       options: allItems.map(item => ({
