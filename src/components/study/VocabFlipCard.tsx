@@ -7,6 +7,7 @@ import { useFlipCardState } from '../../hooks/useFlipCardState'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { AnnotatedWord } from '../kanji/AnnotatedWord'
 import { AudioButton } from '../vocabulary/AudioButton'
 import { PitchAccentBars } from '../vocabulary/PitchAccentBars'
 import { RatingBar } from './shared/RatingBar'
@@ -15,41 +16,6 @@ const GRID_FACE: React.CSSProperties = { gridArea: '1 / 1' }
 const GRID_FACE_BACK: React.CSSProperties = { ...GRID_FACE, transform: 'rotateY(180deg)' }
 
 const JP_SIZE_MAP = { sm: 'text-5xl', md: 'text-6xl', lg: 'text-7xl' }
-
-const RT_STYLE: React.CSSProperties = {
-  fontFamily: 'var(--br-mono-font)',
-  fontSize: '9px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  color: 'var(--color-primary)',
-}
-
-interface AnnotatedWordProps {
-  word: string
-  hanVietMap: Map<string, string>
-  className?: string
-}
-
-function AnnotatedWord({ word, hanVietMap, className = '' }: AnnotatedWordProps) {
-  return (
-    <span className={className} style={{ fontFamily: 'var(--br-jp-font)' }}>
-      {[...word].map((char, i) => {
-        const hv = hanVietMap.get(char)
-        const charKey = `${i}-${char}`
-        if (!hv)
-          return <span key={charKey}>{char}</span>
-        return (
-          <ruby key={charKey}>
-            {char}
-            <rt style={RT_STYLE}>{hv}</rt>
-          </ruby>
-        )
-      })}
-    </span>
-  )
-}
 
 interface VocabFlipCardProps {
   card: VocabWithSRS
