@@ -49,13 +49,14 @@ export function BackupSection() {
         kanji_cards: (raw.kanji_cards ?? []).map(c => ({ ...c, userId })),
         custom_decks: (raw.custom_decks ?? []).map(d => ({ ...d, user_id: userId })),
         custom_vocabulary: (raw.custom_vocabulary ?? []).map(v => ({ ...v, user_id: userId })),
-        review_log: [],
-        streaks: [],
+        review_log: (raw.review_log ?? []).map(e => ({ ...e, userId })),
+        streaks: (raw.streaks ?? []).map(s => ({ ...s, userId })),
       }
       const count = await mergePackageIntoDexie(userId, payload)
       queryClient.invalidateQueries({ queryKey: ['due-cards', userId] })
       queryClient.invalidateQueries({ queryKey: ['user-cards', userId] })
       queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
+      queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
       setImportSuccess(`Đã nhập ${count} mục thành công.`)
     }
     catch (err) {
