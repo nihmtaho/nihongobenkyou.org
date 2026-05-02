@@ -115,6 +115,7 @@ function KanjiLessonStudyPage() {
         }}
         mode="flashcard"
         ratingCounts={session.stats.ratingCounts}
+        returnTab="kanji"
       />
     )
   }
@@ -145,6 +146,7 @@ function KanjiLessonStudyPage() {
             key={item.kanji.char}
             prompt={item.kanji.char}
             answer={item.kanji.han_viet ?? ''}
+            hint={item.kanji.meaning_vi.join(', ')}
             onAnswer={session.handleKanjiAnswer}
           />
         )

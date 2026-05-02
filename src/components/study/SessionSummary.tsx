@@ -1,5 +1,6 @@
 import type { SRSRating } from '../../types/srs'
 import type { SessionStats, StudyMode } from '../../types/study'
+import type { ActiveTab } from './study.config'
 import { useNavigate } from '@tanstack/react-router'
 import { useStudySessionStore } from '../../stores/studySessionStore'
 
@@ -9,6 +10,7 @@ interface SessionSummaryProps {
   ratingCounts?: Record<SRSRating, number>
   streak?: number
   lessonContext?: { book: string, lesson: number }
+  returnTab?: ActiveTab
 }
 
 const MODE_LABELS: Record<StudyMode, string> = {
@@ -28,7 +30,7 @@ function formatDuration(startTime: Date): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContext }: SessionSummaryProps) {
+export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContext, returnTab }: SessionSummaryProps) {
   const requeueWrongCards = useStudySessionStore(s => s.requeueWrongCards)
   const navigate = useNavigate()
   const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
@@ -37,7 +39,11 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
 
   function handleRetryWrong() {
     requeueWrongCards()
-    navigate({ to: '/study/$mode', params: { mode } })
+    navigate({ to: '/study/$mode', params: { mode }, search: { returnTab } })
+  }
+
+  function navigateToStudy() {
+    navigate({ to: '/study', search: { tab: returnTab } })
   }
 
   function handleBackToLesson() {
@@ -182,18 +188,18 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
                 </button>
                 <button
                   className="btn btn-ghost w-full font-[var(--br-mono-font)] uppercase text-[11px]"
-                  onClick={() => navigate({ to: '/' })}
+                  onClick={() => navigateToStudy()}
                 >
-                  Về trang chủ
+                  Về Study
                 </button>
               </>
             )
           : (
               <button
                 className="btn btn-primary w-full font-[var(--br-heading-font)] uppercase tracking-wide"
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => navigateToStudy()}
               >
-                VỀ TRANG CHỦ
+                VỀ STUDY
               </button>
             )}
       </div>

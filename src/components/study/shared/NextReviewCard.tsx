@@ -1,39 +1,61 @@
-function getDateStrings() {
-  const now = Date.now()
+import { useEffect, useState } from 'react'
+
+function getRemaining(nextDueDate: string): { display: string, hint: string, isLive: boolean } {
+  const target = new Date(`${nextDueDate}T00:00:00`)
+  const diffMs = target.getTime() - Date.now()
+
+  if (diffMs <= 0) {
+    return { display: 'ĐẾN HẠN', hint: 'Có thẻ đang đến hạn', isLive: false }
+  }
+
+  const totalSecs = Math.floor(diffMs / 1000)
+  const days = Math.floor(totalSecs / 86400)
+  const hours = Math.floor((totalSecs % 86400) / 3600)
+  const mins = Math.floor((totalSecs % 3600) / 60)
+  const secs = totalSecs % 60
+
+  const pad = (n: number) => String(n).padStart(2, '0')
+
+  if (days === 0) {
+    return {
+      display: `${pad(hours)}:${pad(mins)}:${pad(secs)}`,
+      hint: 'Lượt ôn tiếp theo hôm nay',
+      isLive: true,
+    }
+  }
+
   return {
-    today: new Date(now).toISOString().slice(0, 10),
-    tomorrow: new Date(now + 86400000).toISOString().slice(0, 10),
+    display: `${days} NGÀY ${pad(hours)}:${pad(mins)}`,
+    hint: `Lượt ôn tiếp theo: ${nextDueDate.split('-').reverse().slice(0, 2).join('/')}`,
+    isLive: days < 7,
   }
 }
 
 export function NextReviewCard({ nextDueDate }: { nextDueDate: string | null }) {
-  const { today, tomorrow } = getDateStrings()
+  const [tick, setTick] = useState(0)
 
-  let display = '---'
-  let hint = 'Chưa có lượt ôn tiếp theo'
+  const derived = nextDueDate ? getRemaining(nextDueDate) : null
+  const isLive = derived?.isLive ?? false
 
-  if (nextDueDate) {
-    if (nextDueDate <= today) {
-      display = 'HÔM NAY'
-      hint = 'Có thẻ đang đến hạn'
-    }
-    else if (nextDueDate === tomorrow) {
-      display = 'NGÀY MAI'
-      hint = 'Lượt ôn tiếp theo vào ngày mai'
-    }
-    else {
-      const [, month, day] = nextDueDate.split('-')
-      display = `${day}/${month}`
-      hint = `Lượt ôn tiếp theo: ${nextDueDate}`
-    }
-  }
+  useEffect(() => {
+    if (!isLive)
+      return
+    const id = setInterval(() => setTick(t => t + 1), 1000)
+    return () => clearInterval(id)
+  }, [isLive, nextDueDate])
+
+  // tick referenced so re-render fires each second
+  void tick
+
+  const display = derived?.display ?? '---'
+  const hint = derived?.hint ?? 'Chưa có lượt ôn tiếp theo'
 
   return (
     <div className="border-t-4 border-info bg-info/5 p-4 lg:p-5">
       <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-wider mb-2">
         LƯỢT ÔN TIẾP THEO
       </p>
-      <p className="text-3xl font-black font-[var(--br-mono-font)] leading-none mb-2 tracking-tight">
+      <p className="text-3xl font-black font-[var(--br-mono-font)] leading-none mb-2 tracking-tight tabular-nums">
         {display}
       </p>
       <p className="text-[11px] font-[var(--br-mono-font)] text-neutral">{hint}</p>

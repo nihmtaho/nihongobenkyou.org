@@ -103,7 +103,7 @@ function DeckDetailPage() {
       is_known: false,
     }))
     initSession(queue, mode, subMode)
-    navigate({ to: '/study/$mode', params: { mode } })
+    navigate({ to: '/study/$mode', params: { mode }, search: { returnTab: 'decks' } })
   }
 
   function handleTogglePublic() {

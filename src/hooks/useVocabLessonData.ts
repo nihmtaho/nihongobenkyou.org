@@ -29,8 +29,8 @@ export function useVocabLessonData(userId: string, lesson: number) {
   }, [kanjiQuery.data])
 
   const vocabIds = useMemo(
-    () => relatedVocabItems.map(rv => `rv_${rv.word ?? rv.kana}_${rv.kana}`),
-    [relatedVocabItems],
+    () => relatedVocabItems.map(rv => `rv_${lesson}_${rv.word ?? rv.kana}_${rv.kana}`),
+    [relatedVocabItems, lesson],
   )
 
   const { data: cards } = useUserCards(userId, vocabIds)
@@ -58,19 +58,33 @@ export function useVocabLessonData(userId: string, lesson: number) {
 
   const hanVietMap = useMemo(() => {
     const map = new Map<string, string>()
+    // Build per-char map from compound han_viet in each vocab item (e.g. "Hoa Ốc" → {花:Hoa, 屋:Ốc})
+    for (const rv of relatedVocabItems) {
+      if (!rv.word || !rv.han_viet)
+        continue
+      const kanjiChars = [...rv.word].filter(ch => ch >= '一' && ch <= '鿿')
+      const hvParts = rv.han_viet.trim().split(/\s+/)
+      if (kanjiChars.length === hvParts.length) {
+        kanjiChars.forEach((ch, i) => {
+          if (!map.has(ch))
+            map.set(ch, hvParts[i])
+        })
+      }
+    }
+    // Fallback: single-char entries from kanji DB for any chars not yet resolved
     kanjiForHanViet?.forEach((k) => {
-      if (k.han_viet)
+      if (k.han_viet && !map.has(k.char))
         map.set(k.char, k.han_viet)
     })
     return map
-  }, [kanjiForHanViet])
+  }, [relatedVocabItems, kanjiForHanViet])
 
   const sessionTimestamp = useMemo(() => new Date().toISOString(), [])
   const sessionToday = sessionTimestamp.slice(0, 10)
 
   const merged = useMemo<VocabWithSRS[]>(
     () => relatedVocabItems.map((rv) => {
-      const vocabId = `rv_${rv.word ?? rv.kana}_${rv.kana}`
+      const vocabId = `rv_${lesson}_${rv.word ?? rv.kana}_${rv.kana}`
       const c = cards?.get(vocabId)
       const base = {
         vocab_id: vocabId,
