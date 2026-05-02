@@ -8,19 +8,13 @@ import { TABS } from '../../../components/study/study.config'
 import { VocabStudyTab } from '../../../components/study/VocabStudyTab'
 import { useAuthStore } from '../../../stores/authStore'
 
-const VALID_TABS: ActiveTab[] = ['vocab', 'kanji', 'decks']
-
 export const Route = createFileRoute('/_authenticated/study/')({
-  validateSearch: (search: Record<string, unknown>) => ({
-    tab: VALID_TABS.includes(search.tab as ActiveTab) ? (search.tab as ActiveTab) : undefined,
-  }),
   component: StudyDashboardPage,
 })
 
 function StudyDashboardPage() {
-  const { tab } = Route.useSearch()
   const userId = useAuthStore(s => s.userId) ?? ''
-  const [activeTab, setActiveTab] = useState<ActiveTab>(tab ?? 'vocab')
+  const [activeTab, setActiveTab] = useState<ActiveTab>('vocab')
 
   return (
     <div className="flex flex-col min-h-full">

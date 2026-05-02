@@ -1,12 +1,11 @@
 import type { SRSStats } from '../../../components/common/SRSProgressBar'
-import type { StudyMode, TypeInputSubMode } from '../../../types/study'
+import type { StudyConfig, StudyMode, TypeInputSubMode } from '../../../types/study'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { SRSProgressBar } from '../../../components/common/SRSProgressBar'
-import { VocabStudyModal } from '../../../components/study/VocabStudyModal'
+import { StudyConfigModal } from '../../../components/study/StudyConfigModal'
 import { VocabList } from '../../../components/vocabulary/VocabList'
-import { useLaunchVocabSession } from '../../../hooks/useLaunchVocabSession'
 import { useUserCards } from '../../../hooks/useUserCards'
 import { useVocabulary } from '../../../hooks/useVocabulary'
 import { formatNextReview } from '../../../lib/next-review'
@@ -38,7 +37,6 @@ function LessonPage() {
   const userId = useAuthStore(s => s.userId) ?? ''
   const { data: cards = new Map() } = useUserCards(userId, vocabIds)
   const { initSession, stats } = useStudySessionStore()
-  const launchVocabSession = useLaunchVocabSession(userId)
 
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const total = nonDeprecated.length
@@ -79,13 +77,40 @@ function LessonPage() {
 
   function handleRetry() {
     initSession(retryCards, retryMode, retryMode === 'type-input' ? retrySubMode : undefined)
-    navigate({ to: '/study/$mode', params: { mode: retryMode }, search: { returnTab: undefined } })
+    navigate({ to: '/study/$mode', params: { mode: retryMode } })
   }
 
-  function handleLaunch(mode: StudyMode, subMode?: TypeInputSubMode, order?: 'random' | 'sequential') {
-    setShowConfig(false)
-    launchVocabSession(book, lessonNumber, false, mode, subMode, order)
+  function handleStudyConfirm(config: StudyConfig) {
+    const now = new Date().toISOString()
+    let merged: VocabWithSRS[] = nonDeprecated.map((v) => {
+      const c = cards.get(v.vocab_id)
+      if (c)
+        return { ...v, ...c }
+      return {
+        ...v,
+        userId,
+        vocabId: v.vocab_id,
+        interval_days: 1,
+        ease_factor: 2.5,
+        due_date: today,
+        review_count: 0,
+        last_rating: null,
+        pending_sync: false,
+        updated_at: now,
+        is_known: false,
+      }
+    })
+
+    if (config.order === 'random')
+      merged = merged.sort(() => Math.random() - 0.5)
+    if (config.cardCount !== 'all')
+      merged = merged.slice(0, config.cardCount)
+
+    initSession(merged, config.mode, config.typeInputSubMode)
+    navigate({ to: '/study/$mode', params: { mode: config.mode } })
   }
+
+  const lessonMeta = [{ lesson_id: `${book}:${lessonNumber}`, lesson_number: lessonNumber }]
 
   return (
     <div className="lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
@@ -218,11 +243,10 @@ function LessonPage() {
       </div>
 
       {showConfig && (
-        <VocabStudyModal
-          title={`Bài ${String(lessonNumber).padStart(2, '0')}`}
-          context="all"
-          stats={srsStats}
-          onLaunch={handleLaunch}
+        <StudyConfigModal
+          availableLessons={lessonMeta}
+          defaultLessonIds={[`${book}:${lessonNumber}`]}
+          onConfirm={handleStudyConfirm}
           onClose={() => setShowConfig(false)}
         />
       )}

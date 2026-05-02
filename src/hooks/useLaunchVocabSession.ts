@@ -1,4 +1,3 @@
-import type { ActiveTab } from '../components/study/study.config'
 import type { StudyMode, TypeInputSubMode } from '../types/study'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useNavigate } from '@tanstack/react-router'
@@ -17,8 +16,6 @@ export function useLaunchVocabSession(userId: string) {
     dueOnly: boolean,
     mode: StudyMode = 'flashcard',
     subMode?: TypeInputSubMode,
-    order?: 'random' | 'sequential',
-    returnTab?: ActiveTab,
   ) {
     if (isLaunching || !userId)
       return
@@ -74,9 +71,8 @@ export function useLaunchVocabSession(userId: string) {
       if (queue.length === 0)
         return
 
-      const finalQueue = order === 'sequential' ? queue : [...queue].sort(() => Math.random() - 0.5)
-      initSession(finalQueue, mode, subMode)
-      navigate({ to: '/study/$mode', params: { mode }, search: { returnTab } })
+      initSession(queue, mode, subMode)
+      navigate({ to: '/study/$mode', params: { mode } })
     }
     finally {
       setIsLaunching(false)

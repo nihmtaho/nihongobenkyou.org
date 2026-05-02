@@ -8,7 +8,6 @@ export interface LessonVocabStats extends LessonMeta {
   review: number
   mature: number
   due: number
-  next_due_date: string | null
 }
 
 export async function fetchVocabLessonStats(userId: string, bookSource: string): Promise<LessonVocabStats[]> {
@@ -52,10 +51,6 @@ export async function fetchVocabLessonStats(userId: string, bookSource: string):
       review: lessonCards.filter(c => c.interval_days >= 8 && c.interval_days < 21 && !c.is_known).length,
       mature: lessonCards.filter(c => c.interval_days >= 21 || c.is_known).length,
       due: lessonCards.filter(c => !c.is_known && c.due_date <= today).length,
-      next_due_date: lessonCards
-        .filter(c => !c.is_known && c.due_date > today)
-        .map(c => c.due_date)
-        .sort()[0] ?? null,
     }
   })
 }
