@@ -57,42 +57,42 @@ describe('vocabStudyModal', () => {
     const user = userEvent.setup()
     render(<VocabStudyModal {...defaultProps} />)
     await user.click(screen.getByRole('button', { name: /Flashcard/ }))
-    expect(defaultProps.onLaunch).toHaveBeenCalledWith('flashcard', undefined)
+    expect(defaultProps.onLaunch).toHaveBeenCalledWith('flashcard', undefined, 'random')
   })
 
   it('calls onLaunch("quiz", undefined) when Trắc nghiệm row clicked', async () => {
     const user = userEvent.setup()
     render(<VocabStudyModal {...defaultProps} />)
     await user.click(screen.getByRole('button', { name: /Trắc nghiệm/ }))
-    expect(defaultProps.onLaunch).toHaveBeenCalledWith('quiz', undefined)
+    expect(defaultProps.onLaunch).toHaveBeenCalledWith('quiz', undefined, 'random')
   })
 
   it('calls onLaunch("type-input", "word→hira") when first Gõ từ sub-row clicked', async () => {
     const user = userEvent.setup()
     render(<VocabStudyModal {...defaultProps} />)
     await user.click(screen.getByRole('button', { name: /Từ vựng.*Hiragana/ }))
-    expect(defaultProps.onLaunch).toHaveBeenCalledWith('type-input', 'word→hira')
+    expect(defaultProps.onLaunch).toHaveBeenCalledWith('type-input', 'word→hira', 'random')
   })
 
   it('calls onLaunch("type-input", "vi→hira") when second Gõ từ sub-row clicked', async () => {
     const user = userEvent.setup()
     render(<VocabStudyModal {...defaultProps} />)
     await user.click(screen.getByRole('button', { name: /Tiếng Việt.*Hiragana/ }))
-    expect(defaultProps.onLaunch).toHaveBeenCalledWith('type-input', 'vi→hira')
+    expect(defaultProps.onLaunch).toHaveBeenCalledWith('type-input', 'vi→hira', 'random')
   })
 
   it('calls onLaunch("type-input", "word→vi") when third Gõ từ sub-row clicked', async () => {
     const user = userEvent.setup()
     render(<VocabStudyModal {...defaultProps} />)
     await user.click(screen.getByRole('button', { name: /Từ vựng.*Tiếng Việt/ }))
-    expect(defaultProps.onLaunch).toHaveBeenCalledWith('type-input', 'word→vi')
+    expect(defaultProps.onLaunch).toHaveBeenCalledWith('type-input', 'word→vi', 'random')
   })
 
   it('calls onLaunch("listening", undefined) when Nghe hiểu row clicked', async () => {
     const user = userEvent.setup()
     render(<VocabStudyModal {...defaultProps} />)
     await user.click(screen.getByRole('button', { name: /Nghe hiểu/ }))
-    expect(defaultProps.onLaunch).toHaveBeenCalledWith('listening', undefined)
+    expect(defaultProps.onLaunch).toHaveBeenCalledWith('listening', undefined, 'random')
   })
 
   it('calls onClose when ESC key is pressed', () => {

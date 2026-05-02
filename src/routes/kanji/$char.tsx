@@ -376,7 +376,7 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
             <div key={`${v.word ?? v.kana}`} className="flex flex-col bg-base-200 border border-base-content/10">
               <button
                 type="button"
-                className="flex items-center justify-between p-2 text-left w-full"
+                className="flex flex-col gap-0.5 p-2 text-left w-full"
                 onClick={() => setExpandedKey(expandedKey === v.kana ? null : v.kana)}
               >
                 <div className="flex items-baseline gap-2">
@@ -388,7 +388,7 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
                     <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">{v.han_viet}</span>
                   )}
                 </div>
-                <span className="text-sm font-[var(--br-jp-font)]">{v.meaning_vi}</span>
+                <span className="text-sm font-[var(--br-jp-font)] text-neutral/80">{v.meaning_vi}</span>
               </button>
               {expandedKey === v.kana && v.example && (
                 <div className="border-t border-base-content/10 border-l-4 border-l-primary pl-3 pr-2 py-2">
@@ -419,7 +419,7 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
         {dynamic.map(v => (
           <div
             key={v.vocab_id}
-            className="flex items-center justify-between bg-base-200 border border-base-content/10 p-2"
+            className="flex flex-col gap-0.5 bg-base-200 border border-base-content/10 p-2"
           >
             <div className="flex items-baseline gap-2">
               {v.word && (
@@ -427,7 +427,7 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
               )}
               <span className="text-sm font-[var(--br-jp-font)] text-neutral">{v.reading}</span>
             </div>
-            <span className="text-sm font-[var(--br-jp-font)]">{v.meaning_vi}</span>
+            <span className="text-sm font-[var(--br-jp-font)] text-neutral/80">{v.meaning_vi}</span>
           </div>
         ))}
       </div>
