@@ -2,7 +2,10 @@
 alwaysApply: true
 description: This file describes the technology stack for the project.
 paths: 
-  - "**/*"
+  - "src/**/*.{ts,tsx}"
+  - "scripts/**/*.{ts,tsx}"
+  - "tests/**/*.{ts,tsx}"
+  - "playwright/**/*.{ts,tsx}"
 ---
 
 ## Runtime

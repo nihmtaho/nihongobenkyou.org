@@ -1,11 +1,13 @@
 ---
-description: "This is the coding style and technology stack for the project. Follow these guidelines when writing, reviewing, or refactoring code to ensure consistency and maintainability across the codebase."
 alwaysApply: true
+description: "This is the coding style and technology stack for the project. Follow these guidelines when writing, reviewing, or refactoring code to ensure consistency and maintainability across the codebase."
 paths:
-  - "./src/*"
-  - "./tests/*"
-  - "./*.ts"
-  - "./scripts/*"
+  - "src/**/*.{ts,tsx}"
+  - "scripts/**/*.{ts,tsx}"
+  - "**/*test.{ts,tsx}"
+  - "playwright/**/*.{ts,tsx}"
+  - "vite.config.ts"
+  - "tsconfig.json"
 ---
 
 - Use TypeScript for all code, with strict mode enabled.

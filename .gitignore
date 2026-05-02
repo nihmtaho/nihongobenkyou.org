@@ -73,3 +73,6 @@ supabase/.temp/
 
 # Supperpower
 .superpowers/**
+
+# Local dev notes (knowledge base, personal notes)
+.devnotes/

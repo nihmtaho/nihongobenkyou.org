@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Primary Rule Always to apply
+
+**Alway** following the [karpathy-guidelines](.claude/rules/karpathy-guidelines.md) before to work.
+
 ## Project Overview
 
 Japanese vocabulary learning PWA targeting Vietnamese learners. Phase 1 focuses on Minna no Nihongo (Shokyuu I & II). **Offline-first architecture** with a strict content/index split:
