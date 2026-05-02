@@ -1,11 +1,10 @@
 import type { KanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import type { LessonStats } from '../../types/study'
 
-import { useMemo, useState } from 'react'
-import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
+import { useState } from 'react'
 
+import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import { useNextKanjiDue } from '../../hooks/useNextKanjiDue'
-import { formatNextReview } from '../../lib/next-review'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 import { KanjiStudyModal } from '../kanji/KanjiStudyModal'
 
@@ -230,9 +229,7 @@ function KanjiSubRow({
   animDelay: number
   onOpenModal: () => void
 }) {
-  const { total, new: newCount, learning, review, mature, due, next_due_date } = stats
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
-  const nextReview = due === 0 && next_due_date ? formatNextReview([next_due_date], today) : null
+  const { total, new: newCount, learning, review, mature, due } = stats
 
   return (
     <div className="flex items-center gap-3 py-1.5">
@@ -246,15 +243,10 @@ function KanjiSubRow({
           height="h-1"
           animDelay={animDelay}
         />
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex gap-2 mt-1">
           <StatPip count={learning} label="HỌC" className="text-warning" />
           <StatPip count={review} label="ÔN" className="text-info" />
           <StatPip count={mature} label="THUỘC" className="text-success" />
-          {nextReview && (
-            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-base-content/35 tracking-widest ml-auto">
-              {nextReview}
-            </span>
-          )}
         </div>
       </div>
       <div className="flex gap-1.5 flex-none">

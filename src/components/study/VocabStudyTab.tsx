@@ -1,13 +1,12 @@
 import type { LessonVocabStats } from '../../hooks/useVocabLessonStats'
 import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import { useQueries } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useLaunchVocabSession } from '../../hooks/useLaunchVocabSession'
 import { useNextVocabDue } from '../../hooks/useNextVocabDue'
 import { useStreak } from '../../hooks/useStreak'
 import { fetchVocabLessonStats } from '../../hooks/useVocabLessonStats'
 import { datasets } from '../../lib/datasets.config'
-import { formatNextReview } from '../../lib/next-review'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 import { DueCard } from './shared/DueCard'
 import { EmptyState } from './shared/EmptyState'
@@ -135,9 +134,9 @@ export function VocabStudyTab({ userId }: { userId: string }) {
             review: modal.lesson.review,
             mature: modal.lesson.mature,
           }}
-          onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode, order?: 'random' | 'sequential') => {
+          onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode) => {
             setActiveModal(null)
-            launchSession(modal.bookId, modal.lesson.lesson_number, modal.context === 'due', mode, subMode, order, 'vocab')
+            launchSession(modal.bookId, modal.lesson.lesson_number, modal.context === 'due', mode, subMode)
           }}
           onClose={() => setActiveModal(null)}
         />
@@ -157,11 +156,9 @@ function LessonVocabRow({
   onReview: () => void
   onStudy: () => void
 }) {
-  const { lesson_number, vocab_count, new: newCount, learning, review, mature, due, next_due_date } = lesson
+  const { lesson_number, vocab_count, new: newCount, learning, review, mature, due } = lesson
   const studied = learning + review + mature
   const pctComplete = vocab_count > 0 ? Math.round((studied / vocab_count) * 100) : 0
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
-  const nextReview = due === 0 && next_due_date ? formatNextReview([next_due_date], today) : null
 
   return (
     <div
@@ -186,21 +183,13 @@ function LessonVocabRow({
             %
           </span>
         </div>
-        {due > 0
-          ? (
-              <span className="badge badge-error font-[var(--br-mono-font)] text-[10px]">
-                {due}
-                {' '}
-                ĐH
-              </span>
-            )
-          : nextReview && (
-            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-base-content/35 tracking-widest">
-              ÔN SAU
-              {' '}
-              {nextReview}
-            </span>
-          )}
+        {due > 0 && (
+          <span className="badge badge-error font-[var(--br-mono-font)] text-[10px]">
+            {due}
+            {' '}
+            ĐH
+          </span>
+        )}
       </div>
 
       <SRSProgressBar

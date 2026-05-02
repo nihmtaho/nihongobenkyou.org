@@ -196,7 +196,7 @@ describe('useLaunchVocabSession', () => {
 
     expect(mockInitSession).toHaveBeenCalledOnce()
     expect(mockInitSession.mock.calls[0][1]).toBe('quiz')
-    expect(mockNavigate).toHaveBeenCalledWith({ to: '/study/$mode', params: { mode: 'quiz' }, search: { returnTab: undefined } })
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/study/$mode', params: { mode: 'quiz' } })
   })
 
   it('passes subMode to initSession when subMode is specified', async () => {

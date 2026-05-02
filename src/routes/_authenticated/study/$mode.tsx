@@ -1,4 +1,3 @@
-import type { ActiveTab } from '../../../components/study/study.config'
 import type { StudyMode } from '../../../types/study'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -44,14 +43,7 @@ function sampleDistractors(queue: VocabWithSRS[], currentIndex: number, count: n
   return shuffled.slice(0, count)
 }
 
-const VALID_TABS: ActiveTab[] = ['vocab', 'kanji', 'decks']
-
 export const Route = createFileRoute('/_authenticated/study/$mode')({
-  validateSearch: (search: Record<string, unknown>) => ({
-    returnTab: VALID_TABS.includes(search.returnTab as ActiveTab)
-      ? (search.returnTab as ActiveTab)
-      : undefined,
-  }),
   component: StudyPage,
 })
 
@@ -132,7 +124,6 @@ function EmptySessionScreen({ onNavigate }: { onNavigate: () => void }) {
 
 function StudyPage() {
   const { mode } = Route.useParams()
-  const { returnTab } = Route.useSearch()
   const navigate = useNavigate()
   const { userId } = useAuthStore()
   const { queue, currentIndex, stats, mode: sessionMode, typeInputSubMode, markCorrect, markWrong, markAttempted, advanceCard }
@@ -174,7 +165,7 @@ function StudyPage() {
   }, [isComplete, userId, queue, sessionMode, stats])
 
   if (queue.length === 0) {
-    return <EmptySessionScreen onNavigate={() => navigate({ to: '/study', search: { tab: undefined } })} />
+    return <EmptySessionScreen onNavigate={() => navigate({ to: '/books' })} />
   }
 
   // Derive lesson context from the session queue for "back to lesson" navigation
@@ -188,7 +179,6 @@ function StudyPage() {
         stats={stats}
         mode={(sessionMode ?? 'flashcard') as StudyMode}
         lessonContext={lessonContext}
-        returnTab={returnTab}
       />
     )
   }
@@ -230,8 +220,8 @@ function StudyPage() {
   const isTypeInput = mode === 'type-input'
   const modeName = MODE_LABELS[mode as StudyMode] ?? mode.toUpperCase()
 
-  // type-input and quiz handle their own width; other modes center at max-w-2xl
-  const outerClass = isTypeInput || mode === 'quiz'
+  // type-input stays full-width (two-column grid); other modes center on desktop
+  const outerClass = isTypeInput
     ? 'flex flex-col min-h-screen'
     : 'flex flex-col min-h-screen max-w-2xl mx-auto'
 

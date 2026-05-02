@@ -115,7 +115,6 @@ function KanjiLessonStudyPage() {
         }}
         mode="flashcard"
         ratingCounts={session.stats.ratingCounts}
-        returnTab="kanji"
       />
     )
   }
