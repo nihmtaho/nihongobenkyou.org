@@ -1,5 +1,6 @@
 import type { TypeInputSubMode } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
+import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
@@ -28,11 +29,20 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
   const [raw, setRaw] = useState('')
   const [wrongMorae, setWrongMorae] = useState<number[]>([])
   const [wasSkipped, setWasSkipped] = useState(false)
+  const [hintedKey, setHintedKey] = useState<string | null>(null)
 
   const canonicalReading = normalizeAnswer(card.reading)
   const canonicalViMeaning = normalizeViMeaning(card.meaning_vi)
 
   const { phase, isCorrect, inputRef, commit, advance } = useTypeInput(onAnswer, card.vocab_id)
+
+  const showHint = hintedKey === card.vocab_id
+
+  const word = card.word ?? card.reading
+
+  const hintLabel = subMode === 'vi→hira' ? 'Từ vựng' : 'Nghĩa'
+  const hintContent = subMode === 'vi→hira' ? word : card.meaning_vi
+  const hintIsVocab = subMode === 'vi→hira'
 
   function doSkip() {
     if (phase !== 'input')
@@ -78,6 +88,12 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.ctrlKey && (e.key === 'h' || e.key === 'H')) {
+      e.preventDefault()
+      if (phase === 'input')
+        setHintedKey(prev => prev === card.vocab_id ? null : card.vocab_id)
+      return
+    }
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault()
       doSkip()
@@ -100,7 +116,6 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
       doCheck()
   }
 
-  const word = card.word ?? card.reading
   const moraChars = canonicalReading.split('').map((char, i) => ({ char, key: `${card.vocab_id}:${i}`, i }))
 
   const accentClass = phase === 'result'
@@ -137,16 +152,54 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
               </div>
             )}
 
-        {/* Reveal word after wrong in vi→hira mode */}
-        {phase === 'result' && !isCorrect && subMode === 'vi→hira' && (
-          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
-            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">TỪ VỰNG</p>
-            <p className="text-2xl font-bold font-[var(--br-jp-font)]">{word}</p>
+        {/* Hint content — visible during input phase when toggled */}
+        {phase === 'input' && showHint && (
+          <div className="w-full flex items-center justify-center bg-primary/[0.08] border border-primary/25 border-l-[3px] border-l-primary px-3.5 py-2">
+            <span
+              className={`font-[var(--br-jp-font)] font-semibold text-neutral ${hintIsVocab ? 'text-2xl font-bold' : 'text-base'}`}
+            >
+              {hintContent}
+            </span>
           </div>
         )}
 
-        {/* Reveal reading after wrong in word→vi mode */}
-        {phase === 'result' && !isCorrect && subMode === 'word→vi' && (
+        {/* Hint toggle button — input phase only */}
+        {phase === 'input' && (
+          <button
+            type="button"
+            onClick={() => setHintedKey(prev => prev === card.vocab_id ? null : card.vocab_id)}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 border font-[var(--br-mono-font)] text-[9px] uppercase tracking-wider transition-colors ${
+              showHint
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-base-content/20 bg-transparent text-base-content/40 hover:border-base-content/35 hover:text-base-content/60'
+            }`}
+          >
+            {showHint ? <EyeOff size={12} /> : <Eye size={12} />}
+            <span>{showHint ? 'Ẩn' : hintLabel}</span>
+            <span className="opacity-50">Ctrl+H</span>
+          </button>
+        )}
+
+        {/* Reveal kanji + reading after result in vi→hira mode */}
+        {phase === 'result' && subMode === 'vi→hira' && (
+          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">TỪ VỰNG</p>
+            <p className="text-2xl font-bold font-[var(--br-jp-font)]">{word}</p>
+            <p className="text-sm font-[var(--br-jp-font)] text-neutral">{canonicalReading}</p>
+          </div>
+        )}
+
+        {/* Reveal reading + meaning after result in word→hira mode */}
+        {phase === 'result' && subMode === 'word→hira' && (
+          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">CÁCH ĐỌC</p>
+            <p className="text-lg font-[var(--br-jp-font)] text-neutral">{canonicalReading}</p>
+            <p className="text-sm text-neutral/75">{card.meaning_vi}</p>
+          </div>
+        )}
+
+        {/* Reveal reading after result in word→vi mode */}
+        {phase === 'result' && subMode === 'word→vi' && (
           <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
             <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">CÁCH ĐỌC</p>
             <p className="text-lg font-[var(--br-jp-font)] text-neutral">{canonicalReading}</p>
@@ -264,8 +317,8 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
 
         <p className="text-[10px] font-[var(--br-mono-font)] text-base-content/30 text-center">
           {subMode === 'word→vi'
-            ? 'Enter = kiểm tra · Ctrl+Enter = bỏ qua'
-            : 'Enter = kiểm tra · Ctrl+Enter = bỏ qua · # = romaji · @ = katakana · ! = hiragana'}
+            ? 'Enter = kiểm tra · Ctrl+Enter = bỏ qua · Ctrl+H = hint'
+            : 'Enter = kiểm tra · Ctrl+Enter = bỏ qua · Ctrl+H = hint · # = romaji · @ = katakana · ! = hiragana'}
         </p>
       </div>
     </div>

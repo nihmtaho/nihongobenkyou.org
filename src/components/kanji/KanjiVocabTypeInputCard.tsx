@@ -1,4 +1,5 @@
 import type { VocabWithSRS } from '../../types/vocabulary'
+import { Eye, EyeOff } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
@@ -36,12 +37,19 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
   const [raw, setRaw] = useState('')
   const [wrongMorae, setWrongMorae] = useState<number[]>([])
   const [wasSkipped, setWasSkipped] = useState(false)
+  const [hintedKey, setHintedKey] = useState<string | null>(null)
 
   const canonicalReading = normalizeCanonical(card.reading)
   const { phase, isCorrect, inputRef, commit, advance } = useTypeInput(onAnswer, `${card.vocab_id}:${subMode}`)
 
   const word = card.word ?? card.reading
   const hasAnnotations = card.word !== null && hanVietMap.size > 0
+
+  const showHint = hintedKey === card.vocab_id
+
+  const hintLabel = subMode === 'vi→hira' ? 'Từ vựng' : 'Nghĩa'
+  const hintContent = subMode === 'vi→hira' ? word : card.meaning_vi
+  const hintIsVocab = subMode === 'vi→hira'
 
   function doSkip() {
     if (phase !== 'input')
@@ -68,6 +76,12 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.ctrlKey && (e.key === 'h' || e.key === 'H')) {
+      e.preventDefault()
+      if (phase === 'input')
+        setHintedKey(prev => prev === card.vocab_id ? null : card.vocab_id)
+      return
+    }
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault()
       doSkip()
@@ -132,7 +146,36 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
                 </p>
               )}
 
-        {phase === 'result' && !isCorrect && subMode === 'vi→hira' && (
+        {/* Hint content — input phase only */}
+        {phase === 'input' && showHint && (
+          <div className="w-full flex items-center justify-center bg-primary/[0.08] border border-primary/25 border-l-[3px] border-l-primary px-3.5 py-2">
+            <span
+              className={`font-[var(--br-jp-font)] font-semibold text-neutral ${hintIsVocab ? 'text-2xl font-bold' : 'text-base'}`}
+            >
+              {hintContent}
+            </span>
+          </div>
+        )}
+
+        {/* Hint toggle button — input phase only */}
+        {phase === 'input' && (
+          <button
+            type="button"
+            onClick={() => setHintedKey(prev => prev === card.vocab_id ? null : card.vocab_id)}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 border font-[var(--br-mono-font)] text-[9px] uppercase tracking-wider transition-colors ${
+              showHint
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-base-content/20 bg-transparent text-base-content/40 hover:border-base-content/35 hover:text-base-content/60'
+            }`}
+          >
+            {showHint ? <EyeOff size={12} /> : <Eye size={12} />}
+            <span>{showHint ? 'Ẩn' : hintLabel}</span>
+            <span className="opacity-50">Ctrl+H</span>
+          </button>
+        )}
+
+        {/* Reveal kanji + reading after result in vi→hira mode */}
+        {phase === 'result' && subMode === 'vi→hira' && (
           <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
             <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">TỪ VỰNG</p>
             {hasAnnotations
@@ -142,13 +185,16 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
               : (
                   <p className="text-2xl font-bold" style={{ fontFamily: 'var(--br-jp-font)' }}>{word}</p>
                 )}
+            <p className="text-sm text-neutral" style={{ fontFamily: 'var(--br-jp-font)' }}>{canonicalReading}</p>
           </div>
         )}
 
-        {phase === 'result' && !isCorrect && subMode === 'word→hira' && (
+        {/* Reveal reading + meaning after result in word→hira mode */}
+        {phase === 'result' && subMode === 'word→hira' && (
           <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
-            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">NGHĨA</p>
-            <p className="text-lg font-bold">{card.meaning_vi}</p>
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">CÁCH ĐỌC</p>
+            <p className="text-lg text-neutral" style={{ fontFamily: 'var(--br-jp-font)' }}>{canonicalReading}</p>
+            <p className="text-sm text-neutral/75">{card.meaning_vi}</p>
           </div>
         )}
       </div>
@@ -241,7 +287,7 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
         </form>
 
         <p className="text-[10px] font-[var(--br-mono-font)] text-base-content/30 text-center">
-          Enter = kiểm tra · Ctrl+Enter = bỏ qua · # = romaji · @ = katakana
+          Enter = kiểm tra · Ctrl+Enter = bỏ qua · Ctrl+H = hint · # = romaji · @ = katakana
         </p>
       </div>
     </div>
