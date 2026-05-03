@@ -89,7 +89,7 @@ function LessonPage() {
 
   return (
     <div className="lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
-      <div className="sticky top-0 z-10 bg-base-100 border-b border-base-content/10 shrink-0">
+      <div className="sticky top-0 z-10 bg-background border-b border-border/10 shrink-0">
         {/* Main header */}
         <div className="p-4 flex items-end justify-between">
           <div>
@@ -168,7 +168,7 @@ function LessonPage() {
                 {retryCards.slice(0, 6).map(c => (
                   <span
                     key={c.vocab_id}
-                    className="text-xs font-[var(--br-jp-font)] bg-base-100 border border-error/30 px-1.5 py-0.5"
+                    className="text-xs font-[var(--br-jp-font)] bg-background border border-destructive/30 px-1.5 py-0.5"
                   >
                     {c.word ?? c.reading}
                   </span>

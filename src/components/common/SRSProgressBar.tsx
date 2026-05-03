@@ -24,7 +24,7 @@ export function SRSProgressBar({
   const { total, learning, review, mature } = stats
 
   return (
-    <div className={`flex ${height} w-full bg-base-300 overflow-hidden`}>
+    <div className={`flex ${height} w-full bg-secondary overflow-hidden`}>
       <motion.div
         className="bg-warning h-full flex-none"
         style={{ transformOrigin: 'left', width: `${segmentPct(learning, total)}%` }}
