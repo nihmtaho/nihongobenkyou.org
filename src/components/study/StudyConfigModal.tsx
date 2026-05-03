@@ -4,9 +4,16 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { STUDY_CONFIG_MODE_OPTIONS } from './config/study-config-modes.config'
 
 const CARD_COUNTS = [5, 10, 20, 50, 'all'] as const
 type CardCountOption = (typeof CARD_COUNTS)[number]
+
+const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string, desc: string }[] = [
+  { value: 'word→hira', label: 'Từ vựng → Hiragana', desc: 'Nhìn chữ Nhật, gõ cách đọc' },
+  { value: 'vi→hira', label: 'Tiếng Việt → Hiragana', desc: 'Nhìn nghĩa tiếng Việt, gõ hiragana' },
+  { value: 'word→vi', label: 'Từ vựng → Tiếng Việt', desc: 'Nhìn chữ Nhật, gõ nghĩa tiếng Việt' },
+]
 
 interface StudyConfigModalProps {
   availableLessons: { lesson_id: string, lesson_number: number, title?: string }[]
@@ -15,12 +22,6 @@ interface StudyConfigModalProps {
   onConfirm: (config: StudyConfig) => void
   onClose: () => void
 }
-
-const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string, desc: string }[] = [
-  { value: 'word→hira', label: 'Từ vựng → Hiragana', desc: 'Nhìn chữ Nhật, gõ cách đọc' },
-  { value: 'vi→hira', label: 'Tiếng Việt → Hiragana', desc: 'Nhìn nghĩa tiếng Việt, gõ hiragana' },
-  { value: 'word→vi', label: 'Từ vựng → Tiếng Việt', desc: 'Nhìn chữ Nhật, gõ nghĩa tiếng Việt' },
-]
 
 export function StudyConfigModal({
   availableLessons,
@@ -64,17 +65,7 @@ export function StudyConfigModal({
         <div className="flex flex-col gap-1">
           <Label className="font-semibold">Mode</Label>
           <div className="flex gap-2 flex-wrap">
-            {(
-              [
-                { value: 'flashcard', label: 'Thẻ từ' },
-                { value: 'quiz', label: 'Trắc nghiệm' },
-                { value: 'type-input', label: 'Gõ từ' },
-                { value: 'sentence-flashcard', label: 'Thẻ câu' },
-                { value: 'listening', label: 'Nghe hiểu' },
-                { value: 'reading-comprehension', label: 'Đọc hiểu' },
-                { value: 'pitch-discrimination', label: 'Thanh điệu' },
-              ] as { value: StudyMode, label: string }[]
-            ).map(({ value: m, label }) => (
+            {STUDY_CONFIG_MODE_OPTIONS.map(({ value: m, label }) => (
               <Button
                 key={m}
                 size="sm"
