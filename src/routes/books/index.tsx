@@ -47,7 +47,7 @@ function BookCard({ dataset, userId }: { dataset: Dataset, userId: string }) {
 
   return (
     <Link to="/books/$book" params={{ book: dataset.id }}>
-      <div className="card bg-base-200 border border-base-content/10 transition-colors hover:border-l-4 hover:border-l-primary cursor-pointer">
+      <div className="bg-card border border-border/10 transition-colors hover:border-l-4 hover:border-l-primary cursor-pointer">
         <div className="card-body p-4 gap-2">
           <div className="flex gap-1">
             {dataset.jlpt_level && (
