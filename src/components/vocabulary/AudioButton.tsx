@@ -1,6 +1,8 @@
 import { Howl } from 'howler'
 import { useEffect, useRef, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
+
 interface AudioButtonProps {
   audioFilename: string | null
   vocabId: string
@@ -47,15 +49,16 @@ export function AudioButton({ audioFilename, vocabId, rate = 1.0 }: AudioButtonP
   }
 
   return (
-    <button
+    <Button
       ref={buttonRef}
-      type="button"
-      className="btn btn-outline btn-sm font-[var(--br-mono-font)] self-start"
+      variant="outline"
+      size="sm"
+      className="font-[var(--br-mono-font)] self-start"
       onClick={handlePlay}
       disabled={isPlaying}
       aria-label={`Play pronunciation for ${vocabId}`}
     >
       {isPlaying ? '▶ PLAYING' : '▶ PLAY'}
-    </button>
+    </Button>
   )
 }
