@@ -66,14 +66,8 @@ async function runPipeline(): Promise<void> {
 
   process.stdout.write('\nAll datasets built.\n')
 
-  // Kanji pipeline (requires external source data — skipped if not present)
-  const KANJIVG_DIR = path.join(process.cwd(), 'dataset/kanjivg')
-  if (existsSync(KANJIVG_DIR)) {
-    await runStep('build-kanji', () => buildKanji())
-  }
-  else {
-    process.stdout.write('\n  → build-kanji... skipped (kanjivg source data not available)\n')
-  }
+  // Kanji pipeline — handles missing kanjivg/ internally (stroke_paths = null)
+  await runStep('build-kanji', () => buildKanji())
 }
 
 runPipeline().catch((err) => {
