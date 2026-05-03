@@ -306,7 +306,7 @@ function CanvasGraph({ focusChar, nodes, onNodeClick }: KanjiGraphProps) {
       {/* Node popup */}
       {popup && (
         <div
-          className="absolute bg-base-100 border border-base-content/20 p-3 flex flex-col gap-2 shadow-xl z-10"
+          className="absolute bg-background border border-border/20 p-3 flex flex-col gap-2 shadow-xl z-10"
           style={{ left: popup.x, top: popup.y, transform: 'translate(8px, -50%)' }}
         >
           <p className="text-3xl font-bold" style={{ fontFamily: 'var(--br-jp-font)' }}>{popup.char}</p>
