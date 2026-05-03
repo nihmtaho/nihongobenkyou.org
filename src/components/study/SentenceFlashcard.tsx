@@ -2,6 +2,8 @@ import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 import { highlightSentence } from '../../lib/sentence-highlight'
 import { AudioButton } from '../vocabulary/AudioButton'
 
@@ -10,6 +12,9 @@ interface SentenceFlashcardProps {
   meaningLanguage: MeaningLanguage
   onRate: (rating: SRSRating) => void
 }
+
+const RATING_VARIANTS = ['destructive', 'warning', 'success', 'info'] as const
+const RATING_LABELS = ['Again', 'Hard', 'Good', 'Easy'] as const
 
 export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFlashcardProps) {
   const [isFlipped, setIsFlipped] = useState(false)
@@ -25,7 +30,7 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
     return (
       <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
         <div
-          className="card bg-base-100 border-2 border-base-content shadow-xl w-full min-h-64 flex flex-col items-center justify-center p-6 gap-3 cursor-pointer"
+          className="bg-background border-2 border-foreground w-full min-h-64 flex flex-col items-center justify-center p-6 gap-3 cursor-pointer"
           onClick={() => setIsFlipped(true)}
           role="button"
           aria-label="flip"
@@ -52,7 +57,7 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
       <div
-        className="card bg-base-100 border-2 border-base-content shadow-xl w-full min-h-64 flex flex-col items-center justify-center p-6 gap-3 cursor-pointer"
+        className="bg-background border-2 border-foreground w-full min-h-64 flex flex-col items-center justify-center p-6 gap-3 cursor-pointer"
         onClick={() => setIsFlipped(true)}
         role="button"
         aria-label="flip"
@@ -81,7 +86,7 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
               </>
             )}
         {!isFlipped && (
-          <span className="text-xs text-base-content/40 mt-2">Tap to reveal</span>
+          <span className="text-xs text-foreground/40 mt-2">Tap to reveal</span>
         )}
       </div>
       {isFlipped && <RatingBar onRate={onRate} />}
@@ -91,11 +96,12 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
 
 function RatingBar({ onRate }: { onRate: (r: SRSRating) => void }) {
   return (
-    <div className="flex gap-2 w-full">
-      <button className="btn btn-error flex-1" onClick={() => onRate(0)} aria-label="again">Again</button>
-      <button className="btn btn-warning flex-1" onClick={() => onRate(1)} aria-label="hard">Hard</button>
-      <button className="btn btn-success flex-1" onClick={() => onRate(2)} aria-label="good">Good</button>
-      <button className="btn btn-info flex-1" onClick={() => onRate(3)} aria-label="easy">Easy</button>
-    </div>
+    <ButtonGroup className="w-full">
+      {([0, 1, 2, 3] as SRSRating[]).map(r => (
+        <Button key={r} variant={RATING_VARIANTS[r]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r].toLowerCase()}>
+          {RATING_LABELS[r]}
+        </Button>
+      ))}
+    </ButtonGroup>
   )
 }

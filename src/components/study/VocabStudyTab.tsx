@@ -2,6 +2,8 @@ import type { LessonVocabStats } from '../../hooks/useVocabLessonStats'
 import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { useLaunchVocabSession } from '../../hooks/useLaunchVocabSession'
 import { useNextVocabDue } from '../../hooks/useNextVocabDue'
 import { useStreak } from '../../hooks/useStreak'
@@ -72,12 +74,12 @@ export function VocabStudyTab({ userId }: { userId: string }) {
       {/* Stats row */}
       <StatsGrid
         items={[
-          { label: 'ĐẾN HẠN', value: totals.due, color: 'text-error' },
-          { label: 'MỚI', value: totals.new, color: 'text-base-content/50' },
+          { label: 'ĐẾN HẠN', value: totals.due, color: 'text-destructive' },
+          { label: 'MỚI', value: totals.new, color: 'text-foreground/50' },
           { label: 'ĐANG HỌC', value: totals.learning, color: 'text-warning' },
           { label: 'ÔN TẬP', value: totals.review, color: 'text-info' },
           { label: 'ĐÃ THUỘC', value: totals.mature, color: 'text-success' },
-          { label: 'ĐÃ HỌC QUA', value: totals.studied, color: 'text-base-content' },
+          { label: 'ĐÃ HỌC QUA', value: totals.studied, color: 'text-foreground' },
         ]}
         isLoading={isLoading}
       />
@@ -100,7 +102,7 @@ export function VocabStudyTab({ userId }: { userId: string }) {
           ? bookGroups.map(({ book, activeLessons }) => (
               <div key={book.id} className="mb-6">
                 <SectionLabel label={book.title_vi} count={activeLessons.length} />
-                <div className="border border-base-content/10">
+                <div className="border border-border/10">
                   {activeLessons.map((lesson, i) => (
                     <LessonVocabRow
                       key={lesson.lesson_number}
@@ -166,7 +168,7 @@ function LessonVocabRow({
   return (
     <div
       className={[
-        'border-b border-base-content/10 last:border-b-0 p-3 lg:p-4',
+        'border-b border-border/10 last:border-b-0 p-3 lg:p-4',
         due > 0 ? 'border-l-4 border-l-primary' : 'border-l-4 border-l-transparent',
       ].join(' ')}
     >
@@ -177,7 +179,7 @@ function LessonVocabRow({
             {' '}
             {String(lesson_number).padStart(2, '0')}
           </span>
-          <span className="text-[10px] font-[var(--br-mono-font)] text-neutral">
+          <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
             {vocab_count}
             {' '}
             từ ·
@@ -188,14 +190,14 @@ function LessonVocabRow({
         </div>
         {due > 0
           ? (
-              <span className="badge badge-error font-[var(--br-mono-font)] text-[10px]">
+              <Badge className="bg-destructive text-destructive-foreground font-[var(--br-mono-font)] text-[10px]">
                 {due}
                 {' '}
                 ĐH
-              </span>
+              </Badge>
             )
           : nextReview && (
-            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-base-content/35 tracking-widest">
+            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-foreground/35 tracking-widest">
               ÔN SAU
               {' '}
               {nextReview}
@@ -217,21 +219,24 @@ function LessonVocabRow({
         </div>
         <div className="flex gap-1.5">
           {due > 0 && (
-            <button
-              className="btn btn-primary btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+            <Button
+              size="xs"
+              className="font-[var(--br-mono-font)] min-h-0 h-7"
               onClick={onReview}
             >
               ÔN TẬP (
               {due}
               )
-            </button>
+            </Button>
           )}
-          <button
-            className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+          <Button
+            size="xs"
+            variant="outline"
+            className="font-[var(--br-mono-font)] min-h-0 h-7"
             onClick={onStudy}
           >
             TỰ HỌC
-          </button>
+          </Button>
         </div>
       </div>
     </div>

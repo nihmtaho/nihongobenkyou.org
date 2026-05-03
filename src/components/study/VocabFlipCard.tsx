@@ -3,6 +3,7 @@ import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { useFlipCardState } from '../../hooks/useFlipCardState'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
@@ -90,7 +91,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
             {/* ── Front ─────────────────────────── */}
             <div
               style={{ backfaceVisibility: 'hidden', ...GRID_FACE }}
-              className="card bg-base-100 border-2 border-base-content shadow-xl flex flex-col min-h-[240px] portrait:min-h-[55svh]"
+              className="bg-background border-2 border-foreground shadow-xl flex flex-col min-h-[240px] portrait:min-h-[55svh]"
             >
               <div className="flex-1 flex flex-col items-center justify-center px-10 pt-10 pb-4 gap-4">
                 <span
@@ -106,19 +107,19 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
                         <PitchAccentBars pattern={pitchPattern} kana={card.reading} />
                         <div className="flex items-center gap-2">
                           <span
-                            className="text-sm text-neutral"
+                            className="text-sm text-muted-foreground"
                             style={{ fontFamily: 'var(--br-jp-font)' }}
                           >
                             {card.reading}
                           </span>
-                          <span className="text-[10px] font-[var(--br-mono-font)] text-neutral/50">
+                          <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground/50">
                             {card.romaji}
                           </span>
                         </div>
                       </div>
                     )
                   : (
-                      <span className="text-[11px] text-base-content/30 font-[var(--br-mono-font)] uppercase tracking-widest">
+                      <span className="text-[11px] text-foreground/30 font-[var(--br-mono-font)] uppercase tracking-widest">
                         Space / tap to reveal
                       </span>
                     )}
@@ -126,29 +127,31 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
 
               {/* Hint button bar */}
               <div className="flex items-center justify-between px-4 pb-3 shrink-0">
-                <span className="text-[9px] text-base-content/20 font-[var(--br-mono-font)] uppercase tracking-widest">
+                <span className="text-[9px] text-foreground/20 font-[var(--br-mono-font)] uppercase tracking-widest">
                   [H]
                 </span>
-                <button
+                <Button
                   type="button"
-                  className={`btn btn-xs font-[var(--br-mono-font)] uppercase text-[9px] ${hintRevealed ? 'btn-primary' : 'btn-ghost border border-base-content/20'}`}
+                  size="xs"
+                  variant={hintRevealed ? 'default' : 'ghost'}
+                  className={`font-[var(--br-mono-font)] uppercase text-[9px] min-h-0 h-7${!hintRevealed ? ' border border-border/20' : ''}`}
                   onClick={handleHint}
                   aria-label="Toggle reading hint"
                 >
                   {hintRevealed ? 'HIDE' : 'HINT'}
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* ── Back ──────────────────────────── */}
             <div
               style={{ backfaceVisibility: 'hidden', ...GRID_FACE_BACK }}
-              className="card bg-base-100 border-2 border-primary shadow-xl overflow-hidden flex flex-col min-h-[240px] portrait:min-h-[55svh]"
+              className="bg-background border-2 border-primary shadow-xl overflow-hidden flex flex-col min-h-[240px] portrait:min-h-[55svh]"
             >
               <div className="h-1 bg-primary w-full shrink-0" />
 
               {/* Word header — per-char han_viet ruby (same as KanjiVocabFlipCard) */}
-              <div className="px-5 pt-4 pb-3 border-b border-base-content/10">
+              <div className="px-5 pt-4 pb-3 border-b border-border/10">
                 {hasHanViet
                   ? (
                       <AnnotatedWord
@@ -168,7 +171,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
               </div>
 
               {/* Reading strip */}
-              <div className="px-5 py-2.5 flex items-center gap-4 border-b border-base-content/10 bg-base-200/50">
+              <div className="px-5 py-2.5 flex items-center gap-4 border-b border-border/10 bg-card/50">
                 <div className="flex flex-col gap-0.5">
                   <p
                     className="text-sm leading-none"
@@ -176,7 +179,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
                   >
                     {card.reading}
                   </p>
-                  <p className="text-[10px] font-[var(--br-mono-font)] text-neutral">{card.romaji}</p>
+                  <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">{card.romaji}</p>
                 </div>
                 {pitchPattern && <PitchAccentBars pattern={pitchPattern} kana={card.reading} />}
                 <div className="ml-auto">
@@ -185,19 +188,19 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
               </div>
 
               {/* Meaning section — below reading so long VI text has full width */}
-              <div className="px-5 py-4 border-b border-base-content/10">
+              <div className="px-5 py-4 border-b border-border/10">
                 <p className="text-2xl sm:text-3xl font-black font-[var(--br-heading-font)] uppercase tracking-tighter leading-tight text-primary">
                   {primaryMeaning}
                 </p>
                 {secondaryMeaning && (
-                  <p className="text-sm text-neutral leading-snug mt-1">{secondaryMeaning}</p>
+                  <p className="text-sm text-muted-foreground leading-snug mt-1">{secondaryMeaning}</p>
                 )}
               </div>
 
               {/* Examples */}
               {examples.length > 0 && (
                 <div className="px-5 py-3 flex flex-col gap-2">
-                  <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+                  <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
                     Ví dụ
                   </p>
                   {examples.map((ex, i) => (
@@ -209,7 +212,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
                         {ex.ja}
                       </p>
                       <p
-                        className="text-xs text-neutral"
+                        className="text-xs text-muted-foreground"
                         style={{ fontFamily: 'var(--br-jp-font)' }}
                       >
                         {ex.vi}
@@ -220,7 +223,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
               )}
 
               <div className="px-5 pb-3 pt-1 mt-auto">
-                <p className="text-[9px] font-[var(--br-mono-font)] text-base-content/20 uppercase tracking-widest text-right">
+                <p className="text-[9px] font-[var(--br-mono-font)] text-foreground/20 uppercase tracking-widest text-right">
                   tap / space to flip back
                 </p>
               </div>
@@ -231,7 +234,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
 
       {isFlipped && <RatingBar onRate={onRate} />}
 
-      <p className="text-[10px] text-base-content/25 font-[var(--br-mono-font)] tracking-wide">
+      <p className="text-[10px] text-foreground/25 font-[var(--br-mono-font)] tracking-wide">
         {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · [h] hint'}
       </p>
     </div>

@@ -3,6 +3,9 @@ import type { StudyMode } from '../../../types/study'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ListeningCard } from '../../../components/study/ListeningCard'
 import { PitchDiscriminationCard } from '../../../components/study/PitchDiscriminationCard'
 import { QuizCard } from '../../../components/study/QuizCard'
@@ -66,11 +69,11 @@ function ProgressBar({ current, total, modeName, lessonNumber }: {
     <div className="flex flex-col gap-2 mb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">{modeName}</span>
+          <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">{modeName}</span>
           {lessonNumber !== undefined && (
             <>
-              <span className="text-base-content/20 text-[10px]">·</span>
-              <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">
+              <span className="text-foreground/20 text-[10px]">·</span>
+              <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">
                 BÀI
                 {' '}
                 {String(lessonNumber).padStart(2, '0')}
@@ -78,14 +81,14 @@ function ProgressBar({ current, total, modeName, lessonNumber }: {
             </>
           )}
         </div>
-        <span className="text-[11px] font-[var(--br-mono-font)] text-neutral tabular-nums">
+        <span className="text-[11px] font-[var(--br-mono-font)] text-muted-foreground tabular-nums">
           {current + 1}
           {' '}
           /
           {total}
         </span>
       </div>
-      <div className="h-0.5 w-full bg-base-300">
+      <div className="h-0.5 w-full bg-secondary">
         <div
           className="bg-primary h-0.5 transition-all duration-300"
           style={{ width: `${pct}%` }}
@@ -110,22 +113,22 @@ function EmptySessionScreen({ onNavigate }: { onNavigate: () => void }) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-4">
-      <div role="alert" className="alert alert-info max-w-sm">
-        <span className="font-[var(--br-mono-font)] text-[11px] uppercase">
+      <Alert className="bg-info/10 border-info/50 max-w-sm">
+        <AlertDescription className="font-[var(--br-mono-font)] text-[11px] uppercase">
           No session active — redirecting in
           {' '}
           {countdown}
           s
-        </span>
-      </div>
+        </AlertDescription>
+      </Alert>
       <div className="flex flex-col gap-2 w-full max-w-sm">
-        <div className="skeleton h-32 w-full" />
-        <div className="skeleton h-6 w-2/3" />
-        <div className="skeleton h-6 w-1/2" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-6 w-2/3" />
+        <Skeleton className="h-6 w-1/2" />
       </div>
-      <button className="btn btn-primary font-[var(--br-mono-font)]" onClick={onNavigate}>
+      <Button className="font-[var(--br-mono-font)]" onClick={onNavigate}>
         GO TO BOOKS
-      </button>
+      </Button>
     </div>
   )
 }

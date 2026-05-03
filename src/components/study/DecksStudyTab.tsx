@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { useMemo } from 'react'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { db } from '../../db/schema'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
 import { formatNextReview } from '../../lib/next-review'
@@ -39,7 +41,7 @@ export function DecksStudyTab({ userId }: { userId: string }) {
   return (
     <div className="p-4 lg:p-6 xl:p-8 max-w-5xl mx-auto">
       <SectionLabel label="BỘ THẺ CỦA TÔI" count={decks.length} />
-      <div className="border border-base-content/10">
+      <div className="border border-border/10">
         {decks.map(deck => (
           <CustomDeckRow key={deck.id} deck={deck} userId={userId} />
         ))}
@@ -84,7 +86,7 @@ function CustomDeckRow({ deck, userId }: { deck: CustomDeck, userId: string }) {
 
   return (
     <div className={[
-      'flex items-center justify-between border-b border-base-content/10 last:border-b-0 p-3 lg:p-4',
+      'flex items-center justify-between border-b border-border/10 last:border-b-0 p-3 lg:p-4',
       dueCount > 0 ? 'border-l-4 border-l-primary' : 'border-l-4 border-l-transparent',
     ].join(' ')}
     >
@@ -93,21 +95,21 @@ function CustomDeckRow({ deck, userId }: { deck: CustomDeck, userId: string }) {
           {deck.title}
         </p>
         <div className="flex items-center gap-2 mt-0.5">
-          <p className="text-[10px] font-[var(--br-mono-font)] text-neutral">
+          <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
             {deck.word_count}
             {' '}
             THẺ
           </p>
           {dueCount > 0
             ? (
-                <span className="badge badge-error font-[var(--br-mono-font)] text-[10px]">
+                <Badge className="bg-destructive text-destructive-foreground font-[var(--br-mono-font)] text-[10px]">
                   {dueCount}
                   {' '}
                   ĐH
-                </span>
+                </Badge>
               )
             : nextLabel && (
-              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-base-content/35 tracking-widest">
+              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-foreground/35 tracking-widest">
                 ÔN SAU
                 {' '}
                 {nextLabel}
@@ -115,13 +117,11 @@ function CustomDeckRow({ deck, userId }: { deck: CustomDeck, userId: string }) {
             )}
         </div>
       </div>
-      <Link
-        to="/custom/$deckId"
-        params={{ deckId: deck.id }}
-        className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
-      >
-        XEM BỘ THẺ
-      </Link>
+      <Button asChild size="xs" variant="outline" className="font-[var(--br-mono-font)] min-h-0 h-7">
+        <Link to="/custom/$deckId" params={{ deckId: deck.id }}>
+          XEM BỘ THẺ
+        </Link>
+      </Button>
     </div>
   )
 }

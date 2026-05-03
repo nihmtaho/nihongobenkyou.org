@@ -2,6 +2,7 @@ import type { SRSRating } from '../../types/srs'
 import type { SessionStats, StudyMode } from '../../types/study'
 import type { ActiveTab } from './study.config'
 import { useNavigate } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
 import { useStudySessionStore } from '../../stores/studySessionStore'
 
 interface SessionSummaryProps {
@@ -61,7 +62,7 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
       {/* Header */}
       <div className="w-full flex items-start justify-between">
         <div>
-          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral mb-1">
+          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-1">
             {MODE_LABELS[mode]}
             {' '}
             · KẾT QUẢ
@@ -71,70 +72,70 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
           </p>
         </div>
         <div className="text-right">
-          <p className={`text-4xl font-black font-[var(--br-mono-font)] ${accuracy >= 80 ? 'text-success' : accuracy >= 50 ? 'text-warning' : 'text-error'}`}>
+          <p className={`text-4xl font-black font-[var(--br-mono-font)] ${accuracy >= 80 ? 'text-success' : accuracy >= 50 ? 'text-warning' : 'text-destructive'}`}>
             {accuracy}
             <span className="text-xl">%</span>
           </p>
-          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">CHÍNH XÁC</p>
+          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">CHÍNH XÁC</p>
         </div>
       </div>
 
       {/* Stats row */}
-      <div className="stats stats-horizontal w-full border border-base-content/10">
-        <div className="stat p-3">
-          <div className="stat-value text-base font-[var(--br-mono-font)]">
+      <div className="grid grid-cols-3 w-full border border-border/10 divide-x divide-border/10">
+        <div className="p-3">
+          <div className="text-base font-[var(--br-mono-font)]">
             {stats.correct}
-            <span className="text-base-content/40">
+            <span className="text-foreground/40">
               /
               {stats.total}
             </span>
           </div>
-          <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">ĐÚNG</div>
+          <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">ĐÚNG</div>
         </div>
         {hasWrong && (
-          <div className="stat p-3">
-            <div className="stat-value text-base font-[var(--br-mono-font)] text-error">{stats.wrongCards.length}</div>
-            <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">SAI</div>
+          <div className="p-3">
+            <div className="text-base font-[var(--br-mono-font)] text-destructive">{stats.wrongCards.length}</div>
+            <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">SAI</div>
           </div>
         )}
-        <div className="stat p-3">
-          <div className="stat-value text-base font-[var(--br-mono-font)]">{formatDuration(stats.startTime)}</div>
-          <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">THỜI GIAN</div>
+        <div className="p-3">
+          <div className="text-base font-[var(--br-mono-font)]">{formatDuration(stats.startTime)}</div>
+          <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">THỜI GIAN</div>
         </div>
         {streak !== undefined && (
-          <div className="stat p-3">
-            <div className="stat-value text-base font-[var(--br-mono-font)] text-primary">{streak}</div>
-            <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">NGÀY</div>
+          <div className="p-3">
+            <div className="text-base font-[var(--br-mono-font)] text-primary">{streak}</div>
+            <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">NGÀY</div>
           </div>
         )}
       </div>
 
       {/* Rating breakdown */}
       {ratingCounts && (
-        <div className="stats stats-horizontal w-full border border-base-content/10">
-          <div className="stat p-3">
-            <div className="stat-value text-base font-[var(--br-mono-font)] text-error">{ratingCounts[0]}</div>
-            <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">AGAIN</div>
+        <div className="grid grid-cols-4 w-full border border-border/10 divide-x divide-border/10">
+          <div className="p-3">
+            <div className="text-base font-[var(--br-mono-font)] text-destructive">{ratingCounts[0]}</div>
+            <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">AGAIN</div>
           </div>
-          <div className="stat p-3">
-            <div className="stat-value text-base font-[var(--br-mono-font)] text-warning">{ratingCounts[1]}</div>
-            <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">HARD</div>
+          <div className="p-3">
+            <div className="text-base font-[var(--br-mono-font)] text-warning">{ratingCounts[1]}</div>
+            <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">HARD</div>
           </div>
-          <div className="stat p-3">
-            <div className="stat-value text-base font-[var(--br-mono-font)] text-success">{ratingCounts[2]}</div>
-            <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">GOOD</div>
+          <div className="p-3">
+            <div className="text-base font-[var(--br-mono-font)] text-success">{ratingCounts[2]}</div>
+            <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">GOOD</div>
           </div>
-          <div className="stat p-3">
-            <div className="stat-value text-base font-[var(--br-mono-font)] text-info">{ratingCounts[3]}</div>
-            <div className="stat-desc font-[var(--br-mono-font)] text-[9px] uppercase">EASY</div>
+          <div className="p-3">
+            <div className="text-base font-[var(--br-mono-font)] text-info">{ratingCounts[3]}</div>
+            <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">EASY</div>
           </div>
         </div>
       )}
 
       {/* Wrong cards preview */}
       {hasWrong && (
-        <div className="w-full border-l-4 border-error bg-error/5 p-3 flex flex-col gap-2">
-          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-error tracking-widest">
+        <div className="w-full border-l-4 border-destructive bg-destructive/5 p-3 flex flex-col gap-2">
+          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-destructive tracking-widest">
             {stats.wrongCards.length}
             {' '}
             TỪ CẦN ÔN LẠI
@@ -143,13 +144,13 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
             {stats.wrongCards.slice(0, 8).map(c => (
               <span
                 key={c.vocab_id}
-                className="text-sm font-[var(--br-jp-font)] bg-base-200 border border-base-content/10 px-2 py-0.5"
+                className="text-sm font-[var(--br-jp-font)] bg-card border border-border/10 px-2 py-0.5"
               >
                 {c.word ?? c.reading}
               </span>
             ))}
             {stats.wrongCards.length > 8 && (
-              <span className="text-[11px] font-[var(--br-mono-font)] text-neutral self-center">
+              <span className="text-[11px] font-[var(--br-mono-font)] text-muted-foreground self-center">
                 +
                 {stats.wrongCards.length - 8}
                 {' '}
@@ -163,8 +164,9 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
       {/* Actions */}
       <div className="flex flex-col gap-3 w-full">
         {hasWrong && (
-          <button
-            className="btn btn-error w-full font-[var(--br-heading-font)] uppercase tracking-wide"
+          <Button
+            variant="destructive"
+            className="w-full font-[var(--br-heading-font)] uppercase tracking-wide"
             onClick={handleRetryWrong}
           >
             ÔN LẠI
@@ -172,35 +174,36 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
             {stats.wrongCards.length}
             {' '}
             TỪ SAI
-          </button>
+          </Button>
         )}
 
         {lessonContext
           ? (
               <>
-                <button
-                  className="btn btn-primary w-full font-[var(--br-heading-font)] uppercase tracking-wide"
+                <Button
+                  className="w-full font-[var(--br-heading-font)] uppercase tracking-wide"
                   onClick={handleBackToLesson}
                 >
                   ← VỀ BÀI
                   {' '}
                   {String(lessonContext.lesson).padStart(2, '0')}
-                </button>
-                <button
-                  className="btn btn-ghost w-full font-[var(--br-mono-font)] uppercase text-[11px]"
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full font-[var(--br-mono-font)] uppercase text-[11px]"
                   onClick={() => navigateToStudy()}
                 >
                   Về Study
-                </button>
+                </Button>
               </>
             )
           : (
-              <button
-                className="btn btn-primary w-full font-[var(--br-heading-font)] uppercase tracking-wide"
+              <Button
+                className="w-full font-[var(--br-heading-font)] uppercase tracking-wide"
                 onClick={() => navigateToStudy()}
               >
                 VỀ STUDY
-              </button>
+              </Button>
             )}
       </div>
     </div>

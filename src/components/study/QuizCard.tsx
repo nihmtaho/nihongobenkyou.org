@@ -63,14 +63,14 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
 
   return (
     <div className="p-4 pt-6 w-full max-w-4xl mx-auto">
-      <div className="border border-base-content/20 overflow-hidden">
+      <div className="border border-border/20 overflow-hidden">
         <div className="h-0.5 bg-primary w-full" />
-        <div className="lg:grid lg:grid-cols-2 lg:divide-x lg:divide-base-content/10">
+        <div className="lg:grid lg:grid-cols-2 lg:divide-x lg:divide-border/10">
           {/* Question — left on desktop, top on mobile */}
-          <div className="bg-base-200 px-[18px] pt-4 pb-4 border-b border-base-content/10 text-center
+          <div className="bg-card px-[18px] pt-4 pb-4 border-b border-border/10 text-center
                           lg:border-b-0 lg:flex lg:flex-col lg:items-center lg:justify-center lg:py-12 lg:px-10"
           >
-            <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-3">
+            <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest mb-3">
               {questionType}
             </p>
             <span
@@ -82,10 +82,10 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
             {/* Hint area — reading + romaji, toggled with [H] */}
             <div className="mt-3 h-8 flex flex-col items-center justify-center">
               {showHint && (
-                <span className="font-[var(--br-jp-font)] text-sm text-neutral leading-snug">
+                <span className="font-[var(--br-jp-font)] text-sm text-muted-foreground leading-snug">
                   {card.reading}
                   {card.romaji && (
-                    <span className="ml-2 font-[var(--br-mono-font)] text-[11px] text-base-content/40">
+                    <span className="ml-2 font-[var(--br-mono-font)] text-[11px] text-foreground/40">
                       {card.romaji}
                     </span>
                   )}
@@ -95,7 +95,7 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
             {canShowHint && (
               <button
                 type="button"
-                className="mt-1 font-[var(--br-mono-font)] text-[9px] uppercase tracking-widest text-base-content/25 hover:text-base-content/50 transition-colors"
+                className="mt-1 font-[var(--br-mono-font)] text-[9px] uppercase tracking-widest text-foreground/25 hover:text-foreground/50 transition-colors"
                 onClick={() => setShowHint(prev => !prev)}
               >
                 {showHint ? '[H] Ẩn' : '[H] Cách đọc'}

@@ -52,13 +52,13 @@ export function NextReviewCard({ nextDueDate }: { nextDueDate: string | null }) 
 
   return (
     <div className="border-t-4 border-info bg-info/5 p-4 lg:p-5">
-      <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-wider mb-2">
+      <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-wider mb-2">
         LƯỢT ÔN TIẾP THEO
       </p>
       <p className="text-3xl font-black font-[var(--br-mono-font)] leading-none mb-2 tracking-tight tabular-nums">
         {display}
       </p>
-      <p className="text-[11px] font-[var(--br-mono-font)] text-neutral">{hint}</p>
+      <p className="text-[11px] font-[var(--br-mono-font)] text-muted-foreground">{hint}</p>
     </div>
   )
 }

@@ -2,6 +2,9 @@ import type { TypeInputSubMode } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
 import { gradeReading } from '../../lib/mora'
@@ -121,15 +124,15 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
   const accentClass = phase === 'result'
     ? isCorrect
       ? 'border-l-success'
-      : 'border-l-error'
+      : 'border-l-destructive'
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-border/10 border-l-4 ${accentClass} transition-colors`}>
 
       {/* ── Prompt panel ── */}
-      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+      <div className="bg-card p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-border/10 min-h-[30vh]">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
           {card.pos.join(' · ')}
           {' '}
           · BÀI
@@ -148,7 +151,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
                 <p className="text-3xl font-bold leading-snug">
                   {card.meaning_vi}
                 </p>
-                <p className="text-sm text-neutral">{card.meaning_en}</p>
+                <p className="text-sm text-muted-foreground">{card.meaning_en}</p>
               </div>
             )}
 
@@ -156,7 +159,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
         {phase === 'input' && showHint && (
           <div className="w-full flex items-center justify-center bg-primary/[0.08] border border-primary/25 border-l-[3px] border-l-primary px-3.5 py-2">
             <span
-              className={`font-[var(--br-jp-font)] font-semibold text-neutral ${hintIsVocab ? 'text-2xl font-bold' : 'text-base'}`}
+              className={`font-[var(--br-jp-font)] font-semibold text-muted-foreground ${hintIsVocab ? 'text-2xl font-bold' : 'text-base'}`}
             >
               {hintContent}
             </span>
@@ -168,11 +171,12 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
           <button
             type="button"
             onClick={() => setHintedKey(prev => prev === card.vocab_id ? null : card.vocab_id)}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 border font-[var(--br-mono-font)] text-[9px] uppercase tracking-wider transition-colors ${
+            className={cn(
+              'inline-flex items-center gap-1.5 px-2.5 py-1 border font-[var(--br-mono-font)] text-[9px] uppercase tracking-wider transition-colors',
               showHint
                 ? 'border-primary bg-primary/10 text-primary'
-                : 'border-base-content/20 bg-transparent text-base-content/40 hover:border-base-content/35 hover:text-base-content/60'
-            }`}
+                : 'border-border/20 bg-transparent text-foreground/40 hover:border-border/35 hover:text-foreground/60',
+            )}
           >
             {showHint ? <EyeOff size={12} /> : <Eye size={12} />}
             <span>{showHint ? 'Ẩn' : hintLabel}</span>
@@ -182,34 +186,34 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
 
         {/* Reveal kanji + reading after result in vi→hira mode */}
         {phase === 'result' && subMode === 'vi→hira' && (
-          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
-            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">TỪ VỰNG</p>
+          <div className="border-t border-border/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">TỪ VỰNG</p>
             <p className="text-2xl font-bold font-[var(--br-jp-font)]">{word}</p>
-            <p className="text-sm font-[var(--br-jp-font)] text-neutral">{canonicalReading}</p>
+            <p className="text-sm font-[var(--br-jp-font)] text-muted-foreground">{canonicalReading}</p>
           </div>
         )}
 
         {/* Reveal reading + meaning after result in word→hira mode */}
         {phase === 'result' && subMode === 'word→hira' && (
-          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
-            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">CÁCH ĐỌC</p>
-            <p className="text-lg font-[var(--br-jp-font)] text-neutral">{canonicalReading}</p>
-            <p className="text-sm text-neutral/75">{card.meaning_vi}</p>
+          <div className="border-t border-border/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">CÁCH ĐỌC</p>
+            <p className="text-lg font-[var(--br-jp-font)] text-muted-foreground">{canonicalReading}</p>
+            <p className="text-sm text-muted-foreground/75">{card.meaning_vi}</p>
           </div>
         )}
 
         {/* Reveal reading after result in word→vi mode */}
         {phase === 'result' && subMode === 'word→vi' && (
-          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
-            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">CÁCH ĐỌC</p>
-            <p className="text-lg font-[var(--br-jp-font)] text-neutral">{canonicalReading}</p>
+          <div className="border-t border-border/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">CÁCH ĐỌC</p>
+            <p className="text-lg font-[var(--br-jp-font)] text-muted-foreground">{canonicalReading}</p>
           </div>
         )}
       </div>
 
       {/* ── Input panel ── */}
       <div className="p-6 flex flex-col gap-5">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
           {subMode === 'word→hira'
             ? 'GÕ CÁCH ĐỌC (HIRAGANA)'
             : subMode === 'vi→hira'
@@ -218,7 +222,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
+          <Input
             ref={inputRef}
             type="text"
             inputMode="text"
@@ -230,23 +234,21 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
               ? 'Gõ nghĩa tiếng Việt...'
               : 'Gõ hiragana · # = romaji · @ = katakana · ! = hiragana'}
             readOnly={phase === 'result'}
-            className={`input input-bordered w-full text-center text-2xl lg:text-3xl transition-colors ${
-              phase === 'result'
-                ? isCorrect
-                  ? 'input-success'
-                  : 'input-error'
-                : ''
-            }`}
+            className={cn(
+              'w-full text-center text-2xl lg:text-3xl h-auto py-2 transition-colors',
+              phase === 'result' && isCorrect && 'border-success focus-visible:border-success focus-visible:ring-success/20',
+              phase === 'result' && !isCorrect && 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20',
+            )}
             style={subMode !== 'word→vi' ? { fontFamily: 'var(--br-jp-font)' } : undefined}
           />
 
           {/* word→vi: always show meaning_vi after check, coloured by result */}
           {phase === 'result' && subMode === 'word→vi' && (
             <div className="flex flex-col items-center gap-2 py-2">
-              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
                 {isCorrect ? 'NGHĨA ĐÚNG' : 'ĐÁP ÁN ĐÚNG'}
               </p>
-              <p className={`text-xl lg:text-2xl font-bold text-center ${isCorrect ? 'text-success' : 'text-error'}`}>
+              <p className={`text-xl lg:text-2xl font-bold text-center ${isCorrect ? 'text-success' : 'text-destructive'}`}>
                 {card.meaning_vi}
               </p>
             </div>
@@ -255,13 +257,13 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
           {/* Kana modes: only show correct answer on wrong */}
           {phase === 'result' && !isCorrect && subMode !== 'word→vi' && (
             <div className="flex flex-col items-center gap-2 py-2">
-              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
                 ĐÁP ÁN ĐÚNG
               </p>
               {wasSkipped
                 ? (
                     <p
-                      className="text-2xl lg:text-3xl font-bold text-base-content"
+                      className="text-2xl lg:text-3xl font-bold text-foreground"
                       style={{ fontFamily: 'var(--br-jp-font)' }}
                     >
                       {canonicalReading}
@@ -272,7 +274,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
                       {moraChars.map(({ char, key, i }) => (
                         <span
                           key={key}
-                          className={`text-2xl lg:text-3xl font-bold ${wrongMorae.includes(i) ? 'text-error' : 'text-success'}`}
+                          className={`text-2xl lg:text-3xl font-bold ${wrongMorae.includes(i) ? 'text-destructive' : 'text-success'}`}
                           style={{ fontFamily: 'var(--br-jp-font)' }}
                         >
                           {char}
@@ -286,36 +288,38 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
           {phase === 'input'
             ? (
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="submit"
                     disabled={subMode === 'word→vi' ? !raw.trim() : !extractAnswer(raw).replace(/\s+/g, '')}
-                    className="btn btn-primary flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
+                    className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                   >
                     KIỂM TRA
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
-                    className="btn btn-ghost font-[var(--br-mono-font)] text-[11px] uppercase"
+                    variant="ghost"
+                    className="font-[var(--br-mono-font)] text-[11px] uppercase"
                     onClick={doSkip}
                     title="Bỏ qua (Ctrl+Enter)"
                   >
                     SKIP
-                  </button>
+                  </Button>
                 </div>
               )
             : (
-                <button
+                <Button
                   type="submit"
-                  className={`btn flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${isCorrect ? 'btn-success' : 'btn-error'}`}
+                  variant={isCorrect ? 'success' : 'destructive'}
+                  className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                 >
                   {isCorrect ? '✓' : '✗'}
                   {' '}
                   TIẾP TỤC [ENTER]
-                </button>
+                </Button>
               )}
         </form>
 
-        <p className="text-[10px] font-[var(--br-mono-font)] text-base-content/30 text-center">
+        <p className="text-[10px] font-[var(--br-mono-font)] text-foreground/30 text-center">
           {subMode === 'word→vi'
             ? 'Enter = kiểm tra · Ctrl+Enter = bỏ qua · Ctrl+H = hint'
             : 'Enter = kiểm tra · Ctrl+Enter = bỏ qua · Ctrl+H = hint · # = romaji · @ = katakana · ! = hiragana'}

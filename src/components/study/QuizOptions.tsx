@@ -62,12 +62,12 @@ export function QuizOptions({ options, correctId, onAnswer }: QuizOptionsProps) 
         const btnCls = [
           'flex items-center gap-2.5 px-3.5 py-2.5 text-left w-full transition-colors',
           selected === null
-            ? 'border border-base-content/20 bg-base-200 hover:border-primary hover:bg-primary/10 cursor-pointer'
+            ? 'border border-border/20 bg-card hover:border-primary hover:bg-primary/10 cursor-pointer'
             : isCorrect
               ? 'border-y border-r border-success border-l-4 border-l-success bg-success/10 text-success'
               : isWrong
-                ? 'border border-error bg-error/10 text-error opacity-60'
-                : 'border border-base-content/10 bg-base-200 opacity-25 pointer-events-none',
+                ? 'border border-destructive bg-destructive/10 text-destructive opacity-60'
+                : 'border border-border/10 bg-card opacity-25 pointer-events-none',
         ].join(' ')
 
         const numCls = [
@@ -75,8 +75,8 @@ export function QuizOptions({ options, correctId, onAnswer }: QuizOptionsProps) 
           selected !== null && isCorrect
             ? 'border-success text-success'
             : selected !== null && isWrong
-              ? 'border-error text-error'
-              : 'border-base-content/20 text-neutral',
+              ? 'border-destructive text-destructive'
+              : 'border-border/20 text-muted-foreground',
         ].join(' ')
 
         return (
@@ -93,7 +93,7 @@ export function QuizOptions({ options, correctId, onAnswer }: QuizOptionsProps) 
         )
       })}
 
-      <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-base-content/30 text-right mt-1 tracking-widest">
+      <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/30 text-right mt-1 tracking-widest">
         {selected === null
           ? 'Phím 1–4 để chọn'
           : selected !== correctId

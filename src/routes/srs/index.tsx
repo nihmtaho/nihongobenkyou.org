@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { Skeleton } from '@/components/ui/skeleton'
 import { SrsEmptyState } from '../../components/srs/SrsEmptyState'
 import { SrsHeader } from '../../components/srs/SrsHeader'
 import { SrsPreSession } from '../../components/srs/SrsPreSession'
@@ -22,8 +23,8 @@ function SrsPage() {
   if (session.phase === 'loading') {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-64 w-full max-w-sm mx-auto" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-64 w-full max-w-sm mx-auto" />
       </div>
     )
   }
@@ -82,7 +83,7 @@ function SrsPage() {
         srsMode={session.srsMode}
       />
       {!card
-        ? <div className="skeleton h-64 w-full max-w-sm mx-auto" />
+        ? <Skeleton className="h-64 w-full max-w-sm mx-auto" />
         : session.srsMode === 'type-input'
           ? (
               <TypeInputCard
