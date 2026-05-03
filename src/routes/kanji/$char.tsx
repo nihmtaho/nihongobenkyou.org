@@ -3,6 +3,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { StrokeOrderAnimation } from '../../components/kanji/StrokeOrderAnimation'
+import { Badge } from '../../components/ui/badge'
+import { Button } from '../../components/ui/button'
 import { getAllKanji, upsertKanjiCard } from '../../db/kanji'
 import { db } from '../../db/schema'
 import { useKanji } from '../../hooks/useKanji'
@@ -81,37 +83,37 @@ function KanjiDetailPage() {
   const badgeRow = (
     <div className="flex gap-2 flex-wrap">
       {kanji.jlpt_level && (
-        <span className="badge badge-primary badge-outline font-[var(--br-mono-font)] text-[10px]">
+        <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px] text-primary border-primary">
           {kanji.jlpt_level}
-        </span>
+        </Badge>
       )}
-      <span className="badge badge-neutral badge-outline font-[var(--br-mono-font)] text-[10px]">
+      <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
         {kanji.stroke_count}
         {' '}
         strokes
-      </span>
+      </Badge>
       {kanji.radical && (
-        <span className="badge badge-neutral badge-outline font-[var(--br-mono-font)] text-[10px]">
+        <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
           radical:
           {' '}
           {kanji.radical}
-        </span>
+        </Badge>
       )}
     </div>
   )
 
   const readingsBlock = (
     <div className="flex flex-col gap-3">
-      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Readings</p>
+      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Readings</p>
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-base-200 border border-base-content/10 p-3">
-          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral mb-1">On'yomi</p>
+        <div className="bg-card border border-border/10 p-3">
+          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-1">On'yomi</p>
           <p className="font-[var(--br-jp-font)] text-sm">
             {kanji.onyomi.length > 0 ? kanji.onyomi.join('・') : '—'}
           </p>
         </div>
-        <div className="bg-base-200 border border-base-content/10 p-3">
-          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral mb-1">Kun'yomi</p>
+        <div className="bg-card border border-border/10 p-3">
+          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-1">Kun'yomi</p>
           <p className="font-[var(--br-jp-font)] text-sm">
             {kanji.kunyomi.length > 0 ? kanji.kunyomi.join('・') : '—'}
           </p>
@@ -122,15 +124,15 @@ function KanjiDetailPage() {
 
   const meaningsBlock = (
     <div className="flex flex-col gap-2">
-      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Meanings</p>
+      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Meanings</p>
       <p className="text-lg font-bold font-[var(--br-jp-font)]">{kanji.meaning_vi.join(', ')}</p>
-      <p className="text-sm text-neutral font-[var(--br-jp-font)]">{kanji.meaning_en.join(', ')}</p>
+      <p className="text-sm text-muted-foreground font-[var(--br-jp-font)]">{kanji.meaning_en.join(', ')}</p>
     </div>
   )
 
   const hanVietBlock = (
     <div className="flex flex-col gap-1">
-      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Hán Việt</p>
+      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Hán Việt</p>
       <p className="text-2xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider">
         {kanji.han_viet ?? '—'}
       </p>
@@ -140,7 +142,7 @@ function KanjiDetailPage() {
   const mnemonicBlock = kanji.mnemonic_vi
     ? (
         <div className="border-l-4 border-primary pl-3 flex flex-col gap-1">
-          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">Mnemonic</p>
+          <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Mnemonic</p>
           <p className="text-sm font-[var(--br-jp-font)]">{kanji.mnemonic_vi}</p>
         </div>
       )
@@ -149,12 +151,12 @@ function KanjiDetailPage() {
   const componentsBlock = kanji.components && kanji.components.length > 0
     ? (
         <div className="flex flex-col gap-3">
-          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Components</p>
+          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Components</p>
           <div className="flex flex-col gap-2">
             {kanji.components.map(comp => (
               <div
                 key={comp.char}
-                className="flex items-center gap-3 bg-base-200 border border-base-content/10 p-3"
+                className="flex items-center gap-3 bg-card border border-border/10 p-3"
               >
                 <span
                   className="text-3xl font-bold"
@@ -164,9 +166,9 @@ function KanjiDetailPage() {
                 </span>
                 <div className="flex flex-col">
                   <span className="text-sm font-bold font-[var(--br-jp-font)]">{comp.meaning_vi}</span>
-                  <span className="text-xs text-neutral">{comp.meaning_en}</span>
+                  <span className="text-xs text-muted-foreground">{comp.meaning_en}</span>
                   {comp.han_viet && (
-                    <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">{comp.han_viet}</span>
+                    <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{comp.han_viet}</span>
                   )}
                 </div>
               </div>
@@ -178,13 +180,13 @@ function KanjiDetailPage() {
 
   const strokeOrderBlock = (
     <div className="flex flex-col gap-3">
-      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Stroke Order</p>
+      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Stroke Order</p>
       {kanji.stroke_paths && kanji.stroke_paths.length > 0
         ? (
             <StrokeOrderAnimation strokes={kanji.stroke_paths} />
           )
         : (
-            <p className="text-sm text-neutral font-[var(--br-mono-font)]">
+            <p className="text-sm text-muted-foreground font-[var(--br-mono-font)]">
               Stroke data not available for this kanji.
             </p>
           )}
@@ -206,20 +208,20 @@ function KanjiDetailPage() {
     <div className="p-4 max-w-5xl mx-auto">
       {/* Navigation bar — back + lesson position + prev/next */}
       <div className="flex items-center mb-4 -ml-2">
-        <div className="tooltip tooltip-right" data-tip="Danh sách hán tự">
-          <button
-            type="button"
+        <div title="Danh sách hán tự">
+          <Button
+            variant="ghost"
+            size="sm"
             aria-label="Danh sách hán tự"
-            className="btn btn-ghost btn-sm"
             onClick={() => navigate({ to: '/kanji' })}
           >
             {chevronLeft}
-          </button>
+          </Button>
         </div>
 
         {kanji.lesson_number != null && lessonKanji && lessonKanji.length > 1 && (
           <>
-            <span className="flex-1 text-center font-[var(--br-mono-font)] text-[11px] uppercase text-neutral tracking-wider">
+            <span className="flex-1 text-center font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider">
               BÀI
               {' '}
               {String(kanji.lesson_number).padStart(2, '0')}
@@ -231,28 +233,26 @@ function KanjiDetailPage() {
               {lessonKanji.length}
             </span>
             <div className="flex gap-1">
-              <div className={`tooltip tooltip-left ${!prevChar ? 'tooltip-disabled' : ''}`} data-tip={prevChar ? `← ${prevChar}` : ''}>
-                <button
-                  type="button"
-                  aria-label="Hán tự trước"
-                  disabled={!prevChar}
-                  className="btn btn-ghost btn-sm disabled:opacity-30"
-                  onClick={() => prevChar && navigate({ to: '/kanji/$char', params: { char: prevChar } })}
-                >
-                  {chevronLeft}
-                </button>
-              </div>
-              <div className={`tooltip tooltip-left ${!nextChar ? 'tooltip-disabled' : ''}`} data-tip={nextChar ? `${nextChar} →` : ''}>
-                <button
-                  type="button"
-                  aria-label="Hán tự tiếp theo"
-                  disabled={!nextChar}
-                  className="btn btn-ghost btn-sm disabled:opacity-30"
-                  onClick={() => nextChar && navigate({ to: '/kanji/$char', params: { char: nextChar } })}
-                >
-                  {chevronRight}
-                </button>
-              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label="Hán tự trước"
+                disabled={!prevChar}
+                className="disabled:opacity-30"
+                onClick={() => prevChar && navigate({ to: '/kanji/$char', params: { char: prevChar } })}
+              >
+                {chevronLeft}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label="Hán tự tiếp theo"
+                disabled={!nextChar}
+                className="disabled:opacity-30"
+                onClick={() => nextChar && navigate({ to: '/kanji/$char', params: { char: nextChar } })}
+              >
+                {chevronRight}
+              </Button>
             </div>
           </>
         )}
@@ -286,7 +286,7 @@ function KanjiDetailPage() {
         {/* Left panel — sticky */}
         <div className="sticky top-6 flex flex-col gap-6">
           {/* Large character card */}
-          <div className="bg-base-200 border border-base-content/10 flex flex-col items-center gap-3 p-6">
+          <div className="bg-card border border-border/10 flex flex-col items-center gap-3 p-6">
             <p
               className="text-[120px] font-bold leading-none"
               style={{ fontFamily: 'var(--br-jp-font)' }}
@@ -299,27 +299,27 @@ function KanjiDetailPage() {
               </p>
             )}
             {!kanji.han_viet && (
-              <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center text-neutral">
+              <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center text-muted-foreground">
                 —
               </p>
             )}
             <div className="flex gap-2 flex-wrap justify-center">
               {kanji.jlpt_level && (
-                <span className="badge badge-primary badge-outline font-[var(--br-mono-font)] text-[10px]">
+                <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px] text-primary border-primary">
                   {kanji.jlpt_level}
-                </span>
+                </Badge>
               )}
-              <span className="badge badge-neutral badge-outline font-[var(--br-mono-font)] text-[10px]">
+              <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
                 {kanji.stroke_count}
                 {' '}
                 strokes
-              </span>
+              </Badge>
               {kanji.radical && (
-                <span className="badge badge-neutral badge-outline font-[var(--br-mono-font)] text-[10px]">
+                <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
                   radical:
                   {' '}
                   {kanji.radical}
-                </span>
+                </Badge>
               )}
             </div>
           </div>
@@ -370,10 +370,10 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
   if (curated && curated.length > 0) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Related Vocabulary</p>
+        <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Related Vocabulary</p>
         <div className="flex flex-col gap-1">
           {curated.map(v => (
-            <div key={`${v.word ?? v.kana}`} className="flex flex-col bg-base-200 border border-base-content/10">
+            <div key={`${v.word ?? v.kana}`} className="flex flex-col bg-card border border-border/10">
               <button
                 type="button"
                 className="flex flex-col gap-0.5 p-2 text-left w-full"
@@ -383,17 +383,17 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
                   {v.word && (
                     <span className="text-base font-bold font-[var(--br-jp-font)]">{v.word}</span>
                   )}
-                  <span className="text-sm font-[var(--br-jp-font)] text-neutral">{v.kana}</span>
+                  <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground">{v.kana}</span>
                   {v.han_viet && (
-                    <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">{v.han_viet}</span>
+                    <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{v.han_viet}</span>
                   )}
                 </div>
-                <span className="text-sm font-[var(--br-jp-font)] text-neutral/80">{v.meaning_vi}</span>
+                <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
               </button>
               {expandedKey === v.kana && v.example && (
-                <div className="border-t border-base-content/10 border-l-4 border-l-primary pl-3 pr-2 py-2">
+                <div className="border-t border-border/10 border-l-4 border-l-primary pl-3 pr-2 py-2">
                   <p className="text-sm font-[var(--br-jp-font)]">{v.example.ja}</p>
-                  <p className="text-xs text-neutral font-[var(--br-jp-font)] mt-1">{v.example.vi}</p>
+                  <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] mt-1">{v.example.vi}</p>
                 </div>
               )}
             </div>
@@ -406,28 +406,28 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
   if (!dynamic || dynamic.length === 0) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Related Vocabulary</p>
-        <p className="text-sm text-neutral font-[var(--br-mono-font)]">No vocabulary found for this kanji yet.</p>
+        <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Related Vocabulary</p>
+        <p className="text-sm text-muted-foreground font-[var(--br-mono-font)]">No vocabulary found for this kanji yet.</p>
       </div>
     )
   }
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Related Vocabulary</p>
+      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Related Vocabulary</p>
       <div className="flex flex-col gap-1">
         {dynamic.map(v => (
           <div
             key={v.vocab_id}
-            className="flex flex-col gap-0.5 bg-base-200 border border-base-content/10 p-2"
+            className="flex flex-col gap-0.5 bg-card border border-border/10 p-2"
           >
             <div className="flex items-baseline gap-2">
               {v.word && (
                 <span className="text-base font-bold font-[var(--br-jp-font)]">{v.word}</span>
               )}
-              <span className="text-sm font-[var(--br-jp-font)] text-neutral">{v.reading}</span>
+              <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground">{v.reading}</span>
             </div>
-            <span className="text-sm font-[var(--br-jp-font)] text-neutral/80">{v.meaning_vi}</span>
+            <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
           </div>
         ))}
       </div>

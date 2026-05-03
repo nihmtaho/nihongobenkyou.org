@@ -5,6 +5,7 @@ import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { KanjiStudyFlipCard } from '../../components/kanji/KanjiStudyFlipCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
+import { Button } from '../../components/ui/button'
 import { db } from '../../db/schema'
 import { useSRS } from '../../hooks/useSRS'
 import { useAuthStore } from '../../stores/authStore'
@@ -118,12 +119,12 @@ function KanjiReviewPage() {
         <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase text-success">
           ALL KANJI REVIEWED!
         </h1>
-        <p className="text-base-content/60 font-[var(--br-mono-font)] text-sm uppercase text-center">
+        <p className="text-foreground/60 font-[var(--br-mono-font)] text-sm uppercase text-center">
           {dueCards.isError ? 'Failed to load review cards.' : 'No kanji cards due today.'}
         </p>
-        <Link to="/kanji" className="btn btn-outline btn-sm font-[var(--br-mono-font)] uppercase">
-          ← Browse Kanji
-        </Link>
+        <Button variant="outline" size="sm" asChild className="font-[var(--br-mono-font)] uppercase">
+          <Link to="/kanji">← Browse Kanji</Link>
+        </Button>
       </div>
     )
   }
@@ -134,18 +135,18 @@ function KanjiReviewPage() {
         <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase">
           KANJI REVIEW
         </h1>
-        <p className="font-[var(--br-mono-font)] text-sm uppercase text-base-content/60">
+        <p className="font-[var(--br-mono-font)] text-sm uppercase text-foreground/60">
           {dueCards.data?.length ?? 0}
           {' '}
           kanji due
         </p>
-        <button
-          type="button"
+        <Button
+          size="lg"
           onClick={handleStart}
-          className="btn btn-primary btn-lg font-[var(--br-heading-font)] uppercase tracking-wide"
+          className="font-[var(--br-heading-font)] uppercase tracking-wide"
         >
           Start Review
-        </button>
+        </Button>
       </div>
     )
   }
@@ -175,19 +176,20 @@ function KanjiReviewPage() {
   return (
     <div className="flex flex-col gap-4 p-4">
       {/* Back navigation */}
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         aria-label="Go back"
-        className="btn btn-ghost btn-sm self-start -ml-2 -mt-2"
+        className="self-start -ml-2 -mt-2"
         onClick={() => window.history.back()}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="m15 18-6-6 6-6" />
         </svg>
-      </button>
+      </Button>
 
       <div className="flex items-center justify-between">
-        <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-base-content/60">
+        <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-foreground/60">
           {currentIndex + 1}
           {' / '}
           {queue.length}

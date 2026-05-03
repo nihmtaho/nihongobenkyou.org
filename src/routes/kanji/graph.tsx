@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { KanjiGraph } from '../../components/kanji/KanjiGraph'
+import { Button } from '../../components/ui/button'
 import { useKanji } from '../../hooks/useKanji'
 import { useKanjiList } from '../../hooks/useKanjiList'
 import { useAuthStore } from '../../stores/authStore'
@@ -68,7 +69,7 @@ function KanjiGraphPage() {
       </div>
 
       {focusKanji?.radical && (
-        <p className="font-[var(--br-mono-font)] text-[11px] uppercase text-neutral">
+        <p className="font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground">
           Radical:
           {' '}
           {focusKanji.radical}
@@ -88,16 +89,17 @@ function KanjiGraphPage() {
       />
 
       {!isExpanded && neighbors.length > MAX_NODES - 1 && (
-        <button
-          type="button"
-          className="btn btn-outline btn-sm font-[var(--br-mono-font)] uppercase"
+        <Button
+          variant="outline"
+          size="sm"
+          className="font-[var(--br-mono-font)] uppercase"
           onClick={() => setIsExpanded(true)}
         >
           Show more (
           {neighbors.length - (MAX_NODES - 1)}
           {' '}
           more)
-        </button>
+        </Button>
       )}
     </div>
   )
