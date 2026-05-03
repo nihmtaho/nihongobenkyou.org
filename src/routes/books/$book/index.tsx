@@ -46,7 +46,7 @@ function BookPage() {
   return (
     <div>
       {/* Sticky header */}
-      <div className="sticky top-0 z-10 bg-base-100 px-4 pt-4 border-b border-base-content/10">
+      <div className="sticky top-0 z-10 bg-background px-4 pt-4 border-b border-border/10">
         <Link
           to="/books"
           className="inline-flex items-center gap-1 text-[11px] font-[var(--br-mono-font)] uppercase text-neutral hover:text-base-content transition-colors mb-3"
@@ -159,7 +159,7 @@ function BookProgressOverview({ userId, bookSource }: { userId: string, bookSour
   ]
 
   return (
-    <div className="border border-base-content/10 border-l-4 border-l-primary bg-base-200 p-4 flex flex-col gap-3">
+    <div className="border border-border/10 border-l-4 border-l-primary bg-card p-4 flex flex-col gap-3">
       <div className="flex items-baseline justify-between">
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
           TIẾN ĐỘ TỔNG QUAN
@@ -261,7 +261,7 @@ function LessonCard({ bookId, lesson, userId }: { bookId: string, lesson: Lesson
 
   return (
     <Link to="/books/$book/$lesson" params={{ book: bookId, lesson: String(lesson.lesson_number).padStart(2, '0') }}>
-      <div className="card bg-base-200 border border-base-content/10 transition-colors hover:border-l-4 hover:border-l-primary cursor-pointer h-full">
+      <div className="bg-card border border-border/10 transition-colors hover:border-l-4 hover:border-l-primary cursor-pointer h-full">
         <div className="card-body p-4 gap-1">
           <h2 className="font-[var(--br-heading-font)] text-3xl leading-none">
             {String(lesson.lesson_number).padStart(2, '0')}

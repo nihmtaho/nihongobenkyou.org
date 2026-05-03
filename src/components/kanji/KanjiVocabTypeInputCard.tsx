@@ -1,6 +1,7 @@
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { Eye, EyeOff } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
 import { gradeReading } from '../../lib/mora'
@@ -115,11 +116,11 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-border/10 border-l-4 ${accentClass} transition-colors`}>
 
       {/* ── Prompt panel ── */}
-      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+      <div className="bg-card p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-border/10 min-h-[30vh]">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
           {subMode === 'vi→hira' ? 'NGHĨA TIẾNG VIỆT' : 'TỪ VỰNG KANJI'}
         </p>
 
@@ -150,7 +151,7 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
         {phase === 'input' && showHint && (
           <div className="w-full flex items-center justify-center bg-primary/[0.08] border border-primary/25 border-l-[3px] border-l-primary px-3.5 py-2">
             <span
-              className={`font-[var(--br-jp-font)] font-semibold text-neutral ${hintIsVocab ? 'text-2xl font-bold' : 'text-base'}`}
+              className={`font-[var(--br-jp-font)] font-semibold text-muted-foreground ${hintIsVocab ? 'text-2xl font-bold' : 'text-base'}`}
             >
               {hintContent}
             </span>
@@ -165,7 +166,7 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 border font-[var(--br-mono-font)] text-[9px] uppercase tracking-wider transition-colors ${
               showHint
                 ? 'border-primary bg-primary/10 text-primary'
-                : 'border-base-content/20 bg-transparent text-base-content/40 hover:border-base-content/35 hover:text-base-content/60'
+                : 'border-border/20 bg-transparent text-foreground/40 hover:border-border/35 hover:text-foreground/60'
             }`}
           >
             {showHint ? <EyeOff size={12} /> : <Eye size={12} />}
@@ -176,8 +177,8 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
 
         {/* Reveal kanji + reading after result in vi→hira mode */}
         {phase === 'result' && subMode === 'vi→hira' && (
-          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
-            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">TỪ VỰNG</p>
+          <div className="border-t border-border/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">TỪ VỰNG</p>
             {hasAnnotations
               ? (
                   <AnnotatedWord word={word} hanVietMap={hanVietMap} className="text-2xl font-bold" />
@@ -185,23 +186,23 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
               : (
                   <p className="text-2xl font-bold" style={{ fontFamily: 'var(--br-jp-font)' }}>{word}</p>
                 )}
-            <p className="text-sm text-neutral" style={{ fontFamily: 'var(--br-jp-font)' }}>{canonicalReading}</p>
+            <p className="text-sm text-muted-foreground" style={{ fontFamily: 'var(--br-jp-font)' }}>{canonicalReading}</p>
           </div>
         )}
 
         {/* Reveal reading + meaning after result in word→hira mode */}
         {phase === 'result' && subMode === 'word→hira' && (
-          <div className="border-t border-base-content/10 pt-4 flex flex-col gap-1">
-            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral">CÁCH ĐỌC</p>
-            <p className="text-lg text-neutral" style={{ fontFamily: 'var(--br-jp-font)' }}>{canonicalReading}</p>
-            <p className="text-sm text-neutral/75">{card.meaning_vi}</p>
+          <div className="border-t border-border/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">CÁCH ĐỌC</p>
+            <p className="text-lg text-muted-foreground" style={{ fontFamily: 'var(--br-jp-font)' }}>{canonicalReading}</p>
+            <p className="text-sm text-muted-foreground/75">{card.meaning_vi}</p>
           </div>
         )}
       </div>
 
       {/* ── Input panel ── */}
       <div className="p-6 flex flex-col gap-5">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
           GÕ CÁCH ĐỌC (HIRAGANA)
         </p>
 
@@ -228,11 +229,11 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
 
           {phase === 'result' && !isCorrect && (
             <div className="flex flex-col items-center gap-2 py-2">
-              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">ĐÁP ÁN ĐÚNG</p>
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">ĐÁP ÁN ĐÚNG</p>
               {wasSkipped
                 ? (
                     <p
-                      className="text-2xl lg:text-3xl font-bold text-base-content"
+                      className="text-2xl lg:text-3xl font-bold text-foreground"
                       style={{ fontFamily: 'var(--br-jp-font)' }}
                     >
                       {canonicalReading}
@@ -243,7 +244,7 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
                       {moraChars.map(({ char, key, i }) => (
                         <span
                           key={key}
-                          className={`text-2xl lg:text-3xl font-bold ${wrongMorae.includes(i) ? 'text-error' : 'text-success'}`}
+                          className={`text-2xl lg:text-3xl font-bold ${wrongMorae.includes(i) ? 'text-destructive' : 'text-success'}`}
                           style={{ fontFamily: 'var(--br-jp-font)' }}
                         >
                           {char}
@@ -257,36 +258,38 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
           {phase === 'input'
             ? (
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="submit"
                     disabled={!extractAnswer(raw).replace(/\s+/g, '')}
-                    className="btn btn-primary flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
+                    className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                   >
                     KIỂM TRA
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
-                    className="btn btn-ghost font-[var(--br-mono-font)] text-[11px] uppercase"
+                    variant="ghost"
+                    className="font-[var(--br-mono-font)] text-[11px] uppercase"
                     onClick={doSkip}
                     title="Bỏ qua (Ctrl+Enter)"
                   >
                     SKIP
-                  </button>
+                  </Button>
                 </div>
               )
             : (
-                <button
+                <Button
                   type="submit"
-                  className={`btn flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${isCorrect ? 'btn-success' : 'btn-error'}`}
+                  variant={isCorrect ? 'success' : 'destructive'}
+                  className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                 >
                   {isCorrect ? '✓' : '✗'}
                   {' '}
                   TIẾP TỤC [ENTER]
-                </button>
+                </Button>
               )}
         </form>
 
-        <p className="text-[10px] font-[var(--br-mono-font)] text-base-content/30 text-center">
+        <p className="text-[10px] font-[var(--br-mono-font)] text-foreground/30 text-center">
           Enter = kiểm tra · Ctrl+Enter = bỏ qua · Ctrl+H = hint · # = romaji · @ = katakana
         </p>
       </div>
@@ -378,11 +381,11 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-border/10 border-l-4 ${accentClass} transition-colors`}>
 
       {/* ── Prompt panel ── */}
-      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">TỪ VỰNG KANJI</p>
+      <div className="bg-card p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-border/10 min-h-[30vh]">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">TỪ VỰNG KANJI</p>
 
         {hasAnnotations
           ? (
@@ -402,7 +405,7 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
             )}
 
         <div className="flex flex-col gap-0.5">
-          <p className="text-sm leading-none text-neutral" style={{ fontFamily: 'var(--br-jp-font)' }}>
+          <p className="text-sm leading-none text-muted-foreground" style={{ fontFamily: 'var(--br-jp-font)' }}>
             {card.reading}
           </p>
         </div>
@@ -410,14 +413,14 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
 
       {/* ── Input panel ── */}
       <div className="p-6 flex flex-col gap-5">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
           GÕ NGHĨA + HÁN VIỆT
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Field 1: Vietnamese meaning */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral/60">NGHĨA TIẾNG VIỆT</label>
+            <label className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground/60">NGHĨA TIẾNG VIỆT</label>
             <input
               ref={viRef}
               type="text"
@@ -438,7 +441,7 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
               }`}
             />
             {phase === 'result' && (
-              <p className={`text-sm font-bold text-center ${viResult ? 'text-success' : 'text-error'}`}>
+              <p className={`text-sm font-bold text-center ${viResult ? 'text-success' : 'text-destructive'}`}>
                 {viResult ? '✓ Đúng' : `✗ ${card.meaning_vi}`}
               </p>
             )}
@@ -447,7 +450,7 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
           {/* Field 2: Han Viet */}
           {hasHanViet && (
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral/60">HÁN VIỆT</label>
+              <label className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground/60">HÁN VIỆT</label>
               <input
                 type="text"
                 inputMode="text"
@@ -466,7 +469,7 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
                 }`}
               />
               {phase === 'result' && (
-                <p className={`text-sm font-bold font-[var(--br-mono-font)] uppercase text-center ${hvResult ? 'text-success' : 'text-error'}`}>
+                <p className={`text-sm font-bold font-[var(--br-mono-font)] uppercase text-center ${hvResult ? 'text-success' : 'text-destructive'}`}>
                   {hvResult ? '✓ Đúng' : `✗ ${card.han_viet}`}
                 </p>
               )}
@@ -476,36 +479,38 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
           {phase === 'input'
             ? (
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="submit"
                     disabled={!viRaw.trim()}
-                    className="btn btn-primary flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
+                    className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                   >
                     KIỂM TRA
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
-                    className="btn btn-ghost font-[var(--br-mono-font)] text-[11px] uppercase"
+                    variant="ghost"
+                    className="font-[var(--br-mono-font)] text-[11px] uppercase"
                     onClick={doSkip}
                     title="Bỏ qua (Ctrl+Enter)"
                   >
                     SKIP
-                  </button>
+                  </Button>
                 </div>
               )
             : (
-                <button
+                <Button
                   type="submit"
-                  className={`btn flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${isAllCorrect ? 'btn-success' : 'btn-error'}`}
+                  variant={isAllCorrect ? 'success' : 'destructive'}
+                  className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                 >
                   {isAllCorrect ? '✓' : '✗'}
                   {' '}
                   TIẾP TỤC [ENTER]
-                </button>
+                </Button>
               )}
         </form>
 
-        <p className="text-[10px] font-[var(--br-mono-font)] text-base-content/30 text-center">
+        <p className="text-[10px] font-[var(--br-mono-font)] text-foreground/30 text-center">
           Enter = kiểm tra · Ctrl+Enter = bỏ qua
         </p>
       </div>

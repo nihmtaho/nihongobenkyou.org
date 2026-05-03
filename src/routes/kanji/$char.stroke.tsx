@@ -1,5 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { StrokeOrderAnimation } from '../../components/kanji/StrokeOrderAnimation'
+import { Button } from '../../components/ui/button'
+import { Skeleton } from '../../components/ui/skeleton'
 import { useKanji } from '../../hooks/useKanji'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -18,8 +20,8 @@ function StrokeOrderPage() {
   if (isLoading) {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-64 w-full" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-64 w-full" />
       </div>
     )
   }
@@ -27,16 +29,17 @@ function StrokeOrderPage() {
   return (
     <div className="p-4 flex flex-col gap-6 max-w-sm mx-auto">
       {/* Back navigation */}
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         aria-label="Go back"
-        className="btn btn-ghost btn-sm self-start -ml-2 -mt-2"
+        className="self-start -ml-2 -mt-2"
         onClick={() => window.history.back()}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="m15 18-6-6 6-6" />
         </svg>
-      </button>
+      </Button>
 
       {/* Header */}
       <div className="flex items-baseline gap-4">
@@ -46,7 +49,7 @@ function StrokeOrderPage() {
         >
           {char}
         </p>
-        <p className="font-[var(--br-heading-font)] text-xl uppercase tracking-wide text-neutral">
+        <p className="font-[var(--br-heading-font)] text-xl uppercase tracking-wide text-muted-foreground">
           Stroke Order
         </p>
       </div>
@@ -57,11 +60,11 @@ function StrokeOrderPage() {
             <StrokeOrderAnimation strokes={kanji.stroke_paths} />
           )
         : (
-            <div className="bg-base-200 border border-base-content/10 p-6 flex flex-col items-center gap-3">
-              <p className="font-[var(--br-mono-font)] text-sm uppercase text-neutral text-center">
+            <div className="bg-card border border-border/10 p-6 flex flex-col items-center gap-3">
+              <p className="font-[var(--br-mono-font)] text-sm uppercase text-muted-foreground text-center">
                 Stroke data unavailable for this kanji
               </p>
-              <p className="font-[var(--br-jp-font)] text-sm text-neutral/60 text-center">
+              <p className="font-[var(--br-jp-font)] text-sm text-muted-foreground/60 text-center">
                 KanjiVG data for
                 {' '}
                 {char}

@@ -8,6 +8,9 @@ import { KanjiVocabFlipCard } from '../../components/kanji/KanjiVocabFlipCard'
 import { KanjiVocabTypeInputCard } from '../../components/kanji/KanjiVocabTypeInputCard'
 import { QuizCard } from '../../components/study/QuizCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
+import { Badge } from '../../components/ui/badge'
+import { Button } from '../../components/ui/button'
+import { Skeleton } from '../../components/ui/skeleton'
 import { useKanjiLessonSession } from '../../hooks/useKanjiLessonSession'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -54,8 +57,8 @@ function KanjiLessonStudyPage() {
   if (session.phase === 'loading') {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-64 w-full max-w-sm mx-auto" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-64 w-full max-w-sm mx-auto" />
       </div>
     )
   }
@@ -64,7 +67,7 @@ function KanjiLessonStudyPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 p-4">
         <div className="text-center">
-          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral mb-2">
+          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-2">
             {TYPE_LABELS[type]}
             {' '}
             ·
@@ -77,29 +80,29 @@ function KanjiLessonStudyPage() {
             {String(lesson).padStart(2, '0')}
           </h1>
         </div>
-        <p className="font-[var(--br-mono-font)] text-sm uppercase text-base-content/60">
+        <p className="font-[var(--br-mono-font)] text-sm uppercase text-foreground/60">
           {session.totalItems}
           {' '}
           {type === 'kanji' ? 'hán tự' : 'từ vựng'}
         </p>
         {session.totalItems === 0
           ? (
-              <p className="text-sm text-base-content/40 font-[var(--br-mono-font)]">
+              <p className="text-sm text-foreground/40 font-[var(--br-mono-font)]">
                 {type === 'vocab' ? 'Không có từ vựng kanji trong bài này.' : 'Không có hán tự trong bài này.'}
               </p>
             )
           : (
-              <button
-                type="button"
+              <Button
+                size="lg"
                 onClick={session.handleStart}
-                className="btn btn-primary btn-lg font-[var(--br-heading-font)] uppercase tracking-wide"
+                className="font-[var(--br-heading-font)] uppercase tracking-wide"
               >
                 Bắt đầu
-              </button>
+              </Button>
             )}
-        <Link to="/kanji" className="btn btn-ghost btn-sm font-[var(--br-mono-font)] uppercase text-[11px]">
-          ← Hán tự
-        </Link>
+        <Button variant="ghost" size="sm" asChild className="font-[var(--br-mono-font)] uppercase text-[11px]">
+          <Link to="/kanji">← Hán tự</Link>
+        </Button>
       </div>
     )
   }
@@ -196,25 +199,26 @@ function KanjiLessonStudyPage() {
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="sm"
           aria-label="Go back"
-          className="btn btn-ghost btn-sm -ml-2"
+          className="-ml-2"
           onClick={() => window.history.back()}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />
           </svg>
-        </button>
+        </Button>
         <div className="flex items-center gap-2">
-          <span className="badge badge-outline font-[var(--br-mono-font)] text-[10px] uppercase">
+          <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px] uppercase">
             {TYPE_LABELS[type]}
-          </span>
-          <span className="badge badge-outline font-[var(--br-mono-font)] text-[10px] uppercase">
+          </Badge>
+          <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px] uppercase">
             {MODE_LABELS[mode]}
-          </span>
+          </Badge>
         </div>
-        <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-base-content/60">
+        <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-foreground/60">
           {session.currentIndex + 1}
           {' / '}
           {queueLength}

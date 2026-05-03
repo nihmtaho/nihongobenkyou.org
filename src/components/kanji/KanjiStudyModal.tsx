@@ -2,7 +2,8 @@ import type { LessonStats } from '../../types/study'
 import type { SRSStats } from '../common/SRSProgressBar'
 import type { VocabTypeSubMode } from './KanjiVocabTypeInputCard'
 import { useNavigate } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 
 type StudyMode = 'flashcard' | 'quiz' | 'type'
@@ -49,25 +50,25 @@ function ModeRow({ type, modeOpt, index, onSelect }: ModeRowProps) {
   return (
     <button
       type="button"
-      className={`group w-full flex items-center gap-3 border-b border-base-content/10
-        hover:bg-primary hover:text-primary-content transition-colors text-left
+      className={`group w-full flex items-center gap-3 border-b border-border/10
+        hover:bg-primary hover:text-primary-foreground transition-colors text-left
         ${isSubMode ? 'pl-9 pr-4 py-2.5' : 'px-5 py-3'}`}
       onClick={() => onSelect(type, modeOpt.mode, modeOpt.vocabSubMode)}
     >
       {/* Sequential index */}
-      <span className="font-[var(--br-mono-font)] text-[10px] text-base-content/25 group-hover:text-primary-content/50 transition-colors w-4 shrink-0 tabular-nums leading-none">
+      <span className="font-[var(--br-mono-font)] text-[10px] text-foreground/25 group-hover:text-primary-foreground/50 transition-colors w-4 shrink-0 tabular-nums leading-none">
         {String(index).padStart(2, '0')}
       </span>
 
       {/* Left rail */}
-      <div className="w-px h-7 bg-primary group-hover:bg-primary-content/60 transition-colors shrink-0" />
+      <div className="w-px h-7 bg-primary group-hover:bg-primary-foreground/60 transition-colors shrink-0" />
 
       {/* Label + desc */}
       <div className="flex-1 min-w-0">
         <span className="font-[var(--br-heading-font)] font-bold uppercase tracking-wide leading-none text-[15px]">
           {modeOpt.name}
         </span>
-        <p className="text-[10px] font-[var(--br-mono-font)] text-neutral group-hover:text-primary-content/75 transition-colors mt-0.5 leading-snug">
+        <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground group-hover:text-primary-foreground/75 transition-colors mt-0.5 leading-snug">
           {modeOpt.desc}
         </p>
       </div>
@@ -97,39 +98,27 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
   const studied = learning + review + mature
   const navigate = useNavigate()
 
-  useEffect(() => {
-    function handleEsc(e: KeyboardEvent) {
-      if (e.key === 'Escape')
-        onClose()
-    }
-    window.addEventListener('keydown', handleEsc)
-    return () => window.removeEventListener('keydown', handleEsc)
-  }, [onClose])
-
-  function go(type: StudyType, mode: StudyMode, vocabSubMode?: VocabTypeSubMode) {
+  function go(studyType: StudyType, mode: StudyMode, vocabSubMode?: VocabTypeSubMode) {
     onClose()
     navigate({
       to: '/kanji/lesson-study',
-      search: { lesson: lessonNum, type, mode, ...(vocabSubMode ? { vocabSubMode } : {}) },
+      search: { lesson: lessonNum, type: studyType, mode, ...(vocabSubMode ? { vocabSubMode } : {}) },
     })
   }
 
   const srsStats: SRSStats = { total, new: newCount, learning, review, mature }
 
   return (
-    <dialog className="modal modal-open" onClick={onClose}>
-      <div
-        className="modal-box max-w-md p-0 overflow-hidden border border-base-content/20"
-        onClick={e => e.stopPropagation()}
-      >
+    <Dialog open onOpenChange={open => !open && onClose()}>
+      <DialogContent className="max-w-md p-0 overflow-hidden border border-foreground/20 gap-0">
         {/* ── Accent top rail ── */}
         <div className="h-0.5 bg-primary w-full shrink-0" />
 
         {/* ── Header ── */}
-        <div className="bg-base-200 px-5 pt-4 pb-0">
+        <div className="bg-card px-5 pt-4 pb-0">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-1">
+              <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest mb-1">
                 Chọn chế độ học
               </p>
               <h2 className="font-[var(--br-heading-font)] font-black text-4xl uppercase tracking-tighter leading-none">
@@ -138,14 +127,15 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
                 {String(lessonNum).padStart(2, '0')}
               </h2>
             </div>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
               aria-label="Đóng [ESC]"
-              className="btn btn-ghost btn-sm btn-square font-[var(--br-mono-font)] text-[11px] mt-0.5"
+              className="font-[var(--br-mono-font)] text-[11px] mt-0.5 h-8 w-8 p-0"
               onClick={onClose}
             >
               ✕
-            </button>
+            </Button>
           </div>
 
           {/* Segmented SRS progress bar — matches lesson panel */}
@@ -154,7 +144,7 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
           {/* Stat legend */}
           <div className="flex items-center gap-3 py-2.5 flex-wrap">
             {newCount > 0 && (
-              <span className="font-[var(--br-mono-font)] text-[10px] text-base-content/40">
+              <span className="font-[var(--br-mono-font)] text-[10px] text-foreground/40">
                 <span className="font-bold">{newCount}</span>
                 {' '}
                 chưa học
@@ -181,7 +171,7 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
                 thuộc
               </span>
             )}
-            <span className="font-[var(--br-mono-font)] text-[10px] text-base-content/25 ml-auto tabular-nums">
+            <span className="font-[var(--br-mono-font)] text-[10px] text-foreground/25 ml-auto tabular-nums">
               {studied}
               /
               {total}
@@ -194,7 +184,7 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
         {/* ── 単漢字 section ── */}
         {(type === undefined || type === 'kanji') && (
           <div>
-            <div className="flex items-center gap-2 px-5 py-2 border-y border-base-content/10 bg-base-300/50">
+            <div className="flex items-center gap-2 px-5 py-2 border-y border-border/10 bg-secondary/50">
               <div className="w-0.5 h-3.5 bg-primary shrink-0" />
               <span
                 className="text-[13px] font-bold leading-none"
@@ -202,10 +192,10 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
               >
                 単漢字
               </span>
-              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-neutral ml-1">
+              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-muted-foreground ml-1">
                 KANJI ĐƠN
               </span>
-              <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/25 ml-auto">
+              <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 ml-auto">
                 {KANJI_MODES.length}
               </span>
             </div>
@@ -218,7 +208,7 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
         {/* ── Từ vựng kanji section ── */}
         {(type === undefined || type === 'vocab') && (
           <div>
-            <div className="flex items-center gap-2 px-5 py-2 border-y border-base-content/10 bg-base-300/50">
+            <div className="flex items-center gap-2 px-5 py-2 border-y border-border/10 bg-secondary/50">
               <div className="w-0.5 h-3.5 bg-primary shrink-0" />
               <span
                 className="text-[13px] font-bold leading-none"
@@ -226,10 +216,10 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
               >
                 語彙
               </span>
-              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-neutral ml-1">
+              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-muted-foreground ml-1">
                 TỪ VỰNG KANJI
               </span>
-              <span className="font-[var(--br-mono-font)] text-[9px] text-base-content/25 ml-auto">
+              <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 ml-auto">
                 {VOCAB_MODES.length}
               </span>
             </div>
@@ -240,15 +230,12 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
         )}
 
         {/* ── Footer ── */}
-        <div className="px-5 py-2 bg-base-200 border-t border-base-content/10">
-          <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-base-content/20 text-right tracking-widest">
+        <div className="px-5 py-2 bg-card border-t border-border/10">
+          <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/20 text-right tracking-widest">
             [ESC] đóng
           </p>
         </div>
-      </div>
-      <form method="dialog" className="modal-backdrop">
-        <button type="button" onClick={onClose}>close</button>
-      </form>
-    </dialog>
+      </DialogContent>
+    </Dialog>
   )
 }
