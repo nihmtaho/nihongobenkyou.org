@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   jp: string
@@ -24,12 +25,9 @@ export function EmptyState({ jp, label, hint, cta, ctaLink }: Props) {
         {label}
       </p>
       <p className="text-xs font-[var(--br-mono-font)] text-muted-foreground max-w-xs">{hint}</p>
-      <Link
-        to={ctaLink}
-        className="btn btn-primary btn-sm font-[var(--br-mono-font)] uppercase tracking-wide mt-2"
-      >
-        {cta}
-      </Link>
+      <Button asChild size="sm" className="font-[var(--br-mono-font)] uppercase tracking-wide mt-2">
+        <Link to={ctaLink}>{cta}</Link>
+      </Button>
     </motion.div>
   )
 }

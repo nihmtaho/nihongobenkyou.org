@@ -74,12 +74,12 @@ export function VocabStudyTab({ userId }: { userId: string }) {
       {/* Stats row */}
       <StatsGrid
         items={[
-          { label: 'ĐẾN HẠN', value: totals.due, color: 'text-error' },
-          { label: 'MỚI', value: totals.new, color: 'text-base-content/50' },
+          { label: 'ĐẾN HẠN', value: totals.due, color: 'text-destructive' },
+          { label: 'MỚI', value: totals.new, color: 'text-foreground/50' },
           { label: 'ĐANG HỌC', value: totals.learning, color: 'text-warning' },
           { label: 'ÔN TẬP', value: totals.review, color: 'text-info' },
           { label: 'ĐÃ THUỘC', value: totals.mature, color: 'text-success' },
-          { label: 'ĐÃ HỌC QUA', value: totals.studied, color: 'text-base-content' },
+          { label: 'ĐÃ HỌC QUA', value: totals.studied, color: 'text-foreground' },
         ]}
         isLoading={isLoading}
       />
