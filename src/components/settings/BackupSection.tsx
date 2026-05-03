@@ -1,5 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { buildPackage, mergePackageIntoDexie } from '../../db/package-sync'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -70,47 +73,53 @@ export function BackupSection() {
   }
 
   return (
-    <div className="card bg-base-200 border border-base-content/10 p-4">
-      <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-2">
-        SAO LƯU & NHẬP
-      </h2>
-      <p className="text-xs text-neutral font-[var(--br-mono-font)] mb-4 uppercase">
-        Xuất / nhập dữ liệu SRS dưới dạng file JSON — không cần tài khoản.
-      </p>
-      <div className="flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={handleExportBackup}
-          className="btn btn-outline btn-sm font-[var(--br-mono-font)] uppercase self-start"
-        >
-          Xuất sao lưu (.json)
-        </button>
-        <div>
-          <button
+    <Card className="p-4">
+      <CardContent className="p-0">
+        <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-2">
+          SAO LƯU & NHẬP
+        </h2>
+        <p className="text-xs text-muted-foreground font-[var(--br-mono-font)] mb-4 uppercase">
+          Xuất / nhập dữ liệu SRS dưới dạng file JSON — không cần tài khoản.
+        </p>
+        <div className="flex flex-col gap-2">
+          <Button
             type="button"
-            onClick={() => importInputRef.current?.click()}
-            disabled={isImporting}
-            className="btn btn-outline btn-sm font-[var(--br-mono-font)] uppercase self-start"
+            variant="outline"
+            size="sm"
+            onClick={handleExportBackup}
+            className="font-[var(--br-mono-font)] uppercase self-start"
           >
-            {isImporting
-              ? <span className="loading loading-spinner loading-xs" />
-              : 'Nhập từ file (.json)'}
-          </button>
-          <input
-            ref={importInputRef}
-            type="file"
-            accept=".json,application/json"
-            className="hidden"
-            onChange={handleImportBackup}
-          />
-          {importError && (
-            <p className="text-error text-xs font-[var(--br-mono-font)] mt-1">{importError}</p>
-          )}
-          {importSuccess && (
-            <p className="text-success text-xs font-[var(--br-mono-font)] mt-1">{importSuccess}</p>
-          )}
+            Xuất sao lưu (.json)
+          </Button>
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => importInputRef.current?.click()}
+              disabled={isImporting}
+              className="font-[var(--br-mono-font)] uppercase self-start"
+            >
+              {isImporting
+                ? <Loader2 className="animate-spin h-3 w-3" />
+                : 'Nhập từ file (.json)'}
+            </Button>
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={handleImportBackup}
+            />
+            {importError && (
+              <p className="text-destructive text-xs font-[var(--br-mono-font)] mt-1">{importError}</p>
+            )}
+            {importSuccess && (
+              <p className="text-green-600 text-xs font-[var(--br-mono-font)] mt-1">{importSuccess}</p>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

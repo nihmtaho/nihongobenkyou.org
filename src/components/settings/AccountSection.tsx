@@ -1,6 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { deleteAccount, signOut } from '../../api/auth'
 import { markProgressReset } from '../../api/profiles'
 import { supabase } from '../../api/supabase'
@@ -152,139 +158,142 @@ export function AccountSection() {
 
   return (
     <>
-      <div className="card bg-base-200 border border-base-content/10 p-4">
-        <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">TÀI KHOẢN</h2>
-        <div className="flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={handleOpenResetModal}
-            className="btn btn-warning btn-outline w-full font-[var(--br-heading-font)] uppercase"
-          >
-            Đặt lại tiến trình
-          </button>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="btn btn-outline w-full font-[var(--br-heading-font)] uppercase"
-          >
-            Đăng xuất
-          </button>
-          <button
-            type="button"
-            onClick={handleOpenDeleteModal}
-            className="btn btn-error btn-outline w-full font-[var(--br-heading-font)] uppercase"
-          >
-            Xóa tài khoản
-          </button>
-        </div>
-      </div>
+      <Card className="p-4">
+        <CardContent className="p-0">
+          <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">TÀI KHOẢN</h2>
+          <div className="flex flex-col gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleOpenResetModal}
+              className="border-[var(--warning)] text-[var(--warning)] hover:bg-[var(--warning)]/10 w-full font-[var(--br-heading-font)] uppercase"
+            >
+              Đặt lại tiến trình
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleLogout}
+              className="w-full font-[var(--br-heading-font)] uppercase"
+            >
+              Đăng xuất
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleOpenDeleteModal}
+              className="border-destructive text-destructive hover:bg-destructive/10 w-full font-[var(--br-heading-font)] uppercase"
+            >
+              Xóa tài khoản
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-      {showResetModal && (
-        <dialog open className="modal modal-open">
-          <div className="modal-box border border-base-content/10 max-w-sm">
-            <h3 className="font-[var(--br-heading-font)] text-xl uppercase font-bold mb-4">
+      <Dialog open={showResetModal} onOpenChange={open => !isResetting && setShowResetModal(open)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-[var(--br-heading-font)] text-xl uppercase">
               ĐẶT LẠI TIẾN TRÌNH
-            </h3>
-            <p className="text-sm text-base-content/70 mb-2">Hành động này sẽ xóa:</p>
-            <ul className="text-sm text-base-content/70 mb-4 list-disc list-inside font-[var(--br-mono-font)] space-y-1">
-              <li>Toàn bộ thẻ ôn tập từ vựng và kanji</li>
-              <li>Lịch sử streak học tập</li>
-              <li>Dữ liệu đồng bộ trên Supabase</li>
-            </ul>
-            <p className="text-xs text-warning font-[var(--br-mono-font)] uppercase mb-4">
-              Nhập &quot;
-              {RESET_CONFIRM_PHRASE}
-              &quot; để xác nhận.
-            </p>
-            <input
-              type="text"
-              value={resetConfirmText}
-              onChange={e => setResetConfirmText(e.target.value.toUpperCase())}
-              placeholder={RESET_CONFIRM_PHRASE}
-              className="input input-bordered w-full mb-4 font-[var(--br-mono-font)] uppercase"
-              disabled={isResetting}
-            />
-            <div className="modal-action">
-              <button
-                type="button"
-                onClick={() => setShowResetModal(false)}
-                className="btn btn-ghost font-[var(--br-mono-font)] uppercase"
-                disabled={isResetting}
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                onClick={handleResetProgress}
-                disabled={resetConfirmText !== RESET_CONFIRM_PHRASE || isResetting}
-                className="btn btn-warning font-[var(--br-heading-font)] uppercase"
-              >
-                {isResetting
-                  ? <span className="loading loading-spinner loading-sm" />
-                  : 'Xác nhận đặt lại'}
-              </button>
-            </div>
-          </div>
-          <div className="modal-backdrop" onClick={() => !isResetting && setShowResetModal(false)} />
-        </dialog>
-      )}
-
-      {showDeleteModal && (
-        <dialog open className="modal modal-open" aria-modal="true">
-          <div className="modal-box border border-base-content/10 max-w-sm">
-            <h3 className="font-[var(--br-heading-font)] text-xl uppercase font-bold mb-4">
-              XÁC NHẬN XÓA TÀI KHOẢN
-            </h3>
-            <p className="text-sm text-base-content/70 mb-4">
-              Xóa vĩnh viễn — không thể khôi phục. Nhập
-              {' '}
-              <strong className="font-[var(--br-mono-font)]">{DELETE_CONFIRM_PHRASE}</strong>
-              {' '}
-              để xác nhận.
-            </p>
-            <input
-              type="text"
-              value={deleteConfirmText}
-              onChange={e => setDeleteConfirmText(e.target.value.toUpperCase())}
-              placeholder={DELETE_CONFIRM_PHRASE}
-              className="input input-bordered input-error w-full mb-4 font-[var(--br-mono-font)] uppercase"
-              disabled={isDeleting}
-            />
-            {deleteError && (
-              <div role="alert" className="alert alert-error py-2 mb-4">
-                <span className="text-sm font-[var(--br-mono-font)]">{deleteError}</span>
-              </div>
-            )}
-            <div className="modal-action">
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm font-[var(--br-mono-font)] uppercase"
-                onClick={() => setShowDeleteModal(false)}
-                disabled={isDeleting}
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                className="btn btn-error btn-sm font-[var(--br-heading-font)] uppercase"
-                onClick={handleDeleteAccount}
-                disabled={deleteConfirmText !== DELETE_CONFIRM_PHRASE || isDeleting}
-              >
-                {isDeleting
-                  ? <span className="loading loading-spinner loading-xs" />
-                  : 'Xóa vĩnh viễn'}
-              </button>
-            </div>
-          </div>
-          <div
-            className="modal-backdrop"
-            onClick={() => {
-              if (!isDeleting)
-                setShowDeleteModal(false)
-            }}
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-foreground/70 mb-2">Hành động này sẽ xóa:</p>
+          <ul className="text-sm text-foreground/70 mb-4 list-disc list-inside font-[var(--br-mono-font)] space-y-1">
+            <li>Toàn bộ thẻ ôn tập từ vựng và kanji</li>
+            <li>Lịch sử streak học tập</li>
+            <li>Dữ liệu đồng bộ trên Supabase</li>
+          </ul>
+          <p className="text-xs text-[var(--warning)] font-[var(--br-mono-font)] uppercase mb-4">
+            Nhập &quot;
+            {RESET_CONFIRM_PHRASE}
+            &quot; để xác nhận.
+          </p>
+          <Input
+            type="text"
+            value={resetConfirmText}
+            onChange={e => setResetConfirmText(e.target.value.toUpperCase())}
+            placeholder={RESET_CONFIRM_PHRASE}
+            className="mb-4 font-[var(--br-mono-font)] uppercase"
+            disabled={isResetting}
           />
-        </dialog>
-      )}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setShowResetModal(false)}
+              className="font-[var(--br-mono-font)] uppercase"
+              disabled={isResetting}
+            >
+              Hủy
+            </Button>
+            <Button
+              type="button"
+              onClick={handleResetProgress}
+              disabled={resetConfirmText !== RESET_CONFIRM_PHRASE || isResetting}
+              className="border-[var(--warning)] text-[var(--warning)] hover:bg-[var(--warning)]/10 font-[var(--br-heading-font)] uppercase"
+              variant="outline"
+            >
+              {isResetting
+                ? <Loader2 className="animate-spin h-4 w-4" />
+                : 'Xác nhận đặt lại'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteModal} onOpenChange={open => !isDeleting && setShowDeleteModal(open)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-[var(--br-heading-font)] text-xl uppercase">
+              XÁC NHẬN XÓA TÀI KHOẢN
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-foreground/70 mb-4">
+            Xóa vĩnh viễn — không thể khôi phục. Nhập
+            {' '}
+            <strong className="font-[var(--br-mono-font)]">{DELETE_CONFIRM_PHRASE}</strong>
+            {' '}
+            để xác nhận.
+          </p>
+          <Input
+            type="text"
+            value={deleteConfirmText}
+            onChange={e => setDeleteConfirmText(e.target.value.toUpperCase())}
+            placeholder={DELETE_CONFIRM_PHRASE}
+            className="border-destructive mb-4 font-[var(--br-mono-font)] uppercase"
+            disabled={isDeleting}
+          />
+          {deleteError && (
+            <Alert variant="destructive" className="py-2 mb-4">
+              <AlertDescription className="text-sm font-[var(--br-mono-font)]">{deleteError}</AlertDescription>
+            </Alert>
+          )}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="font-[var(--br-mono-font)] uppercase"
+              onClick={() => setShowDeleteModal(false)}
+              disabled={isDeleting}
+            >
+              Hủy
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="border-destructive text-destructive hover:bg-destructive/10 font-[var(--br-heading-font)] uppercase"
+              onClick={handleDeleteAccount}
+              disabled={deleteConfirmText !== DELETE_CONFIRM_PHRASE || isDeleting}
+            >
+              {isDeleting
+                ? <Loader2 className="animate-spin h-3 w-3" />
+                : 'Xóa vĩnh viễn'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

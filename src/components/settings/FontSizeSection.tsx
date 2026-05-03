@@ -1,4 +1,7 @@
 import type { FontSize } from '../../types/study'
+import { Card, CardContent } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useSettingsStore } from '../../stores/settingsStore'
 
 const FONT_SIZE_OPTIONS: { value: FontSize, label: string }[] = [
@@ -11,23 +14,22 @@ export function FontSizeSection() {
   const fontSize = useSettingsStore(s => s.fontSize)
 
   return (
-    <div className="card bg-base-200 border border-base-content/10 p-4">
-      <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">CỠ CHỮ</h2>
-      <div className="flex gap-4">
-        {FONT_SIZE_OPTIONS.map(({ value, label }) => (
-          <label key={value} className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              className="radio radio-primary"
-              name="fontSize"
-              value={value}
-              checked={fontSize === value}
-              onChange={() => useSettingsStore.setState({ fontSize: value })}
-            />
-            <span className="font-[var(--br-mono-font)] text-sm uppercase">{label}</span>
-          </label>
-        ))}
-      </div>
-    </div>
+    <Card className="p-4">
+      <CardContent className="p-0">
+        <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">CỠ CHỮ</h2>
+        <RadioGroup
+          value={fontSize}
+          onValueChange={value => useSettingsStore.setState({ fontSize: value as FontSize })}
+          className="flex gap-4"
+        >
+          {FONT_SIZE_OPTIONS.map(({ value, label }) => (
+            <Label key={value} className="flex items-center gap-2 cursor-pointer">
+              <RadioGroupItem value={value} />
+              <span className="font-[var(--br-mono-font)] text-sm uppercase">{label}</span>
+            </Label>
+          ))}
+        </RadioGroup>
+      </CardContent>
+    </Card>
   )
 }

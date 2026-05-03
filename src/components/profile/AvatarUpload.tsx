@@ -1,4 +1,7 @@
+import { Loader2 } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import { useProfile } from '../../hooks/useProfile'
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024
@@ -61,20 +64,21 @@ export function AvatarUpload({ currentUrl, displayName }: AvatarUploadProps) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="avatar placeholder">
-        <div className="bg-base-300 text-base-content w-20 h-20 border border-base-content/10">
-          {avatarSrc && !imgFailed
-            ? (
-                <img
-                  src={avatarSrc}
-                  alt="Avatar"
-                  className="object-cover w-full h-full"
-                  onError={() => setImgFailed(true)}
-                />
-              )
-            : <span className="text-2xl font-[var(--br-heading-font)]">{initials}</span>}
-        </div>
-      </div>
+      <Avatar className="w-20 h-20 border border-border/10">
+        {avatarSrc && !imgFailed
+          ? (
+              <AvatarImage
+                src={avatarSrc}
+                alt="Avatar"
+                className="object-cover"
+                onError={() => setImgFailed(true)}
+              />
+            )
+          : null}
+        <AvatarFallback className="bg-secondary text-foreground text-2xl font-[var(--br-heading-font)]">
+          {initials}
+        </AvatarFallback>
+      </Avatar>
 
       <input
         ref={inputRef}
@@ -85,11 +89,11 @@ export function AvatarUpload({ currentUrl, displayName }: AvatarUploadProps) {
       />
 
       {sizeError && (
-        <p className="text-error text-xs font-[var(--br-mono-font)]">{sizeError}</p>
+        <p className="text-destructive text-xs font-[var(--br-mono-font)]">{sizeError}</p>
       )}
 
       {updateAvatar.isError && (
-        <p className="text-error text-xs font-[var(--br-mono-font)]">
+        <p className="text-destructive text-xs font-[var(--br-mono-font)]">
           {updateAvatar.error?.message ?? 'Tải lên thất bại'}
           <button
             type="button"
@@ -104,32 +108,37 @@ export function AvatarUpload({ currentUrl, displayName }: AvatarUploadProps) {
       {preview
         ? (
             <div className="flex gap-2">
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={handleConfirm}
                 disabled={updateAvatar.isPending}
-                className="btn btn-primary btn-sm font-[var(--br-mono-font)] uppercase"
+                className="font-[var(--br-mono-font)] uppercase"
               >
-                {updateAvatar.isPending ? <span className="loading loading-spinner loading-xs" /> : 'Xác nhận'}
-              </button>
-              <button
+                {updateAvatar.isPending ? <Loader2 className="animate-spin h-3 w-3" /> : 'Xác nhận'}
+              </Button>
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleCancel}
-                className="btn btn-ghost btn-sm font-[var(--br-mono-font)] uppercase"
+                className="font-[var(--br-mono-font)] uppercase"
               >
                 Hủy
-              </button>
+              </Button>
             </div>
           )
         : (
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               aria-label="Tải lên ảnh đại diện"
               onClick={() => inputRef.current?.click()}
-              className="btn btn-outline btn-sm font-[var(--br-mono-font)] uppercase"
+              className="font-[var(--br-mono-font)] uppercase"
             >
               📷 Đổi ảnh
-            </button>
+            </Button>
           )}
     </div>
   )

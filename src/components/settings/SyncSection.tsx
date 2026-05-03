@@ -1,7 +1,11 @@
 import { Link } from '@tanstack/react-router'
-
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
-
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { uploadPendingReviews } from '../../db/sync'
 import { useSyncStatus } from '../../hooks/useSyncStatus'
 import { useAuthStore } from '../../stores/authStore'
@@ -30,56 +34,59 @@ export function SyncSection() {
   }
 
   return (
-    <div className="card bg-base-200 border border-base-content/10 p-4">
-      <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">
-        ĐỒNG BỘ ĐÁM MÂY
-      </h2>
-      {isRealUser
-        ? (
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center justify-between cursor-pointer">
-                <span className="font-[var(--br-mono-font)] text-sm uppercase">Bật đồng bộ</span>
-                <input
-                  type="checkbox"
-                  className="toggle toggle-primary"
-                  checked={syncEnabled}
-                  onChange={() => useSettingsStore.setState({ syncEnabled: !syncEnabled })}
-                />
-              </label>
-              {syncEnabled && (
-                <button
-                  type="button"
-                  onClick={handleManualSync}
-                  disabled={isSyncing}
-                  className="btn btn-outline btn-sm font-[var(--br-mono-font)] uppercase self-start"
-                >
-                  {isSyncing
-                    ? <span className="loading loading-spinner loading-xs" />
-                    : syncJustCompleted
-                      ? '✓ Đã đồng bộ'
-                      : 'Đồng bộ ngay'}
-                </button>
-              )}
-            </div>
-          )
-        : (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <span className="badge badge-neutral font-[var(--br-mono-font)] text-[10px]">
-                  KHÓA
-                </span>
-                <span className="text-sm text-neutral font-[var(--br-mono-font)]">
-                  Chỉ dành cho tài khoản đã đăng nhập
-                </span>
+    <Card className="p-4">
+      <CardContent className="p-0">
+        <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">
+          ĐỒNG BỘ ĐÁM MÂY
+        </h2>
+        {isRealUser
+          ? (
+              <div className="flex flex-col gap-3">
+                <Label className="flex items-center justify-between cursor-pointer">
+                  <span className="font-[var(--br-mono-font)] text-sm uppercase">Bật đồng bộ</span>
+                  <Switch
+                    checked={syncEnabled}
+                    onCheckedChange={() => useSettingsStore.setState({ syncEnabled: !syncEnabled })}
+                  />
+                </Label>
+                {syncEnabled && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleManualSync}
+                    disabled={isSyncing}
+                    className="font-[var(--br-mono-font)] uppercase self-start"
+                  >
+                    {isSyncing
+                      ? <Loader2 className="animate-spin h-3 w-3" />
+                      : syncJustCompleted
+                        ? '✓ Đã đồng bộ'
+                        : 'Đồng bộ ngay'}
+                  </Button>
+                )}
               </div>
-              <Link
-                to="/auth/login"
-                className="btn btn-primary btn-sm font-[var(--br-heading-font)] uppercase self-start mt-1"
-              >
-                Đăng nhập để đồng bộ
-              </Link>
-            </div>
-          )}
-    </div>
+            )
+          : (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="font-[var(--br-mono-font)] text-[10px]">
+                    KHÓA
+                  </Badge>
+                  <span className="text-sm text-muted-foreground font-[var(--br-mono-font)]">
+                    Chỉ dành cho tài khoản đã đăng nhập
+                  </span>
+                </div>
+                <Button
+                  asChild
+                  size="sm"
+                  className="font-[var(--br-heading-font)] uppercase self-start mt-1"
+                >
+                  <Link to="/auth/login">Đăng nhập để đồng bộ</Link>
+                </Button>
+              </div>
+            )}
+      </CardContent>
+    </Card>
   )
 }
