@@ -1,6 +1,9 @@
 import type { ChangeEvent } from 'react'
 import type { CsvImportResult } from '../../types/custom-deck'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { bulkImport } from '../../api/custom-vocabulary'
 import { useOnlineStatus } from '../../hooks/useOnlineStatus'
 import { parseCsvRows } from '../../lib/csv-parser'
@@ -59,15 +62,17 @@ export function CsvImport({ deckId, userId, onSuccess }: Props) {
 
   if (!isOnline) {
     return (
-      <div className="alert alert-warning text-sm">
-        Bạn đang ngoại tuyến. Không thể nhập CSV.
-      </div>
+      <Alert className="bg-warning/10 border-warning/50 text-sm">
+        <AlertDescription>
+          Bạn đang ngoại tuyến. Không thể nhập CSV.
+        </AlertDescription>
+      </Alert>
     )
   }
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs text-base-content/60">
+      <p className="text-xs text-foreground/60">
         Định dạng: cột
         {' '}
         <code>kana</code>
@@ -100,18 +105,18 @@ export function CsvImport({ deckId, userId, onSuccess }: Props) {
             {' '}
             hàng sẵn sàng nhập
           </span>
-          <button className="btn btn-primary btn-sm" onClick={handleImport}>
+          <Button size="sm" onClick={handleImport}>
             Xác nhận nhập
-          </button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setState('idle')}>
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setState('idle')}>
             Hủy
-          </button>
+          </Button>
         </div>
       )}
 
       {state === 'importing' && (
         <div className="flex items-center gap-2 text-sm">
-          <span className="loading loading-spinner loading-sm" />
+          <Loader2 className="animate-spin h-4 w-4" />
           Đang nhập…
         </div>
       )}
@@ -134,13 +139,13 @@ export function CsvImport({ deckId, userId, onSuccess }: Props) {
           )}
           {result.errors.length > 0 && (
             <details className="mt-1">
-              <summary className="cursor-pointer text-base-content/60">
+              <summary className="cursor-pointer text-foreground/60">
                 Chi tiết (
                 {result.errors.length}
                 {' '}
                 lỗi)
               </summary>
-              <ul className="mt-1 ml-3 list-disc text-xs text-base-content/60">
+              <ul className="mt-1 ml-3 list-disc text-xs text-foreground/60">
                 {result.errors.map(err => (
                   <li key={`${err.row}-${err.reason}`}>
                     Hàng
@@ -159,10 +164,10 @@ export function CsvImport({ deckId, userId, onSuccess }: Props) {
 
       {state === 'error' && (
         <div className="flex items-center gap-3">
-          <span className="text-error text-sm">{errorMsg}</span>
-          <button className="btn btn-ghost btn-xs" onClick={() => setState('idle')}>
+          <span className="text-destructive text-sm">{errorMsg}</span>
+          <Button variant="ghost" size="sm" className="h-6 px-2 text-[10px]" onClick={() => setState('idle')}>
             Thử lại
-          </button>
+          </Button>
         </div>
       )}
     </div>

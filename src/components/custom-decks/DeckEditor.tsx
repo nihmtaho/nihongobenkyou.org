@@ -1,5 +1,9 @@
 import type { CustomDeck } from '../../types/custom-deck'
-import { useRef, useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useOnlineStatus } from '../../hooks/useOnlineStatus'
 
 interface Props {
@@ -14,7 +18,6 @@ export function DeckEditor({ deck, onSave, onDelete, onClose, isPending }: Props
   const { isOnline } = useOnlineStatus()
   const [title, setTitle] = useState(deck?.title ?? '')
   const [description, setDescription] = useState(deck?.description ?? '')
-  const dialogRef = useRef<HTMLDialogElement>(null)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -26,21 +29,25 @@ export function DeckEditor({ deck, onSave, onDelete, onClose, isPending }: Props
   const isEditing = !!deck
 
   return (
-    <dialog ref={dialogRef} className="modal modal-open">
-      <div className="modal-box">
-        <h3 className="font-bold text-lg mb-4">
-          {isEditing ? 'Chỉnh sửa bộ từ vựng' : 'Tạo bộ từ vựng mới'}
-        </h3>
+    <Dialog open onOpenChange={open => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {isEditing ? 'Chỉnh sửa bộ từ vựng' : 'Tạo bộ từ vựng mới'}
+          </DialogTitle>
+        </DialogHeader>
 
         {!isOnline && (
-          <div className="alert alert-warning mb-4 text-sm">
-            Bạn đang ngoại tuyến. Vui lòng kết nối mạng để tiếp tục.
-          </div>
+          <Alert className="bg-warning/10 border-warning/50 mb-4 text-sm">
+            <AlertDescription>
+              Bạn đang ngoại tuyến. Vui lòng kết nối mạng để tiếp tục.
+            </AlertDescription>
+          </Alert>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <label className="form-control">
-            <span className="label-text mb-1">Tên bộ từ vựng *</span>
+          <label className="flex flex-col gap-1">
+            <span className="text-sm mb-1">Tên bộ từ vựng *</span>
             <input
               type="text"
               className="input input-bordered"
@@ -52,8 +59,8 @@ export function DeckEditor({ deck, onSave, onDelete, onClose, isPending }: Props
             />
           </label>
 
-          <label className="form-control">
-            <span className="label-text mb-1">Mô tả</span>
+          <label className="flex flex-col gap-1">
+            <span className="text-sm mb-1">Mô tả</span>
             <textarea
               className="textarea textarea-bordered resize-none"
               rows={3}
@@ -63,31 +70,30 @@ export function DeckEditor({ deck, onSave, onDelete, onClose, isPending }: Props
             />
           </label>
 
-          <div className="modal-action mt-2">
+          <DialogFooter className="mt-2">
             {isEditing && onDelete && (
-              <button
+              <Button
                 type="button"
-                className="btn btn-error btn-outline"
+                variant="outline"
+                className="border-destructive text-destructive hover:bg-destructive/10"
                 onClick={onDelete}
                 disabled={!isOnline || isPending}
               >
                 Xóa
-              </button>
+              </Button>
             )}
-            <button type="button" className="btn" onClick={onClose} disabled={isPending}>
+            <Button type="button" variant="ghost" onClick={onClose} disabled={isPending}>
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="btn btn-primary"
               disabled={!isOnline || !title.trim() || isPending}
             >
-              {isPending ? <span className="loading loading-spinner loading-sm" /> : 'Lưu'}
-            </button>
-          </div>
+              {isPending ? <Loader2 className="animate-spin h-4 w-4" /> : 'Lưu'}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-      <div className="modal-backdrop" onClick={onClose} />
-    </dialog>
+      </DialogContent>
+    </Dialog>
   )
 }
