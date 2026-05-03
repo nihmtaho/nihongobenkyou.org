@@ -1,7 +1,9 @@
 import type { StudyMode, TypeInputSubMode } from '../../../types/study'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { CsvImport } from '../../../components/custom-decks/CsvImport'
 import { DeckEditor } from '../../../components/custom-decks/DeckEditor'
 import { WordEntry } from '../../../components/custom-decks/WordEntry'
@@ -38,8 +40,10 @@ function DeckDetailPage() {
   if (!deck) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-16">
-        <p className="text-base-content/60">Không tìm thấy bộ từ vựng</p>
-        <Link to="/custom" className="btn btn-ghost">← Quay lại</Link>
+        <p className="text-foreground/60">Không tìm thấy bộ từ vựng</p>
+        <Button variant="ghost" asChild>
+          <Link to="/custom">← Quay lại</Link>
+        </Button>
       </div>
     )
   }
@@ -135,90 +139,88 @@ function DeckDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <Link to="/custom" className="text-sm text-base-content/60 hover:text-base-content">
+          <Link to="/custom" className="text-sm text-foreground/60 hover:text-foreground">
             ← Bộ từ vựng
           </Link>
           <h1 className="text-2xl font-bold mt-1">{deck.title}</h1>
           {deck.description && (
-            <p className="text-sm text-base-content/60 mt-1">{deck.description}</p>
+            <p className="text-sm text-foreground/60 mt-1">{deck.description}</p>
           )}
         </div>
         <div className="flex gap-2 shrink-0">
-          <button className="btn btn-ghost btn-sm" onClick={() => setShowEditor(true)}>
+          <Button variant="ghost" size="sm" onClick={() => setShowEditor(true)}>
             Chỉnh sửa
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
+          </Button>
+          <Button
+            size="sm"
             disabled={wordsLoading || !words.length}
             onClick={() => setShowStudyModal(true)}
           >
             Học
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Share section */}
-      <div className="card bg-base-200 border border-base-300">
-        <div className="card-body p-4 gap-3">
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-sm">Chia sẻ bộ từ vựng</span>
-            <input
-              type="checkbox"
-              className="toggle toggle-sm toggle-primary"
-              checked={deck.is_public}
-              onChange={handleTogglePublic}
-              disabled={mutations.updateDeck.isPending}
-            />
-          </div>
-          {deck.is_public && (
-            <div className="flex items-center gap-2">
-              <input
-                ref={copyRef}
-                type="text"
-                readOnly
-                value={shareUrl}
-                className="input input-bordered input-sm flex-1 text-xs font-mono"
-              />
-              <button className="btn btn-ghost btn-sm" onClick={handleCopyShareUrl}>
-                Sao chép
-              </button>
-            </div>
-          )}
+      <div className="bg-card border border-secondary p-4 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <span className="font-medium text-sm">Chia sẻ bộ từ vựng</span>
+          <input
+            type="checkbox"
+            className="toggle toggle-sm toggle-primary"
+            checked={deck.is_public}
+            onChange={handleTogglePublic}
+            disabled={mutations.updateDeck.isPending}
+          />
         </div>
+        {deck.is_public && (
+          <div className="flex items-center gap-2">
+            <input
+              ref={copyRef}
+              type="text"
+              readOnly
+              value={shareUrl}
+              className="input input-bordered input-sm flex-1 text-xs font-mono"
+            />
+            <Button variant="ghost" size="sm" onClick={handleCopyShareUrl}>
+              Sao chép
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Word entry */}
-      <div className="card bg-base-200 border border-base-300">
-        <div className="card-body p-4 gap-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-medium">Thêm từ mới</h2>
-            <button
-              className="btn btn-ghost btn-xs"
-              onClick={() => setShowCsvImport(!showCsvImport)}
-            >
-              {showCsvImport ? 'Ẩn' : 'Nhập CSV'}
-            </button>
-          </div>
-
-          {showCsvImport
-            ? (
-                <CsvImport
-                  deckId={deckId}
-                  userId={userId ?? ''}
-                  onSuccess={() => {
-                    setShowCsvImport(false)
-                    mutations.refresh(deckId)
-                  }}
-                />
-              )
-            : (
-                <WordEntry
-                  onAdd={handleAddWord}
-                  isPending={mutations.addWord.isPending}
-                  pitchLoading={pitchLoading}
-                />
-              )}
+      <div className="bg-card border border-secondary p-4 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-medium">Thêm từ mới</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-[10px]"
+            onClick={() => setShowCsvImport(!showCsvImport)}
+          >
+            {showCsvImport ? 'Ẩn' : 'Nhập CSV'}
+          </Button>
         </div>
+
+        {showCsvImport
+          ? (
+              <CsvImport
+                deckId={deckId}
+                userId={userId ?? ''}
+                onSuccess={() => {
+                  setShowCsvImport(false)
+                  mutations.refresh(deckId)
+                }}
+              />
+            )
+          : (
+              <WordEntry
+                onAdd={handleAddWord}
+                isPending={mutations.addWord.isPending}
+                pitchLoading={pitchLoading}
+              />
+            )}
       </div>
 
       {/* Word list */}
@@ -226,7 +228,7 @@ function DeckDetailPage() {
         <h2 className="font-medium mb-3">
           Từ vựng
           {' '}
-          <span className="text-base-content/60">
+          <span className="text-foreground/60">
             (
             {deck.word_count}
             )
@@ -234,9 +236,9 @@ function DeckDetailPage() {
         </h2>
 
         {wordsLoading
-          ? <span className="loading loading-spinner loading-sm" />
+          ? <Loader2 className="animate-spin h-4 w-4" />
           : words.length === 0
-            ? <p className="text-base-content/60 text-sm">Chưa có từ nào. Thêm từ đầu tiên!</p>
+            ? <p className="text-foreground/60 text-sm">Chưa có từ nào. Thêm từ đầu tiên!</p>
             : (
                 <div className="overflow-x-auto">
                   <table className="table table-sm">
@@ -260,17 +262,19 @@ function DeckDetailPage() {
                           <td>
                             {word.pitch_pattern !== null
                               ? word.pitch_pattern
-                              : <span className="text-base-content/40">—</span>}
+                              : <span className="text-foreground/40">—</span>}
                           </td>
                           <td>
-                            <button
-                              className="btn btn-ghost btn-xs text-error"
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-2 text-[10px] text-destructive hover:text-destructive"
                               onClick={() =>
                                 mutations.deleteWord.mutate({ wordId: word.id, deckId })}
                               disabled={mutations.deleteWord.isPending}
                             >
                               ×
-                            </button>
+                            </Button>
                           </td>
                         </tr>
                       ))}

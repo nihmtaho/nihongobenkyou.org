@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { sendPasswordResetEmail } from '../../api/auth'
 
 export const Route = createFileRoute('/auth/forgot-password')({
@@ -22,21 +24,23 @@ function ForgotPasswordPage() {
   if (submitted) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="card bg-base-100 border border-base-content/10 w-full max-w-sm">
-          <div className="card-body gap-4 text-center">
-            <h1 className="card-title font-[var(--br-heading-font)] text-2xl uppercase tracking-tight justify-center">
+        <div className="bg-background border border-border/10 w-full max-w-sm">
+          <div className="p-6 flex flex-col gap-4 text-center">
+            <h1 className="font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
               KIỂM TRA HỘP THƯ
             </h1>
-            <p className="text-sm text-base-content/70">
+            <p className="text-sm text-foreground/70">
               Nếu email
               {' '}
               <strong>{email}</strong>
               {' '}
               tồn tại trong hệ thống, bạn sẽ nhận được liên kết đặt lại mật khẩu.
             </p>
-            <Link to="/auth/login" className="btn btn-ghost btn-sm font-[var(--br-mono-font)] uppercase">
-              Quay lại đăng nhập
-            </Link>
+            <Button variant="ghost" size="sm" asChild className="font-[var(--br-mono-font)] uppercase">
+              <Link to="/auth/login">
+                Quay lại đăng nhập
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -45,19 +49,19 @@ function ForgotPasswordPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="card bg-base-100 border border-base-content/10 w-full max-w-sm">
-        <div className="card-body gap-4">
-          <h1 className="card-title font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
+      <div className="bg-background border border-border/10 w-full max-w-sm">
+        <div className="p-6 flex flex-col gap-4">
+          <h1 className="font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
             QUÊN MẬT KHẨU
           </h1>
-          <p className="text-sm text-base-content/70">
+          <p className="text-sm text-foreground/70">
             Nhập email của bạn để nhận liên kết đặt lại mật khẩu.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="form-control">
-              <label className="label" htmlFor="email">
-                <span className="label-text font-[var(--br-mono-font)] text-[11px] uppercase">Email</span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="email" className="font-[var(--br-mono-font)] text-[11px] uppercase">
+                Email
               </label>
               <input
                 id="email"
@@ -70,15 +74,15 @@ function ForgotPasswordPage() {
               />
             </div>
 
-            <button
+            <Button
               type="submit"
-              className="btn btn-primary w-full font-[var(--br-heading-font)] uppercase"
+              className="w-full font-[var(--br-heading-font)] uppercase"
               disabled={isLoading}
             >
               {isLoading
-                ? <span className="loading loading-spinner loading-sm" />
+                ? <Loader2 className="animate-spin h-4 w-4" />
                 : 'Gửi liên kết đặt lại'}
-            </button>
+            </Button>
           </form>
 
           <Link to="/auth/login" className="text-sm text-center font-[var(--br-mono-font)] text-primary underline">

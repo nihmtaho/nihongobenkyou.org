@@ -1,4 +1,7 @@
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { useOnlineStatus } from '../../hooks/useOnlineStatus'
 
 interface Props {
@@ -35,14 +38,16 @@ export function WordEntry({ onAdd, isPending, pitchLoading }: Props) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       {!isOnline && (
-        <div className="alert alert-warning text-sm">
-          Bạn đang ngoại tuyến. Không thể thêm từ mới.
-        </div>
+        <Alert className="bg-warning/10 border-warning/50 text-sm">
+          <AlertDescription>
+            Bạn đang ngoại tuyến. Không thể thêm từ mới.
+          </AlertDescription>
+        </Alert>
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <label className="form-control">
-          <span className="label-text mb-1">Kana *</span>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm mb-1">Kana *</span>
           <input
             type="text"
             className="input input-bordered"
@@ -55,8 +60,8 @@ export function WordEntry({ onAdd, isPending, pitchLoading }: Props) {
           />
         </label>
 
-        <label className="form-control">
-          <span className="label-text mb-1">Kanji</span>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm mb-1">Kanji</span>
           <input
             type="text"
             className="input input-bordered"
@@ -69,8 +74,8 @@ export function WordEntry({ onAdd, isPending, pitchLoading }: Props) {
         </label>
       </div>
 
-      <label className="form-control">
-        <span className="label-text mb-1">Nghĩa tiếng Việt *</span>
+      <label className="flex flex-col gap-1">
+        <span className="text-sm mb-1">Nghĩa tiếng Việt *</span>
         <input
           type="text"
           className="input input-bordered"
@@ -82,8 +87,8 @@ export function WordEntry({ onAdd, isPending, pitchLoading }: Props) {
         />
       </label>
 
-      <label className="form-control">
-        <span className="label-text mb-1">Nghĩa tiếng Anh</span>
+      <label className="flex flex-col gap-1">
+        <span className="text-sm mb-1">Nghĩa tiếng Anh</span>
         <input
           type="text"
           className="input input-bordered"
@@ -95,16 +100,15 @@ export function WordEntry({ onAdd, isPending, pitchLoading }: Props) {
       </label>
 
       <div className="flex items-center gap-3">
-        <button
+        <Button
           type="submit"
-          className="btn btn-primary"
           disabled={disabled || !kana.trim() || !meaningVi.trim()}
         >
-          {isPending ? <span className="loading loading-spinner loading-sm" /> : 'Thêm từ'}
-        </button>
+          {isPending ? <Loader2 className="animate-spin h-4 w-4" /> : 'Thêm từ'}
+        </Button>
         {pitchLoading && (
-          <span className="text-sm text-base-content/60 flex items-center gap-1">
-            <span className="loading loading-dots loading-xs" />
+          <span className="text-sm text-foreground/60 flex items-center gap-1">
+            <Loader2 className="animate-spin h-3 w-3" />
             Đang tra pitch accent…
           </span>
         )}

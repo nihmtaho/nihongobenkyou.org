@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { supabase } from '../../api/supabase'
 
@@ -24,7 +25,7 @@ function CallbackPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <span className="loading loading-spinner loading-lg" />
+      <Loader2 className="animate-spin h-8 w-8" />
     </div>
   )
 }

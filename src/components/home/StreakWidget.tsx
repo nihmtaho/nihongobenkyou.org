@@ -23,7 +23,7 @@ export function StreakWidget({ userId }: StreakWidgetProps) {
         </p>
         <div className="flex items-baseline gap-2">
           {currentStreak > 0 && (
-            <span className="text-error text-xl" aria-hidden="true">🔥</span>
+            <span className="text-destructive text-xl" aria-hidden="true">🔥</span>
           )}
           <span className="text-4xl font-bold font-[var(--br-mono-font)]">{currentStreak}</span>
           <span className="text-sm font-[var(--br-mono-font)] text-muted-foreground uppercase">DAYS</span>

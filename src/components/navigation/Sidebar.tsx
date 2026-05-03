@@ -32,13 +32,13 @@ function SidebarNavItem({
           className={[
             'flex items-center justify-center w-full h-12 transition-colors',
             isActive
-              ? 'border-l-4 border-primary bg-base-200'
-              : 'border-l-4 border-transparent hover:bg-base-200',
+              ? 'border-l-4 border-primary bg-card'
+              : 'border-l-4 border-transparent hover:bg-card',
           ].join(' ')}
         >
           <Icon
             size={17}
-            className={isActive ? 'text-primary' : 'text-base-content/50'}
+            className={isActive ? 'text-primary' : 'text-foreground/50'}
             strokeWidth={isActive ? 2.5 : 1.75}
             aria-hidden
           />
@@ -53,20 +53,20 @@ function SidebarNavItem({
       className={[
         'flex items-center gap-3 w-full px-4 h-11 transition-colors',
         isActive
-          ? 'border-l-4 border-primary bg-base-200'
-          : 'border-l-4 border-transparent hover:bg-base-200',
+          ? 'border-l-4 border-primary bg-card'
+          : 'border-l-4 border-transparent hover:bg-card',
       ].join(' ')}
     >
       <Icon
         size={16}
-        className={isActive ? 'text-primary' : 'text-base-content/50'}
+        className={isActive ? 'text-primary' : 'text-foreground/50'}
         strokeWidth={isActive ? 2.5 : 1.75}
         aria-hidden
       />
       <span
         className={[
           'text-sm font-[var(--br-heading-font)] truncate',
-          isActive ? 'text-base-content' : 'text-neutral',
+          isActive ? 'text-foreground' : 'text-muted-foreground',
         ].join(' ')}
       >
         {label}
@@ -108,12 +108,12 @@ export function Sidebar() {
     <div
       className={[
         'hidden lg:flex lg:flex-col lg:h-screen lg:flex-shrink-0',
-        'bg-base-100 border-r border-base-content/10 transition-all duration-200',
+        'bg-background border-r border-border/10 transition-all duration-200',
         collapsed ? 'w-14' : 'w-56',
       ].join(' ')}
     >
       {/* Logo — h-12 matches DesktopTopBar */}
-      <div className="flex items-center h-12 flex-shrink-0 border-b border-base-content/10 px-4 overflow-hidden">
+      <div className="flex items-center h-12 flex-shrink-0 border-b border-border/10 px-4 overflow-hidden">
         {collapsed
           ? (
               <span className="font-black font-[var(--br-heading-font)] tracking-tighter leading-none text-base">
@@ -130,10 +130,10 @@ export function Sidebar() {
       {/* User row */}
       {collapsed
         ? (
-            <div className="flex items-center justify-center h-12 flex-shrink-0 border-b border-base-content/10">
+            <div className="flex items-center justify-center h-12 flex-shrink-0 border-b border-border/10">
               <div className="tooltip tooltip-right" data-tip={nameLabel}>
                 <div className="avatar placeholder cursor-default">
-                  <div className="bg-base-300 text-base-content w-8 h-8 border border-base-content/10 flex items-center justify-center">
+                  <div className="bg-secondary text-foreground w-8 h-8 border border-border/10 flex items-center justify-center">
                     {avatarUrl && !imgFailed
                       ? (
                           <img
@@ -143,16 +143,16 @@ export function Sidebar() {
                             onError={() => setImgFailed(true)}
                           />
                         )
-                      : <User size={14} className="text-base-content/50" />}
+                      : <User size={14} className="text-foreground/50" />}
                   </div>
                 </div>
               </div>
             </div>
           )
         : (
-            <div className="flex items-center gap-3 px-4 h-12 flex-shrink-0 border-b border-base-content/10">
+            <div className="flex items-center gap-3 px-4 h-12 flex-shrink-0 border-b border-border/10">
               <div className="avatar placeholder flex-none">
-                <div className="bg-base-300 text-base-content w-8 h-8 border border-base-content/10 flex items-center justify-center">
+                <div className="bg-secondary text-foreground w-8 h-8 border border-border/10 flex items-center justify-center">
                   {avatarUrl && !imgFailed
                     ? (
                         <img
@@ -162,11 +162,11 @@ export function Sidebar() {
                           onError={() => setImgFailed(true)}
                         />
                       )
-                    : <User size={14} className="text-base-content/50" />}
+                    : <User size={14} className="text-foreground/50" />}
                 </div>
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral leading-none mb-0.5">
+                <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground leading-none mb-0.5">
                   Signed in
                 </p>
                 <p className="text-sm font-[var(--br-heading-font)] truncate leading-none">
@@ -198,8 +198,8 @@ export function Sidebar() {
         onClick={toggleCollapse}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         className={[
-          'flex items-center w-full flex-shrink-0 border-t border-base-content/10',
-          'text-base-content/40 hover:text-base-content/70 hover:bg-base-200 transition-colors',
+          'flex items-center w-full flex-shrink-0 border-t border-border/10',
+          'text-foreground/40 hover:text-foreground/70 hover:bg-card transition-colors',
           collapsed ? 'justify-center h-12' : 'justify-between px-4 h-9',
         ].join(' ')}
       >

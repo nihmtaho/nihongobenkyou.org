@@ -1,3 +1,4 @@
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useOnlineStatus } from '../../hooks/useOnlineStatus'
 import { useSyncStatus } from '../../hooks/useSyncStatus'
 
@@ -7,23 +8,25 @@ export function OfflineIndicator() {
 
   if (!isOnline) {
     return (
-      <div
+      <Alert
         role="alert"
-        className="alert alert-warning fixed top-0 left-0 right-0 z-50 rounded-none py-2 justify-center"
+        className="fixed top-0 left-0 right-0 z-50 rounded-none py-2 justify-center bg-warning/10 border-warning/50"
       >
-        <span className="font-[var(--br-mono-font)] text-[11px] uppercase">
+        <AlertDescription className="font-[var(--br-mono-font)] text-[11px] uppercase text-center">
           Đang ngoại tuyến — Dữ liệu sẽ được đồng bộ khi có kết nối
-        </span>
-      </div>
+        </AlertDescription>
+      </Alert>
     )
   }
 
   if (syncJustCompleted) {
     return (
       <div className="toast toast-top toast-center z-50 pointer-events-none">
-        <div className="alert alert-success py-2">
-          <span className="font-[var(--br-mono-font)] text-[11px]">Đã đồng bộ ✓</span>
-        </div>
+        <Alert className="py-2 bg-success/10 border-success/50">
+          <AlertDescription className="font-[var(--br-mono-font)] text-[11px]">
+            Đã đồng bộ ✓
+          </AlertDescription>
+        </Alert>
       </div>
     )
   }

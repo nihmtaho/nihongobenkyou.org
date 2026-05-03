@@ -17,7 +17,7 @@ function BooksPage() {
 
   return (
     <div className="p-4 flex flex-col gap-4">
-      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
         TỪ VỰNG
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -51,7 +51,7 @@ function BookCard({ dataset, userId }: { dataset: Dataset, userId: string }) {
         <div className="card-body p-4 gap-2">
           <div className="flex gap-1">
             {dataset.jlpt_level && (
-              <span className="badge badge-primary badge-outline font-[var(--br-mono-font)] text-[10px]">
+              <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-primary text-primary px-1.5 py-0.5">
                 #N
                 {dataset.jlpt_level}
               </span>
@@ -60,8 +60,8 @@ function BookCard({ dataset, userId }: { dataset: Dataset, userId: string }) {
           <h2 className="card-title font-[var(--br-heading-font)] text-xl uppercase tracking-tight leading-tight">
             {dataset.title}
           </h2>
-          <p className="text-sm text-neutral font-[var(--br-jp-font)]">{dataset.title_vi}</p>
-          <p className="text-[11px] font-[var(--br-mono-font)] text-neutral uppercase">
+          <p className="text-sm text-muted-foreground font-[var(--br-jp-font)]">{dataset.title_vi}</p>
+          <p className="text-[11px] font-[var(--br-mono-font)] text-muted-foreground uppercase">
             LESSONS
             {' '}
             {dataset.lesson_range[0]}
