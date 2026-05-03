@@ -1,3 +1,10 @@
+import { Loader2 } from 'lucide-react'
+
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
 interface AuthFormProps {
   onSubmit: (email: string, password: string, confirmPassword?: string) => void
   isLoading: boolean
@@ -19,68 +26,62 @@ export function AuthForm({ onSubmit, isLoading, error, showConfirmPassword = fal
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-      <div className="form-control">
-        <label className="label" htmlFor="email">
-          <span className="label-text font-[var(--br-mono-font)] text-[11px] uppercase">Email</span>
-        </label>
-        <input
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="email" className="font-[var(--br-mono-font)] text-[11px] uppercase">Email</Label>
+        <Input
           id="email"
           name="email"
           type="email"
           required
           autoComplete="email"
-          className="input input-bordered w-full"
+          className="w-full"
           disabled={isLoading}
         />
       </div>
 
-      <div className="form-control">
-        <label className="label" htmlFor="password">
-          <span className="label-text font-[var(--br-mono-font)] text-[11px] uppercase">Mật khẩu</span>
-        </label>
-        <input
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="password" className="font-[var(--br-mono-font)] text-[11px] uppercase">Mật khẩu</Label>
+        <Input
           id="password"
           name="password"
           type="password"
           required
           autoComplete={showConfirmPassword ? 'new-password' : 'current-password'}
-          className="input input-bordered w-full"
+          className="w-full"
           disabled={isLoading}
         />
       </div>
 
       {showConfirmPassword && (
-        <div className="form-control">
-          <label className="label" htmlFor="confirmPassword">
-            <span className="label-text font-[var(--br-mono-font)] text-[11px] uppercase">Xác nhận mật khẩu</span>
-          </label>
-          <input
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="confirmPassword" className="font-[var(--br-mono-font)] text-[11px] uppercase">Xác nhận mật khẩu</Label>
+          <Input
             id="confirmPassword"
             name="confirmPassword"
             type="password"
             required
             autoComplete="new-password"
-            className="input input-bordered w-full"
+            className="w-full"
             disabled={isLoading}
           />
         </div>
       )}
 
       {error && (
-        <div role="alert" className="alert alert-error py-2">
-          <span className="text-sm font-[var(--br-mono-font)]">{error}</span>
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription className="text-sm font-[var(--br-mono-font)]">{error}</AlertDescription>
+        </Alert>
       )}
 
-      <button
+      <Button
         type="submit"
-        className="btn btn-primary w-full font-[var(--br-heading-font)] uppercase"
+        className="w-full font-[var(--br-heading-font)] uppercase"
         disabled={isLoading}
       >
         {isLoading
-          ? <span className="loading loading-spinner loading-sm" />
+          ? <Loader2 className="animate-spin h-4 w-4" />
           : submitLabel}
-      </button>
+      </Button>
     </form>
   )
 }
