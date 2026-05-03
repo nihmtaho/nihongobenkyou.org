@@ -1,6 +1,9 @@
 import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import { useKnownCards } from '../../hooks/useKnownCards'
 import { AudioButton } from './AudioButton'
 import { PitchAccentBars } from './PitchAccentBars'
@@ -34,7 +37,7 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
         <div className="flex-1 p-8 xl:p-12 flex flex-col gap-6">
           {/* Metadata strip */}
           <div className="flex items-center justify-between">
-            <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-neutral tracking-wider">
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider">
               {item.pos.join(' · ')}
               {' '}
               · LESSON
@@ -45,18 +48,19 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
               {item.edition && item.edition.length > 0 && (
                 <div className="flex gap-1">
                   {item.edition.map(ed => (
-                    <span
+                    <Badge
                       key={ed}
-                      className="badge badge-outline font-[var(--br-mono-font)] text-[9px]"
+                      variant="outline"
+                      className="font-[var(--br-mono-font)] text-[9px]"
                       title={`第${ed}版`}
                     >
                       {ed}
                       版
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               )}
-              <span className="font-[var(--br-mono-font)] text-[11px] text-neutral/40 tabular-nums">
+              <span className="font-[var(--br-mono-font)] text-[11px] text-muted-foreground/40 tabular-nums">
                 {String(index + 1).padStart(2, '0')}
                 {' '}
                 /
@@ -70,7 +74,7 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
           <div className="flex flex-col gap-2">
             {item.word && (
               <div className="flex flex-col gap-1">
-                <p className="text-7xl xl:text-8xl font-bold font-[var(--br-jp-font)] text-base-content leading-none break-all">
+                <p className="text-7xl xl:text-8xl font-bold font-[var(--br-jp-font)] text-foreground leading-none break-all">
                   {item.word}
                 </p>
                 {item.han_viet && (
@@ -80,10 +84,10 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
                 )}
               </div>
             )}
-            <p className={`font-bold font-[var(--br-jp-font)] leading-none ${item.word ? 'text-3xl text-neutral' : 'text-7xl xl:text-8xl text-base-content'}`}>
+            <p className={`font-bold font-[var(--br-jp-font)] leading-none ${item.word ? 'text-3xl text-muted-foreground' : 'text-7xl xl:text-8xl text-foreground'}`}>
               {item.reading}
             </p>
-            <p className="font-[var(--br-jp-font)] text-lg text-neutral">{item.romaji}</p>
+            <p className="font-[var(--br-jp-font)] text-lg text-muted-foreground">{item.romaji}</p>
           </div>
 
           {/* Pitch accent + audio */}
@@ -92,45 +96,49 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
             <AudioButton audioFilename={item.audio_filename} vocabId={item.vocab_id} />
           </div>
 
-          <div className="divider my-0 opacity-20" />
+          <Separator className="opacity-20" />
 
           {/* Meanings */}
           <div className="flex flex-col gap-2">
             <p className="text-2xl font-bold font-[var(--br-jp-font)]">{item.meaning_vi}</p>
-            <p className="text-sm text-neutral font-[var(--br-jp-font)]">{item.meaning_en}</p>
+            <p className="text-sm text-muted-foreground font-[var(--br-jp-font)]">{item.meaning_en}</p>
           </div>
 
           {/* Examples */}
           {item.examples.length > 0 && (
             <div className="border-l-4 border-primary pl-4">
-              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral mb-2 tracking-wider">EXAMPLE</p>
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-2 tracking-wider">EXAMPLE</p>
               <p className="text-sm font-[var(--br-jp-font)] leading-relaxed">{item.examples[0].ja}</p>
-              <p className="text-xs text-neutral font-[var(--br-jp-font)] mt-1">{item.examples[0].vi}</p>
-              <p className="text-xs text-neutral font-[var(--br-jp-font)] opacity-70">{item.examples[0].en}</p>
+              <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] mt-1">{item.examples[0].vi}</p>
+              <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] opacity-70">{item.examples[0].en}</p>
               {item.examples[0].fr && (
-                <p className="text-xs text-neutral font-[var(--br-jp-font)] opacity-70">{item.examples[0].fr}</p>
+                <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] opacity-70">{item.examples[0].fr}</p>
               )}
             </div>
           )}
 
           {/* Action buttons pinned to bottom */}
-          <div className="mt-auto pt-6 border-t border-base-content/10 flex gap-2">
-            <button
-              className={`btn btn-sm font-[var(--br-mono-font)] ${isKnown ? 'btn-primary' : 'btn-outline'}`}
+          <div className="mt-auto pt-6 border-t border-border/10 flex gap-2">
+            <Button
+              size="sm"
+              variant={isKnown ? 'default' : 'outline'}
+              className="font-[var(--br-mono-font)]"
               onClick={handleToggleKnown}
               type="button"
             >
               {isKnown ? '✓ ĐÃ BIẾT' : 'ĐÃ BIẾT?'}
-            </button>
+            </Button>
             {firstKanjiChar && (
-              <button
-                className="btn btn-sm btn-outline font-[var(--br-mono-font)]"
+              <Button
+                size="sm"
+                variant="outline"
+                className="font-[var(--br-mono-font)]"
                 type="button"
                 onClick={() => window.location.assign(`/kanji/${firstKanjiChar}`)}
                 aria-label={`View kanji ${firstKanjiChar}`}
               >
                 漢字
-              </button>
+              </Button>
             )}
           </div>
         </div>
