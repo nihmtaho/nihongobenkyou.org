@@ -1,0 +1,3695 @@
+languages:
+  en: English
+  vi: Tiếng Việt
+
+lessons:
+  - key: lesson-00
+    id: 0
+  - key: lesson-01
+    id: 1
+  - key: lesson-02
+    id: 2
+  - key: lesson-03
+    id: 3
+  - key: lesson-04
+    id: 4
+  - key: lesson-05
+    id: 5
+  - key: lesson-06
+    id: 6
+  - key: lesson-07
+    id: 7
+  - key: lesson-08
+    id: 8
+  - key: lesson-09
+    id: 9
+  - key: lesson-10
+    id: 10
+  - key: lesson-11
+    id: 11
+  - key: lesson-12
+    id: 12
+  - key: lesson-13
+    id: 13
+  - key: lesson-14
+    id: 14
+  - key: lesson-15
+    id: 15
+  - key: lesson-16
+    id: 16
+  - key: lesson-17
+    id: 17
+  - key: lesson-18
+    id: 18
+  - key: lesson-19
+    id: 19
+  - key: lesson-20
+    id: 20
+  - key: lesson-21
+    id: 21
+  - key: lesson-22
+    id: 22
+  - key: lesson-23
+    id: 23
+  - key: lesson-24
+    id: 24
+  - key: lesson-25
+    id: 25
+
+# related_vocab format:
+#   - word: 日本        # kanji form (null nếu không có)
+#     kana: にほん      # cách đọc (bắt buộc)
+#     han_viet: Nhật Bản
+#     meaning_vi: Nhật Bản
+#     example:
+#       ja: 日本語を勉強しています。
+#       vi: Tôi đang học tiếng Nhật.
+# Dùng `related_vocab: null` nếu chưa thêm.
+
+lesson-00:
+  - char: 一
+    meaning_vi: [một, nhất]
+    han_viet: Nhất
+    mnemonic_vi: "Một (一) đường thẳng đơn giản"
+    components: null
+    related_vocab: null
+  - char: 二
+    meaning_vi: [hai, nhị]
+    han_viet: Nhị
+    mnemonic_vi: "Hai (二) đường thẳng song song"
+    components: null
+    related_vocab: null
+  - char: 三
+    meaning_vi: [ba, tam]
+    han_viet: Tam
+    mnemonic_vi: "Ba (三) đường thẳng xếp chồng lên nhau"
+    components: null
+    related_vocab: null
+  - char: 四
+    meaning_vi: [bốn, tứ]
+    han_viet: Tứ
+    mnemonic_vi: "Bốn (四) góc của một hình vuông"
+    components: null
+    related_vocab: null
+  - char: 五
+    meaning_vi: [năm, ngũ]
+    han_viet: Ngũ
+    mnemonic_vi: "Năm (五) ngón tay trên một bàn tay"
+    components: null
+    related_vocab: null
+  - char: 六
+    meaning_vi: [sáu, lục]
+    han_viet: Lục
+    mnemonic_vi: "Sáu (六) hình dạng giống như một cái nón"
+    components: null
+    related_vocab: null
+  - char: 七
+    meaning_vi: [bảy, thất]
+    han_viet: Thất
+    mnemonic_vi: "Bảy (七) hình dạng giống như một cái móc câu"
+    components: null
+    related_vocab: null
+  - char: 八
+    meaning_vi: [tám, bát]
+    han_viet: Bát
+    mnemonic_vi: "Tám (八) hình dạng giống như hai đường thẳng tách ra"
+    components: null
+    related_vocab: null
+  - char: 九
+    meaning_vi: [chín, cửu]
+    han_viet: Cửu
+    mnemonic_vi: "Chín (九) hình dạng giống như một cái móc câu ngược"
+    components: null
+    related_vocab: null
+  - char: 十
+    meaning_vi: [mười, thập]
+    han_viet: Thập
+    mnemonic_vi: "Mười (十) hình dạng giống như một dấu cộng"
+    components: null
+    related_vocab: null
+
+lesson-01:
+  - char: 人
+    meaning_vi: [người]
+    han_viet: Nhân
+    mnemonic_vi: "Người (人) đứng thẳng"
+    components: null
+    related_vocab:
+      - word: あの人
+        kana: あのひと
+        han_viet: Nhân
+        meaning_vi: người kia
+        example:
+          ja: あの人は誰ですか？
+          vi: Người kia là ai?
+      - word: アメリカ人
+        kana: アメリカじん
+        han_viet: Nhân
+        meaning_vi: người Mỹ
+        example:
+          ja: 彼はアメリカ人です。
+          vi: Anh ấy là người Mỹ.
+      - word: 三人
+        kana: さんにん
+        han_viet: Tam Nhân
+        meaning_vi: ba người
+        example:
+          ja: 部屋に三人います。
+          vi: Trong phòng có ba người.
+  - char: 名
+    meaning_vi: [tên, danh]
+    han_viet: Danh
+    mnemonic_vi: "Người (人) có một cái miệng (口) để nói tên (名)"
+    components: null
+    related_vocab:
+      - word: 名前
+        kana: なまえ
+        han_viet: Danh Tiền
+        meaning_vi: tên, danh tính
+        example:
+          ja: お名前は何ですか？
+          vi: Tên bạn là gì?
+      - word: 有名
+        kana: ゆうめい
+        han_viet: Hữu Danh
+        meaning_vi: nổi tiếng
+        example:
+          ja: 彼は有名な人です。
+          vi: Anh ấy là người nổi tiếng.
+      - word: 有名人
+        kana: ゆうめいじん
+        han_viet: Hữu Danh Nhân
+        meaning_vi: người nổi tiếng
+        example:
+          ja: 彼女は有名人です。
+          vi: Cô ấy là người nổi tiếng.
+  - char: 方
+    level: n5
+    meaning_vi: [phương, hướng, cách]
+    han_viet: Phương
+    mnemonic_vi: "Người (人) chỉ về một hướng (方)"
+    components: null
+    related_vocab:
+      - word: あの方
+        kana: あのかた
+        han_viet: Phương
+        meaning_vi: người kia (lịch sự)
+        example:
+          ja: あの方は先生です。
+          vi: Người kia là giáo viên.
+      - word: 日本の方
+        kana: にほんのかた
+        han_viet: Nhật Bản Phương
+        meaning_vi: người Nhật (lịch sự) (đất nước + の方)
+        example:
+          ja: 日本の方ですか？
+          vi: Bạn là người Nhật à?
+      - word: 方向
+        kana: ほうこう
+        han_viet: Phương Hướng
+        meaning_vi: hướng, phương hướng
+        example:
+          ja: 方向がわかりません。
+          vi: Tôi không biết hướng nào.
+  - char: 本
+    meaning_vi: [sách, gốc, cơ bản, Nhật Bản]
+    han_viet: Bản
+    mnemonic_vi: "Gốc cây (木) có thêm dấu gốc → bản gốc"
+    components:
+      - { char: 木, meaning_en: tree, meaning_vi: cây, han_viet: Mộc }
+    related_vocab:
+      - word: 山本
+        kana: やまもと
+        han_viet: Sơn Bản
+        meaning_vi: tên người (Yamamoto)
+        example:
+          ja: 山本さんは日本人です。
+          vi: Anh Yamamoto là người Nhật. 
+      - word: 本当
+        kana: ほんとう
+        han_viet: Bản Đương
+        meaning_vi: sự thật, thật sự
+        example:
+          ja: これは本当ですか？
+          vi: Đây có phải là sự thật không?
+      - word: 三本
+        kana: さんぼん
+        han_viet: Tam Bản
+        meaning_vi: ba cây (đếm vật dài)
+        example:
+          ja: 木が三本あります。
+          vi: Có ba cây.
+  - char: 日
+    meaning_vi: [mặt trời, ngày]
+    han_viet: Nhật
+    mnemonic_vi: "Mặt trời (日) chiếu sáng"
+    components: null
+    related_vocab:
+      - word: 先生の日
+        kana: せんせいのひ
+        han_viet: Tiên Sinh Nhật
+        meaning_vi: ngày của thầy giáo
+        example:
+          ja: 先生の日はいつですか？
+          vi: Ngày của thầy giáo là khi nào?
+      - word: 二日
+        kana: ふつか
+        han_viet: Nhị Nhật
+        meaning_vi: ngày mùng 2
+        example:
+          ja: 二日は何の日ですか？
+          vi: Ngày mùng 2 là ngày gì?
+      - word: 日本
+        kana: にほん
+        han_viet: Nhật Bản
+        meaning_vi: Nhật Bản
+        example:
+          ja: 日本は美しい国です。
+          vi: Nhật Bản là một đất nước đẹp.
+      - word: 日曜日
+        kana: にちようび
+        han_viet: Nhật Diệu Nhật
+        meaning_vi: chủ Nhật
+        example:
+          ja: 日曜日に映画を見ます。
+          vi: Chủ Nhật tôi đi xem phim.
+  - char: 何
+    meaning_vi: [gì, cái gì]
+    han_viet: Hà
+    mnemonic_vi: "Cái gì (何) có một dấu hỏi ở trên"
+    components: 
+      - { char: 亻, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 可, meaning_en: can, meaning_vi: có thể, han_viet: Khả }
+    related_vocab:
+      - word: 何語
+        kana: なにご
+        han_viet: Hà Ngữ
+        meaning_vi: tiếng gì, ngôn ngữ gì
+        example:
+          ja: 何語を話せますか？
+          vi: Bạn có thể nói tiếng gì?
+      - word: 何をしますか
+        kana: なにをしますか
+        han_viet: Hà Sĩ
+        meaning_vi: bạn làm gì, bạn sẽ làm gì
+        example:
+          ja: 何をしますか？
+          vi: Bạn làm gì? / Bạn sẽ làm gì?
+      - word: 何人
+        kana: なんにん
+        han_viet: Hà Nhân
+        meaning_vi: mấy người, bao nhiêu người
+        example:
+          ja: 部屋に何人いますか？
+          vi: Trong phòng có mấy người?
+      - word: 何時
+        kana: なんじ
+        han_viet: Hà Thời
+        meaning_vi: mấy giờ, khi nào
+        example:
+          ja: 今は何時ですか？
+          vi: Bây giờ là mấy giờ?
+      - word: 何日
+        kana: なんにち
+        han_viet: Hà Nhật
+        meaning_vi: mấy ngày, ngày nào
+        example:
+          ja: 今日は何日ですか？
+          vi: Hôm nay là ngày nào?
+      - word: 何才
+        kana: なんさい
+        han_viet: Hà Tuế
+        meaning_vi: mấy tuổi, bao nhiêu tuổi
+        example:
+          ja: お子さんは何才ですか？
+          vi: Con bạn bao nhiêu tuổi?
+  - char: 大
+    meaning_vi: [lớn, to, đại]
+    han_viet: Đại
+    mnemonic_vi: "Người (大) giang tay to lớn"
+    components: 
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+    related_vocab:
+      - word: 大きい
+        kana: おおきい
+        han_viet: Đại
+        meaning_vi: to, lớn
+        example:
+          ja: 大きい犬がいます。
+          vi: Có một con chó to.
+      - word: 大雨
+        kana: おおあめ
+        han_viet: Đại Vũ
+        meaning_vi: mưa lớn
+        example:
+          ja: 大雨が降っています。
+          vi: Trời đang mưa lớn.
+      - word: 大学
+        kana: だいがく
+        han_viet: Đại Học
+        meaning_vi: đại học
+        example:
+          ja: 大学に行きます。
+          vi: Tôi đi đại học.
+      - word: 大会
+        kana: たいかい
+        han_viet: Đại Hội
+        meaning_vi: đại hội, cuộc thi lớn
+        example:
+          ja: 大会に参加します。
+          vi: Tôi sẽ tham gia đại hội.
+  - char: 学
+    meaning_vi: [học]
+    han_viet: Học
+    mnemonic_vi: "Học (学) có một mái nhà và một đứa trẻ bên dưới"
+    components: 
+      - { char: 子, meaning_en: child, meaning_vi: đứa trẻ, han_viet: Tử }
+      - { char: 龸, meaning_en: cover, meaning_vi: mái nhà, han_viet: Mịch }
+    related_vocab:
+      - word: 学生
+        kana: がくせい
+        han_viet: Học Sinh
+        meaning_vi: học sinh, sinh viên
+        example:
+          ja: 私は学生です。
+          vi: Tôi là học sinh/sinh viên.
+      - word: 学校
+        kana: がっこう
+        han_viet: Học Hiệu
+        meaning_vi: trường học
+        example:
+          ja: 学校に行きます。
+          vi: Tôi đi học.
+      - word: 学ぶ
+        kana: まなぶ
+        han_viet: Học
+        meaning_vi: học, nghiên cứu (động từ)
+        example:
+          ja: 日本語を学びます。
+          vi: Tôi học tiếng Nhật.
+
+lesson-02:
+  - char: 社
+    meaning_vi: [xã, công ty, đền thờ]
+    han_viet: Xã
+    mnemonic_vi: "Người (人) làm việc trong một công ty (社)"
+    components:
+      - { char: 礻, meaning_en: spirit, meaning_vi: thần linh, han_viet: Thị }
+      - { char: 土, meaning_en: earth, meaning_vi: đất, han_viet: Thổ }
+    related_vocab:
+      - word: 社長
+        kana: しゃちょう
+        han_viet: Xã Trưởng
+        meaning_vi: giám đốc công ty
+        example:
+          ja: 彼は社長です。
+          vi: Anh ấy là giám đốc công ty.
+      - word: 神社
+        kana: じんじゃ
+        han_viet: Thần Xã
+        meaning_vi: đền thờ thần linh
+        example:
+          ja: 神社に行きます。
+          vi: Tôi đi đến đền thờ.
+  - char: 員
+    level: n5
+    meaning_vi: [viên, nhân viên]
+    han_viet: Viên
+    mnemonic_vi: "Người (人) làm việc trong một công ty (社) là nhân viên (員)"
+    components:
+      - { char: 貝, meaning_en: shell, meaning_vi: vỏ sò, han_viet: Bối }
+    related_vocab:
+      - word: 社員
+        kana: しゃいん
+        han_viet: Xã Viên
+        meaning_vi: nhân viên
+        example:
+          ja: 彼女は社員です。
+          vi: Cô ấy là nhân viên.
+      - word: 全員
+        kana: ぜんいん
+        han_viet: Toàn Viên
+        meaning_vi: tất cả mọi người
+        example:
+          ja: 全員が集まりました。
+          vi: Tất cả mọi người đã tập trung.
+  - char: 会
+    meaning_vi: [hội, gặp gỡ, công ty]
+    han_viet: Hội
+    mnemonic_vi: "Người (人) gặp nhau trong một hội nghị (会)"
+    components:
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 云, meaning_en: say, meaning_vi: nói, han_viet: Vân }
+    related_vocab:
+      - word: 会います
+        kana: あいます
+        han_viet: Hội
+        meaning_vi: gặp gỡ (động từ)
+        example:
+          ja: 友達に会います。
+          vi: Tôi gặp bạn bè.
+      - word: 会社
+        kana: かいしゃ
+        han_viet: Hội Xã
+        meaning_vi: công ty
+        example:
+          ja: 会社に行きます。
+          vi: Tôi đi làm ở công ty.
+      - word: 社会
+        kana: しゃかい
+        han_viet: Xã Hội
+        meaning_vi: xã hội
+        example:
+          ja: 社会について学びます。
+          vi: Tôi học về xã hội.
+      - word: 会員
+        kana: かいいん
+        han_viet: Hội Viên
+        meaning_vi: hội viên, thành viên của một tổ chức
+        example:
+          ja: 私はそのクラブの会員です。
+          vi: Tôi là hội viên của câu lạc bộ đó.
+      - word: 会話
+        kana: かいわ
+        han_viet: Hội Thoại
+        meaning_vi: hội thoại, cuộc trò chuyện
+        example:
+          ja: 日本語で会話します。
+          vi: Tôi nói chuyện bằng tiếng Nhật.
+  - char: 先
+    meaning_vi: [trước, tiên, đầu tiên]
+    han_viet: Tiên
+    mnemonic_vi: "Người (人) đi trước là người tiên phong"
+    components:
+      - { char: 𠂉, meaning_en: lid, meaning_vi: nắp, han_viet: Cái }
+      - { char: 儿, meaning_en: legs, meaning_vi: chân, han_viet: Nhân đi }
+    related_vocab:
+      - word: 先生
+        kana: せんせい
+        han_viet: Tiên Sinh
+        meaning_vi: thầy giáo, cô giáo
+        example:
+          ja: 先生は優しいです。
+          vi: Thầy cô giáo rất tốt bụng.
+      - word: お先にしつれします。
+        kana: おさきにしつれします。
+        meaning_vi: Xin phép về trước.
+        example:
+          ja: お先にしつれします。
+          vi: Xin phép về trước.
+  - char: 生
+    meaning_vi: [sinh, sống, đời sống]
+    han_viet: Sinh
+    mnemonic_vi: "Người (人) sinh ra từ đất (土)"
+    components:
+      - { char: 𠂉, meaning_en: lid, meaning_vi: nắp, han_viet: Cái }
+    related_vocab:
+      - word: 生まれる
+        kana: うまれる
+        meaning_vi: được sinh ra
+        example:
+          ja: 赤ちゃんが生まれました。
+          vi: Em bé đã được sinh ra.
+      - word: 学生
+        kana: がくせい
+        han_viet: Học Sinh
+        meaning_vi: học sinh, sinh viên
+        example:
+          ja: 学生は勉強しています。
+          vi: Học sinh đang học tập.
+      - word: 先生
+        kana: せんせい
+        han_viet: Tiên Sinh
+        meaning_vi: thầy giáo, cô giáo
+        example:
+          ja: 先生は優しいです。
+          vi: Thầy cô giáo rất tốt bụng.
+  - char: 行
+    meaning_vi: [đi, hành, tiến hành]
+    han_viet: Hành
+    mnemonic_vi: "Người (人) đi trên đường (行) để hành động"
+    components:
+      - { char: 彳, meaning_en: step, meaning_vi: bước, han_viet: Xích }
+      - { char: 一, meaning_en: one, meaning_vi: một, han_viet: Nhất }
+      - { char: 丁, meaning_en: street, meaning_vi: phố, han_viet: Đinh }
+    related_vocab:
+      - word: 行く
+        kana: いく
+        han_viet: Hành
+        meaning_vi: đi
+        example:
+          ja: 学校に行きます。
+          vi: Tôi đi đến trường.
+      - word: 銀行
+        kana: ぎんこう
+        han_viet: Ngân Hành
+        meaning_vi: ngân hàng
+        example:
+          ja: 銀行へ行きます。
+          vi: Tôi đi đến ngân hàng.
+      - word: 銀行員
+        kana: ぎんこういん
+        han_viet: Ngân Hành Viên
+        meaning_vi: nhân viên ngân hàng
+        example:
+          ja: 銀行員は親切です。
+          vi: Nhân viên ngân hàng rất thân thiện.
+  - char: 来
+    meaning_vi: [đến, lai, tương lai]
+    han_viet: Lai
+    mnemonic_vi: "Người (人) đi đến một nơi mới (来)"
+    components:
+      - { char: 木, meaning_en: tree, meaning_vi: cây, han_viet: Mộc }
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+    related_vocab:
+      - word: 来る
+        kana: くる
+        han_viet: Lai
+        meaning_vi: đến
+        example:
+          ja: 明日来ます。
+          vi: Tôi sẽ đến vào ngày mai.
+      - word: 来週
+        kana: らいしゅう
+        han_viet: Lai Chu
+        meaning_vi: tuần tới
+        example:
+          ja: 来週は忙しいです。
+          vi: Tuần tới tôi bận rộn.
+      - word: 来年
+        kana: らいねん
+        han_viet: Lai Niên
+        meaning_vi: năm tới
+        example:
+          ja: 来年は旅行に行きたいです。
+          vi: Năm tới tôi muốn đi du lịch.
+      - word: 来月
+        kana: らいげつ
+        han_viet: Lai Nguyệt
+        meaning_vi: tháng tới
+        example:
+          ja: 来月は誕生日です。
+          vi: Tháng tới là sinh nhật của tôi.
+  - char: 車
+    meaning_vi: [xe, ô tô]
+    han_viet: Xa
+    mnemonic_vi: "Chiếc xe (車) có bốn bánh và một mái che"
+    components: null
+    related_vocab:
+      - word: 車
+        kana: くるま
+        han_viet: Xa
+        meaning_vi: xe, ô tô
+        example:
+          ja: 車を運転します。
+          vi: Tôi lái xe.
+      - word: 電車
+        kana: でんしゃ
+        han_viet: Điện Xa
+        meaning_vi: tàu điện
+        example:
+          ja: 電車に乗ります。
+          vi: Tôi đi tàu điện.
+      - word: 自転車
+        kana: じてんしゃ
+        han_viet: Tự Chuyển Xa
+        meaning_vi: xe đạp
+        example:
+          ja: 自転車を買います。
+          vi: Tôi sẽ mua xe đạp.
+
+lesson-03:
+  - char: 百
+    meaning_vi: [trăm, bách]
+    han_viet: Bách
+    mnemonic_vi: "Một trăm (百) con mắt nhìn về một người"
+    components:
+      - { char: 白, meaning_en: white, meaning_vi: trắng, han_viet: Bạch }
+      - { char: 一, meaning_en: one, meaning_vi: một, han_viet: Nhất }
+    related_vocab:
+      - word: 百
+        kana: ひゃく
+        han_viet: Bách
+        meaning_vi: một trăm
+        example:
+          ja: 百円ください。
+          vi: Cho tôi một trăm yên.
+      - word: 二百
+        kana: にひゃく
+        han_viet: Nhị bách
+        meaning_vi: hai trăm
+        example:
+          ja: 二百人が来ました。
+          vi: Hai trăm người đã đến.
+      - word: 三百
+        kana: さんびゃく
+        han_viet: Tam bách
+        meaning_vi: ba trăm
+        example:
+          ja: 三百ページの本です。
+          vi: Đây là một cuốn sách 300 trang.
+      - word: 六百
+        kana: ろっぴゃく
+        han_viet: Lục bách
+        meaning_vi: sáu trăm
+        example:
+          ja: 六百円です。
+          vi: Giá là sáu trăm yên.
+      - word: 八百
+        kana: はっぴゃく
+        han_viet: Bát bách
+        meaning_vi: tám trăm
+        example:
+          ja: 八百円です。
+          vi: Giá là tám trăm yên.
+  - char: 千
+    meaning_vi: [nghìn, thiên]
+    han_viet: Thiên
+    mnemonic_vi: "Một nghìn (千) người đứng xếp hàng"
+    components: null
+    related_vocab:
+      - word: 千
+        kana: せん
+        han_viet: Thiên
+        meaning_vi: một nghìn
+        example:
+          ja: 千人が集まりました。
+          vi: Một nghìn người đã tập trung.
+      - word: 二千
+        kana: にせん
+        han_viet: Nhị thiên
+        meaning_vi: hai nghìn
+        example:
+          ja: 二千円です。
+          vi: Giá là hai nghìn yên.
+      - word: 八千
+        kana: はっせん
+        han_viet: Bát thiên
+        meaning_vi: tám nghìn
+        example:
+          ja: 八千円です。
+          vi: Giá là tám nghìn yên. 
+      - word: 三千
+        kana: さんぜん
+        han_viet: Tam thiên
+        meaning_vi: ba nghìn
+        example:
+          ja: 三千円です。
+          vi: Giá là ba nghìn yên.  
+  - char: 万
+    meaning_vi: [vạn, mười nghìn]
+    han_viet: Vạn
+    mnemonic_vi: "Mười nghìn (万) người đứng xếp hàng"
+    components: null
+    related_vocab:
+      - word: 万
+        kana: まん
+        han_viet: Vạn
+        meaning_vi: mười nghìn
+        example:
+          ja: 一万人が来ました。
+          vi: Mười nghìn người đã đến.
+      - word: 十万
+        kana: じゅうまん
+        han_viet: Thập Vạn
+        meaning_vi: một trăm nghìn
+        example:
+          ja: 十万円です。
+          vi: Giá là một trăm nghìn yên. 
+      - word: 百万
+        kana: ひゃくまん
+        han_viet: Bách Vạn
+        meaning_vi: một triệu
+        example:
+          ja: 百万円です。
+          vi: Giá là một triệu yên.
+  - char: 円
+    meaning_vi: [yên, đồng tiền]
+    han_viet: Viên
+    mnemonic_vi: "Đồng yên (円) có hình tròn"
+    components:
+      - { char: 丸, meaning_en: round, meaning_vi: tròn, han_viet: Hoàn }
+    related_vocab:
+      - word: 百円
+        kana: ひゃくえん
+        han_viet: Bách Viên
+        meaning_vi: một trăm yên
+        example:
+          ja: これは百円です。
+          vi: Đây là một trăm yên.
+      - word: 二千円
+        kana: にせんえん
+        han_viet: Nhị Thiên Viên
+        meaning_vi: hai nghìn yên
+        example:
+          ja: 二千円です。
+          vi: Giá là hai nghìn yên.
+      - word: 五万円
+        kana: ごまんえん
+        han_viet: Ngũ Vạn Viên
+        meaning_vi: năm mươi nghìn yên
+        example:
+          ja: 五万円です。
+          vi: Giá là năm mươi nghìn yên.
+  - char: 毎
+    meaning_vi: [mỗi, hằng]
+    han_viet: Mỗi
+    mnemonic_vi: "Mỗi (毎) ngày tôi học kanji"
+    components: null
+    related_vocab:
+      - word: 毎日
+        kana: まいにち
+        han_viet: Mỗi Nhật
+        meaning_vi: mỗi ngày
+        example:
+          ja: 毎日勉強します。
+          vi: Tôi học mỗi ngày.
+      - word: 毎週
+        kana: まいしゅう
+        han_viet: Mỗi Chu
+        meaning_vi: mỗi tuần
+        example:
+          ja: 毎週会います。
+          vi: Chúng ta gặp nhau mỗi tuần.
+      - word: 毎月
+        kana: まいつき
+        han_viet: Mỗi Nguyệt
+        meaning_vi: mỗi tháng
+        example:
+          ja: 毎月給料をもらいます。
+          vi: Tôi nhận lương mỗi tháng.
+      - word: 毎年
+        kana: まいとし
+        han_viet: Mỗi Niên
+        meaning_vi: mỗi năm
+        example:
+          ja: 毎年旅行します。
+          vi: Tôi đi du lịch mỗi năm.
+  - char: 時
+    meaning_vi: [giờ, thời gian]
+    han_viet: Thời
+    mnemonic_vi: "Thời gian (時) trôi qua nhanh"
+    components:
+      - { char: 日, meaning_en: sun/day, meaning_vi: mặt trời/ngày, han_viet: Nhật }
+      - { char: 寺, meaning_en: temple, meaning_vi: chùa, han_viet: Tự }
+    related_vocab:
+      - word: 一時
+        kana: いちじ
+        han_viet: Nhất Thời
+        meaning_vi: một giờ
+        example:
+          ja: 一時に会いましょう。
+          vi: Hãy gặp nhau lúc một giờ.
+      - word: 一時間
+        kana: いちじかん
+        han_viet: Nhất Thời
+        meaning_vi: một giờ
+        example:
+          ja: 一時間勉強します。
+          vi: Tôi học một giờ.
+      - word: 時間
+        kana: じかん
+        han_viet: Thời Gian
+        meaning_vi: thời gian
+        example:
+          ja: 三時間勉強します。
+          vi: Tôi học ba giờ. 
+  - char: 分
+    meaning_vi: [phút, phần]
+    han_viet: Phân
+    mnemonic_vi: "Phút (分) trôi qua nhanh"
+    components:
+      - { char: 刀, meaning_en: sword, meaning_vi: kiếm, han_viet: Đao }
+      - { char: 八, meaning_en: eight, meaning_vi: tám, han_viet: Bát }
+    related_vocab:
+      - word: 一分
+        kana: いっぷん
+        han_viet: Nhất Phân
+        meaning_vi: một phút
+        example:
+          ja: 一分待ってください。
+          vi: Hãy đợi một phút.
+      - word: 二分
+        kana: にふん
+        han_viet: Nhị Phân
+        meaning_vi: hai phút
+        example:
+          ja: 二分で終わります。
+          vi: Nó sẽ kết thúc trong hai phút.
+      - word: 十分
+        kana: じゅっぷん
+        han_viet: Thập Phân
+        meaning_vi: mười phút
+        example:
+          ja: 十分遅れます。
+          vi: Tôi sẽ đến muộn mười phút.
+  - char: 半
+    meaning_vi: [nửa, bán]
+    han_viet: Bán
+    mnemonic_vi: "Nửa (半) quả táo"
+    components:
+      - { char: 二, meaning_en: two, meaning_vi: hai, han_viet: Nhị }
+      - { char: 丨, meaning_en: line, meaning_vi: nét, han_viet: Cổn }
+      - { char: 丷, meaning_en: eight, meaning_vi: tám, han_viet: Bát }
+    related_vocab:
+      - word: 半分
+        kana: はんぶん
+        han_viet: Bán Phân
+        meaning_vi: nửa phần
+        example:
+          ja: ケーキを半分食べました。
+          vi: Tôi đã ăn nửa chiếc bánh.
+      - word: 半年
+        kana: はんとし
+        han_viet: Bán Niên
+        meaning_vi: nửa năm
+        example:
+          ja: 半年勉強しました。
+          vi: Tôi đã học nửa năm.
+      - word: 半日
+        kana: はんにち
+        han_viet: Bán Nhật
+        meaning_vi: nửa ngày
+        example:
+          ja: 半日休みます。
+          vi: Tôi sẽ nghỉ nửa ngày.
+      - word: 九時半
+        kana: くじはん
+        han_viet: Cửu Thời Bán
+        meaning_vi: 9 giờ rưỡi
+        example:
+          ja: 九時半に会いましょう。
+          vi: Hãy gặp nhau lúc 9 giờ rưỡi.
+
+lesson-04:
+  - char: 国
+    meaning_vi: [quốc, đất nước]
+    han_viet: Quốc
+    mnemonic_vi: "Đất nước (国) có một bức tường bao quanh và một người bên trong"
+    components:
+      - { char: 囗, meaning_en: enclosure, meaning_vi: bao quanh, han_viet: Vi }
+      - { char: 玉, meaning_en: jewel, meaning_vi: ngọc, han_viet: Ngọc }
+    related_vocab:
+      - word: 国
+        kana: くに
+        han_viet: Quốc
+        meaning_vi: đất nước
+        example:
+          ja: 日本は美しい国です。
+          vi: Nhật Bản là một đất nước đẹp.
+      - word: 中国
+        kana: ちゅうごく
+        han_viet: Trung Quốc
+        meaning_vi: Trung Quốc
+        example:
+          ja: 中国は大きな国です。
+          vi: Trung Quốc là một đất nước lớn.
+      - word: 外国
+        kana: がいこく
+        han_viet: Ngoại Quốc
+        meaning_vi: nước ngoài
+        example:
+          ja: 外国に行きたいです。
+          vi: Tôi muốn đi nước ngoài.
+  - char: 月
+    meaning_vi: [mặt trăng, tháng]
+    han_viet: Nguyệt
+    mnemonic_vi: "Mặt trăng (月) chiếu sáng vào ban đêm"
+    components: null
+    related_vocab:
+      - word: 月
+        kana: つき
+        han_viet: Nguyệt
+        meaning_vi: mặt trăng
+        example:
+          ja: 月がきれいです。
+          vi: Mặt trăng thật đẹp.
+      - word: 毎月
+        kana: まいつき
+        han_viet: Mỗi Nguyệt
+        meaning_vi: mỗi tháng
+        example:
+          ja: 毎月給料をもらいます。
+          vi: Tôi nhận lương mỗi tháng.
+      - word: 一月
+        kana: いちがつ
+        han_viet: Nhất Nguyệt
+        meaning_vi: tháng 1
+        example:
+          ja: 一月は寒いです。
+          vi: Tháng 1 rất lạnh.
+      - word: 一ヶ月
+        kana: いっかげつ
+        han_viet: Nhất Nguyệt
+        meaning_vi: một tháng (khoảng thời gian)
+        example:
+          ja: 一ヶ月勉強します。
+          vi: Tôi sẽ học trong một tháng.
+      - word: 月曜日
+        kana: げつようび
+        han_viet: Nguyệt Diệu Nhật
+        meaning_vi: thứ Hai
+        example:
+          ja: 月曜日に会いましょう。
+          vi: Hãy gặp nhau vào thứ Hai. 
+  - char: 火
+    meaning_vi: [lửa, hỏa]
+    han_viet: Hỏa
+    mnemonic_vi: "Lửa (火) cháy sáng"
+    components: null
+    related_vocab:
+      - word: 火
+        kana: ひ
+        han_viet: Hỏa
+        meaning_vi: lửa
+        example:
+          ja: 火が燃えています。
+          vi: Lửa đang cháy.
+      - word: 火事
+        kana: かじ
+        han_viet: Hỏa Sự
+        meaning_vi: hỏa hoạn
+        example:
+          ja: 火事が起きました。
+          vi: Đã xảy ra hỏa hoạn.
+      - word: 火星
+        kana: かせい
+        han_viet: Hỏa Tinh
+        meaning_vi: sao Hỏa
+        example:
+          ja: 火星は赤いです。
+          vi: Sao Hỏa có màu đỏ.
+      - word: 火曜日
+        kana: かようび
+        han_viet: Hỏa Diệu Nhật
+        meaning_vi: thứ Ba
+        example:
+          ja: 火曜日に会いましょう。
+          vi: Hãy gặp nhau vào thứ Ba.
+      - word: 火山
+        kana: かざん
+        han_viet: Hỏa Sơn
+        meaning_vi: núi lửa
+        example:
+          ja: 火山が噴火しました。
+          vi: Núi lửa đã phun trào.
+  - char: 水
+    meaning_vi: [nước, thủy]
+    han_viet: Thủy
+    mnemonic_vi: "Nước (水) chảy qua các đường nét"
+    components: null
+    related_vocab:
+      - word: 水
+        kana: みず
+        han_viet: Thủy
+        meaning_vi: nước
+        example:
+          ja: 水を飲みます。
+          vi: Tôi uống nước.
+      - word: 水曜日
+        kana: すいようび
+        han_viet: Thủy Diệu Nhật
+        meaning_vi: thứ Tư
+        example:
+          ja: 水曜日に会いましょう。
+          vi: Hãy gặp nhau vào thứ Tư.
+      - word: 水道
+        kana: すいどう
+        han_viet: Thủy Đạo
+        meaning_vi: hệ thống nước, đường ống nước
+        example:
+          ja: 水道が壊れました。
+          vi: Hệ thống nước bị hỏng.
+  - char: 木
+    meaning_vi: [cây, mộc]
+    han_viet: Mộc
+    mnemonic_vi: "Cây (木) có một thân và nhiều cành"
+    components: null
+    related_vocab:
+      - word: 木
+        kana: き
+        han_viet: Mộc
+        meaning_vi: cây
+        example:
+          ja: 木が生えています。
+          vi: Cây đang mọc.
+      - word: 木曜日
+        kana: もくようび
+        han_viet: Mộc Diệu Nhật
+        meaning_vi: thứ Năm
+        example:
+          ja: 木曜日に会いましょう。
+          vi: Hãy gặp nhau vào thứ Năm.
+      - word: 木のいす
+        kana: きのいす
+        han_viet: Mộc Ý Tử
+        meaning_vi: cái ghế bằng gỗ
+        example:
+          ja: 木のいすに座ります。
+          vi: Tôi ngồi trên cái ghế bằng gỗ.
+  - char: 金
+    meaning_vi: [vàng, kim loại]
+    han_viet: Kim
+    mnemonic_vi: "Vàng (金) có hình dạng giống như một cây cỏ với hai nhánh"
+    components: null
+    related_vocab:
+      - word: お金
+        kana: おかね
+        han_viet: Kim
+        meaning_vi: tiền bạc
+        example:
+          ja: お金が必要です。
+          vi: Tôi cần tiền.
+      - word: 金曜日
+        kana: きんようび
+        han_viet: Kim Diệu Nhật
+        meaning_vi: thứ Sáu
+        example:
+          ja: 金曜日に会いましょう。
+          vi: Hãy gặp nhau vào thứ Sáu.
+      - word: 金のゆうび
+        kana: きんのゆうび
+        han_viet: Kim
+        meaning_vi: vàng (kim loại)
+        example:
+          ja: 金のゆうびが必要です。
+          vi: Tôi cần vàng.
+  - char: 土
+    meaning_vi: [đất, thổ]
+    han_viet: Thổ
+    mnemonic_vi: "Đất (土) có hình dạng giống như một ngọn núi với một đường ngang"
+    components: null
+    related_vocab:
+      - word: 土
+        kana: つち
+        han_viet: Thổ
+        meaning_vi: đất
+        example:
+          ja: 土を掘ります。
+          vi: Tôi đào đất.
+      - word: 土曜日
+        kana: どようび
+        han_viet: Thổ Diệu Nhật
+        meaning_vi: thứ Bảy
+        example:
+          ja: 土曜日に会いましょう。
+          vi: Hãy gặp nhau vào thứ Bảy.
+      - word: 土地
+        kana: とち
+        han_viet: Thổ Địa
+        meaning_vi: đất đai, mảnh đất
+        example:
+          ja: 土地を買います。
+          vi: Tôi sẽ mua một mảnh đất.
+  - char: 書
+    meaning_vi: [viết, thư]
+    han_viet: Thư
+    mnemonic_vi: "Viết (書く) là hành động sử dụng bút để tạo ra chữ viết"
+    components:
+      - { char: 聿, meaning_en: brush, meaning_vi: bút lông, han_viet: Duật }
+      - { char: 日, meaning_en: sun/day, meaning_vi: mặt trời/ngày, han_viet: Nhật }
+    related_vocab:
+      - word: 書く
+        kana: かく
+        han_viet: Thư
+        meaning_vi: viết (động từ)
+        example:
+          ja: 手紙を書きます。
+          vi: Tôi viết một bức thư.
+      - word: 辞書
+        kana: じしょ
+        han_viet: Từ Thư
+        meaning_vi: từ điển
+        example:
+          ja: 辞書を使います。
+          vi: Tôi sử dụng từ điển.
+      - word: 図書館
+        kana: としょかん
+        han_viet: Đồ Thư Quán
+        meaning_vi: thư viện
+        example:
+          ja: 図書館で本を借ります。
+          vi: Tôi mượn sách ở thư viện.
+      - word: 教科書
+        kana: きょうかしょ
+        han_viet: Giáo Khoa Thư
+        meaning_vi: sách giáo khoa
+        example:
+          ja: 教科書を買います。
+          vi: Tôi sẽ mua sách giáo khoa.
+
+lesson-05:
+  - char: 友
+    meaning_vi: [bạn, hữu]
+    han_viet: Hữu
+    mnemonic_vi: "Bạn (友) là người mà bạn có thể chia sẻ niềm vui và nỗi buồn cùng nhau"
+    components:
+      - { char: 又, meaning_en: again, meaning_vi: lại, han_viet: Hựu }
+    related_vocab:
+      - word: 友達
+        kana: ともだち
+        han_viet: Hữu Đạt
+        meaning_vi: bạn bè
+        example:
+          ja: 友達と遊びます。
+          vi: Tôi chơi với bạn bè.
+      - word: 親友
+        kana: しんゆう
+        han_viet: Thân Hữu
+        meaning_vi: bạn thân
+        example:
+          ja: 彼は私の親友です。
+          vi: Anh ấy là bạn thân của tôi.
+      - word: 友人
+        kana: ゆうじん
+        han_viet: Hữu Nhân
+        meaning_vi: bạn bè
+        example:
+          ja: 友人と会います。
+          vi: Tôi gặp gỡ bạn bè.
+  - char: 年
+    meaning_vi: [năm, tuổi]
+    han_viet: Niên
+    mnemonic_vi: "Năm (年) có hình dạng giống như một người đứng trên mặt đất với một mái nhà trên đầu"
+    components:
+      - { char: 干, meaning_en: dry, meaning_vi: khô, han_viet: Can }
+      - { char: 丨, meaning_en: line, meaning_vi: nét, han_viet: Cổn }
+    related_vocab:
+      - word: 毎年
+        kana: まいとし
+        han_viet: Mỗi Niên
+        meaning_vi: mỗi năm
+        example:
+          ja: 毎年旅行します。
+          vi: Tôi đi du lịch mỗi năm.
+      - word: 去年
+        kana: きょねん
+        han_viet: Khứ Niên
+        meaning_vi: năm ngoái
+        example:
+          ja: 去年は忙しかったです。
+          vi: Năm ngoái tôi đã bận rộn.
+      - word: 来年
+        kana: らいねん
+        han_viet: Lai Niên
+        meaning_vi: năm tới
+        example:
+          ja: 来年は旅行に行きたいです。
+          vi: Năm tới tôi muốn đi du lịch.
+      - word: 一昨年
+        kana: おととし
+        han_viet: Nhất Tạc Niên
+        meaning_vi: năm trước nữa (năm kia)
+        example:
+          ja: 一昨年は楽しかったです。
+          vi: Năm trước nữa tôi đã rất vui.
+      - word: 2026年
+        kana: にせんにじゅうろくねん
+        han_viet: Nhị Thiên Nhị Thập Lục Niên
+        meaning_vi: năm 2026
+        example:
+          ja: 2026年にオリンピックがあります。
+          vi: Năm 2026 sẽ có Olympic. 
+  - char: 今
+    meaning_vi: [bây giờ, hiện tại]
+    han_viet: Kim
+    mnemonic_vi: "Bây giờ (今) là thời điểm hiện tại mà chúng ta đang sống"
+    components:
+      - { char: 亼, meaning_en: null, meaning_vi: null, han_viet: null }
+      - { char: ㇇, meaning_en: null, meaning_vi: null, han_viet: null }
+    related_vocab:
+      - word: 今
+        kana: いま
+        han_viet: Kim
+        meaning_vi: bây giờ
+        example:
+          ja: 今は忙しいです。
+          vi: Bây giờ tôi đang bận.
+      - word: 今日
+        kana: きょう
+        han_viet: Kim Nhật
+        meaning_vi: hôm nay
+        example:
+          ja: 今日はいい天気です。
+          vi: Hôm nay thời tiết đẹp.
+      - word: 今朝
+        kana: けさ
+        han_viet: Kim Triều
+        meaning_vi: sáng nay
+        example:
+          ja: 今朝は早く起きました。
+          vi: Sáng nay tôi đã dậy sớm.
+      - word: 今月
+        kana: こんげつ
+        han_viet: Kim Nguyệt
+        meaning_vi: tháng này
+        example:
+          ja: 今月は給料日です。
+          vi: Tháng này là ngày trả lương.
+      - word: 今年
+        kana: ことし
+        han_viet: Kim Niên
+        meaning_vi: năm nay
+        example:
+          ja: 今年は旅行に行きたいです。
+          vi: Năm nay tôi muốn đi du lịch.
+      - word: 今晩
+        kana: こんばん
+        han_viet: Kim Vãn
+        meaning_vi: tối nay
+        example:
+          ja: 今晩は映画を見ます。
+          vi: Tối nay tôi sẽ xem phim.
+  - char: 週
+    meaning_vi: [tuần, chu]
+    han_viet: Chu
+    mnemonic_vi: "Tuần (週) có hình dạng giống như một người đứng trên mặt đất với một mái nhà trên đầu và một đường ngang dưới chân"
+    components:
+      - { char: 周, meaning_en: circumference, meaning_vi: chu vi, han_viet: Chu }
+    related_vocab:
+      - word: 毎週
+        kana: まいしゅう
+        han_viet: Mỗi Chu
+        meaning_vi: mỗi tuần
+        example:
+          ja: 毎週会います。
+          vi: Chúng ta gặp nhau mỗi tuần.
+      - word: 来週
+        kana: らいしゅう
+        han_viet: Lai Chu
+        meaning_vi: tuần tới
+        example:
+          ja: 来週は忙しいです。
+          vi: Tuần tới tôi bận rộn.
+      - word: 先週
+        kana: せんしゅう
+        han_viet: Tiên Chu
+        meaning_vi: tuần trước
+        example:
+          ja: 先週は楽しかったです。
+          vi: Tuần trước tôi đã rất vui.
+      - word: 今週
+        kana: こんしゅう
+        han_viet: Kim Chu
+        meaning_vi: tuần này
+        example:
+          ja: 今週は忙しいです。
+          vi: Tuần này tôi đang bận.
+      - word: 週末
+        kana: しゅうまつ
+        han_viet: Chu Mạt
+        meaning_vi: cuối tuần
+        example:
+          ja: 週末は友達と遊びます。
+          vi: Cuối tuần tôi chơi với bạn bè.
+      - word: 一週間
+        kana: いっしゅうかん
+        han_viet: Nhất Chu Gian
+        meaning_vi: một tuần (khoảng thời gian)
+        example:
+          ja: 一週間旅行します。
+          vi: Tôi sẽ đi du lịch trong một tuần.
+  - char: 休
+    meaning_vi: [nghỉ, hưu]
+    han_viet: Hưu
+    mnemonic_vi: "Nghỉ (休む) là thời gian để thư giãn và phục hồi năng lượng"
+    components:
+      - { char: 亻, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 木, meaning_en: tree, meaning_vi: cây, han_viet: Mộc }
+    related_vocab:
+      - word: 休む
+        kana: やすむ
+        han_viet: Hưu
+        meaning_vi: nghỉ ngơi (động từ)
+        example:
+          ja: 今日は休みます。
+          vi: Hôm nay tôi sẽ nghỉ ngơi.
+      - word: 休日
+        kana: きゅうじつ
+        han_viet: Hưu Nhật
+        meaning_vi: ngày nghỉ
+        example:
+          ja: 明日は休日です。
+          vi: Ngày mai là ngày nghỉ.
+      - word: 休み
+        kana: やすみ
+        han_viet: Hưu
+        meaning_vi: kỳ nghỉ, ngày nghỉ
+        example:
+          ja: 夏休みは楽しいです。
+          vi: Kỳ nghỉ hè thật vui.
+      - word: 休みの日
+        kana: やすみのひ
+        han_viet: Hưu Nhật
+        meaning_vi: ngày nghỉ
+        example:
+          ja: 休みの日は家で過ごします。
+          vi: Tôi dành ngày nghỉ ở nhà.
+  - char: 前
+    meaning_vi: [trước, tiền]
+    han_viet: Tiền
+    mnemonic_vi: "Trước (前) là thời điểm trước khi một sự kiện xảy ra"
+    components:
+      - { char: 月, meaning_en: moon/month, meaning_vi: mặt trăng/tháng, han_viet: Nguyệt }
+    related_vocab:
+      - word: 前
+        kana: まえ
+        han_viet: Tiền
+        meaning_vi: trước
+        example:
+          ja: 家の前に車があります。
+          vi: Có một chiếc xe trước nhà.
+      - word: 前に
+        kana: まえに
+        han_viet: Tiền
+        meaning_vi: trước khi (liên từ)
+        example:
+          ja: 食事の前に手を洗います。
+          vi: Tôi rửa tay trước khi ăn.
+      - word: 前回
+        kana: ぜんかい
+        han_viet: Tiền Hội
+        meaning_vi: lần trước
+        example:
+          ja: 前回は楽しかったです。
+          vi: Lần trước tôi đã rất vui.
+      - word: 前日
+        kana: ぜんじつ
+        han_viet: Tiền Nhật
+        meaning_vi: ngày trước đó
+        example:
+          ja: 前日は雨でした。
+          vi: Ngày trước đó trời đã mưa.
+  - char: 午
+    meaning_vi: [trưa, ngọ]
+    han_viet: Ngọ
+    mnemonic_vi: "Trưa (午) là thời điểm giữa ngày khi mặt trời ở đỉnh cao nhất"
+    components:
+      - { char: 十, meaning_en: ten, meaning_vi: mười, han_viet: Thập }
+      - { char: 卜, meaning_en: divination, meaning_vi: bói toán, han_viet: Bốc }
+    related_vocab:
+      - word: 午前
+        kana: ごぜん
+        han_viet: Ngọ Tiền
+        meaning_vi: buổi sáng (trước 12 giờ trưa)
+        example:
+          ja: 午前中は仕事があります。
+          vi: Buổi sáng tôi có công việc.
+      - word: 午後
+        kana: ごご
+        han_viet: Ngọ Hậu
+        meaning_vi: buổi chiều (sau 12 giờ trưa)
+        example:
+          ja: 午後は休みます。
+          vi: Buổi chiều tôi sẽ nghỉ ngơi.
+      - word: 正午
+        kana: しょうご
+        han_viet: Chính Ngọ
+        meaning_vi: chính ngọ (12 giờ trưa)
+        example:
+          ja: 正午に会いましょう。
+          vi: Hãy gặp nhau vào chính ngọ.
+  - char: 後
+    meaning_vi: [sau, hậu]
+    han_viet: Hậu
+    mnemonic_vi: "Sau (後) là thời điểm sau khi một sự kiện đã xảy ra"
+    components:
+      - { char: 彳, meaning_en: step, meaning_vi: bước chân, han_viet: Xích }
+      - { char: 幺, meaning_en: small, meaning_vi: nhỏ, han_viet: Yêu }
+    related_vocab:
+      - word: 後
+        kana: あと
+        han_viet: Hậu
+        meaning_vi: sau
+        example:
+          ja: 家の後に公園があります。
+          vi: Có một công viên sau nhà.
+      - word: 後で
+        kana: あとで
+        han_viet: Hậu
+        meaning_vi: sau đó (liên từ)
+        example:
+          ja: 食事の後で映画を見ます。
+          vi: Tôi sẽ xem phim sau khi ăn.
+      - word: 後回し
+        kana: あとまわし
+        han_viet: Hậu Hội
+        meaning_vi: trì hoãn, để sau
+        example:
+          ja: 宿題は後回しにします。
+          vi: Tôi sẽ để bài tập về nhà sau.
+      - word: 後半
+        kana: こうはん
+        han_viet: Hậu Bán
+        meaning_vi: nửa sau
+        example:
+          ja: 試合の後半は面白かったです。
+          vi: Nửa sau của trận đấu thật thú vị.
+      - word: 後ろ
+        kana: うしろ
+        han_viet: Hậu
+        meaning_vi: phía sau
+        example:
+          ja: 後ろに人がいます。
+          vi: Có người ở phía sau.
+      - word: 前後
+        kana: ぜんご
+        han_viet: Tiền Hậu
+        meaning_vi: trước và sau
+        example:
+          ja: 前後に人がいます。
+          vi: Có người ở trước và sau.
+
+lesson-06:
+  - char: 校
+    meaning_vi: [trường học, hiệu]
+    han_viet: Hiệu
+    mnemonic_vi: "Trường học (校) là nơi mà học sinh đến để học tập"
+    components:
+      - { char: 木, meaning_en: tree, meaning_vi: cây, han_viet: Mộc }
+      - { char: 交, meaning_en: mix, meaning_vi: giao nhau, han_viet: Giao }
+    related_vocab:
+      - word: 学校
+        kana: がっこう
+        han_viet: Học Hiệu
+        meaning_vi: trường học
+        example:
+          ja: 学校に行きます。
+          vi: Tôi đi đến trường học.
+      - word: 校長
+        kana: こうちょう
+        han_viet: Hiệu Trưởng
+        meaning_vi: hiệu trưởng
+        example:
+          ja: 校長先生は優しいです。
+          vi: Hiệu trưởng rất
+  - char: 帰
+    meaning_vi: [về nhà, quy]
+    han_viet: Quy
+    mnemonic_vi: "Về nhà (帰る) là hành động trở về nơi bạn sống sau khi đi ra ngoài"
+    components: null
+    related_vocab:
+      - word: 帰る
+        kana: かえる
+        han_viet: Quy
+        meaning_vi: về nhà (động từ)
+        example:
+          ja: 家に帰ります。
+          vi: Tôi về nhà.
+      - word: 帰国
+        kana: きこく
+        han_viet: Quy Quốc
+        meaning_vi: về nước
+        example:
+          ja: 来年帰国します。
+          vi: Năm tới tôi sẽ về nước.
+      - word: お帰りなさい
+        kana: おかえりなさい
+        han_viet: Quy
+        meaning_vi: chào mừng về nhà (cách nói lịch sự)
+        example:
+          ja: お帰りなさい。
+          vi: Chào mừng về nhà.
+  - char: 見
+    meaning_vi: [nhìn, kiến]
+    han_viet: Kiến
+    mnemonic_vi: "Nhìn (見る) là hành động sử dụng mắt để quan sát thế giới xung quanh"
+    components:
+      - { char: 目, meaning_en: eye, meaning_vi: mắt, han_viet: Mục }
+      - { char: 儿, meaning_en: legs, meaning_vi: chân, han_viet: Nhi }
+    related_vocab:
+      - word: 見る
+        kana: みる
+        han_viet: Kiến
+        meaning_vi: nhìn (động từ)
+        example:
+          ja: 映画を見ます。
+          vi: Tôi xem phim.
+      - word: 見せる
+        kana: みせる
+        han_viet: Kiến
+        meaning_vi: cho xem (động từ)
+        example:
+          ja: 写真を見せます。
+          vi: Tôi sẽ cho bạn xem bức ảnh.
+      - word: 見える
+        kana: みえる
+        han_viet: Kiến
+        meaning_vi: có thể nhìn thấy (động từ)
+        example:
+          ja: 山が見えます。
+          vi: Tôi có thể nhìn thấy núi.
+      - word: お花見
+        kana: おはなみ
+        han_viet: Kiến Hoa
+        meaning_vi: ngắm hoa (thường là hoa anh đào)
+        example:
+          ja: お花見に行きます。
+          vi: Tôi sẽ đi ngắm hoa.
+      - word: 見学
+        kana: けんがく
+        han_viet: Kiến Học
+        meaning_vi: tham quan, học hỏi
+        example:
+          ja: 工場を見学します。
+          vi: Tôi sẽ tham quan nhà máy.
+      - word: 意見
+        kana: いけん
+        han_viet: Ý Kiến
+        meaning_vi: ý kiến
+        example:
+          ja: 意見を言います。
+          vi: Tôi sẽ nói ý kiến của mình.
+  - char: 聞
+    meaning_vi: [nghe, văn]
+    han_viet: Văn
+    mnemonic_vi: "Nghe (聞く) là hành động sử dụng tai để nhận biết âm thanh xung quanh"
+    components:
+      - { char: 耳, meaning_en: ear, meaning_vi: tai, han_viet: Nhĩ }
+      - { char: 門, meaning_en: gate, meaning_vi: cổng, han_viet: Môn }
+    related_vocab:
+      - word: 聞く
+        kana: きく
+        han_viet: Văn
+        meaning_vi: nghe (động từ)
+        example:
+          ja: 音楽を聞きます。
+          vi: Tôi nghe nhạc.
+      - word: 聞こえる
+        kana: きこえる
+        han_viet: Văn
+        meaning_vi: có thể nghe thấy (động từ)
+        example:
+          ja: 鳥の声が聞こえます。
+          vi: Tôi có thể nghe thấy tiếng chim hót.
+      - word: 新聞
+        kana: しんぶん
+        han_viet: Tân Văn
+        meaning_vi: báo chí, tờ báo
+        example:
+          ja: 新聞を読みます。
+          vi: Tôi đọc báo.
+      - word: 道を聞きます
+        kana: みちをききます
+        han_viet: Đạo Văn
+        meaning_vi: hỏi đường
+        example:
+          ja: 道を聞きます。
+          vi: Tôi sẽ hỏi đường.
+  - char: 読
+    meaning_vi: [đọc, độc]
+    han_viet: Độc
+    mnemonic_vi: "Đọc (読む) là hành động sử dụng mắt để hiểu nội dung của văn bản"
+    components:
+      - { char: 言, meaning_en: word, meaning_vi: lời nói, han_viet: Ngôn }
+      - { char: 売, meaning_en: sell, meaning_vi: bán, han_viet: Mại }
+    related_vocab:
+      - word: 読む
+        kana: よむ
+        han_viet: Độc
+        meaning_vi: đọc (động từ)
+        example:
+          ja: 本を読みます。
+          vi: Tôi đọc sách.
+      - word: 読み方
+        kana: よみかた
+        han_viet: Độc Phương
+        meaning_vi: cách đọc
+        example:
+          ja: 漢字の読み方を教えてください。
+          vi: Hãy dạy tôi cách đọc kanji.
+      - word: 読者
+        kana: どくしゃ
+        han_viet: Độc Giả
+        meaning_vi: độc giả
+        example:
+          ja: 読者の皆さん、こんにちは。
+          vi: Xin chào tất cả các độc giả.
+  - char: 食
+    meaning_vi: [ăn, thực]
+    han_viet: Thực
+    mnemonic_vi: "Ăn (食べる) là hành động đưa thức ăn vào miệng để tiêu hóa"
+    components: null
+    related_vocab:
+      - word: 食べる
+        kana: たべる
+        han_viet: Thực
+        meaning_vi: ăn (động từ)
+        example:
+          ja: ご飯を食べます。
+          vi: Tôi ăn cơm.
+      - word: 食事します
+        kana: しょくじします
+        han_viet: Thực Sự
+        meaning_vi: ăn (động từ)
+        example:
+          ja: レストランで食事します。
+          vi: Tôi sẽ ăn ở nhà hàng.
+      - word: 食堂
+        kana: しょくどう
+        han_viet: Thực Đường
+        meaning_vi: nhà ăn, căng tin
+        example:
+          ja: 学校の食堂で昼ご飯を食べます。
+          vi: Tôi ăn trưa ở căng tin của trường.
+      - word: 食べ物
+        kana: たべもの
+        han_viet: Thực Vật
+        meaning_vi: thức ăn
+        example:
+          ja: 美味しい食べ物が好きです。
+          vi: Tôi thích thức ăn ngon.
+      - word: 和食
+        kana: わしょく
+        han_viet: Hòa Thực
+        meaning_vi: ẩm thực Nhật Bản
+        example:
+          ja: 和食が好きです。
+          vi: Tôi thích ẩm thực Nhật Bản.
+      - word: 洋食
+        kana: ようしょく
+        han_viet: Dương Thực
+        meaning_vi: ẩm thực phương Tây
+        example:
+          ja: 洋食も好きです。
+          vi: Tôi cũng thích ẩm thực phương Tây.
+  - char: 飲
+    meaning_vi: [uống, ẩm]
+    han_viet: Ẩm
+    mnemonic_vi: "Uống (飲む) là hành động đưa chất lỏng vào miệng để tiêu hóa"
+    components:
+      - { char: 飠, meaning_en: eat, meaning_vi: ăn, han_viet: Thực }
+      - { char: 欠, meaning_en: lack, meaning_vi: thiếu, han_viet: Khiếm }
+    related_vocab:
+      - word: 飲む
+        kana: のむ
+        han_viet: Ẩm
+        meaning_vi: uống (động từ)
+        example:
+          ja: 水を飲みます。
+          vi: Tôi uống nước.
+      - word: 飲み物
+        kana: のみもの
+        han_viet: Ẩm Vật
+        meaning_vi: đồ uống
+        example:
+          ja: コーヒーは私の好きな飲み物です。
+          vi: Cà phê là đồ uống yêu thích của tôi.
+      - word: 飲み会
+        kana: のみかい
+        han_viet: Ẩm Hội
+        meaning_vi: buổi tiệc uống rượu
+        example:
+          ja: 会社の飲み会があります。
+          vi: Có một buổi tiệc uống rượu của công ty.
+      - word: 飲食
+        kana: いんしょく
+        han_viet: Ẩm Thực
+        meaning_vi: ăn uống, ẩm thực (việc ăn uống)
+        example:
+          ja: 飲食店で働いています。
+          vi: Tôi làm việc tại một nhà hàng.
+  - char: 買
+    meaning_vi: [mua, mại]
+    han_viet: Mại
+    mnemonic_vi: "Mua (買う) là hành động trao đổi tiền để nhận được một sản phẩm hoặc dịch vụ"
+    components:
+      - { char: 貝, meaning_en: shell/money, meaning_vi: vỏ sò/tiền, han_viet: Bối }
+    related_vocab:
+      - word: 買う
+        kana: かう
+        han_viet: Mại
+        meaning_vi: mua (động từ)
+        example:
+          ja: 本を買います。
+          vi: Tôi mua sách.
+      - word: 買い物
+        kana: かいもの
+        han_viet: Mại Vật
+        meaning_vi: việc mua sắm
+        example:
+          ja: 買い物に行きます。
+          vi: Tôi đi mua sắm.
+
+lesson-07:
+  - char: 母
+    meaning_vi: [mẹ, mẫu]
+    han_viet: Mẫu
+    mnemonic_vi: "Mẹ (母) là người phụ nữ đã sinh ra và nuôi dưỡng bạn"
+    components: null
+    related_vocab:
+      - word: 母
+        kana: はは
+        han_viet: Mẫu
+        meaning_vi: mẹ
+        example:
+          ja: 母は料理が上手です。
+          vi: Mẹ tôi nấu ăn rất ngon.
+      - word: お母さん
+        kana: おかあさん
+        han_viet: Mẫu
+        meaning_vi: mẹ (cách gọi lịch sự)
+        example:
+          ja: お母さんは何歳ですか？
+          vi: Mẹ bạn bao nhiêu tuổi?
+      - word: 母語
+        kana: ぼご
+        han_viet: Mẫu Ngữ
+        meaning_vi: tiếng mẹ đẻ
+        example:
+          ja: 母語は日本語です。
+          vi: Tiếng mẹ đẻ của tôi là tiếng Nhật.
+      - word: 祖母
+        kana: そぼ
+        han_viet: Tổ Mẫu
+        meaning_vi: bà ngoại/bà nội
+        example:
+          ja: 祖母は優しいです。
+          vi: Bà ngoại/bà nội rất hiền lành.
+  - char: 父
+    meaning_vi: [bố, phụ]
+    han_viet: Phụ
+    mnemonic_vi: "Bố (父) là người đàn ông đã sinh ra và nuôi dưỡng bạn"
+    components: null
+    related_vocab:
+      - word: 父
+        kana: ちち
+        han_viet: Phụ
+        meaning_vi: bố
+        example:
+          ja: 父は仕事が忙しいです。
+          vi: Bố tôi rất bận rộn với công việc.
+      - word: お父さん
+        kana: おとうさん
+        han_viet: Phụ
+        meaning_vi: bố (cách gọi lịch sự)
+        example:
+          ja: お父さんは何歳ですか？
+          vi: Bố bạn bao nhiêu tuổi?
+      - word: 父母
+        kana: ふぼ
+        han_viet: Phụ Mẫu
+        meaning_vi: cha mẹ
+        example:
+          ja: 父母は仲がいいです。
+          vi: Cha mẹ tôi rất hòa thuận.
+      - word: 祖父
+        kana: そふ
+        han_viet: Tổ Phụ
+        meaning_vi: ông ngoại/ông nội
+        example:
+          ja: 祖父は面白い話をします。
+          vi: Ông ngoại/ông nội tôi kể những câu chuyện thú vị.
+      - word: 祖父母
+        kana: そふぼ
+        han_viet: Tổ Phụ Mẫu
+        meaning_vi: ông bà ngoại/ông bà nội
+        example:
+          ja: 祖父母は優しいです。
+          vi: Ông bà ngoại/ông bà nội rất hiền lành.
+  - char: 物
+    meaning_vi: [đồ vật, vật]
+    han_viet: Vật
+    mnemonic_vi: "Đồ vật (物) là những thứ hữu hình mà chúng ta có thể chạm vào và sử dụng trong cuộc sống hàng ngày"
+    components:
+      - { char: 牛, meaning_en: cow, meaning_vi: con bò, han_viet: Ngưu }
+      - { char: 勿, meaning_en: not, meaning_vi: không, han_viet: Vật }
+    related_vocab:
+      - word: 食べ物
+        kana: たべもの
+        han_viet: Thực Vật
+        meaning_vi: thức ăn
+        example:
+          ja: 美味しい食べ物が好きです。
+          vi: Tôi thích thức ăn ngon.
+      - word: 着物
+        kana: きもの
+        han_viet: Trước Vật
+        meaning_vi: kimono (trang phục truyền thống của Nhật Bản)
+        example:
+          ja: 着物を着ます。
+          vi: Tôi mặc kimono.
+      - word: 荷物
+        kana: にもつ
+        han_viet: Hành Vật
+        meaning_vi: hành lý, đồ đạc
+        example:
+          ja: 荷物を持ちます。
+          vi: Tôi mang hành lý.
+      - word: 動物
+        kana: どうぶつ
+        han_viet: Động Vật
+        meaning_vi: động vật
+        example:
+          ja: 動物が好きです。
+          vi: Tôi thích động vật.
+  - char: 朝
+    meaning_vi: [sáng, triều]
+    han_viet: Triều
+    mnemonic_vi: "Sáng (朝) là thời điểm bắt đầu của một ngày mới khi mặt trời mọc"
+    components:
+      - { char: 十, meaning_en: ten, meaning_vi: mười, han_viet: Thập }
+      - { char: 月, meaning_en: moon/month, meaning_vi: mặt trăng/tháng, han_viet: Nguyệt }
+    related_vocab:
+      - word: 毎朝
+        kana: まいあさ
+        han_viet: Mỗi Triều
+        meaning_vi: mỗi sáng
+        example:
+          ja: 毎朝ジョギングします。
+          vi: Tôi chạy bộ mỗi sáng.
+      - word: 今朝
+        kana: けさ
+        han_viet: Kim Triều
+        meaning_vi: sáng nay
+        example:
+          ja: 今朝は早く起きました。
+          vi: Sáng nay tôi đã dậy sớm.
+      - word: 朝食
+        kana: ちょうしょく
+        han_viet: Triều Thực
+        meaning_vi: bữa sáng
+        example:
+          ja: 朝食を食べます。
+          vi: Tôi ăn bữa sáng.
+      - word: 朝ごはん
+        kana: あさごはん
+        han_viet: Triều Phạn
+        meaning_vi: bữa sáng (cách nói thông thường)
+        example:
+          ja: 朝ごはんはパンを食べます。
+          vi: Tôi ăn bánh mì cho bữa sáng.
+  - char: 昼
+    meaning_vi: [trưa, trú]
+    han_viet: Trú
+    mnemonic_vi: "Trưa (昼) là thời điểm giữa ngày khi mặt trời ở đỉnh cao nhất"
+    components: null
+    related_vocab:
+      - word: 昼
+        kana: ひる
+        han_viet: Trú
+        meaning_vi: trưa
+        example:
+          ja: 昼ごはんを食べます。
+          vi: Tôi ăn trưa.
+      - word: 昼休み
+        kana: ひるやすみ
+        han_viet: Trú Hưu
+        meaning_vi: giờ nghỉ trưa
+        example:
+          ja: 昼休みに散歩します。
+          vi: Tôi đi dạo vào giờ nghỉ trưa.
+      - word: 昼ごはん
+        kana: ひるごはん
+        han_viet: Trú Phạn
+        meaning_vi: bữa trưa (cách nói thông thường)
+        example:
+          ja: 昼ごはんはカレーを食べます。
+          vi: Tôi ăn cà ri cho bữa trưa.
+      - word: 昼食
+        kana: ちゅうしょく
+        han_viet: Trú Thực
+        meaning_vi: bữa trưa
+        example:
+          ja: 昼食はサンドイッチです。
+          vi: Bữa trưa là bánh mì sandwich.
+  - char: 夜
+    meaning_vi: [tối, dạ]
+    han_viet: Dạ
+    mnemonic_vi: "Tối (夜) là thời điểm sau khi mặt trời lặn và trước khi mặt trời mọc"
+    components:
+      - { char: 亠, meaning_en: lid, meaning_vi: nắp, han_viet: Đầu }
+      - { char: 夕, meaning_en: evening, meaning_vi: buổi tối, han_viet: Tịch }
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+    related_vocab:
+      - word: 夜
+        kana: よる
+        han_viet: Dạ
+        meaning_vi: tối
+        example:
+          ja: 夜は涼しいです。
+          vi: Buổi tối thì mát mẻ.
+      - word: 夜おそく
+        kana: よおそく
+        han_viet: Dạ Trì
+        meaning_vi: khuya, muộn
+        example:
+          ja: 夜おそくまで起きています。
+          vi: Tôi thức khuya.
+      - word: 今夜
+        kana: こんばん
+        han_viet: Kim Dạ
+        meaning_vi: tối nay
+        example:
+          ja: 今夜は映画を見ます。
+          vi: Tối nay tôi sẽ xem phim.
+      - word: 夜食
+        kana: やしょく
+        han_viet: Dạ Thực
+        meaning_vi: bữa ăn khuya
+        example:
+          ja: 夜食を食べます。
+          vi: Tôi ăn bữa ăn khuya.
+  - char: 晩
+    meaning_vi: [tối, vãn]
+    han_viet: Vãn
+    mnemonic_vi: "Tối (晩) là thời điểm sau khi mặt trời lặn và trước khi mặt trời mọc"
+    components:
+      - { char: 日, meaning_en: sun/day, meaning_vi: mặt trời/ngày, han_viet: Nhật }
+      - { char: 免, meaning_en: avoid, meaning_vi: tránh, han_viet: Miễn }
+    related_vocab:
+      - word: 毎晩
+        kana: まいばん
+        han_viet: Mỗi Vãn
+        meaning_vi: mỗi tối
+        example:
+          ja: 毎晩テレビを見ます。
+          vi: Tôi xem TV mỗi tối.
+      - word: 今晩
+        kana: こんばん
+        han_viet: Kim Vãn
+        meaning_vi: tối nay
+        example:
+          ja: 今晩は雨が降ります。
+          vi: Tối nay trời sẽ mưa.
+      - word: 晩ごはん
+        kana: ばんごはん
+        han_viet: Vãn Phạn
+        meaning_vi: bữa tối (cách nói thông thường)
+        example:
+          ja: 晩ごはんはカレーを食べます。
+          vi: Tôi ăn cà ri cho bữa tối.
+  - char: 町
+    meaning_vi: [thị trấn, đinh]
+    han_viet: Đinh
+    mnemonic_vi: "Thị trấn (町) là một khu vực nhỏ hơn thành phố nhưng lớn hơn làng, nơi mọi người sống và làm việc"
+    components:
+      - { char: 田, meaning_en: rice field, meaning_vi: ruộng lúa, han_viet: Điền }
+      - { char: 丁, meaning_en: street block, meaning_vi: khối phố, han_viet: Đinh }
+    related_vocab:
+      - word: 町
+        kana: まち
+        han_viet: Đinh
+        meaning_vi: thị trấn
+        example:
+          ja: 町に住んでいます。
+          vi: Tôi sống ở thị trấn.
+      - word: 町長
+        kana: ちょうちょう
+        han_viet: Đinh Trưởng
+        meaning_vi: thị trưởng
+        example:
+          ja: 町長は優しいです。
+          vi: Thị trưởng rất hiền lành.
+
+lesson-08:
+  - char: 山
+    meaning_vi: [núi, sơn]
+    han_viet: Sơn
+    mnemonic_vi: "Núi (山) là một khối đất cao lớn, thường có đỉnh nhọn và được bao phủ bởi cây cối hoặc tuyết"
+    components: null
+    related_vocab:
+      - word: 山
+        kana: やま
+        han_viet: Sơn
+        meaning_vi: núi
+        example:
+          ja: 山に登ります。
+          vi: Tôi leo núi.
+      - word: 富士山
+        kana: ふじさん
+        han_viet: Phú Sĩ Sơn
+        meaning_vi: núi Phú Sĩ
+        example:
+          ja: 富士山は日本で一番高い山です。
+          vi: Núi Phú Sĩ là ngọn núi cao nhất ở Nhật Bản.
+      - word: 火山
+        kana: かざん
+        han_viet: Hỏa Sơn
+        meaning_vi: núi lửa
+        example:
+          ja: 火山が噴火しました。
+          vi: Núi lửa đã phun trào.
+  - char: 白
+    meaning_vi: [trắng, bạch]
+    han_viet: Bạch
+    mnemonic_vi: "Trắng (白) là màu sắc của tuyết, sữa và nhiều thứ khác, thường được liên kết với sự tinh khiết và sạch sẽ"
+    components:
+      - { char: 白, meaning_en: white, meaning_vi: trắng, han_viet: Bạch }
+    related_vocab:
+      - word: 白い
+        kana: しろい
+        han_viet: Bạch
+        meaning_vi: trắng (tính từ)
+        example:
+          ja: 白い花が咲いています。
+          vi: Những bông hoa trắng đang nở.
+      - word: 白鳥
+        kana: はくちょう
+        han_viet: Bạch Điểu
+        meaning_vi: thiên nga
+        example:
+          ja: 白鳥が湖にいます。
+          vi: Có một con thiên nga trên hồ.
+      - word: 白雪
+        kana: はくせつ
+        han_viet: Bạch Tuyết
+        meaning_vi: tuyết trắng
+        example:
+          ja: 白雪が降っています。
+          vi: Tuyết trắng đang rơi.
+      - word: 真っ白
+        kana: まっしろ
+        han_viet: Chân Bạch
+        meaning_vi: trắng tinh, trắng toát
+        example:
+          ja: 真っ白な紙があります。
+          vi: Có một tờ giấy trắng tinh.
+  - char: 赤
+    meaning_vi: [đỏ, xích]
+    han_viet: Xích
+    mnemonic_vi: "Đỏ (赤) là màu sắc của máu, lửa và nhiều thứ khác, thường được liên kết với sự nhiệt huyết và tình yêu"
+    components:
+      - { char: 赤, meaning_en: red, meaning_vi: đỏ, han_viet: Xích }
+    related_vocab:
+      - word: 赤い
+        kana: あかい
+        han_viet: Xích
+        meaning_vi: đỏ (tính từ)
+        example:
+          ja: 赤い車があります。
+          vi: Có một chiếc xe đỏ.
+      - word: 赤ちゃん
+        kana: あかちゃん
+        han_viet: Xích Nhi
+        meaning_vi: em bé
+        example:
+          ja: 赤ちゃんが泣いています。
+          vi: Em bé đang khóc.
+      - word: 赤道
+        kana: せきどう
+        han_viet: Xích Đạo
+        meaning_vi: xích đạo
+        example:
+          ja: 赤道は地球の中心を通っています。
+          vi: Xích đạo đi qua trung tâm của Trái đất.
+  - char: 青
+    meaning_vi: [xanh, thanh]
+    han_viet: Thanh
+    mnemonic_vi: "Xanh (青) là màu sắc của bầu trời, biển và nhiều thứ khác, thường được liên kết với sự yên bình và tươi mát"
+    components:
+      - { char: 青, meaning_en: blue, meaning_vi: xanh, han_viet: Thanh }
+    related_vocab:
+      - word: 青い
+        kana: あおい
+        han_viet: Thanh
+        meaning_vi: xanh (tính từ)
+        example:
+          ja: 青い空があります。
+          vi: Có một bầu trời xanh.
+      - word: 青空
+        kana: あおぞら
+        han_viet: Thanh Không
+        meaning_vi: bầu trời xanh
+        example:
+          ja: 青空が広がっています。
+          vi: Bầu trời xanh đang trải rộng. 
+      - word: 青春
+        kana: せいしゅん
+        han_viet: Thanh Xuân
+        meaning_vi: tuổi trẻ
+        example:
+          ja: 青春は一度きりです。
+          vi: Tuổi trẻ chỉ có một lần.
+      - word: 青年
+        kana: せいねん
+        han_viet: Thanh Niên
+        meaning_vi: thanh niên
+        example:
+          ja: 青年は未来の希望です。
+          vi: Thanh niên là hy vọng của tương lai.
+  - char: 黒
+    meaning_vi: [đen, hắc]
+    han_viet: Hắc
+    mnemonic_vi: "Đen (黒) là màu sắc của bóng tối, than và nhiều thứ khác, thường được liên kết với sự bí ẩn và quyền lực"
+    components:
+      - { char: 黒, meaning_en: black, meaning_vi: đen, han_viet: Hắc }
+    related_vocab:
+      - word: 黒い
+        kana: くろい
+        han_viet: Hắc
+        meaning_vi: đen (tính từ)
+        example:
+          ja: 黒い猫がいます。
+          vi: Có một con mèo đen.
+      - word: 黒板
+        kana: こくばん
+        han_viet: Hắc Bản
+        meaning_vi: bảng đen
+        example:
+          ja: 黒板に書きます。
+          vi: Tôi viết lên bảng đen.
+      - word: 黒鳥
+        kana: くろちょう
+        han_viet: Hắc Điểu
+        meaning_vi: thiên nga đen
+        example:
+          ja: 黒鳥が湖にいます。
+          vi: Có một con thiên nga đen trên hồ.
+      - word: 真っ黒
+        kana: まっくろ
+        han_viet: Chân Hắc
+        meaning_vi: đen tuyền, đen thui
+        example:
+          ja: 真っ黒な夜です。
+          vi: Đêm tối đen thui.
+  - char: 安
+    meaning_vi: [rẻ, an]
+    han_viet: An
+    mnemonic_vi: "Rẻ (安い) là khi một sản phẩm hoặc dịch vụ có giá thấp hơn so với giá trị thực của nó"
+    components:
+      - { char: 宀, meaning_en: roof, meaning_vi: mái nhà, han_viet: Miên }
+      - { char: 女, meaning_en: woman, meaning_vi: phụ nữ, han_viet: Nữ }
+    related_vocab:
+      - word: 安い
+        kana: やすい
+        han_viet: An
+        meaning_vi: rẻ (tính từ)
+        example:
+          ja: この店は安いです。
+          vi: Cửa hàng này rẻ.
+      - word: 安全
+        kana: あんぜん
+        han_viet: An Toàn
+        meaning_vi: an toàn
+        example:
+          ja: 安全に運転します。
+          vi: Tôi lái xe an toàn.
+      - word: 安心
+        kana: あんしん
+        han_viet: An Tâm
+        meaning_vi: yên tâm
+        example:
+          ja: 安心してください。
+          vi: Hãy yên tâm.
+      - word: 不安
+        kana: ふあん
+        han_viet: Bất An
+        meaning_vi: bất an, lo lắng
+        example:
+          ja: 将来が不安です。
+          vi: Tôi lo lắng về tương lai.
+  - char: 高
+    meaning_vi: [cao, cao]
+    han_viet: Cao
+    mnemonic_vi: "Cao (高い) là khi một vật có chiều cao lớn hoặc giá trị cao hơn so với mức trung bình"
+    components:
+      - { char: 高, meaning_en: tall/high, meaning_vi: cao, han_viet: Cao }
+    related_vocab:
+      - word: 高い
+        kana: たかい
+        han_viet: Cao
+        meaning_vi: cao (tính từ)
+        example:
+          ja: このビルは高いです。
+          vi: Tòa nhà này cao.
+      - word: 高校
+        kana: こうこう
+        han_viet: Cao Hiệu
+        meaning_vi: trường trung học phổ thông
+        example:
+          ja: 高校に通っています。
+          vi: Tôi đang học ở trường trung học phổ thông.
+      - word: 背が高い
+        kana: せがたかい
+        han_viet: Bối Cao
+        meaning_vi: cao (dùng để nói về chiều cao của người)
+        example:
+          ja: 彼は背が高いです。
+          vi: Anh ấy cao.
+      - word: 高校生
+        kana: こうこうせい
+        han_viet: Cao Hiệu Sinh
+        meaning_vi: học sinh trung học phổ thông
+        example:
+          ja: 高校生は勉強が大変です。
+          vi: Học sinh trung học phổ thông có nhiều việc phải học.
+  - char: 小
+    meaning_vi: [nhỏ, tiểu]
+    han_viet: Tiểu
+    mnemonic_vi: "Nhỏ (小さい) là khi một vật có kích thước nhỏ hơn so với mức trung bình"
+    components:
+      - { char: 小, meaning_en: small, meaning_vi: nhỏ, han_viet: Tiểu }
+    related_vocab:
+      - word: 小さい
+        kana: ちいさい
+        han_viet: Tiểu
+        meaning_vi: nhỏ (tính từ)
+        example:
+          ja: この犬は小さいです。
+          vi: Con chó này nhỏ.
+      - word: 小学校
+        kana: しょうがっこう
+        han_viet: Tiểu Học Hiệu
+        meaning_vi: trường tiểu học
+        example:
+          ja: 小学校に通っています。
+          vi: Tôi đang học ở trường tiểu học.
+      - word: 小学生
+        kana: しょうがくせい
+        han_viet: Tiểu Học Sinh
+        meaning_vi: học sinh tiểu học
+        example:
+          ja: 小学生は元気です。
+          vi: Học sinh tiểu học rất năng động.
+
+lesson-09:
+  - char: 男
+    meaning_vi: [nam, đàn ông]
+    han_viet: Nam
+    mnemonic_vi: "Đàn ông (男) là người thuộc giới tính nam, thường có đặc điểm mạnh mẽ và bảo vệ gia đình"
+    components:
+      - { char: 田, meaning_en: rice field, meaning_vi: ruộng lúa, han_viet: Điền }
+      - { char: 力, meaning_en: power, meaning_vi: sức mạnh, han_viet: Lực }
+    related_vocab:
+      - word: 男の人
+        kana: おとこのひと
+        han_viet: Nam Nhân
+        meaning_vi: người đàn ông
+        example:
+          ja: あの男の人は誰ですか？
+          vi: Người đàn ông kia là ai?
+      - word: 男の子
+        kana: おとこのこ
+        han_viet: Nam Tử
+        meaning_vi: con trai
+        example:
+          ja: 男の子が遊んでいます。
+          vi: Con trai đang chơi đùa.
+      - word: 男性
+        kana: だんせい
+        han_viet: Nam Tính
+        meaning_vi: nam giới
+        example:
+          ja: 男性は多いです。
+          vi: Có nhiều nam giới.
+      - word: 男子学生
+        kana: だんしがくせい
+        han_viet: Nam Tử Học Sinh
+        meaning_vi: học sinh nam
+        example:
+          ja: 男子学生はサッカーが好きです。
+          vi: Học sinh nam thích bóng đá.
+  - char: 女
+    meaning_vi: [nữ, phụ nữ]
+    han_viet: Nữ
+    mnemonic_vi: "Phụ nữ (女) là người thuộc giới tính nữ, thường có đặc điểm dịu dàng và chăm sóc gia đình"
+    components:
+      - { char: 女, meaning_en: woman, meaning_vi: phụ nữ, han_viet: Nữ }
+    related_vocab:
+      - word: 女の人
+        kana: おんなのひと
+        han_viet: Nữ Nhân
+        meaning_vi: người phụ nữ
+        example:
+          ja: あの女の人は誰ですか？
+          vi: Người phụ nữ kia là ai?
+      - word: 女の子
+        kana: おんなのこ
+        han_viet: Nữ Tử
+        meaning_vi: con gái
+        example:
+          ja: 女の子が遊んでいます。
+          vi: Con gái đang chơi đùa.
+      - word: 女性
+        kana: じょせい
+        han_viet: Nữ Tính
+        meaning_vi: nữ giới
+        example:
+          ja: 女性は多いです。
+          vi: Có nhiều nữ giới.
+      - word: 女子学生
+        kana: じょしがくせい
+        han_viet: Nữ Tử Học Sinh
+        meaning_vi: học sinh nữ
+        example:
+          ja: 女子学生はバレーボールが好きです。
+          vi: Học sinh nữ thích bóng chuyền.
+  - char: 上
+    meaning_vi: [trên, thượng]
+    han_viet: Thượng
+    mnemonic_vi: "Trên (上) là vị trí cao hơn so với một điểm tham chiếu nào đó"
+    components: null
+    related_vocab:
+      - word: 上
+        kana: うえ
+        han_viet: Thượng
+        meaning_vi: trên
+        example:
+          ja: テーブルの上に本があります。
+          vi: Có một cuốn sách trên bàn.
+      - word: 年上の人
+        kana: としうえのひと
+        han_viet: Niên Thượng Nhân
+        meaning_vi: người lớn tuổi hơn
+        example:
+          ja: 年上の人は尊敬されます。
+          vi: Người lớn tuổi hơn được tôn trọng.
+      - word: 上手
+        kana: じょうず
+        han_viet: Thượng Thủ
+        meaning_vi: giỏi, khéo léo
+        example:
+          ja: 彼は料理が上手です。
+          vi: Anh ấy nấu ăn rất giỏi.
+      - word: 上司
+        kana: じょうし
+        han_viet: Thượng Sĩ
+        meaning_vi: cấp trên, sếp
+        example:
+          ja: 上司は優しいです。
+          vi: Cấp trên của tôi rất hiền lành.
+  - char: 下
+    meaning_vi: [dưới, hạ]
+    han_viet: Hạ
+    mnemonic_vi: "Dưới (下) là vị trí thấp hơn so với một điểm tham chiếu nào đó"
+    components: null
+    related_vocab:
+      - word: 下
+        kana: した
+        han_viet: Hạ
+        meaning_vi: dưới
+        example:
+          ja: テーブルの下に猫がいます。
+          vi: Có một con mèo dưới bàn.
+      - word: 年下の人
+        kana: とししたのひと
+        han_viet: Niên Hạ Nhân
+        meaning_vi: người nhỏ tuổi hơn
+        example:
+          ja: 年下の人は可愛がられます。
+          vi: Người nhỏ tuổi hơn được yêu thương.
+      - word: 下手
+        kana: へた
+        han_viet: Hạ Thủ
+        meaning_vi: kém, vụng về
+        example:
+          ja: 彼は料理が下手です。
+          vi: Anh ấy nấu ăn rất kém.
+      - word: 部下
+        kana: ぶか
+        han_viet: Bộ Hạ
+        meaning_vi: cấp dưới, nhân viên
+        example:
+          ja: 部下は一生懸命働いています。
+          vi: Cấp dưới của tôi làm việc rất chăm chỉ.
+  - char: 左
+    meaning_vi: [trái, tả]
+    han_viet: Tả
+    mnemonic_vi: "Trái (左) là hướng đối diện với phải, thường được liên kết với sự sáng tạo và trực giác"
+    components: null
+    related_vocab:
+      - word: 左
+        kana: ひだり
+        han_viet: Tả
+        meaning_vi: trái
+        example:
+          ja: 左手で書きます。
+          vi: Tôi viết bằng tay trái.
+      - word: 左手
+        kana: ひだりて
+        han_viet: Tả Thủ
+        meaning_vi: tay trái
+        example:
+          ja: 左手でボールを投げます。
+          vi: Tôi ném bóng bằng tay trái.
+  - char: 右
+    meaning_vi: [phải, hữu]
+    han_viet: Hữu
+    mnemonic_vi: "Phải (右) là hướng đối diện với trái, thường được liên kết với sự logic và phân tích"
+    components: null
+    related_vocab:
+      - word: 右
+        kana: みぎ
+        han_viet: Hữu
+        meaning_vi: phải
+        example:
+          ja: 右手で書きます。
+          vi: Tôi viết bằng tay phải.
+      - word: 右手
+        kana: みぎて
+        han_viet: Hữu Thủ
+        meaning_vi: tay phải
+        example:
+          ja: 右手でボールを投げます。
+          vi: Tôi ném bóng bằng tay phải. 
+      - word: 左右
+        kana: さゆう
+        han_viet: Tả Hữu
+        meaning_vi: hai bên, trái phải
+        example:
+          ja: 左右を確認してください。
+          vi: Hãy kiểm tra hai bên.
+  - char: 中
+    meaning_vi: [giữa, trung]
+    han_viet: Trung
+    mnemonic_vi: "Giữa (中) là vị trí ở giữa hai điểm hoặc trong một không gian nào đó"
+    components: null
+    related_vocab:
+      - word: 中
+        kana: なか
+        han_viet: Trung
+        meaning_vi: giữa, trong
+        example:
+          ja: 箱の中に猫がいます。
+          vi: Có một con mèo trong hộp.
+      - word: 真ん中
+        kana: まんなか
+        han_viet: Chân Trung
+        meaning_vi: chính giữa
+        example:
+          ja: 真ん中に座ります。
+          vi: Tôi ngồi ở chính giữa.
+      - word: 中心
+        kana: ちゅうしん
+        han_viet: Trung Tâm
+        meaning_vi: trung tâm
+        example:
+          ja: 都市の中心に行きます。
+          vi: Tôi sẽ đi đến trung tâm thành phố.
+      - word: 中国
+        kana: ちゅうごく
+        han_viet: Trung Quốc
+        meaning_vi: Trung Quốc
+        example:
+          ja: 中国は大きな国です。
+          vi: Trung Quốc là một quốc gia lớn.
+  - char: 門
+    meaning_vi: [cổng, môn]
+    han_viet: Môn
+    mnemonic_vi: "Cổng (門) là một cấu trúc được sử dụng để mở ra hoặc đóng lại một lối vào, thường được liên kết với sự bảo vệ và an ninh"
+    components:
+      - { char: 門, meaning_en: gate, meaning_vi: cổng, han_viet: Môn }
+    related_vocab:
+      - word: 門
+        kana: もん
+        han_viet: Môn
+        meaning_vi: cổng
+        example:
+          ja: 学校の門は大きいです。
+          vi: Cổng trường học rất lớn.
+      - word: 門の前
+        kana: もんのまえ
+        han_viet: Môn Tiền
+        meaning_vi: trước cổng
+        example:
+          ja: 門の前で待っています。
+          vi: Tôi đang đợi trước cổng.
+
+lesson-10:
+  - char: 間
+    meaning_vi: [giữa, gian]
+    han_viet: Gian
+    mnemonic_vi: "Giữa (間) là khoảng cách hoặc thời gian giữa hai điểm hoặc sự kiện nào đó"
+    components:
+      - { char: 門, meaning_en: gate, meaning_vi: cổng, han_viet: Môn }
+      - { char: 日, meaning_en: sun/day, meaning_vi: mặt trời/ngày, han_viet: Nhật }
+    related_vocab:
+      - word: 間
+        kana: あいだ
+        han_viet: Gian
+        meaning_vi: giữa (khoảng cách hoặc thời gian)
+        example:
+          ja: 彼は私の間に座っています。
+          vi: Anh ấy ngồi giữa tôi và người khác.
+      - word: 時間
+        kana: じかん
+        han_viet: Thời Gian
+        meaning_vi: thời gian
+        example:
+          ja: 時間が足りません。
+          vi: Thời gian không đủ.
+      - word: 一時間
+        kana: いちじかん
+        han_viet: Nhất Thời Gian
+        meaning_vi: một giờ
+        example:
+          ja: 一時間待ちます。
+          vi: Tôi sẽ đợi một giờ.
+      - word: 一週間
+        kana: いっしゅうかん
+        han_viet: Nhất Chu Gian
+        meaning_vi: một tuần
+        example:
+          ja: 一週間休みます。
+          vi: Tôi sẽ nghỉ một tuần.
+  - char: 近
+    meaning_vi: [gần, cận]
+    han_viet: Cận
+    mnemonic_vi: "Gần (近い) là khi một vật hoặc địa điểm có khoảng cách ngắn so với một điểm tham chiếu nào đó"
+    components:
+      - { char: 近, meaning_en: near, meaning_vi: gần, han_viet: Cận }
+    related_vocab:
+      - word: 近い
+        kana: ちかい
+        han_viet: Cận
+        meaning_vi: gần (tính từ)
+        example:
+          ja: 学校は家から近いです。
+          vi: Trường học gần nhà.
+      - word: 近く
+        kana: ちかく
+        han_viet: Cận
+        meaning_vi: gần (danh từ)
+        example:
+          ja: 近くにスーパーがあります。
+          vi: Có một siêu thị gần đây.
+      - word: 近所
+        kana: きんじょ
+        han_viet: Cận Sở
+        meaning_vi: hàng xóm, khu vực lân cận
+        example:
+          ja: 近所の人は親切です。
+          vi: Hàng xóm rất thân thiện.
+      - word: 近所人
+        kana: きんじょにん
+        han_viet: Cận Sở Nhân
+        meaning_vi: người hàng xóm
+        example:
+          ja: 近所の人は親切です。
+          vi: Hàng xóm rất thân thiện.
+  - char: 魚
+    meaning_vi: [cá, ngư]
+    han_viet: Ngư
+    mnemonic_vi: "Cá (魚) là một loài động vật sống dưới nước, có vây và thường được con người nuôi để làm thực phẩm"
+    components:
+      - { char: 魚, meaning_en: fish, meaning_vi: cá, han_viet: Ngư }
+    related_vocab:
+      - word: 魚
+        kana: さかな
+        han_viet: Ngư
+        meaning_vi: cá
+        example:
+          ja: 魚を食べます。
+          vi: Tôi ăn cá.
+      - word: 人魚
+        kana: にんぎょ
+        han_viet: Nhân Ngư
+        meaning_vi: nàng tiên cá
+        example:
+          ja: 人魚は海に住んでいます。
+          vi: Nàng tiên cá sống dưới biển.
+      - word: 金魚
+        kana: きんぎょ
+        han_viet: Kim Ngư
+        meaning_vi: cá vàng
+        example:
+          ja: 金魚が泳いでいます。
+          vi: Có một con cá vàng đang bơi.
+  - char: 手
+    meaning_vi: [tay, thủ]
+    han_viet: Thủ
+    mnemonic_vi: "Tay (手) là bộ phận của cơ thể người dùng để cầm nắm và thực hiện các hoạt động khác nhau"
+    components:
+      - { char: 手, meaning_en: hand, meaning_vi: tay, han_viet: Thủ }
+    related_vocab:
+      - word: 手
+        kana: て
+        han_viet: Thủ
+        meaning_vi: tay
+        example:
+          ja: 手を洗います。
+          vi: Tôi rửa tay.
+      - word: 手紙
+        kana: てがみ
+        han_viet: Thủ Chỉ
+        meaning_vi: thư
+        example:
+          ja: 友達に手紙を書きます。
+          vi: Tôi viết thư cho bạn bè.
+      - word: 上手
+        kana: じょうず
+        han_viet: Thượng Thủ
+        meaning_vi: giỏi, khéo léo
+        example:
+          ja: 彼は料理が上手です。
+          vi: Anh ấy nấu ăn rất giỏi.
+      - word: 下手
+        kana: へた
+        han_viet: Hạ Thủ
+        meaning_vi: kém, vụng về
+        example:
+          ja: 彼は料理が下手です。
+          vi: Anh ấy nấu ăn rất kém.
+  - char: 犬
+    meaning_vi: [chó, khuyển]
+    han_viet: Khuyển
+    mnemonic_vi: "Chó (犬) là một loài động vật được con người nuôi để làm thú cưng hoặc bảo vệ nhà cửa"
+    components:
+      - { char: 犬, meaning_en: dog, meaning_vi: chó, han_viet: Khuyển }
+    related_vocab:
+      - word: 犬
+        kana: いぬ
+        han_viet: Khuyển
+        meaning_vi: chó
+        example:
+          ja: 犬がいます。
+          vi: Có một con chó.
+      - word: 子犬
+        kana: こいぬ
+        han_viet: Tử Khuyển
+        meaning_vi: chó con
+        example:
+          ja: 子犬がかわいいです。
+          vi: Chó con rất dễ thương.
+      - word: 日本犬
+        kana: にほんけん
+        han_viet: Nhật Bản Khuyển
+        meaning_vi: chó Nhật
+        example:
+          ja: 日本犬は忠実です。
+          vi: Chó Nhật rất trung thành.
+  - char: 早
+    meaning_vi: [sớm, tảo]
+    han_viet: Tảo
+    mnemonic_vi: "Sớm (早い) là khi một sự việc xảy ra trước thời gian dự kiến hoặc mong đợi"
+    components:
+      - { char: 早, meaning_en: early, meaning_vi: sớm, han_viet: Tảo }
+    related_vocab:
+      - word: 早い
+        kana: はやい
+        han_viet: Tảo
+        meaning_vi: sớm (tính từ)
+        example:
+          ja: 朝は早いです。
+          vi: Buổi sáng rất sớm.
+      - word: 早く
+        kana: はやく
+        han_viet: Tảo
+        meaning_vi: nhanh, sớm (trạng từ)
+        example:
+          ja: 早く起きます。
+          vi: Tôi dậy sớm.
+      - word: 早退します
+        kana: そうたいします
+        han_viet: Tảo Thối
+        meaning_vi: về sớm (rời khỏi nơi làm việc hoặc trường học trước giờ quy định)
+        example:
+          ja: 今日は早退します。
+          vi: Hôm nay tôi sẽ về sớm.
+  - char: 計
+    meaning_vi: [kế, kế hoạch]
+    han_viet: Kế
+    mnemonic_vi: "Kế (計) là việc lên kế hoạch hoặc dự định cho một sự kiện hoặc hoạt động nào đó"
+    components:
+      - { char: 言, meaning_en: say, meaning_vi: nói, han_viet: Ngôn }
+      - { char: 十, meaning_en: ten, meaning_vi: mười, han_viet: Thập }
+    related_vocab:
+      - word: 計画
+        kana: けいかく
+        han_viet: Kế Hoạch
+        meaning_vi: kế hoạch
+        example:
+          ja: 旅行の計画を立てます。
+          vi: Tôi lập kế hoạch cho chuyến du lịch.
+      - word: 時計
+        kana: とけい
+        han_viet: Thời Kế
+        meaning_vi: đồng hồ
+        example:
+          ja: 時計を見ます。
+          vi: Tôi nhìn đồng hồ.
+      - word: お会計お願いします
+        kana: おかいけいおねがいします
+        han_viet: Hội Kế
+        meaning_vi: tính tiền, thanh toán (cách nói lịch sự khi yêu cầu thanh toán tại nhà hàng)
+        example:
+          ja: お会計お願いします。
+          vi: Xin tính tiền.
+  - char: 外
+    meaning_vi: [ngoài, ngoại]
+    han_viet: Ngoại
+    mnemonic_vi: "Ngoài (外) là vị trí hoặc khu vực bên ngoài một điểm tham chiếu nào đó"
+    components:
+      - { char: 夕, meaning_en: evening, meaning_vi: buổi tối, han_viet: Tịch }
+      - { char: 卜, meaning_en: divination, meaning_vi: bói toán, han_viet: Bốc }
+    related_vocab:
+      - word: 外
+        kana: そと
+        han_viet: Ngoại
+        meaning_vi: ngoài
+        example:
+          ja: 外に出ます。
+          vi: Tôi ra ngoài.
+      - word: 外国
+        kana: がいこく
+        han_viet: Ngoại Quốc
+        meaning_vi: nước ngoài
+        example:
+          ja: 外国に行きたいです。
+          vi: Tôi muốn đi nước ngoài.
+      - word: 外国人
+        kana: がいこくじん
+        han_viet: Ngoại Quốc Nhân
+        meaning_vi: người nước ngoài
+        example:
+          ja: 外国人は日本語を勉強しています。
+          vi: Người nước ngoài đang học tiếng Nhật.
+      - word: 外食します
+        kana: がいしょくします
+        han_viet: Ngoại Thực
+        meaning_vi: ăn ngoài (ăn ở nhà hàng thay vì nấu ăn tại nhà)
+        example:
+          ja: 今夜は外食します。
+          vi: Tối nay tôi sẽ ăn ngoài.
+
+lesson-11:
+  - char: 兄
+    meaning_vi: [anh trai, huynh]
+    han_viet: Huynh
+    mnemonic_vi: "Anh trai (兄) là người đàn ông lớn tuổi hơn bạn trong gia đình"
+    components:
+      - { char: 儿, meaning_en: legs, meaning_vi: chân, han_viet: Nhi }
+      - { char: 一, meaning_en: one, meaning_vi: một, han_viet: Khẩu }
+    related_vocab:
+      - word: 兄
+        kana: あに
+        han_viet: Huynh
+        meaning_vi: anh trai
+        example:
+          ja: 兄は大学生です。
+          vi: Anh trai tôi là sinh viên đại học.
+      - word: お兄さん
+        kana: おにいさん
+        han_viet: Huynh
+        meaning_vi: anh trai (cách gọi lịch sự)
+        example:
+          ja: お兄さんは何歳ですか？
+          vi: Anh trai bạn bao nhiêu tuổi?
+      - word: 兄弟
+        kana: きょうだい
+        han_viet: Huynh Đệ
+        meaning_vi: anh em
+        example:
+          ja: 兄弟は仲がいいです。
+          vi: Anh em chúng tôi rất thân thiết.
+  - char: 第
+    meaning_vi: [thứ, đệ]
+    han_viet: Đệ
+    mnemonic_vi: "Thứ (第) là thứ tự của một sự vật trong một chuỗi"
+    components:
+      - { char: 竹, meaning_en: bamboo, meaning_vi: tre, han_viet: Trúc }
+      - { char: 弓, meaning_en: bow, meaning_vi: cung, han_viet: Cung }
+    related_vocab:
+      - word: 弟
+        kana: おとうと
+        han_viet: Đệ
+        meaning_vi: em trai
+        example:
+          ja: 弟は高校生です。
+          vi: Em trai tôi là học sinh trung học.
+      - word: 弟さん
+        kana: おとうとさん
+        han_viet: Đệ
+        meaning_vi: em trai (cách gọi lịch sự)
+        example:
+          ja: 弟さんは何歳ですか？
+          vi: Em trai bạn bao nhiêu tuổi?
+      - word: 兄弟
+        kana: きょうだい
+        han_viet: Huynh Đệ
+        meaning_vi: anh em
+        example:
+          ja: 兄弟は仲がいいです。
+          vi: Anh em chúng tôi rất thân thiết.
+  - char: 姉
+    meaning_vi: [chị gái, tỷ]
+    han_viet: Tỷ
+    mnemonic_vi: "Chị gái (姉) là người phụ nữ lớn tuổi hơn bạn trong gia đình"
+    components:
+      - { char: 女, meaning_en: woman, meaning_vi: phụ nữ, han_viet: Nữ }
+      - { char: 市, meaning_en: city, meaning_vi: thành phố, han_viet: Thị }
+    related_vocab:
+      - word: 姉
+        kana: あね
+        han_viet: Tỷ
+        meaning_vi: chị gái
+        example:
+          ja: 姉は会社員です。
+          vi: Chị gái tôi là nhân viên công ty.
+      - word: お姉さん
+        kana: おねえさん
+        han_viet: Tỷ
+        meaning_vi: chị gái (cách gọi lịch sự)
+        example:
+          ja: お姉さんは何歳ですか？
+          vi: Chị gái bạn bao nhiêu tuổi?
+      - word: 姉妹
+        kana: しまい
+        han_viet: Tỷ Muội
+        meaning_vi: chị em gái
+        example:
+          ja: 姉妹は仲がいいです。
+          vi: Chị em gái chúng tôi rất thân thiết.
+  - char: 妹
+    meaning_vi: [em gái, muội]
+    han_viet: Muội
+    mnemonic_vi: "Em gái (妹) là người phụ nữ nhỏ tuổi hơn bạn trong gia đình"
+    components:
+      - { char: 女, meaning_en: woman, meaning_vi: phụ nữ, han_viet: Nữ }
+      - { char: 未, meaning_en: not yet, meaning_vi: chưa, han_viet: Vị }
+    related_vocab:
+      - word: 妹
+        kana: いもうと
+        han_viet: Muội
+        meaning_vi: em gái
+        example:
+          ja: 妹は中学生です。
+          vi: Em gái tôi là học sinh trung học cơ sở.
+      - word: 妹さん
+        kana: いもうとさん
+        han_viet: Muội
+        meaning_vi: em gái (cách gọi lịch sự)
+        example:
+          ja: 妹さんは何歳ですか？
+          vi: Em gái bạn bao nhiêu tuổi?
+      - word: 姉妹
+        kana: しまい
+        han_viet: Tỷ Muội
+        meaning_vi: chị em gái
+        example:
+          ja: 姉妹は仲がいいです。
+          vi: Chị em gái chúng tôi rất thân thiết.
+  - char: 家
+    meaning_vi: [nhà, gia đình]
+    han_viet: Gia
+    mnemonic_vi: "Nhà (家) là nơi mà gia đình sống và tạo nên những kỷ niệm"
+    components:
+      - { char: 宀, meaning_en: roof, meaning_vi: mái nhà, han_viet: Miên }
+      - { char: 豕, meaning_en: pig, meaning_vi: lợn, han_viet: Thỉ }
+    related_vocab:
+      - word: 家
+        kana: いえ
+        han_viet: Gia
+        meaning_vi: nhà
+        example:
+          ja: 家に帰ります。
+          vi: Tôi về nhà.
+      - word: 家族
+        kana: かぞく
+        han_viet: Gia Tộc
+        meaning_vi: gia đình
+        example:
+          ja: 家族は大切です。
+          vi: Gia đình là quan trọng.
+      - word: 家内
+        kana: かない
+        han_viet: Gia Nội
+        meaning_vi: vợ (cách gọi lịch sự)
+        example:
+          ja: 家内は料理が上手です。
+          vi: Vợ tôi nấu ăn rất ngon.
+  - char: 族
+    meaning_vi: [gia tộc, chủng tộc]
+    han_viet: Tộc
+    mnemonic_vi: "Gia tộc (族) là một nhóm người có cùng nguồn gốc hoặc đặc điểm chung"
+    components:
+      - { char: 方, meaning_en: direction, meaning_vi: phương hướng, han_viet: Phương }
+      - { char: 矢, meaning_en: arrow, meaning_vi: mũi tên, han_viet: Thỉ }
+    related_vocab:
+      - word: 家族
+        kana: かぞく
+        han_viet: Gia Tộc
+        meaning_vi: gia đình
+        example:
+          ja: 家族は大切です。
+          vi: Gia đình là quan trọng.
+      - word: 族長
+        kana: ぞくちょう
+        han_viet: Tộc Trưởng
+        meaning_vi: trưởng tộc
+        example:
+          ja: 族長は尊敬されています。
+          vi: Trưởng tộc được kính trọng.
+      - word: 水族館
+        kana: すいぞくかん
+        han_viet: Thủy Tộc Quán
+        meaning_vi: thủy cung
+        example:
+          ja: 水族館に行きます。
+          vi: Tôi sẽ đi thủy cung.
+  - char: 春
+    meaning_vi: [mùa xuân, xuân]
+    han_viet: Xuân
+    mnemonic_vi: "Mùa xuân (春) là thời điểm khi hoa nở và thời tiết trở nên ấm áp"
+    components:
+      - { char: 日, meaning_en: sun/day, meaning_vi: mặt trời/ngày, han_viet: Nhật }
+      - { char: 三, meaning_en: three, meaning_vi: ba, han_viet: Tam }
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+    related_vocab:
+      - word: 春
+        kana: はる
+        han_viet: Xuân
+        meaning_vi: mùa xuân
+        example:
+          ja: 春は花が咲きます。
+          vi: Mùa xuân hoa nở.
+      - word: 青春
+        kana: せいしゅん
+        han_viet: Thanh Xuân
+        meaning_vi: tuổi trẻ
+        example:
+          ja: 青春は一度きりです。
+          vi: Tuổi trẻ chỉ có một lần.
+  - char: 夏
+    meaning_vi: [mùa hè, hạ]
+    han_viet: Hạ
+    mnemonic_vi: "Mùa hè (夏) là thời điểm khi trời nóng và mọi người thường đi biển hoặc du lịch"
+    components:
+      - { char: 一, meaning_en: one, meaning_vi: một, han_viet: Nhất }
+      - { char: 自, meaning_en: self, meaning_vi: tự, han_viet: Tự }
+      - { char: 夂, meaning_en: go, meaning_vi: đi, han_viet: Tri }
+    related_vocab:
+      - word: 夏
+        kana: なつ
+        han_viet: Hạ
+        meaning_vi: mùa hè
+        example:
+          ja: 夏は暑いです。
+          vi: Mùa hè rất nóng.
+      - word: 夏休み
+        kana: なつやすみ
+        han_viet: Hạ Hưu
+        meaning_vi: kỳ nghỉ hè
+        example:
+          ja: 夏休みは楽しいです。
+          vi: Kỳ nghỉ hè thật vui.
+
+lesson-12:
+  - char: 秋
+    meaning_vi: [mùa thu, thu]
+    han_viet: Thu
+    mnemonic_vi: "Mùa thu (秋) là thời điểm khi lá cây chuyển màu và rơi xuống"
+    components:
+      - { char: 禾, meaning_en: grain, meaning_vi: ngũ cốc, han_viet: Hòa }
+      - { char: 火, meaning_en: fire, meaning_vi: lửa, han_viet: Hỏa }
+    related_vocab:
+      - word: 秋
+        kana: あき
+        han_viet: Thu
+        meaning_vi: mùa thu
+        example:
+          ja: 秋は紅葉がきれいです。
+          vi: Mùa thu lá đỏ rất đẹp.
+      - word: 中秋節
+        kana: ちゅうしゅうせつ
+        han_viet: Trung Thu Tiết
+        meaning_vi: Tết Trung Thu
+        example:
+          ja: 中秋節は家族と一緒に過ごします。
+          vi: Tết Trung Thu được tổ chức cùng gia đình.
+  - char: 冬
+    meaning_vi: [mùa đông, đông]
+    han_viet: Đông
+    mnemonic_vi: "Mùa đông (冬) là thời điểm khi trời lạnh và có thể có tuyết rơi"
+    components:
+      - { char: 夂, meaning_en: go, meaning_vi: đi, han_viet: Tri }
+      - { char: ⺀, meaning_en: ice, meaning_vi: băng, han_viet: Băng }
+    related_vocab:
+      - word: 冬
+        kana: ふゆ
+        han_viet: Đông
+        meaning_vi: mùa đông
+        example:
+          ja: 冬は寒いです。
+          vi: Mùa đông rất lạnh.
+      - word: 春夏秋冬
+        kana: しゅんかしゅうとう
+        han_viet: Xuân Hạ Thu Đông
+        meaning_vi: bốn mùa
+        example:
+          ja: 春夏秋冬はそれぞれ美しいです。
+          vi: Bốn mùa đều đẹp.
+  - char: 気
+    meaning_vi: [khí, tinh thần]
+    han_viet: Khí
+    mnemonic_vi: "Khí (気) là năng lượng vô hình mà chúng ta cảm nhận được"
+    components:
+      - { char: 气, meaning_en: steam, meaning_vi: hơi nước, han_viet: Khí }
+      - { char: 㐅, meaning_en: null, meaning_vi: null, han_viet: null }
+    related_vocab:
+      - word: 空気
+        kana: くうき
+        han_viet: Không Khí
+        meaning_vi: không khí
+        example:
+          ja: 空気がきれいです。
+          vi: Không khí trong lành.
+      - word: 電気
+        kana: でんき
+        han_viet: Điện Khí
+        meaning_vi: điện
+        example:
+          ja: 電気をつけます。
+          vi: Tôi bật đèn.
+      - word: 人気
+        kana: にんき
+        han_viet: Nhân Khí
+        meaning_vi: phổ biến, được yêu thích
+        example:
+          ja: その歌手は人気があります。
+          vi: Ca sĩ đó rất được yêu thích.
+      - word: やる気
+        kana: やるき
+        han_viet: Dã Khí
+        meaning_vi: động lực, tinh thần làm việc
+        example:
+          ja: やる気が出ません。
+          vi: Tôi không có động lực.
+  - char: 天
+    meaning_vi: [trời, thiên]
+    han_viet: Thiên
+    mnemonic_vi: "Trời (天) là không gian rộng lớn bao phủ chúng ta và chứa đựng tất cả mọi thứ"
+    components:
+      - { char: 大, meaning_en: big, meaning_vi: lớn, han_viet: Đại }
+      - { char: 一, meaning_en: one, meaning_vi: một, han_viet: Nhất }
+    related_vocab:
+      - word: 天気
+        kana: てんき
+        han_viet: Thiên Khí
+        meaning_vi: thời tiết
+        example:
+          ja: 今日の天気はどうですか？
+          vi: Thời tiết hôm nay thế nào?
+  - char: 多
+    meaning_vi: [nhiều, đa]
+    han_viet: Đa
+    mnemonic_vi: "Nhiều (多) là số lượng lớn hơn một"
+    components:
+      - { char: 夕, meaning_en: evening, meaning_vi: buổi tối, han_viet: Tịch }
+      - { char: 夕, meaning_en: evening, meaning_vi: buổi tối, han_viet: Tịch }
+    related_vocab:
+      - word: 多い
+        kana: おおい
+        han_viet: Đa
+        meaning_vi: nhiều (tính từ)
+        example:
+          ja: 人が多いです。
+          vi: Có nhiều người.
+      - word: 多分
+        kana: たぶん
+        han_viet: Đa Phân
+        meaning_vi: có lẽ, có thể
+        example:
+          ja: 多分雨が降ります。
+          vi: Có lẽ sẽ mưa.
+  - char: 少
+    meaning_vi: [ít, thiểu]
+    han_viet: Thiểu
+    mnemonic_vi: "Ít (少) là số lượng nhỏ hơn một"
+    components:
+      - { char: 小, meaning_en: small, meaning_vi: nhỏ, han_viet: Tiểu }
+    related_vocab:
+      - word: 少ない
+        kana: すくない
+        han_viet: Thiểu
+        meaning_vi: ít (tính từ)
+        example:
+          ja: 人が少ないです。
+          vi: Có ít người.
+      - word: 少し
+        kana: すこし
+        han_viet: Thiểu
+        meaning_vi: một chút, hơi
+        example:
+          ja: 少し疲れました。
+          vi: Tôi hơi mệt.
+      - word: 少年
+        kana: しょうねん
+        han_viet: Thiểu Niên
+        meaning_vi: thiếu niên, cậu bé
+        example:
+          ja: 少年は公園で遊んでいます。
+          vi: Cậu bé đang chơi ở công viên.
+      - word: 少女
+        kana: しょうじょ
+        han_viet: Thiểu Nữ
+        meaning_vi: thiếu nữ, cô gái
+        example:
+          ja: 少女は花を摘んでいます。
+          vi: Cô gái đang hái hoa.
+  - char: 元
+    meaning_vi: [nguyên, gốc]
+    han_viet: Nguyên
+    mnemonic_vi: "Nguyên (元) là nguồn gốc hoặc bắt đầu của một sự vật hoặc hiện tượng"
+    components:
+      - { char: 二, meaning_en: two, meaning_vi: hai, han_viet: Nhị }
+      - { char: 儿, meaning_en: legs, meaning_vi: chân, han_viet: Nhi }
+    related_vocab:
+      - word: 元気
+        kana: げんき
+        han_viet: Nguyên Khí
+        meaning_vi: khỏe mạnh, năng lượng
+        example:
+          ja: 元気ですか？
+          vi: Bạn có khỏe không?
+      - word: 元日
+        kana: がんじつ
+        han_viet: Nguyên Nhật
+        meaning_vi: ngày đầu năm mới
+        example:
+          ja: 元日に初詣に行きます。
+          vi: Tôi sẽ đi lễ chùa vào ngày đầu năm mới.
+      - word: 元カレ
+        kana: もとかれ
+        han_viet: Nguyên
+        meaning_vi: bạn trai cũ
+        example:
+          ja: 元カレは優しかったです。
+          vi: Bạn trai cũ của tôi rất tốt.
+      - word: 元カノ
+        kana: もとかの
+        han_viet: Nguyên
+        meaning_vi: bạn gái cũ
+        example:
+          ja: 元カノはきれいじゃありませんでした。
+          vi: Bạn gái cũ của tôi không xinh đẹp.
+  - char: 歩
+    meaning_vi: [bước, bộ]
+    han_viet: Bộ
+    mnemonic_vi: "Bước (歩く) là hành động di chuyển bằng cách đặt một chân trước chân kia"
+    components:
+      - { char: 止, meaning_en: stop, meaning_vi: dừng lại, han_viet: Chỉ }
+      - { char: 少, meaning_en: few, meaning_vi: ít, han_viet: Thiểu }
+    related_vocab:
+      - word: 歩く
+        kana: あるく
+        han_viet: Bộ
+        meaning_vi: đi bộ (động từ)
+        example:
+          ja: 公園を歩きます。
+          vi: Tôi đi bộ trong công viên.
+      - word: 散歩する
+        kana: さんぽする
+        han_viet: Tản Bộ
+        meaning_vi: đi dạo
+        example:
+          ja: 散歩します。
+          vi: Đi dạo.
+      - word: 歩道
+        kana: ほどう
+        han_viet: Bộ Đạo
+        meaning_vi: vỉa hè, lối đi bộ
+        example:
+          ja: 歩道を歩きます。
+          vi: Tôi đi trên vỉa hè.
+      - word: 一歩
+        kana: いっぽ
+        han_viet: Nhất Bộ
+        meaning_vi: một bước (khoảng cách)
+        example:
+          ja: 一歩前に進みます。
+          vi: Tôi tiến một bước về phía trước.
+
+lesson-13:
+  - char: 入
+    meaning_vi: [vào, nhập]
+    han_viet: Nhập
+    mnemonic_vi: "Vào (入る) là hành động di chuyển từ bên ngoài vào bên trong một không gian nào đó"
+    components:
+      - { char: 入, meaning_en: enter, meaning_vi: vào, han_viet: Nhập }
+    related_vocab:
+      - word: 入れる
+        kana: いれる
+        han_viet: Nhập
+        meaning_vi: cho vào, bỏ vào (động từ)
+        example:
+          ja: コーヒーに砂糖を入れます。
+          vi: Tôi cho đường vào cà phê.
+      - word: 入る
+        kana: はいる
+        han_viet: Nhập
+        meaning_vi: đi vào (động từ)
+        example:
+          ja: 部屋に入ります。
+          vi: Tôi vào phòng.
+      - word: 入口
+        kana: いりぐち
+        han_viet: Nhập Khẩu
+        meaning_vi: lối vào, cửa vào
+        example:
+          ja: 入口はどこですか？
+          vi: Lối vào ở đâu?
+      - word: 入院
+        kana: にゅういん
+        han_viet: Nhập Viện
+        meaning_vi: nhập viện
+        example:
+          ja: 彼は入院しています。
+          vi: Anh ấy đang nhập viện.
+      - word: 入国
+        kana: にゅうこく
+        han_viet: Nhập Quốc
+        meaning_vi: nhập cảnh
+        example:
+          ja: 日本に入国します。
+          vi: Tôi sẽ nhập cảnh vào Nhật Bản.
+      - word: 入学します
+        kana: にゅうがくします
+        han_viet: Nhập Học
+        meaning_vi: nhập học
+        example:
+          ja: 大学に入学します。
+          vi: Tôi sẽ nhập học đại học.
+  - char: 出
+    meaning_vi: [ra, xuất]
+    han_viet: Xuất
+    mnemonic_vi: "Ra (出る) là hành động di chuyển từ bên trong ra ngoài một không gian nào đó"
+    components:
+      - { char: 凵, meaning_en: container, meaning_vi: cái chứa, han_viet: Khảm }
+      - { char: 山, meaning_en: mountain, meaning_vi: núi, han_viet: Sơn }
+    related_vocab:
+      - word: 出す
+        kana: だす
+        han_viet: Xuất
+        meaning_vi: lấy ra, đưa ra (động từ)
+        example:
+          ja: 財布からお金を出します。
+          vi: Tôi lấy tiền ra từ ví.
+      - word: 出る
+        kana: でる
+        han_viet: Xuất
+        meaning_vi: ra (động từ)
+        example:
+          ja: 家を出ます。
+          vi: Tôi ra khỏi nhà.
+      - word: 出口
+        kana: でぐち
+        han_viet: Xuất Khẩu
+        meaning_vi: lối ra, cửa ra
+        example:
+          ja: 出口はどこですか？
+          vi: Lối ra ở đâu?
+      - word: 日の出
+        kana: ひので
+        han_viet: Nhật Xuất
+        meaning_vi: bình minh, mặt trời mọc
+        example:
+          ja: 日の出がきれいです。
+          vi: Bình minh rất đẹp.
+      - word: 出発
+        kana: しゅっぱつ
+        han_viet: Xuất Phát
+        meaning_vi: xuất phát, khởi hành
+        example:
+          ja: 電車は9時に出発します。
+          vi: Tàu sẽ khởi hành lúc 9 giờ.
+      - word: 出長
+        kana: しゅっちょう
+        han_viet: Xuất Trường
+        meaning_vi: công tác, đi công tác
+        example:
+          ja: 来週は出長します。
+          vi: Tuần tới tôi sẽ đi công tác.
+  - char: 広
+    meaning_vi: [rộng, quảng]
+    han_viet: Quảng
+    mnemonic_vi: "Rộng (広い) là khi một không gian có diện tích lớn hoặc có nhiều chỗ để di chuyển"
+    components:
+      - { char: 广, meaning_en: shelter, meaning_vi: mái che, han_viet: Nghiễm }
+    related_vocab:
+      - word: 広い
+        kana: ひろい
+        han_viet: Quảng
+        meaning_vi: rộng (tính từ)
+        example:
+          ja: この部屋は広いです。
+          vi: Căn phòng này rộng rãi.
+      - word: 広場
+        kana: ひろば
+        han_viet: Quảng Trường
+        meaning_vi: quảng trường
+        example:
+          ja: 公園の広場で遊びます。
+          vi: Tôi chơi ở quảng trường trong công viên.
+  - char: 止
+    meaning_vi: [dừng, chỉ]
+    han_viet: Chỉ
+    mnemonic_vi: "Dừng (止まる) là khi một sự vật hoặc hành động ngừng lại hoặc không tiếp tục nữa"
+    components:
+      - { char: 止, meaning_en: stop, meaning_vi: dừng lại, han_viet: Chỉ }
+    related_vocab:
+      - word: 止まる
+        kana: とまる
+        han_viet: Chỉ
+        meaning_vi: dừng lại, đỗ lại (động từ)
+        example:
+          ja: 車が止まります。
+          vi: Xe dừng lại.
+      - word: 止める
+        kana: とめる
+        han_viet: Chỉ
+        meaning_vi: dừng, đỗ (động từ)
+        example:
+          ja: 車を止めます。
+          vi: Tôi dừng xe.
+      - word: 禁止
+        kana: きんし
+        han_viet: Cấm Chỉ
+        meaning_vi: cấm, nghiêm cấm
+        example:
+          ja: ここは禁煙です。
+          vi: Nơi này cấm hút thuốc.
+      - word: 中止します
+        kana: ちゅうしします
+        han_viet: Trung Chỉ
+        meaning_vi: hủy bỏ, ngừng lại (sự kiện hoặc hoạt động)
+        example:
+          ja: コンサートは中止します。
+          vi: Buổi hòa nhạc đã bị hủy bỏ.
+  - char: 雨
+    meaning_vi: [mưa, vũ]
+    han_viet: Vũ
+    mnemonic_vi: "Mưa (雨) là hiện tượng khi nước rơi từ bầu trời xuống mặt đất"
+    components:
+      - { char: 雨, meaning_en: rain, meaning_vi: mưa, han_viet: Vũ }
+    related_vocab:
+      - word: 雨
+        kana: あめ
+        han_viet: Vũ
+        meaning_vi: mưa
+        example:
+          ja: 雨が降っています。
+          vi: Trời đang mưa.
+      - word: 大雨
+        kana: おおあめ
+        han_viet: Đại Vũ
+        meaning_vi: mưa lớn
+        example:
+          ja: 大雨が降っています。
+          vi: Trời đang mưa rất to.
+      - word: 小雨
+        kana: こさめ
+        han_viet: Tiểu Vũ
+        meaning_vi: mưa nhỏ, mưa phùn
+        example:
+          ja: 小雨が降っています。
+          vi: Trời đang mưa nhỏ.
+  - char: 開
+    meaning_vi: [mở, khai]
+    han_viet: Khai
+    mnemonic_vi: "Mở (開く) là hành động làm cho một vật gì đó không còn đóng hoặc bị che phủ nữa"
+    components:
+      - { char: 門, meaning_en: gate, meaning_vi: cổng, han_viet: Môn }
+    related_vocab:
+      - word: 開く
+        kana: あく
+        han_viet: Khai
+        meaning_vi: mở ra (tự động từ, chỉ trạng thái cửa/hộp đã mở hoặc tự mở)
+        example:
+          ja: ドアが開いています。
+          vi: Cửa đang mở.
+      - word: 開ける
+        kana: あける
+        han_viet: Khai
+        meaning_vi: mở (tha động từ, chủ động làm cho cái gì đó mở ra)
+        example:
+          ja: 窓を開けます。
+          vi: Tôi mở cửa sổ.
+      - word: 開く
+        kana: ひらく
+        han_viet: Khai
+        meaning_vi: mở, mở ra (nghĩa rộng hơn, dùng cho việc mở ra (sách, tài khoản), tổ chức sự kiện, hoặc mở cánh hoa)
+        example:
+          ja: パーティーを開きます。
+          vi: Tôi tổ chức một bữa tiệc.
+      - word: 開花
+        kana: かいか
+        han_viet: Khai Hoa
+        meaning_vi: việc ra hoa
+        example:
+          ja: 桜が開花しました。
+          vi: Hoa anh đào đã nở.
+  - char: 海
+    meaning_vi: [biển, hải]
+    han_viet: Hải
+    mnemonic_vi: "Biển (海) là một vùng nước mặn lớn bao phủ phần lớn bề mặt Trái Đất và chứa đựng nhiều sinh vật biển"
+    components:
+      - { char: 毎, meaning_en: every, meaning_vi: mỗi, han_viet: Mỗi }
+    related_vocab:
+      - word: 海
+        kana: うみ
+        han_viet: Hải
+        meaning_vi: biển
+        example:
+          ja: 海に行きます。
+          vi: Tôi sẽ đi biển.
+      - word: 日本海
+        kana: にほんかい
+        han_viet: Nhật Bản Hải
+        meaning_vi: biển Nhật Bản
+        example:
+          ja: 日本海は美しいです。
+          vi: Biển Nhật Bản rất đẹp.
+      - word: 海外
+        kana: かいがい
+        han_viet: Hải Ngoại
+        meaning_vi: nước ngoài
+        example:
+          ja: 海外に行きたいです。
+          vi: Tôi muốn đi nước ngoài.
+  - char: 川
+    meaning_vi: [sông, xuyên]
+    han_viet: Xuyên
+    mnemonic_vi: "Sông (川) là một dòng nước tự nhiên chảy từ nơi cao xuống nơi thấp hơn và thường đổ ra biển hoặc hồ"
+    components:
+      - { char: 巛, meaning_en: river, meaning_vi: sông, han_viet: Xuyên }
+    related_vocab:
+      - word: 川
+        kana: かわ
+        han_viet: Xuyên
+        meaning_vi: sông
+        example:
+          ja: 川で泳ぎます。
+          vi: Tôi bơi ở sông.
+      - word: 天の川
+        kana: あまのがわ
+        han_viet: Thiên Xuyên
+        meaning_vi: dải ngân hà
+        example:
+          ja: 天の川は夜空に見えます。
+          vi: Dải ngân hà có thể nhìn thấy trên bầu trời đêm.
+      - word: ナイル川
+        kana: ナイルがわ
+        han_viet: Xuyên
+        meaning_vi: sông Nile
+        example:
+          ja: ナイル川はアフリカにあります。
+          vi: Sông Nile nằm ở châu Phi.
+
+lesson-14:
+  - char: 世
+    meaning_vi: [thế, thế giới]
+    han_viet: Thế
+    mnemonic_vi: "Thế (世) là tất cả những gì tồn tại và xảy ra trên Trái Đất, bao gồm con người, động vật, thực vật và các hiện tượng tự nhiên"
+    components:
+      - { char: 一, meaning_en: one, meaning_vi: một, han_viet: Nhất }
+      - { char: 廿, meaning_en: twenty, meaning_vi: hai mươi, han_viet: Nhập }
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+    related_vocab:
+      - word: 世界
+        kana: せかい
+        han_viet: Thế Giới
+        meaning_vi: thế giới
+        example:
+          ja: 世界は広いです。
+          vi: Thế giới rất rộng lớn.
+      - word: 世紀
+        kana: せいき
+        han_viet: Thế Kỷ
+        meaning_vi: thế kỷ
+        example:
+          ja: 20世紀は多くの変化がありました。
+          vi: Thế kỷ 20 đã có nhiều thay đổi.
+      - word: 世話します
+        kana: せわします
+        han_viet: Thế Thoại
+        meaning_vi: chăm sóc, giúp đỡ (động từ)
+        example:
+          ja: 子供の世話をします。
+          vi: Tôi chăm sóc trẻ em
+  - char: 界
+    meaning_vi: [giới, thế giới]
+    han_viet: Giới
+    mnemonic_vi: "Giới (界) là một phạm vi hoặc lĩnh vực mà trong đó các sự vật hoặc hiện tượng tồn tại và tương tác với nhau"
+    components:
+      - { char: 田, meaning_en: rice field, meaning_vi: ruộng lúa, han_viet: Điền }
+      - { char: 介, meaning_en: mediate, meaning_vi: trung gian, han_viet: Giới }
+    related_vocab:
+      - word: 世界
+        kana: せかい
+        han_viet: Thế Giới
+        meaning_vi: thế giới
+        example:
+          ja: 世界は広いです。
+          vi: Thế giới rất rộng lớn
+  - char: 画
+    meaning_vi: [họa, hội họa]
+    han_viet: Họa, Hoạch
+    mnemonic_vi: "Họa (画) là nghệ thuật tạo ra hình ảnh bằng cách sử dụng các công cụ như bút vẽ, màu sắc và giấy"
+    components:
+      - { char: 田, meaning_en: rice field, meaning_vi: ruộng lúa, han_viet: Điền }
+      - { char: 一, meaning_en: one, meaning_vi: một, han_viet: Nhất }
+    related_vocab:
+      - word: 画家
+        kana: がか
+        han_viet: Họa Gia
+        meaning_vi: họa sĩ
+        example:
+          ja: 彼は有名な画家です。
+          vi: Anh ấy là một họa sĩ nổi tiếng.
+      - word: 絵画
+        kana: かいが
+        han_viet: Hội Họa
+        meaning_vi: tranh vẽ, hội họa
+        example:
+          ja: 美術館で絵画を見ます。
+          vi: Tôi xem tranh tại bảo tàng mỹ thuật.
+      - word: 計画
+        kana: けいかく
+        han_viet: Kế Họa
+        meaning_vi: kế hoạch
+        example:
+          ja: 旅行の計画を立てます。
+          vi: Tôi lập kế hoạch cho chuyến du lịch.
+  - char: 映
+    meaning_vi: [ánh, chiếu]
+    han_viet: Ánh
+    mnemonic_vi: "Ánh (映る) là khi một hình ảnh hoặc ánh sáng được phản chiếu hoặc chiếu lên một bề mặt nào đó"
+    components:
+      - { char: 日, meaning_en: sun/day, meaning_vi: mặt trời/ngày, han_viet: Nhật }
+      - { char: 央, meaning_en: center, meaning_vi: trung tâm, han_viet: Ống }
+    related_vocab:
+      - word: 映画
+        kana: えいが
+        han_viet: Ánh Họa
+        meaning_vi: phim ảnh, điện ảnh
+        example:
+          ja: 映画を見ます。
+          vi: Tôi xem phim.
+      - word: 上映
+        kana: じょうえい
+        han_viet: Thượng Ánh
+        meaning_vi: chiếu phim
+        example:
+          ja: 映画が上映されます。
+          vi: Phim sẽ được chiếu.
+  - char: 花
+    meaning_vi: [hoa, hoa]
+    han_viet: Hoa
+    mnemonic_vi: "Hoa (花) là phần của cây có màu sắc và mùi thơm, thường được coi là đẹp và được sử dụng để trang trí hoặc làm quà tặng"
+    components:
+      - { char: 艹, meaning_en: grass, meaning_vi: cỏ, han_viet: Thảo }
+      - { char: 化, meaning_en: change, meaning_vi: biến hóa, han_viet: Hóa }
+    related_vocab:
+      - word: 花屋
+        kana: はなや
+        han_viet: Hoa Ốc
+        meaning_vi: cửa hàng hoa
+        example:
+          ja: 花屋で花を買います。
+          vi: Tôi mua hoa ở cửa hàng hoa.
+      - word: 花火
+        kana: はなび
+        han_viet: Hoa Hỏa
+        meaning_vi: pháo hoa
+        example:
+          ja: 夏祭りで花火を見ます。
+          vi: Tôi xem pháo hoa tại lễ hội mùa hè.
+      - word: お花見
+        kana: おはなみ
+        han_viet: Hoa Kiến
+        meaning_vi: ngắm hoa (thường là hoa anh đào)
+        example:
+          ja: 春にお花見をします。
+          vi: Tôi ngắm hoa vào mùa xuân.
+  - char: 茶
+    meaning_vi: [trà, trà]
+    han_viet: Trà
+    mnemonic_vi: "Trà (茶) là một loại đồ uống được làm từ lá của cây trà, thường được uống nóng hoặc lạnh và có nhiều hương vị khác nhau"
+    components:
+      - { char: 艹, meaning_en: grass, meaning_vi: cỏ, han_viet: Thảo }
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+    related_vocab:
+      - word: お茶
+        kana: おちゃ
+        han_viet: Trà
+        meaning_vi: trà (cách gọi lịch sự)
+        example:
+          ja: お茶を飲みます。
+          vi: Tôi uống trà.
+      - word: 茶色
+        kana: ちゃいろ
+        han_viet: Trà Sắc
+        meaning_vi: màu nâu
+        example:
+          ja: 茶色の靴を買います。
+          vi: Tôi mua đôi giày màu nâu.
+      - word: 茶道
+        kana: さどう
+        han_viet: Trà Đạo
+        meaning_vi: trà đạo, nghệ thuật pha trà
+        example:
+          ja: 茶道を習います。
+          vi: Tôi học trà đạo.
+  - char: 語
+    meaning_vi: [ngữ, ngôn ngữ]
+    han_viet: Ngữ
+    mnemonic_vi: "Ngữ (言語) là hệ thống các ký hiệu và quy tắc được sử dụng để giao tiếp giữa con người"
+    components:
+      - { char: 言, meaning_en: say, meaning_vi: nói, han_viet: Ngôn }
+      - { char: 五, meaning_en: five, meaning_vi: năm, han_viet: Ngũ }
+    related_vocab:
+      - word: 日本語
+        kana: にほんご
+        han_viet: Nhật Bản Ngữ
+        meaning_vi: tiếng Nhật
+        example:
+          ja: 日本語を勉強します。
+          vi: Tôi học tiếng Nhật.
+      - word: 英語
+        kana: えいご
+        han_viet: Anh Ngữ
+        meaning_vi: tiếng Anh
+        example:
+          ja: 英語が話せますか？
+          vi: Bạn có thể nói tiếng Anh không?
+      - word: 言語
+        kana: げんご
+        han_viet: Ngôn Ngữ
+        meaning_vi: ngôn ngữ
+        example:
+          ja: 言語は文化の一部です。
+          vi: Ngôn ngữ là một phần của văn hóa.
+      - word: 言語学
+        kana: げんごがく
+        han_viet: Ngữ Ngôn Học
+        meaning_vi: ngôn ngữ học
+        example:
+          ja: 言語学を専攻しています。
+          vi: Tôi chuyên ngành ngôn ngữ học.
+  - char: 英
+    meaning_vi: [anh, anh hùng]
+    han_viet: Anh
+    mnemonic_vi: "Anh (英雄) là một người có những phẩm chất đặc biệt như dũng cảm, thông minh và có khả năng lãnh đạo, thường được ngưỡng mộ và tôn vinh"
+    components:
+      - { char: 艹, meaning_en: grass, meaning_vi: cỏ, han_viet: Thảo }
+      - { char: 央, meaning_en: center, meaning_vi: trung tâm, han_viet: Ống }
+    related_vocab:
+      - word: 英語
+        kana: えいご
+        han_viet: Anh Ngữ
+        meaning_vi: tiếng Anh
+        example:
+          ja: 英語が話せますか？
+          vi: Bạn có thể nói tiếng Anh không?
