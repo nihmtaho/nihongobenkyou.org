@@ -28,6 +28,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
     lessonNum: number
     stats: LessonStats
     type?: 'kanji' | 'vocab'
+    dueOnly?: boolean
   } | null>(null)
 
   const openLesson = openModal
@@ -52,6 +53,8 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
     { due: 0, new: 0, learning: 0, review: 0, mature: 0, studied: 0 },
   )
 
+  const kanjiCardsDue = lessons?.reduce((acc, l) => acc + l.kanji.due, 0) ?? 0
+
   return (
     <div className="p-4 lg:p-6 xl:p-8 max-w-5xl mx-auto">
       <StatsGrid
@@ -68,7 +71,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
         <DueCard
-          count={kanjiTotals?.due ?? 0}
+          count={kanjiCardsDue}
           label="THẺ HÁN TỰ CẦN ÔN HÔM NAY"
           reviewLink="/kanji/review"
         />
@@ -88,7 +91,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                         key={lesson.lessonNumber}
                         lesson={lesson}
                         animDelay={i * 0.04}
-                        onOpenModal={(type, stats) => setOpenModal({ lessonNum: lesson.lessonNumber, stats, type })}
+                        onOpenModal={(type, stats, dueOnly) => setOpenModal({ lessonNum: lesson.lessonNumber, stats, type, dueOnly })}
                       />
                     ))}
                   </div>
@@ -158,6 +161,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
           lessonNum={openLesson.lessonNum}
           stats={openLesson.stats}
           type={openLesson.type}
+          dueOnly={openLesson.dueOnly}
           onClose={() => setOpenModal(null)}
         />
       )}
@@ -172,7 +176,7 @@ function KanjiLessonRow({
 }: {
   lesson: KanjiLessonStats
   animDelay: number
-  onOpenModal: (type: 'kanji' | 'vocab', stats: LessonStats) => void
+  onOpenModal: (type: 'kanji' | 'vocab', stats: LessonStats, dueOnly?: boolean) => void
 }) {
   const { lessonNumber, kanji, vocab } = lesson
   const totalDue = kanji.due + vocab.due
@@ -206,6 +210,7 @@ function KanjiLessonRow({
           stats={kanji}
           animDelay={animDelay}
           onOpenModal={() => onOpenModal('kanji', { total: kanji.total, new: kanji.new, learning: kanji.learning, review: kanji.review, mature: kanji.mature })}
+          onOpenDue={kanji.due > 0 ? () => onOpenModal('kanji', { total: kanji.total, new: kanji.new, learning: kanji.learning, review: kanji.review, mature: kanji.mature }, true) : undefined}
         />
       )}
       {vocab.total > 0 && (
@@ -215,6 +220,7 @@ function KanjiLessonRow({
           stats={vocab}
           animDelay={animDelay + 0.04}
           onOpenModal={() => onOpenModal('vocab', { total: vocab.total, new: vocab.new, learning: vocab.learning, review: vocab.review, mature: vocab.mature })}
+          onOpenDue={vocab.due > 0 ? () => onOpenModal('vocab', { total: vocab.total, new: vocab.new, learning: vocab.learning, review: vocab.review, mature: vocab.mature }, true) : undefined}
         />
       )}
     </div>
@@ -227,12 +233,14 @@ function KanjiSubRow({
   stats,
   animDelay,
   onOpenModal,
+  onOpenDue,
 }: {
   label: string
   labelVi: string
   stats: KanjiLessonStats['kanji']
   animDelay: number
   onOpenModal: () => void
+  onOpenDue?: () => void
 }) {
   const { total, new: newCount, learning, review, mature, due, next_due_date } = stats
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
@@ -266,7 +274,7 @@ function KanjiSubRow({
           <Button
             size="xs"
             className="font-[var(--br-mono-font)] min-h-0 h-7"
-            onClick={onOpenModal}
+            onClick={onOpenDue ?? onOpenModal}
           >
             ÔN (
             {due}

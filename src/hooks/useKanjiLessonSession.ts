@@ -36,6 +36,7 @@ export interface UseKanjiLessonSessionReturn {
 export function useKanjiLessonSession(
   lesson: number,
   type: 'kanji' | 'vocab',
+  dueOnly?: boolean,
 ): UseKanjiLessonSessionReturn {
   const userId = useAuthStore(s => s.userId) ?? ''
 
@@ -70,11 +71,18 @@ export function useKanjiLessonSession(
   const totalItems = type === 'kanji' ? kanjiData.items.length : vocabData.vocab.length
 
   function handleStart() {
+    const today = new Date().toISOString().slice(0, 10)
     if (type === 'kanji') {
-      setKanjiQueue([...kanjiData.items].sort(() => Math.random() - 0.5))
+      const source = dueOnly
+        ? kanjiData.items.filter(item => item.card !== null && item.card.due_date <= today)
+        : kanjiData.items
+      setKanjiQueue([...source].sort(() => Math.random() - 0.5))
     }
     else {
-      setVocabQueue([...vocabData.vocab].sort(() => Math.random() - 0.5))
+      const source = dueOnly
+        ? vocabData.vocab.filter(v => v.review_count > 0 && v.due_date <= today && !v.is_known)
+        : vocabData.vocab
+      setVocabQueue([...source].sort(() => Math.random() - 0.5))
     }
     setCurrentIndex(0)
     setStats({

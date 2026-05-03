@@ -29,6 +29,7 @@ function LessonPage() {
   const lessonNumber = Number(lesson)
   const navigate = useNavigate()
   const [showConfig, setShowConfig] = useState(false)
+  const [configContext, setConfigContext] = useState<'all' | 'due'>('all')
   const [retryMode, setRetryMode] = useState<StudyMode>('flashcard')
   const [retrySubMode] = useState<TypeInputSubMode>('word→hira')
 
@@ -85,7 +86,7 @@ function LessonPage() {
 
   function handleLaunch(mode: StudyMode, subMode?: TypeInputSubMode, order?: 'random' | 'sequential') {
     setShowConfig(false)
-    launchVocabSession(book, lessonNumber, false, mode, subMode, order)
+    launchVocabSession(book, lessonNumber, configContext === 'due', mode, subMode, order)
   }
 
   return (
@@ -108,13 +109,33 @@ function LessonPage() {
               {String(lessonNumber).padStart(2, '0')}
             </h1>
           </div>
-          <Button
-            className="font-[var(--br-mono-font)] mb-2"
-            onClick={() => setShowConfig(true)}
-            disabled={nonDeprecated.length === 0}
-          >
-            STUDY
-          </Button>
+          <div className="flex gap-1.5 mb-2">
+            {dueCount > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="font-[var(--br-mono-font)]"
+                onClick={() => {
+                  setConfigContext('due')
+                  setShowConfig(true)
+                }}
+              >
+                ÔN TẬP (
+                {dueCount}
+                )
+              </Button>
+            )}
+            <Button
+              className="font-[var(--br-mono-font)]"
+              onClick={() => {
+                setConfigContext('all')
+                setShowConfig(true)
+              }}
+              disabled={nonDeprecated.length === 0}
+            >
+              STUDY
+            </Button>
+          </div>
         </div>
 
         {/* Progress strip */}
@@ -222,7 +243,9 @@ function LessonPage() {
       {showConfig && (
         <VocabStudyModal
           title={`Bài ${String(lessonNumber).padStart(2, '0')}`}
-          context="all"
+          {...(configContext === 'due'
+            ? { context: 'due' as const, dueCount }
+            : { context: 'all' as const })}
           stats={srsStats}
           onLaunch={handleLaunch}
           onClose={() => setShowConfig(false)}

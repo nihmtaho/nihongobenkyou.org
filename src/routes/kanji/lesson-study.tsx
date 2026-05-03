@@ -19,6 +19,7 @@ interface LessonStudySearch {
   type: 'kanji' | 'vocab'
   mode: 'flashcard' | 'quiz' | 'type'
   vocabSubMode?: VocabTypeSubMode
+  dueOnly?: boolean
 }
 
 export const Route = createFileRoute('/kanji/lesson-study')({
@@ -35,6 +36,7 @@ export const Route = createFileRoute('/kanji/lesson-study')({
     vocabSubMode: (['word→hira', 'vi→hira', 'word→vi+hanviet'] as const).includes(search.vocabSubMode as VocabTypeSubMode)
       ? search.vocabSubMode as VocabTypeSubMode
       : undefined,
+    dueOnly: search.dueOnly === true,
   }),
   component: KanjiLessonStudyPage,
 })
@@ -51,8 +53,8 @@ const TYPE_LABELS = {
 } as const
 
 function KanjiLessonStudyPage() {
-  const { lesson, type, mode, vocabSubMode } = Route.useSearch()
-  const session = useKanjiLessonSession(lesson, type)
+  const { lesson, type, mode, vocabSubMode, dueOnly } = Route.useSearch()
+  const session = useKanjiLessonSession(lesson, type, dueOnly)
 
   if (session.phase === 'loading') {
     return (
