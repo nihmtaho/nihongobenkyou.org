@@ -1,5 +1,6 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { BookOpen, BrainCircuit, Home, Languages, Settings } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
   { to: '/', label: 'HOME', Icon: Home, ariaLabel: 'Home' },
@@ -14,23 +15,29 @@ export function BottomDock() {
   const pathname = location.pathname
 
   return (
-    <div className="dock lg:hidden">
-      {NAV_ITEMS.map(({ to, label, Icon, ariaLabel }) => {
-        const isActive = to === '/' ? pathname === '/' : pathname.startsWith(to)
-        return (
-          <Link
-            key={to}
-            to={to}
-            aria-label={ariaLabel}
-            className={isActive ? 'dock-active' : undefined}
-          >
-            <Icon size={18} strokeWidth={isActive ? 2.5 : 1.75} aria-hidden />
-            <span className="dock-label font-[var(--br-mono-font)] text-[9px] uppercase">
-              {label}
-            </span>
-          </Link>
-        )
-      })}
-    </div>
+    <nav className="fixed bottom-0 inset-x-0 lg:hidden bg-background border-t border-border z-50">
+      <div className="flex">
+        {NAV_ITEMS.map(({ to, label, Icon, ariaLabel }) => {
+          const isActive = to === '/' ? pathname === '/' : pathname.startsWith(to)
+          return (
+            <Link
+              key={to}
+              to={to}
+              aria-label={ariaLabel}
+              className={cn(
+                'flex flex-col items-center justify-center flex-1 gap-1 py-2 min-h-[52px]',
+                'text-muted-foreground transition-colors',
+                isActive && 'border-t-2 border-primary text-primary -mt-px',
+              )}
+            >
+              <Icon size={18} strokeWidth={isActive ? 2.5 : 1.75} aria-hidden />
+              <span className="font-[var(--br-mono-font)] text-[9px] uppercase">
+                {label}
+              </span>
+            </Link>
+          )
+        })}
+      </div>
+    </nav>
   )
 }
