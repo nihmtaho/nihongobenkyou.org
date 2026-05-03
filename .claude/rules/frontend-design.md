@@ -5,24 +5,34 @@ paths:
   - "src/pages/**"
   - "src/routes/**"
   - "src/layouts/**"
-  - "src/app.css"
+  - "src/**/*.css"
 ---
 
 # Frontend Design Rules
 
+## Component Architecture
+
+**must** extract every distinct UI element into its own reusable component — never inline complex UI directly in route/page files.
+
+**must not** create a new component if an existing one can be reused. Always check `src/components/` before creating a new one.
+
+**must** name components by function, not by location: `VocabCard` ✓, `HomePageCard` ✗.
+
+---
+
 ## Design Vision
 
-Raw Brutalist Editorial — cảm hứng từ Zine culture + Swiss Brutalism. Typography condensed bold all-caps kiểu tạp chí thời trang/nghệ thuật. Nền beige/cream film-vintage. Accent thay đổi theo từng dataset/bộ sách. Grid asymmetric editorial.
+Raw Brutalist Editorial — inspired by Zine culture + Swiss Brutalism. Condensed bold all-caps typography in the style of fashion/art magazines. Beige/cream vintage-film background. Accent color varies per dataset/book. Asymmetric editorial grid.
 
-**Component library: DaisyUI v5** trên Tailwind CSS v4. Dùng semantic DaisyUI class (`btn`, `card`, `badge`, `navbar`, `stats`, `dock`, `join`...) làm base. Visual được kiểm soát hoàn toàn qua custom DaisyUI theme — không viết CSS riêng lẻ cho từng component.
+**Component library: DaisyUI v5** on Tailwind CSS v4. Use semantic DaisyUI classes (`btn`, `card`, `badge`, `navbar`, `stats`, `dock`, `join`...) as base. Visual styling is controlled entirely via custom DaisyUI theme — no per-component CSS.
 
-**Font chính:**
-- Heading: **Barlow Condensed** (hoặc Bebas Neue) — Black/ExtraBold, all-caps, CSS var `--br-heading-font`
+**Fonts:**
+- Heading: **Barlow Condensed** (or Bebas Neue) — Black/ExtraBold, all-caps, CSS var `--br-heading-font`
 - Metadata/tag: **IBM Plex Mono** — monospace technical, CSS var `--br-mono-font`
 - Body: **Inter** — readable, neutral
-- JP Content: **Noto Sans JP** — bắt buộc cho mọi ký tự Nhật, CSS var `--br-jp-font`
+- JP Content: **Noto Sans JP** — required for all Japanese characters, CSS var `--br-jp-font`
 
-Không bao giờ dùng heading font cho tiếng Nhật. Barlow Condensed không có glyph kana/kanji.
+Never use heading font for Japanese text. Barlow Condensed has no kana/kanji glyphs.
 
 ---
 
@@ -61,22 +71,22 @@ Không bao giờ dùng heading font cho tiếng Nhật. Barlow Condensed không 
   --color-success: oklch(63% 0.15 150);    /* GOOD */
   --color-info:    oklch(65% 0.12 240);    /* EASY */
 
-  --radius-selector: 0;  /* góc vuông tất cả btn, badge */
-  --radius-field: 0;     /* góc vuông input */
-  --radius-box: 0;       /* góc vuông card */
+  --radius-selector: 0;  /* square corners on all btn, badge */
+  --radius-field: 0;     /* square corners on inputs */
+  --radius-box: 0;       /* square corners on cards */
   --border: 1px;
-  --depth: 0;            /* tắt soft shadow */
+  --depth: 0;            /* disable soft shadows */
   --noise: 0;
 }
 ```
 
-Per-dataset theme thêm vào cùng file, chỉ thay `--color-primary`:
+Per-dataset theme: add to same file, only change `--color-primary`:
 - `brutalist-tango`: `oklch(60% 0.18 35)` (coral)
 - `brutalist-mimikara`: `oklch(58% 0.10 145)` (sage)
 - `brutalist-custom`: `oklch(58% 0.16 295)` (purple)
 - Dark variants: suffix `-dark`, `--color-base-100: oklch(14% 0.008 80)`
 
-Apply: set `data-theme="brutalist-{dataset}"` trên `<html>`. State qua Zustand `settingsStore`. Persist: `localStorage`. Load trước first render để tránh FOUC.
+Apply: set `data-theme="brutalist-{dataset}"` on `<html>`. State via Zustand `settingsStore`. Persist: `localStorage`. Load before first render to avoid FOUC.
 
 ---
 
@@ -102,7 +112,7 @@ Subtle border: `border-base-content/10`. Accent border rail: `border-l-4 border-
 
 ## Typography Scale
 
-| Role | Font var | Tailwind | Ghi chú |
+| Role | Font var | Tailwind | Notes |
 |---|---|---|---|
 | Display | `--br-heading-font` | `text-7xl font-black tracking-tighter` | Lesson number 80px |
 | Heading L | `--br-heading-font` | `text-4xl font-bold uppercase` | Section title |
@@ -174,7 +184,7 @@ Apply custom font: `font-[var(--br-heading-font)]` — Tailwind arbitrary value.
 <span class="badge badge-error font-[var(--br-mono-font)] text-[10px]">#DUE</span>
 ```
 
-`border-radius = 0` tự động qua `--radius-selector: 0` trong theme.
+`border-radius = 0` automatically applied via `--radius-selector: 0` in theme.
 
 ### Navigation
 
@@ -213,9 +223,9 @@ Apply custom font: `font-[var(--br-heading-font)]` — Tailwind arbitrary value.
       <span class="badge badge-outline font-[var(--br-mono-font)] text-[10px]">#N5</span>
     </div>
     <h2 class="card-title font-[var(--br-heading-font)] text-xl uppercase tracking-tight leading-tight">
-      LESSON 05 — Gia đình
+      LESSON 05 — Family
     </h2>
-    <p class="text-sm text-neutral">Nhà ở và các phòng trong nhà</p>
+    <p class="text-sm text-neutral">Home and rooms in the house</p>
     <div class="divider my-0 opacity-20"></div>
     <div class="stats stats-horizontal -mx-4 -mb-4">
       <div class="stat p-3">
@@ -263,12 +273,61 @@ Apply custom font: `font-[var(--br-heading-font)]` — Tailwind arbitrary value.
 
 ## Pitch Accent Bars (Custom Component)
 
-Không có DaisyUI component tương đương — implement custom:
+No DaisyUI equivalent — implement custom:
 
 - High (H): `w-[18px] h-[11px] bg-primary border border-base-content/30`
 - Low (L): `w-[18px] h-[5px] bg-base-300 border border-base-content/15 opacity-70`
 - Kana label: `text-[11px] font-[var(--br-jp-font)] mt-[3px]`
 - Container: `flex items-end gap-px`
+
+---
+
+## Component States
+
+### Focus-visible
+**must** preserve DaisyUI's default `focus-visible` ring — do not override with `focus:outline-none` or `focus:ring-0`. For custom interactive elements not using DaisyUI: **must** add `focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1`.
+
+### Disabled
+**must** use `disabled` HTML attribute combined with `disabled:opacity-40 disabled:cursor-not-allowed`. Do not use `pointer-events-none` as a substitute — screen readers still need to announce the disabled state.
+
+### Loading
+**must** set `disabled` on the button when loading to prevent double-submit:
+```html
+<button class="btn btn-primary" disabled>
+  <span class="loading loading-spinner loading-xs"></span>
+  LOADING
+</button>
+```
+
+### Error (inputs)
+**must** use `input-error` + `label-text-alt text-error`:
+```html
+<input class="input input-bordered input-error w-full" />
+<label class="label">
+  <span class="label-text-alt text-error font-[var(--br-mono-font)] text-[10px]">ERROR: ...</span>
+</label>
+```
+
+### Hover
+Cards: `hover:border-l-4 hover:border-l-primary transition-colors duration-[120ms]` — already in Lesson Card pattern. Buttons: DaisyUI handles hover — **should not** add custom hover styles.
+
+---
+
+## Anti-patterns
+
+**must not:**
+- Use `rounded-*` — theme already sets `--radius-*: 0`, will override
+- Use `shadow-*` — theme already sets `--depth: 0`, will override
+- Use `--br-heading-font` (Barlow Condensed) for Japanese text — no kana/kanji glyphs
+- Use arbitrary colors (`text-[#FF0000]`) — **must** use semantic tokens (`text-error`)
+- Use `text-black` / `text-white` — use `text-base-content` / `text-primary-content`
+- Add `border-radius` via inline style — theme controls all radius
+- Skip `font-[var(--br-mono-font)]` on labels, tags, counters, metadata
+
+**should not:**
+- Mix heading font and body font in the same UI element
+- Add animations without wrapping in `@media (prefers-reduced-motion: no-preference)`
+- Override `card-body` padding (`p-4`) with other utility classes
 
 ---
 
@@ -279,14 +338,14 @@ Không có DaisyUI component tương đương — implement custom:
 | Structural card border | `border border-base-content/10` |
 | Active/hover accent rail | `border-l-4 border-primary` |
 | Example blockquote | `border-l-4 border-primary` |
-| No shadow | `shadow-none` (hoặc không dùng shadow utility) |
-| No border-radius | Set trong theme — không cần thêm `rounded-none` |
+| No shadow | `shadow-none` (or omit shadow utility entirely) |
+| No border-radius | Set in theme — no need to add `rounded-none` |
 
 ---
 
 ## Animation
 
-Wrap trong `@media (prefers-reduced-motion: no-preference)`. Không dùng `steps()`.
+Wrap in `@media (prefers-reduced-motion: no-preference)`. Do not use `steps()`.
 
 | Interaction | Tailwind / Custom | Duration |
 |---|---|---|
@@ -304,19 +363,19 @@ Wrap trong `@media (prefers-reduced-motion: no-preference)`. Không dùng `steps
 | Breakpoint | Layout | Key classes |
 |---|---|---|
 | < 640px (mobile) | Single col + Dock 3 tabs | `w-full`, `pb-16` (dock clearance) |
-| 640px–1024px | `max-w-lg mx-auto` + Dock | `sm:grid-cols-2` cho lesson grid |
+| 640px–1024px | `max-w-lg mx-auto` + Dock | `sm:grid-cols-2` for lesson grid |
 | > 1024px | Sidebar `w-56` + `flex-1` main | `lg:hidden` Dock, `lg:block` Sidebar |
 
-Min touch target: `min-h-[44px]` — DaisyUI `btn` đã đạt mặc định.
+Min touch target: `min-h-[44px]` — DaisyUI `btn` meets this by default.
 
 ---
 
 ## Accessibility
 
-- Contrast 4.5:1 tối thiểu — beige nền đủ tối với ink `#111`
-- `aria-label` cho mọi icon-only button (Audio, nav icons)
-- Keyboard navigable — DaisyUI components hỗ trợ sẵn
-- `prefers-reduced-motion` — wrap tất cả animation
+- Minimum contrast 4.5:1 — beige background is sufficiently dark against ink `#111`
+- `aria-label` on all icon-only buttons (Audio, nav icons)
+- Keyboard navigable — DaisyUI components support this out of the box
+- `prefers-reduced-motion` — wrap all animations
 
 ---
 
@@ -344,10 +403,30 @@ Min touch target: `min-h-[44px]` — DaisyUI `btn` đã đạt mặc định.
 
 ---
 
+## QA Checklist
+
+Run when reviewing any change in `src/components/**`, `src/routes/**`, `src/**/*.css`:
+
+- [ ] No `rounded-*` classes (theme sets `--radius-*: 0`)
+- [ ] No `shadow-*` classes (theme sets `--depth: 0`)
+- [ ] Japanese text uses `font-[var(--br-jp-font)]`, not heading/mono font
+- [ ] Icon-only buttons have `aria-label`
+- [ ] DaisyUI `focus-visible` ring not overridden
+- [ ] Disabled state uses HTML `disabled` attribute + `disabled:opacity-40`
+- [ ] Loading state button has `disabled` attribute
+- [ ] Colors use semantic tokens, not arbitrary hex values
+- [ ] Animations wrapped in `@media (prefers-reduced-motion: no-preference)`
+- [ ] Mobile touch targets ≥ `min-h-[44px]`
+- [ ] New component uses DaisyUI base + theme tokens + `--br-*` font vars
+- [ ] No complex UI inlined in route/page — extracted into a component
+- [ ] No duplicate component created — checked `src/components/` first
+
+---
+
 ## Performance Targets
 
-- Bundle: ≤ 500KB gzip (DaisyUI tree-shakes qua Tailwind v4 — chỉ build class đã dùng)
+- Bundle: ≤ 500KB gzip (DaisyUI tree-shakes via Tailwind v4 — only builds used classes)
 - LCP ≤ 2.5s. CLS ≤ 0.1
 - Lighthouse: PWA ≥ 90 | Performance ≥ 85 | Accessibility ≥ 90 | SEO ≥ 90
 - Vocabulary JSON: lazy-load per book
-- Audio: lazy-load sau first interaction, < 80KB tổng
+- Audio: lazy-load after first interaction, < 80KB total

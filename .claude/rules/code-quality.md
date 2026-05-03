@@ -1,7 +1,11 @@
 ---
 alwaysApply: true
-applyTo: **/*.ts, **/*.tsx, **/*.js, **/*.jsx
 description: This file describes the code quality standards for the project.
+paths:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+  - "src/**/*.js"
+  - "src/**/*.jsx"
 ---
 
 # Code Quality
