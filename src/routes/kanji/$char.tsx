@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import { StrokeOrderAnimation } from '../../components/kanji/StrokeOrderAnimation'
 import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
+import { Separator } from '../../components/ui/separator'
+import { Skeleton } from '../../components/ui/skeleton'
 import { getAllKanji, upsertKanjiCard } from '../../db/kanji'
 import { db } from '../../db/schema'
 import { useKanji } from '../../hooks/useKanji'
@@ -60,9 +62,9 @@ function KanjiDetailPage() {
   if (isLoading) {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <div className="skeleton h-20 w-20" />
-        <div className="skeleton h-6 w-48" />
-        <div className="skeleton h-32 w-full" />
+        <Skeleton className="h-20 w-20" />
+        <Skeleton className="h-6 w-48" />
+        <Skeleton className="h-32 w-full" />
       </div>
     )
   }
@@ -271,7 +273,7 @@ function KanjiDetailPage() {
             {badgeRow}
           </div>
         </div>
-        <div className="divider my-0 opacity-20" />
+        <Separator className="my-0 opacity-20" />
         {readingsBlock}
         {meaningsBlock}
         {hanVietBlock}

@@ -5,6 +5,7 @@ import { KanjiCard } from '../../components/kanji/KanjiCard'
 import { KanjiLessonPanel } from '../../components/kanji/KanjiLessonPanel'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
+import { Skeleton } from '../../components/ui/skeleton'
 import { useKanjiList } from '../../hooks/useKanjiList'
 import { cn } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
@@ -185,7 +186,7 @@ function BrowsePanel({ userId, stickyFilters = false }: BrowsePanelProps) {
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
             {Array.from({ length: 12 }).map((_, i) => (
               // eslint-disable-next-line react/no-array-index-key
-              <div key={i} className="skeleton h-24" />
+              <Skeleton key={i} className="h-24" />
             ))}
           </div>
         )}

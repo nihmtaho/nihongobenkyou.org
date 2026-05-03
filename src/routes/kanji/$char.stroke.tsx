@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { StrokeOrderAnimation } from '../../components/kanji/StrokeOrderAnimation'
 import { Button } from '../../components/ui/button'
+import { Skeleton } from '../../components/ui/skeleton'
 import { useKanji } from '../../hooks/useKanji'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -19,8 +20,8 @@ function StrokeOrderPage() {
   if (isLoading) {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-64 w-full" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-64 w-full" />
       </div>
     )
   }

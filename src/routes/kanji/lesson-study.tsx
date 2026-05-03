@@ -10,6 +10,7 @@ import { QuizCard } from '../../components/study/QuizCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
 import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
+import { Skeleton } from '../../components/ui/skeleton'
 import { useKanjiLessonSession } from '../../hooks/useKanjiLessonSession'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -56,8 +57,8 @@ function KanjiLessonStudyPage() {
   if (session.phase === 'loading') {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-64 w-full max-w-sm mx-auto" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-64 w-full max-w-sm mx-auto" />
       </div>
     )
   }

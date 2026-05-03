@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { KanjiStudyFlipCard } from '../../components/kanji/KanjiStudyFlipCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
 import { Button } from '../../components/ui/button'
+import { Skeleton } from '../../components/ui/skeleton'
 import { db } from '../../db/schema'
 import { useSRS } from '../../hooks/useSRS'
 import { useAuthStore } from '../../stores/authStore'
@@ -107,8 +108,8 @@ function KanjiReviewPage() {
   if (phase === 'loading') {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-64 w-full max-w-sm mx-auto" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-64 w-full max-w-sm mx-auto" />
       </div>
     )
   }
@@ -203,7 +204,7 @@ function KanjiReviewPage() {
       />
 
       {!isCardReady
-        ? <div className="skeleton h-64 w-full max-w-sm mx-auto" />
+        ? <Skeleton className="h-64 w-full max-w-sm mx-auto" />
         : <KanjiStudyFlipCard key={char} kanji={kanji} onRate={handleRate} />}
     </div>
   )
