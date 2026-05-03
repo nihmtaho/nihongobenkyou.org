@@ -128,7 +128,7 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
     <div className="flex flex-col">
       {stickyStats
         ? (
-            <div className="sticky top-0 z-10 bg-base-100 px-6 pt-4 pb-3 border-b border-base-content/10 flex flex-col gap-3">
+            <div className="sticky top-0 z-10 bg-background px-6 pt-4 pb-3 border-b border-border/10 flex flex-col gap-3">
               {headerContent}
             </div>
           )
@@ -207,7 +207,7 @@ function LessonAccordionRow({
   )
 
   return (
-    <div className="border border-base-content/10 bg-base-200">
+    <div className="border border-border/10 bg-card">
       <div
         role="button"
         tabIndex={0}
