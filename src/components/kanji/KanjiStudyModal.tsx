@@ -10,10 +10,11 @@ interface KanjiStudyModalProps {
   lessonNum: number
   stats: LessonStats
   type?: 'kanji' | 'vocab'
+  dueOnly?: boolean
   onClose: () => void
 }
 
-export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyModalProps) {
+export function KanjiStudyModal({ lessonNum, stats, type, dueOnly, onClose }: KanjiStudyModalProps) {
   const navigate = useNavigate()
   const { total, new: newCount, learning, review, mature } = stats
 
@@ -42,6 +43,7 @@ export function KanjiStudyModal({ lessonNum, stats, type, onClose }: KanjiStudyM
             type: options.sectionId as 'kanji' | 'vocab',
             mode: mode as 'flashcard' | 'quiz' | 'type',
             ...(options.subMode ? { vocabSubMode: options.subMode as VocabTypeSubMode } : {}),
+            ...(dueOnly ? { dueOnly: true } : {}),
           },
         })
       }}
