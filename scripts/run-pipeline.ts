@@ -44,6 +44,9 @@ async function runPipeline(): Promise<void> {
     process.exit(1)
   }
 
+  // Kanji pipeline runs first so write-manifest can include it in the manifest
+  await runStep('build-kanji', () => buildKanji())
+
   for (const config of enabledDatasets) {
     process.stdout.write(`\nBuilding dataset: ${config.id} (${config.version})\n`)
 
@@ -65,9 +68,6 @@ async function runPipeline(): Promise<void> {
   }
 
   process.stdout.write('\nAll datasets built.\n')
-
-  // Kanji pipeline — handles missing kanjivg/ internally (stroke_paths = null)
-  await runStep('build-kanji', () => buildKanji())
 }
 
 runPipeline().catch((err) => {
