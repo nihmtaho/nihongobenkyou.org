@@ -31,9 +31,9 @@ const WEEKDAY_LABELS: readonly string[] = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', '
 
 const RATING_CONFIG = [
   { label: 'Quên', color: 'text-destructive' },
-  { label: 'Khó', color: 'text-[var(--warning)]' },
-  { label: 'Ôn', color: 'text-[var(--success)]' },
-  { label: 'Dễ', color: 'text-[var(--info)]' },
+  { label: 'Khó', color: 'text-warning' },
+  { label: 'Ôn', color: 'text-success' },
+  { label: 'Dễ', color: 'text-info' },
 ] as const
 
 const STALE_TIME = 60_000
