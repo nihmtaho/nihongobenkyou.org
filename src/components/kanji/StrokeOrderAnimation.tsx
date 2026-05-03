@@ -1,5 +1,7 @@
 import type { StrokeData } from '../../types/kanji'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 
 const SPEED_KEY = 'kanji-stroke-speed'
 const BASE_DURATION_MS = 800
@@ -213,7 +215,7 @@ export function StrokeOrderAnimation({ strokes, viewBox = '0 0 109 109', classNa
   return (
     <div className={`flex flex-col gap-4 ${className ?? ''}`}>
       {/* SVG canvas */}
-      <div className="bg-base-200 border border-base-content/10 p-2 flex justify-center">
+      <div className="bg-card border border-border/10 p-2 flex justify-center">
         <svg
           viewBox={viewBox}
           width="200"
@@ -242,64 +244,63 @@ export function StrokeOrderAnimation({ strokes, viewBox = '0 0 109 109', classNa
       </div>
 
       {/* Stroke counter */}
-      <p className="font-[var(--br-mono-font)] text-[11px] uppercase text-neutral text-center">
+      <p className="font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground text-center">
         {`${displayCount} / ${strokes.length} strokes`}
       </p>
 
       {/* Controls */}
-      <div className="join w-full">
-        <button
-          type="button"
+      <ButtonGroup className="w-full">
+        <Button
+          variant="outline"
           aria-label="Previous stroke"
-          className="btn join-item flex-1 btn-outline"
+          className="flex-1"
           onClick={handlePrev}
           disabled={isReset}
         >
           <IconSkipBack />
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
           aria-label={isPlaying ? 'Pause' : 'Play'}
-          className="btn join-item flex-1 btn-primary"
+          className="flex-1"
           onClick={handlePlay}
         >
           {isPlaying ? <IconPause /> : <IconPlay />}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
           aria-label="Next stroke"
-          className="btn join-item flex-1 btn-outline"
+          className="flex-1"
           onClick={handleNext}
           disabled={isDone}
         >
           <IconSkipForward />
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
           aria-label="Reset"
-          className="btn join-item btn-outline"
           onClick={resetAll}
         >
           <IconRotateCcw />
-        </button>
-      </div>
+        </Button>
+      </ButtonGroup>
 
       {/* Speed selector */}
       <div className="flex items-center gap-2">
-        <span className="font-[var(--br-mono-font)] text-[10px] uppercase text-neutral">Speed</span>
-        <div className="join">
+        <span className="font-[var(--br-mono-font)] text-[10px] uppercase text-muted-foreground">Speed</span>
+        <ButtonGroup>
           {SPEEDS.map(s => (
-            <button
+            <Button
               key={s}
-              type="button"
-              className={`btn join-item btn-xs font-[var(--br-mono-font)] ${speed === s ? 'btn-primary' : 'btn-outline'}`}
+              variant={speed === s ? 'default' : 'outline'}
+              size="sm"
+              className="h-6 px-2 text-[10px] font-[var(--br-mono-font)]"
               onClick={() => handleSpeedChange(s)}
             >
               {s}
               ×
-            </button>
+            </Button>
           ))}
-        </div>
+        </ButtonGroup>
       </div>
     </div>
   )
