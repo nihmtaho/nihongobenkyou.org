@@ -1,3 +1,5 @@
+import { Alert, AlertDescription } from '@/components/ui/alert'
+
 import { useOfflineAuthNotice } from '../../hooks/useOfflineAuthNotice'
 
 export function OfflineAuthNotice() {
@@ -7,10 +9,12 @@ export function OfflineAuthNotice() {
     return null
 
   return (
-    <div role="alert" className="alert alert-warning rounded-none border-0 border-b border-base-content/10 py-2 px-4">
-      <span className="font-[var(--br-mono-font)] text-[11px] uppercase">
+    <Alert
+      className="rounded-none border-0 border-b border-border py-2 px-4 bg-[var(--warning)]/10 border-[var(--warning)]/50 text-[var(--warning)]"
+    >
+      <AlertDescription className="font-[var(--br-mono-font)] text-[11px] uppercase">
         Kết nối lại để tiếp tục đồng bộ
-      </span>
-    </div>
+      </AlertDescription>
+    </Alert>
   )
 }
