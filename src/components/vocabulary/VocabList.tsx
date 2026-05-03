@@ -4,6 +4,7 @@ import type { VocabItem } from '../../types/vocabulary'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useMemo, useRef, useState } from 'react'
 
+import { Skeleton } from '@/components/ui/skeleton'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
 import { VocabCard } from './VocabCard'
@@ -62,7 +63,7 @@ export function VocabList({ items, cards, userId, isLoading }: VocabListProps) {
     return (
       <div className="flex flex-col gap-4 p-4">
         {Array.from({ length: SKELETON_COUNT }, (_, i) => `skel-${i}`).map(key => (
-          <div key={key} className="skeleton h-[180px] w-full" />
+          <Skeleton key={key} className="h-[180px] w-full" />
         ))}
       </div>
     )
@@ -71,7 +72,7 @@ export function VocabList({ items, cards, userId, isLoading }: VocabListProps) {
   if (items.length === 0) {
     return (
       <div className="p-8 text-center">
-        <p className="font-[var(--br-mono-font)] text-neutral text-sm">
+        <p className="font-[var(--br-mono-font)] text-muted-foreground text-sm">
           No vocabulary — run `pnpm run build:dataset`
         </p>
       </div>
@@ -119,7 +120,7 @@ export function VocabList({ items, cards, userId, isLoading }: VocabListProps) {
       <div className="hidden lg:flex h-full">
         {/* Left — compact numbered index */}
         <div
-          className="w-[300px] xl:w-[340px] shrink-0 border-r border-base-content/10 overflow-auto outline-none"
+          className="w-[300px] xl:w-[340px] shrink-0 border-r border-border/10 overflow-auto outline-none"
           tabIndex={0}
           onKeyDown={handleIndexKeyDown}
           aria-label="Vocabulary index — use arrow keys to navigate"
@@ -138,7 +139,7 @@ export function VocabList({ items, cards, userId, isLoading }: VocabListProps) {
         </div>
 
         {/* Right — poster-scale detail view */}
-        <div className="flex-1 min-w-0 bg-base-200">
+        <div className="flex-1 min-w-0 bg-card">
           {selectedItem && (
             <VocabDetailPanel
               item={selectedItem}
