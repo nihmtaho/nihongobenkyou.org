@@ -165,7 +165,7 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
 
         {/* Header */}
         <div className="flex items-baseline justify-between gap-4">
-          <span className="text-[11px] font-[var(--br-mono-font)] font-bold uppercase tracking-[0.22em] text-base-content">
+          <span className="text-[11px] font-[var(--br-mono-font)] font-bold uppercase tracking-[0.22em] text-foreground">
             TIẾN ĐỘ HỌC
           </span>
           {isLoading
