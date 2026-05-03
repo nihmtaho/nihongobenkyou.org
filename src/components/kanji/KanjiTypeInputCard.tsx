@@ -1,5 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { removeDiacritics } from '../../lib/text-utils'
 
@@ -71,11 +73,11 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
     : 'border-l-primary'
 
   return (
-    <div className={`grid grid-cols-1 border border-base-content/10 border-l-4 ${accentClass} transition-colors`}>
+    <div className={`grid grid-cols-1 border border-border/10 border-l-4 ${accentClass} transition-colors`}>
 
       {/* ── Prompt panel ── */}
-      <div className="bg-base-200 p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-base-content/10 min-h-[30vh]">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">HÁN TỰ</p>
+      <div className="bg-card p-6 flex flex-col items-center justify-center text-center gap-4 border-b border-border/10 min-h-[30vh]">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">HÁN TỰ</p>
         <p
           className="text-8xl font-bold leading-none"
           style={{ fontFamily: 'var(--br-jp-font)' }}
@@ -86,7 +88,7 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
         {/* Hint content — input phase only */}
         {phase === 'input' && hint && showHint && (
           <div className="w-full flex items-center justify-center bg-primary/[0.08] border border-primary/25 border-l-[3px] border-l-primary px-3.5 py-2">
-            <span className="text-base font-semibold text-neutral" style={{ fontFamily: 'var(--br-jp-font)' }}>
+            <span className="text-base font-semibold text-muted-foreground" style={{ fontFamily: 'var(--br-jp-font)' }}>
               {hint}
             </span>
           </div>
@@ -100,7 +102,7 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 border font-[var(--br-mono-font)] text-[9px] uppercase tracking-wider transition-colors ${
               showHint
                 ? 'border-primary bg-primary/10 text-primary'
-                : 'border-base-content/20 bg-transparent text-base-content/40 hover:border-base-content/35 hover:text-base-content/60'
+                : 'border-foreground/20 bg-transparent text-foreground/40 hover:border-foreground/35 hover:text-foreground/60'
             }`}
           >
             {showHint ? <EyeOff size={12} /> : <Eye size={12} />}
@@ -112,10 +114,10 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
 
       {/* ── Input panel ── */}
       <div className="p-6 flex flex-col gap-5">
-        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">GÕ HÁN VIỆT</p>
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">GÕ HÁN VIỆT</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
+          <Input
             ref={inputRef}
             type="text"
             inputMode="text"
@@ -125,21 +127,21 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
             onKeyDown={handleKeyDown}
             placeholder="Gõ Hán Việt... (không cần dấu)"
             readOnly={phase === 'result'}
-            className={`input input-bordered w-full text-center text-2xl lg:text-3xl uppercase font-[var(--br-mono-font)] transition-colors ${
+            className={`w-full text-center text-2xl lg:text-3xl uppercase font-[var(--br-mono-font)] transition-colors ${
               phase === 'result'
                 ? isCorrect
-                  ? 'input-success'
-                  : 'input-error'
+                  ? 'border-success'
+                  : 'border-destructive'
                 : ''
             }`}
           />
 
           {phase === 'result' && (
             <div className="flex flex-col items-center gap-2 py-2">
-              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
                 {isCorrect ? 'HÁN VIỆT' : 'ĐÁP ÁN ĐÚNG'}
               </p>
-              <p className={`text-2xl lg:text-3xl font-bold font-[var(--br-mono-font)] uppercase ${isCorrect ? 'text-success' : 'text-error'}`}>
+              <p className={`text-2xl lg:text-3xl font-bold font-[var(--br-mono-font)] uppercase ${isCorrect ? 'text-success' : 'text-destructive'}`}>
                 {answer}
               </p>
             </div>
@@ -148,36 +150,37 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
           {phase === 'input'
             ? (
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="submit"
                     disabled={!raw.trim()}
-                    className="btn btn-primary flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
+                    className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                   >
                     KIỂM TRA
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
-                    className="btn btn-ghost font-[var(--br-mono-font)] text-[11px] uppercase"
+                    variant="ghost"
+                    className="font-[var(--br-mono-font)] text-[11px] uppercase"
                     onClick={doSkip}
                     title="Bỏ qua (Ctrl+Enter)"
                   >
                     SKIP
-                  </button>
+                  </Button>
                 </div>
               )
             : (
-                <button
+                <Button
                   type="submit"
-                  className={`btn flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${isCorrect ? 'btn-success' : 'btn-error'}`}
+                  className={`flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${isCorrect ? 'bg-success hover:bg-success/90 text-foreground' : 'bg-destructive hover:bg-destructive/90'}`}
                 >
                   {isCorrect ? '✓' : '✗'}
                   {' '}
                   TIẾP TỤC [ENTER]
-                </button>
+                </Button>
               )}
         </form>
 
-        <p className="text-[10px] font-[var(--br-mono-font)] text-base-content/30 text-center">
+        <p className="text-[10px] font-[var(--br-mono-font)] text-foreground/30 text-center">
           {hint ? 'Enter = kiểm tra · Ctrl+Enter = bỏ qua · Ctrl+H = hint' : 'Enter = kiểm tra · Ctrl+Enter = bỏ qua'}
         </p>
       </div>

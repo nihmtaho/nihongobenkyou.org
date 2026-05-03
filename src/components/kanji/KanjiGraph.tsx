@@ -91,7 +91,7 @@ export function KanjiGraph(props: KanjiGraphProps) {
     return (
       <div className="flex flex-col gap-3 items-center">
         <RadialFallback {...props} />
-        <p className="font-[var(--br-mono-font)] text-[10px] uppercase text-neutral">
+        <p className="font-[var(--br-mono-font)] text-[10px] uppercase text-muted-foreground">
           Static layout (low-power mode)
         </p>
       </div>
@@ -296,7 +296,7 @@ function CanvasGraph({ focusChar, nodes, onNodeClick }: KanjiGraphProps) {
         ref={canvasRef}
         width={320}
         height={320}
-        className="border border-base-content/10 bg-base-200 cursor-pointer"
+        className="border border-border/10 bg-card cursor-pointer"
         onClick={handleCanvasClick}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -311,10 +311,10 @@ function CanvasGraph({ focusChar, nodes, onNodeClick }: KanjiGraphProps) {
         >
           <p className="text-3xl font-bold" style={{ fontFamily: 'var(--br-jp-font)' }}>{popup.char}</p>
           <p className="font-[var(--br-heading-font)] font-bold uppercase">{popup.han_viet ?? '—'}</p>
-          <p className="text-xs text-neutral">{popup.meaning_en.slice(0, 2).join(', ')}</p>
+          <p className="text-xs text-muted-foreground">{popup.meaning_en.slice(0, 2).join(', ')}</p>
           <button
             type="button"
-            className="btn btn-xs btn-primary font-[var(--br-mono-font)] uppercase"
+            className="inline-flex items-center justify-center h-6 px-2 text-[9px] bg-primary text-primary-foreground font-[var(--br-mono-font)] uppercase"
             onClick={() => {
               setPopup(null)
               onNodeClick(popup.char)

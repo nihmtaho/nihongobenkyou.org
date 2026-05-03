@@ -2,6 +2,8 @@ import type { KanjiCardState, KanjiItem } from '../../types/kanji'
 import type { SRSRating } from '../../types/srs'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 
 interface KanjiFlipCardProps {
   kanji: KanjiItem
@@ -54,7 +56,7 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
             {/* Front */}
             <div
               style={{ backfaceVisibility: 'hidden' }}
-              className="card bg-base-100 border-2 border-base-content shadow-xl absolute inset-0 flex flex-col items-center justify-center p-6 gap-3"
+              className="bg-background border-2 border-foreground shadow-xl absolute inset-0 flex flex-col items-center justify-center p-6 gap-3"
             >
               <span
                 className="text-7xl font-bold leading-none"
@@ -62,7 +64,7 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
               >
                 {kanji.char}
               </span>
-              <span className="text-sm text-base-content/50 mt-2 font-[var(--br-mono-font)] uppercase">
+              <span className="text-sm text-foreground/50 mt-2 font-[var(--br-mono-font)] uppercase">
                 Tap to reveal
               </span>
             </div>
@@ -70,7 +72,7 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
             {/* Back */}
             <div
               style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-              className="card bg-base-100 border-2 border-primary shadow-xl absolute inset-0 flex flex-col items-center justify-center p-6 gap-3"
+              className="bg-background border-2 border-primary shadow-xl absolute inset-0 flex flex-col items-center justify-center p-6 gap-3"
             >
               <span
                 className="text-4xl font-bold"
@@ -85,12 +87,12 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
 
               <div className="flex flex-col items-center gap-1">
                 {kanji.onyomi.length > 0 && (
-                  <p className="text-sm font-[var(--br-jp-font)] text-neutral">
+                  <p className="text-sm font-[var(--br-jp-font)] text-muted-foreground">
                     {kanji.onyomi.join('・')}
                   </p>
                 )}
                 {kanji.kunyomi.length > 0 && (
-                  <p className="text-sm font-[var(--br-jp-font)] text-neutral">
+                  <p className="text-sm font-[var(--br-jp-font)] text-muted-foreground">
                     {kanji.kunyomi.join('・')}
                   </p>
                 )}
@@ -102,7 +104,7 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
 
               {kanji.mnemonic_vi && (
                 <div className="border-l-4 border-primary pl-3 self-start">
-                  <p className="text-xs font-[var(--br-jp-font)] text-neutral">{kanji.mnemonic_vi}</p>
+                  <p className="text-xs font-[var(--br-jp-font)] text-muted-foreground">{kanji.mnemonic_vi}</p>
                 </div>
               )}
             </div>
@@ -112,16 +114,16 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
 
       {/* Rating buttons */}
       {showButtons && (
-        <div className="join w-full">
-          <button className="btn join-item flex-1 btn-error font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(0)}>Again</button>
-          <button className="btn join-item flex-1 btn-warning font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(1)}>Hard</button>
-          <button className="btn join-item flex-1 btn-success font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(2)}>Good</button>
-          <button className="btn join-item flex-1 btn-info font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(3)}>Easy</button>
-        </div>
+        <ButtonGroup className="w-full">
+          <Button variant="destructive" className="flex-1 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(0)}>Again</Button>
+          <Button className="flex-1 bg-warning text-foreground hover:bg-warning/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(1)}>Hard</Button>
+          <Button className="flex-1 bg-success text-foreground hover:bg-success/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(2)}>Good</Button>
+          <Button className="flex-1 bg-info text-foreground hover:bg-info/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(3)}>Easy</Button>
+        </ButtonGroup>
       )}
 
       {isFlipped && (
-        <p className="text-xs text-base-content/40 font-[var(--br-mono-font)]">← Again &nbsp;|&nbsp; Good →</p>
+        <p className="text-xs text-foreground/40 font-[var(--br-mono-font)]">← Again &nbsp;|&nbsp; Good →</p>
       )}
     </div>
   )
