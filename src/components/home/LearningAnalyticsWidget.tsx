@@ -25,14 +25,14 @@ const STAT_META: StatMeta[] = [
 ]
 
 const COUNT_COLORS: Record<StatKey, string> = {
-  new: 'text-base-content/50',
+  new: 'text-foreground/50',
   learning: 'text-warning',
   review: 'text-info',
   mature: 'text-success',
 }
 
 const LEGEND_ITEMS: LegendItem[] = [
-  { key: 'new', label: 'Chưa học', dotClass: 'bg-base-300 border border-base-content/20' },
+  { key: 'new', label: 'Chưa học', dotClass: 'bg-secondary border border-foreground/20' },
   { key: 'learning', label: 'Đang học', dotClass: 'bg-warning' },
   { key: 'review', label: 'Ôn tập', dotClass: 'bg-info' },
   { key: 'mature', label: 'Đã thuộc', dotClass: 'bg-success' },
@@ -76,12 +76,12 @@ function SubjectRow({
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-[0.18em] text-base-content/50">
+      <span className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-[0.18em] text-foreground/50">
         {label}
       </span>
 
-      {/* Stacked progress bar — bg-base-300 is the "new/unseen" fill */}
-      <div className="flex h-3 w-full bg-base-300 overflow-hidden">
+      {/* Stacked progress bar — bg-secondary is the "new/unseen" fill */}
+      <div className="flex h-3 w-full bg-secondary overflow-hidden">
         <motion.div
           className="bg-warning h-full flex-none"
           style={{ transformOrigin: 'left', width: `${learningPct}%` }}
@@ -114,7 +114,7 @@ function SubjectRow({
             >
               <AnimatedNumber value={stats[key]} delay={animDelay + i * 0.06} />
             </span>
-            <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-base-content/40 tracking-wide leading-tight mt-0.5">
+            <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/40 tracking-wide leading-tight mt-0.5">
               {statLabel}
             </span>
           </div>
@@ -122,7 +122,7 @@ function SubjectRow({
       </div>
 
       {nextReview && (
-        <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-base-content/40 text-right leading-none">
+        <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/40 text-right leading-none">
           ôn tiếp:
           {' '}
           {nextReview}
@@ -135,13 +135,13 @@ function SubjectRow({
 function SkeletonRow() {
   return (
     <div className="flex flex-col gap-3">
-      <div className="h-2.5 w-16 bg-base-300 animate-pulse" />
-      <div className="h-3 w-full bg-base-300 animate-pulse" />
+      <div className="h-2.5 w-16 bg-secondary animate-pulse" />
+      <div className="h-3 w-full bg-secondary animate-pulse" />
       <div className="grid grid-cols-4">
         {[0, 1, 2, 3].map(i => (
           <div key={i} className="flex flex-col gap-1">
-            <div className="h-6 w-8 bg-base-300 animate-pulse" />
-            <div className="h-2 w-12 bg-base-300 animate-pulse" />
+            <div className="h-6 w-8 bg-secondary animate-pulse" />
+            <div className="h-2 w-12 bg-secondary animate-pulse" />
           </div>
         ))}
       </div>
@@ -157,7 +157,7 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
-      className="bg-base-200 border border-base-content/10 overflow-hidden"
+      className="bg-card border border-border/10 overflow-hidden"
     >
       <div className="h-[3px] bg-primary w-full" />
 
@@ -165,13 +165,13 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
 
         {/* Header */}
         <div className="flex items-baseline justify-between gap-4">
-          <span className="text-[11px] font-[var(--br-mono-font)] font-bold uppercase tracking-[0.22em] text-base-content">
+          <span className="text-[11px] font-[var(--br-mono-font)] font-bold uppercase tracking-[0.22em] text-foreground">
             TIẾN ĐỘ HỌC
           </span>
           {isLoading
-            ? <div className="h-2.5 w-28 bg-base-300 animate-pulse" />
+            ? <div className="h-2.5 w-28 bg-secondary animate-pulse" />
             : stats && (
-              <span className="text-[10px] font-[var(--br-mono-font)] text-base-content/40">
+              <span className="text-[10px] font-[var(--br-mono-font)] text-foreground/40">
                 {stats.vocab.total}
                 {' '}
                 từ vựng
@@ -190,7 +190,7 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
           ? <SkeletonRow />
           : stats && <SubjectRow label="TỪ VỰNG" stats={stats.vocab} animDelay={0.15} />}
 
-        <div className="h-px bg-base-content/10" />
+        <div className="h-px bg-foreground/10" />
 
         {/* Kanji section */}
         {isLoading
@@ -198,11 +198,11 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
           : stats && <SubjectRow label="HÁN TỰ" stats={stats.kanji} animDelay={0.38} />}
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5 border-t border-base-content/10">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5 border-t border-foreground/10">
           {LEGEND_ITEMS.map(({ key, label, dotClass }) => (
             <div key={key} className="flex items-center gap-1.5">
               <span className={`w-2 h-2 inline-block flex-none ${dotClass}`} />
-              <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-base-content/40 tracking-wide">
+              <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/40 tracking-wide">
                 {label}
               </span>
             </div>

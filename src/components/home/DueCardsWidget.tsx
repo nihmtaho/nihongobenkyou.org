@@ -3,6 +3,9 @@ import type { VocabItem, VocabWithSRS } from '../../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { db } from '../../db/schema'
 import { useDueCards } from '../../hooks/useDueCards'
 import { useStudySessionStore } from '../../stores/studySessionStore'
@@ -68,34 +71,38 @@ export function DueCardsWidget({ userId }: DueCardsWidgetProps) {
   }
 
   if (isLoading) {
-    return <div className="skeleton h-16 w-full" />
+    return <Skeleton className="h-16 w-full" />
   }
 
   const count = cards?.length ?? 0
 
   return (
     <>
-      <div className="card bg-base-200 border border-base-content/10 p-4">
-        <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral mb-2">
-          DUE TODAY
-        </p>
-        <div className="flex items-baseline gap-2">
-          <span className="text-4xl font-bold font-[var(--br-mono-font)]">{count}</span>
-          <span className="text-sm font-[var(--br-mono-font)] text-neutral uppercase">CARDS</span>
-        </div>
-        {count === 0
-          ? (
-              <p className="text-sm font-[var(--br-jp-font)] text-neutral mt-2">すごい! All caught up.</p>
-            )
-          : (
-              <button
-                className="btn btn-primary btn-sm mt-3 font-[var(--br-mono-font)] self-start"
-                onClick={() => setShowConfig(true)}
-              >
-                STUDY DUE
-              </button>
-            )}
-      </div>
+      <Card className="p-4">
+        <CardContent className="p-0">
+          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-2">
+            DUE TODAY
+          </p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-bold font-[var(--br-mono-font)]">{count}</span>
+            <span className="text-sm font-[var(--br-mono-font)] text-muted-foreground uppercase">CARDS</span>
+          </div>
+          {count === 0
+            ? (
+                <p className="text-sm font-[var(--br-jp-font)] text-muted-foreground mt-2">すごい! All caught up.</p>
+              )
+            : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="mt-3 font-[var(--br-mono-font)] self-start"
+                  onClick={() => setShowConfig(true)}
+                >
+                  STUDY DUE
+                </Button>
+              )}
+        </CardContent>
+      </Card>
 
       {showConfig && (
         <StudyConfigModal

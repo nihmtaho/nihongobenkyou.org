@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useReviewStats } from '../../hooks/useReviewStats'
 
 interface ReviewActivityWidgetProps {
@@ -18,15 +20,15 @@ export function ReviewActivityWidget({ userId }: ReviewActivityWidgetProps) {
   const { data: stats, isLoading } = useReviewStats(userId)
 
   return (
-    <div className="card bg-base-200 border border-base-content/10">
-      <div className="card-body p-4 gap-4">
+    <Card>
+      <CardContent className="p-4 flex flex-col gap-4">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
             CHI TIẾT ÔN TẬP
           </p>
           {stats && (
-            <span className="text-[10px] font-[var(--br-mono-font)] text-neutral">
+            <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
               TỔNG
               {' '}
               {stats.totalCount}
@@ -87,8 +89,8 @@ export function ReviewActivityWidget({ userId }: ReviewActivityWidgetProps) {
           <ActivityDotGrid stats={stats} isLoading={isLoading} />
           <RatingDistribution stats={stats} isLoading={isLoading} />
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -108,18 +110,18 @@ function StatChip({
   isLoading: boolean
 }) {
   return (
-    <div className="bg-base-300/50 border border-base-content/10 p-2 flex flex-col gap-1">
+    <div className="bg-secondary/50 border border-border/10 p-2 flex flex-col gap-1">
       <span className={`text-[11px] font-[var(--br-mono-font)] ${iconColor} flex items-center gap-1`}>
         <span>{icon}</span>
-        <span className="text-neutral text-[9px] uppercase tracking-wider">{label}</span>
+        <span className="text-muted-foreground text-[9px] uppercase tracking-wider">{label}</span>
       </span>
       {isLoading
-        ? <div className="skeleton h-4 w-8" />
+        ? <Skeleton className="h-4 w-8" />
         : (
             <p className="text-base font-bold font-[var(--br-mono-font)] leading-none">
               {value}
               {' '}
-              <span className="text-[10px] font-normal text-neutral">{unit}</span>
+              <span className="text-[10px] font-normal text-muted-foreground">{unit}</span>
             </p>
           )}
     </div>
@@ -137,7 +139,7 @@ function ActivityDotGrid({
 }) {
   return (
     <div>
-      <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-2">
+      <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest mb-2">
         7 NGÀY GẦN NHẤT
       </p>
       {isLoading
@@ -145,8 +147,8 @@ function ActivityDotGrid({
             <div className="flex gap-1.5">
               {Array.from({ length: 7 }, (_, i) => i).map(i => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <div className="skeleton w-full h-8" />
-                  <div className="skeleton h-2 w-4" />
+                  <Skeleton className="w-full h-8" />
+                  <Skeleton className="h-2 w-4" />
                 </div>
               ))}
             </div>
@@ -161,7 +163,7 @@ function ActivityDotGrid({
                   : 4
                 const intensity = maxCount > 0 ? day.count / maxCount : 0
                 const bgClass = day.count === 0
-                  ? 'bg-base-300'
+                  ? 'bg-secondary'
                   : intensity > 0.7
                     ? 'bg-primary'
                     : intensity > 0.3
@@ -172,20 +174,20 @@ function ActivityDotGrid({
                   <div key={day.date} className="flex-1 flex flex-col items-center gap-1">
                     <span
                       className={`text-[9px] font-[var(--br-mono-font)] font-bold leading-none ${
-                        day.count > 0 ? 'text-base-content/70' : 'invisible'
+                        day.count > 0 ? 'text-foreground/70' : 'invisible'
                       }`}
                     >
                       {day.count > 0 ? day.count : '0'}
                     </span>
                     <motion.div
-                      className={`w-full ${bgClass} ${isToday ? 'border-t-2 border-base-content' : ''}`}
+                      className={`w-full ${bgClass} ${isToday ? 'border-t-2 border-foreground' : ''}`}
                       style={{ height: barHeight }}
                       initial={{ scaleY: 0, originY: '100%' }}
                       animate={{ scaleY: 1 }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}
                     />
                     <span
-                      className={`text-[9px] font-[var(--br-mono-font)] ${isToday ? 'text-primary font-bold' : 'text-neutral'}`}
+                      className={`text-[9px] font-[var(--br-mono-font)] ${isToday ? 'text-primary font-bold' : 'text-muted-foreground'}`}
                     >
                       {day.label}
                     </span>
@@ -209,10 +211,10 @@ function RatingDistribution({
 
   return (
     <div>
-      <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest mb-2">
+      <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest mb-2">
         PHÂN BỔ ĐÁNH GIÁ
         {total7Days > 0 && (
-          <span className="ml-1 text-neutral/60">
+          <span className="ml-1 text-muted-foreground/60">
             (
             {total7Days}
             {' '}
@@ -223,7 +225,7 @@ function RatingDistribution({
       {isLoading
         ? (
             <div className="flex flex-col gap-1.5">
-              {['a', 'b', 'c', 'd'].map(k => <div key={k} className="skeleton h-4 w-full" />)}
+              {['a', 'b', 'c', 'd'].map(k => <Skeleton key={k} className="h-4 w-full" />)}
             </div>
           )
         : (
@@ -233,7 +235,7 @@ function RatingDistribution({
                   <span className={`text-[10px] font-[var(--br-mono-font)] w-8 ${r.color}`}>
                     {r.label}
                   </span>
-                  <div className="flex-1 bg-base-300 h-1.5">
+                  <div className="flex-1 bg-secondary h-1.5">
                     <motion.div
                       className={`${RATING_BAR_COLORS[r.color] ?? 'bg-neutral'} h-full`}
                       style={{ width: `${r.pct}%` }}
@@ -242,7 +244,7 @@ function RatingDistribution({
                       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: i * 0.08 }}
                     />
                   </div>
-                  <span className="text-[10px] font-[var(--br-mono-font)] text-neutral w-12 text-right">
+                  <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground w-12 text-right">
                     {r.count}
                     {' '}
                     (
