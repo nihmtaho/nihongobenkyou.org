@@ -1,12 +1,9 @@
 import type { SRSRating } from '../../../types/srs'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 
 const RATING_LABELS: Record<SRSRating, string> = { 0: 'Again', 1: 'Hard', 2: 'Good', 3: 'Easy' }
-const RATING_CLASSES: Record<SRSRating, string> = {
-  0: 'btn-error',
-  1: 'btn-warning',
-  2: 'btn-success',
-  3: 'btn-info',
-}
+const RATING_VARIANTS = ['destructive', 'warning', 'success', 'info'] as const
 
 interface RatingBarProps {
   onRate: (rating: SRSRating) => void
@@ -14,12 +11,13 @@ interface RatingBarProps {
 
 export function RatingBar({ onRate }: RatingBarProps) {
   return (
-    <div className="join w-full">
+    <ButtonGroup className="w-full">
       {([0, 1, 2, 3] as SRSRating[]).map((r, idx) => (
-        <button
+        <Button
           key={r}
           type="button"
-          className={`btn join-item flex-1 ${RATING_CLASSES[r]} font-[var(--br-mono-font)] text-[11px] flex flex-col gap-0.5 py-2`}
+          variant={RATING_VARIANTS[r]}
+          className="flex-1 font-[var(--br-mono-font)] text-[11px] flex flex-col gap-0.5 py-2 h-auto"
           onClick={(e) => {
             e.stopPropagation()
             onRate(r)
@@ -27,8 +25,8 @@ export function RatingBar({ onRate }: RatingBarProps) {
         >
           <span className="font-bold">{RATING_LABELS[r]}</span>
           <span className="opacity-50 text-[9px]">{`[${idx + 1}]`}</span>
-        </button>
+        </Button>
       ))}
-    </div>
+    </ButtonGroup>
   )
 }

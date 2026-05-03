@@ -2,6 +2,8 @@ import type { Passage } from '../../types/passages'
 import type { SRSRating } from '../../types/srs'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 import { highlightSentence } from '../../lib/sentence-highlight'
 
 interface ReadingComprehensionCardProps {
@@ -11,6 +13,9 @@ interface ReadingComprehensionCardProps {
 }
 
 type Phase = 'reading' | 'questions' | 'results'
+
+const RATING_LABELS = ['Again', 'Hard', 'Good', 'Easy'] as const
+const RATING_VARIANTS = ['destructive', 'warning', 'success', 'info'] as const
 
 export function ReadingComprehensionCard({ passage, card, onRate }: ReadingComprehensionCardProps) {
   const [phase, setPhase] = useState<Phase>('reading')
@@ -43,8 +48,8 @@ export function ReadingComprehensionCard({ passage, card, onRate }: ReadingCompr
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
       {phase === 'reading' && (
-        <div className="card bg-base-100 border-2 border-base-content shadow-xl w-full p-6 flex flex-col gap-4">
-          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Đọc đoạn văn</p>
+        <div className="bg-background border-2 border-foreground w-full p-6 flex flex-col gap-4">
+          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Đọc đoạn văn</p>
           <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--br-jp-font)' }}>
             {passageParts.length === 1
               ? passageParts[0]
@@ -56,15 +61,15 @@ export function ReadingComprehensionCard({ passage, card, onRate }: ReadingCompr
                   </>
                 )}
           </p>
-          <button className="btn btn-primary w-full font-[var(--br-mono-font)]" onClick={() => setPhase('questions')}>
+          <Button className="w-full font-[var(--br-mono-font)]" onClick={() => setPhase('questions')}>
             Trả lời
-          </button>
+          </Button>
         </div>
       )}
 
       {phase === 'questions' && (
-        <div className="card bg-base-100 border-2 border-base-content shadow-xl w-full p-6 flex flex-col gap-4">
-          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">
+        <div className="bg-background border-2 border-foreground w-full p-6 flex flex-col gap-4">
+          <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">
             Câu hỏi
             {' '}
             {currentQ + 1}
@@ -77,68 +82,69 @@ export function ReadingComprehensionCard({ passage, card, onRate }: ReadingCompr
               <div className="flex flex-col gap-1">
                 {q.options.map((opt, oi) => {
                   const chosen = answers[qi]
-                  let cls = 'btn btn-outline btn-sm justify-start'
+                  let variant: React.ComponentProps<typeof Button>['variant'] = 'outline'
                   if (chosen !== null) {
                     if (oi === q.correct_index)
-                      cls = 'btn btn-success btn-sm justify-start'
+                      variant = 'success'
                     else if (oi === chosen)
-                      cls = 'btn btn-error btn-sm justify-start'
+                      variant = 'destructive'
                   }
                   return (
-                    <button
+                    <Button
                       key={opt}
-                      className={cls}
+                      size="sm"
+                      variant={variant}
+                      className="justify-start"
                       style={{ fontFamily: 'var(--br-jp-font)' }}
                       onClick={() => selectAnswer(qi, oi)}
                       disabled={answers[qi] !== null}
                     >
                       {opt}
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
             </div>
           ))}
           {allAnswered && (
-            <button className="btn btn-primary w-full font-[var(--br-mono-font)]" onClick={handleViewResults}>
+            <Button className="w-full font-[var(--br-mono-font)]" onClick={handleViewResults}>
               Xem kết quả
-            </button>
+            </Button>
           )}
         </div>
       )}
 
       {phase === 'results' && (
         <>
-          <div className="card bg-base-100 border-2 border-base-content shadow-xl w-full p-6 flex flex-col gap-3">
-            <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral">Kết quả</p>
-            <p className={`text-lg font-bold ${allCorrect ? 'text-success' : 'text-error'}`}>
+          <div className="bg-background border-2 border-foreground w-full p-6 flex flex-col gap-3">
+            <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Kết quả</p>
+            <p className={`text-lg font-bold ${allCorrect ? 'text-success' : 'text-destructive'}`}>
               {correctCount}
               /
               {passage.questions.length}
               {' '}
               đúng
             </p>
-            <div className="border-l-4 border-primary pl-3 text-sm text-base-content/70">
+            <div className="border-l-4 border-primary pl-3 text-sm text-foreground/70">
               {passage.text_vi}
             </div>
           </div>
-          <div className="flex gap-2 w-full">
+          <ButtonGroup className="w-full">
             {([0, 1, 2, 3] as SRSRating[]).map((r) => {
-              const labels = ['Again', 'Hard', 'Good', 'Easy']
-              const classes = ['btn-error', 'btn-warning', 'btn-success', 'btn-info']
               const preselected = allCorrect ? 2 : 0
               return (
-                <button
+                <Button
                   key={r}
-                  className={`btn flex-1 ${classes[r]} ${preselected === r ? 'ring-2 ring-offset-1 ring-base-content' : ''}`}
-                  aria-label={labels[r].toLowerCase()}
+                  variant={RATING_VARIANTS[r]}
+                  className={`flex-1 ${preselected === r ? 'ring-2 ring-offset-1 ring-foreground' : ''}`}
+                  aria-label={RATING_LABELS[r].toLowerCase()}
                   onClick={() => onRate(r)}
                 >
-                  {labels[r]}
-                </button>
+                  {RATING_LABELS[r]}
+                </Button>
               )
             })}
-          </div>
+          </ButtonGroup>
         </>
       )}
     </div>

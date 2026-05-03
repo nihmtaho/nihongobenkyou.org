@@ -24,7 +24,7 @@ function StudyDashboardPage() {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="sticky top-0 z-10 bg-base-100 border-b border-base-content/10">
+      <div className="sticky top-0 z-10 bg-background border-b border-border/10">
         <div className="max-w-5xl mx-auto">
           <div className="flex">
             {TABS.map(tab => (
@@ -35,13 +35,13 @@ function StudyDashboardPage() {
                   'flex-1 flex flex-col items-center gap-0.5 py-3 lg:py-4 transition-colors border-b-4',
                   activeTab === tab.id
                     ? 'bg-primary border-primary'
-                    : 'bg-base-100 border-transparent hover:bg-base-200',
+                    : 'bg-background border-transparent hover:bg-card',
                 ].join(' ')}
               >
                 <span
                   className={[
                     'font-[var(--br-jp-font)] text-xl font-bold leading-none',
-                    activeTab === tab.id ? 'text-primary-content' : 'text-base-content',
+                    activeTab === tab.id ? 'text-primary-content' : 'text-foreground',
                   ].join(' ')}
                 >
                   {tab.jp}
@@ -49,7 +49,7 @@ function StudyDashboardPage() {
                 <span
                   className={[
                     'text-[9px] font-[var(--br-mono-font)] uppercase tracking-widest',
-                    activeTab === tab.id ? 'text-primary-content/70' : 'text-neutral',
+                    activeTab === tab.id ? 'text-primary-content/70' : 'text-muted-foreground',
                   ].join(' ')}
                 >
                   {tab.label}

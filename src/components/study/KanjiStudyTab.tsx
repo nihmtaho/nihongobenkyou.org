@@ -2,8 +2,10 @@ import type { KanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import type { LessonStats } from '../../types/study'
 
 import { useMemo, useState } from 'react'
-import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
+import { Badge } from '@/components/ui/badge'
 
+import { Button } from '@/components/ui/button'
+import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import { useNextKanjiDue } from '../../hooks/useNextKanjiDue'
 import { formatNextReview } from '../../lib/next-review'
 import { SRSProgressBar } from '../common/SRSProgressBar'
@@ -80,7 +82,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
               {activeLessons.length > 0 && (
                 <div className="mb-4">
                   <SectionLabel label="BÀI ĐANG HỌC" count={activeLessons.length} />
-                  <div className="border border-base-content/10">
+                  <div className="border border-border/10">
                     {activeLessons.map((lesson, i) => (
                       <KanjiLessonRow
                         key={lesson.lessonNumber}
@@ -108,7 +110,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                   {unstartedLessons.map(lesson => (
                     <div
                       key={lesson.lessonNumber}
-                      className="flex items-center justify-between border-b border-base-content/10 last:border-b-0 px-4 py-2.5"
+                      className="flex items-center justify-between border-b border-border/10 last:border-b-0 px-4 py-2.5"
                     >
                       <div className="flex items-baseline gap-2">
                         <span className="font-[var(--br-heading-font)] text-sm font-bold uppercase">
@@ -126,8 +128,10 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                           từ
                         </span>
                       </div>
-                      <button
-                        className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+                      <Button
+                        size="xs"
+                        variant="outline"
+                        className="font-[var(--br-mono-font)] min-h-0 h-7"
                         onClick={() =>
                           setOpenModal({
                             lessonNum: lesson.lessonNumber,
@@ -141,7 +145,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                           })}
                       >
                         BẮT ĐẦU
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </UnstartedCollapse>
@@ -176,7 +180,7 @@ function KanjiLessonRow({
   return (
     <div
       className={[
-        'border-b border-base-content/10 last:border-b-0 p-3 lg:p-4',
+        'border-b border-border/10 last:border-b-0 p-3 lg:p-4',
         totalDue > 0 ? 'border-l-4 border-l-primary' : 'border-l-4 border-l-transparent',
       ].join(' ')}
     >
@@ -187,11 +191,11 @@ function KanjiLessonRow({
           {String(lessonNumber).padStart(2, '0')}
         </span>
         {totalDue > 0 && (
-          <span className="badge badge-error font-[var(--br-mono-font)] text-[10px]">
+          <Badge className="bg-destructive text-destructive-foreground font-[var(--br-mono-font)] text-[10px]">
             {totalDue}
             {' '}
             ĐH
-          </span>
+          </Badge>
         )}
       </div>
 
@@ -238,7 +242,7 @@ function KanjiSubRow({
     <div className="flex items-center gap-3 py-1.5">
       <div className="flex-none w-[72px]">
         <p className="text-[11px] font-[var(--br-jp-font)] text-base-content/80">{label}</p>
-        <p className="text-[9px] font-[var(--br-mono-font)] text-neutral/60">{labelVi}</p>
+        <p className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground/60">{labelVi}</p>
       </div>
       <div className="flex-1 min-w-0">
         <SRSProgressBar
@@ -251,7 +255,7 @@ function KanjiSubRow({
           <StatPip count={review} label="ÔN" className="text-info" />
           <StatPip count={mature} label="THUỘC" className="text-success" />
           {nextReview && (
-            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-base-content/35 tracking-widest ml-auto">
+            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-foreground/35 tracking-widest ml-auto">
               {nextReview}
             </span>
           )}
@@ -259,21 +263,24 @@ function KanjiSubRow({
       </div>
       <div className="flex gap-1.5 flex-none">
         {due > 0 && (
-          <button
-            className="btn btn-primary btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+          <Button
+            size="xs"
+            className="font-[var(--br-mono-font)] min-h-0 h-7"
             onClick={onOpenModal}
           >
             ÔN (
             {due}
             )
-          </button>
+          </Button>
         )}
-        <button
-          className="btn btn-outline btn-xs font-[var(--br-mono-font)] min-h-0 h-7"
+        <Button
+          size="xs"
+          variant="outline"
+          className="font-[var(--br-mono-font)] min-h-0 h-7"
           onClick={onOpenModal}
         >
           HỌC
-        </button>
+        </Button>
       </div>
     </div>
   )

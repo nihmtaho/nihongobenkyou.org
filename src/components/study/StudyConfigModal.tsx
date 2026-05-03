@@ -1,5 +1,8 @@
 import type { MeaningLanguage, StudyConfig, StudyMode, TypeInputSubMode } from '../../types/study'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
 import { useSettingsStore } from '../../stores/settingsStore'
 
 const CARD_COUNTS = [5, 10, 20, 50, 'all'] as const
@@ -51,13 +54,15 @@ export function StudyConfigModal({
   }
 
   return (
-    <dialog className="modal modal-open">
-      <div className="modal-box flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
-        <h3 className="font-bold text-lg">Study Configuration</h3>
+    <Dialog open onOpenChange={open => !open && onClose()}>
+      <DialogContent className="flex flex-col gap-4 max-h-[90vh] overflow-y-auto sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-bold text-lg">Study Configuration</DialogTitle>
+        </DialogHeader>
 
         {/* Mode */}
-        <div className="form-control gap-1">
-          <label className="label-text font-semibold">Mode</label>
+        <div className="flex flex-col gap-1">
+          <Label className="font-semibold">Mode</Label>
           <div className="flex gap-2 flex-wrap">
             {(
               [
@@ -70,21 +75,23 @@ export function StudyConfigModal({
                 { value: 'pitch-discrimination', label: 'Thanh điệu' },
               ] as { value: StudyMode, label: string }[]
             ).map(({ value: m, label }) => (
-              <button
+              <Button
                 key={m}
-                className={`btn btn-sm font-[var(--br-mono-font)] ${mode === m ? 'btn-primary' : 'btn-outline'}`}
+                size="sm"
+                variant={mode === m ? 'default' : 'outline'}
+                className="font-[var(--br-mono-font)]"
                 onClick={() => setMode(m)}
               >
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* Type-input sub-mode */}
         {mode === 'type-input' && (
-          <div className="form-control gap-2">
-            <label className="label-text font-semibold">Hướng gõ</label>
+          <div className="flex flex-col gap-2">
+            <Label className="font-semibold">Hướng gõ</Label>
             <div className="flex flex-col gap-2">
               {TYPE_INPUT_SUB_MODES.map(({ value, label, desc }) => (
                 <button
@@ -93,12 +100,12 @@ export function StudyConfigModal({
                   className={`flex flex-col items-start p-3 border text-left transition-colors ${
                     typeInputSubMode === value
                       ? 'border-primary bg-primary/10 border-l-4'
-                      : 'border-base-content/20 hover:border-base-content/40'
+                      : 'border-border/20 hover:border-border/40'
                   }`}
                   onClick={() => setTypeInputSubMode(value)}
                 >
                   <span className="text-sm font-semibold font-[var(--br-mono-font)]">{label}</span>
-                  <span className="text-[11px] text-neutral mt-0.5">{desc}</span>
+                  <span className="text-[11px] text-muted-foreground mt-0.5">{desc}</span>
                 </button>
               ))}
             </div>
@@ -106,78 +113,81 @@ export function StudyConfigModal({
         )}
 
         {/* Card count */}
-        <div className="form-control gap-1">
-          <label className="label-text font-semibold">Cards</label>
+        <div className="flex flex-col gap-1">
+          <Label className="font-semibold">Cards</Label>
           <div className="flex gap-2 flex-wrap">
             {CARD_COUNTS.map(c => (
-              <button
+              <Button
                 key={String(c)}
-                className={`btn btn-sm ${cardCount === c ? 'btn-primary' : 'btn-outline'}`}
+                size="sm"
+                variant={cardCount === c ? 'default' : 'outline'}
                 onClick={() => setCardCount(c)}
               >
                 {c}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* Order */}
-        <div className="form-control gap-1">
-          <label className="label-text font-semibold">Order</label>
+        <div className="flex flex-col gap-1">
+          <Label className="font-semibold">Order</Label>
           <div className="flex gap-2">
             {(['random', 'sequential'] as const).map(o => (
-              <button
+              <Button
                 key={o}
-                className={`btn btn-sm ${order === o ? 'btn-primary' : 'btn-outline'}`}
+                size="sm"
+                variant={order === o ? 'default' : 'outline'}
                 onClick={() => setOrder(o)}
               >
                 {o}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* Meaning language */}
-        <div className="form-control gap-1">
-          <label className="label-text font-semibold">Meaning Language</label>
+        <div className="flex flex-col gap-1">
+          <Label className="font-semibold">Meaning Language</Label>
           <div className="flex gap-2">
             {(['vi', 'en', 'both'] as MeaningLanguage[]).map(l => (
-              <button
+              <Button
                 key={l}
-                className={`btn btn-sm ${lang === l ? 'btn-primary' : 'btn-outline'}`}
+                size="sm"
+                variant={lang === l ? 'default' : 'outline'}
                 onClick={() => setLang(l)}
               >
                 {l === 'vi' ? 'Vietnamese' : l === 'en' ? 'English' : 'Both'}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* Lesson filter */}
         {availableLessons.length > 0 && (
-          <div className="form-control gap-1">
-            <label className="label-text font-semibold">Lessons (leave empty for all)</label>
+          <div className="flex flex-col gap-1">
+            <Label className="font-semibold">Lessons (leave empty for all)</Label>
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
               {availableLessons.map(l => (
-                <button
+                <Button
                   key={l.lesson_id}
-                  className={`btn btn-xs ${lessonIds.includes(l.lesson_id) ? 'btn-primary' : 'btn-outline'}`}
+                  size="xs"
+                  variant={lessonIds.includes(l.lesson_id) ? 'default' : 'outline'}
                   onClick={() => toggleLesson(l.lesson_id)}
                 >
                   L
                   {l.lesson_number}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
         )}
 
-        <div className="modal-action">
-          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
-          <button className="btn btn-primary" onClick={handleConfirm}>Start</button>
-        </div>
-      </div>
-      <form method="dialog" className="modal-backdrop" onClick={onClose} />
-    </dialog>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleConfirm}>Start</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

@@ -62,7 +62,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
             {/* ── Front ─────────────────────────── */}
             <div
               style={{ backfaceVisibility: 'hidden', ...GRID_FACE }}
-              className="card bg-base-100 border-2 border-base-content shadow-xl flex flex-col items-center justify-center p-10 gap-4 min-h-56"
+              className="bg-background border-2 border-foreground flex flex-col items-center justify-center p-10 gap-4 min-h-56"
             >
               <span
                 className={`${jpSize} font-bold leading-none`}
@@ -71,7 +71,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
                 {word}
               </span>
               <PitchAccentBars pattern={pitchPattern} kana={card.reading} />
-              <span className="text-[11px] text-base-content/40 font-[var(--br-mono-font)] uppercase tracking-widest mt-1">
+              <span className="text-[11px] text-foreground/40 font-[var(--br-mono-font)] uppercase tracking-widest mt-1">
                 Space / tap to reveal
               </span>
             </div>
@@ -79,13 +79,13 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
             {/* ── Back ──────────────────────────── */}
             <div
               style={{ backfaceVisibility: 'hidden', ...GRID_FACE_BACK }}
-              className="card bg-base-100 border-2 border-primary shadow-xl overflow-hidden flex flex-col"
+              className="bg-background border-2 border-primary overflow-hidden flex flex-col"
             >
               {/* Accent top bar */}
               <div className="h-1 bg-primary w-full shrink-0" />
 
               {/* Header zone */}
-              <div className="px-5 pt-4 pb-3 flex items-start gap-4 border-b border-base-content/10">
+              <div className="px-5 pt-4 pb-3 flex items-start gap-4 border-b border-border/10">
                 <div className="flex flex-col items-start shrink-0">
                   <span
                     className="text-4xl font-bold leading-none"
@@ -94,7 +94,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
                     {word}
                   </span>
                   {card.han_viet && (
-                    <span className="text-[10px] font-[var(--br-mono-font)] text-neutral uppercase tracking-wider mt-1">
+                    <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground uppercase tracking-wider mt-1">
                       {card.han_viet}
                     </span>
                   )}
@@ -104,13 +104,13 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
                     {primaryMeaning}
                   </p>
                   {secondaryMeaning && (
-                    <p className="text-sm text-neutral leading-snug">{secondaryMeaning}</p>
+                    <p className="text-sm text-muted-foreground leading-snug">{secondaryMeaning}</p>
                   )}
                 </div>
               </div>
 
               {/* Reading strip */}
-              <div className="px-5 py-2.5 flex items-center gap-4 border-b border-base-content/10 bg-base-200/50">
+              <div className="px-5 py-2.5 flex items-center gap-4 border-b border-border/10 bg-card/50">
                 <div className="flex flex-col gap-0.5">
                   <p
                     className="text-sm leading-none"
@@ -118,7 +118,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
                   >
                     {card.reading}
                   </p>
-                  <p className="text-[10px] font-[var(--br-mono-font)] text-neutral">{card.romaji}</p>
+                  <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">{card.romaji}</p>
                 </div>
                 {pitchPattern && (
                   <PitchAccentBars pattern={pitchPattern} kana={card.reading} />
@@ -131,7 +131,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
               {/* Content zone — examples */}
               {examples.length > 0 && (
                 <div className="px-5 py-3 flex flex-col gap-2">
-                  <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+                  <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
                     Ví dụ
                   </p>
                   {examples.map((ex, i) => (
@@ -142,7 +142,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
                       <p className="text-sm leading-snug" style={{ fontFamily: 'var(--br-jp-font)' }}>
                         {ex.ja}
                       </p>
-                      <p className="text-xs text-neutral" style={{ fontFamily: 'var(--br-jp-font)' }}>
+                      <p className="text-xs text-muted-foreground" style={{ fontFamily: 'var(--br-jp-font)' }}>
                         {ex.vi}
                       </p>
                     </div>
@@ -152,7 +152,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
 
               {/* Flip-back hint */}
               <div className="px-5 pb-3 pt-1 mt-auto">
-                <p className="text-[9px] font-[var(--br-mono-font)] text-base-content/20 uppercase tracking-widest text-right">
+                <p className="text-[9px] font-[var(--br-mono-font)] text-foreground/20 uppercase tracking-widest text-right">
                   tap / space to flip back
                 </p>
               </div>
@@ -164,7 +164,7 @@ export function FlipCard({ card, meaningLanguage, onRate }: FlipCardProps) {
       {/* Rating bar */}
       {isFlipped && <RatingBar onRate={onRate} />}
 
-      <p className="text-[10px] text-base-content/25 font-[var(--br-mono-font)] tracking-wide">
+      <p className="text-[10px] text-foreground/25 font-[var(--br-mono-font)] tracking-wide">
         {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · swipe'}
       </p>
     </div>

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   totalCardCount: number | undefined
@@ -25,12 +26,12 @@ export function SrsEmptyState({ totalCardCount, futureCards }: Props) {
         <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase">
           CHƯA CÓ THẺ
         </h1>
-        <p className="text-base-content/60 font-[var(--br-mono-font)] text-sm uppercase text-center">
+        <p className="text-foreground/60 font-[var(--br-mono-font)] text-sm uppercase text-center">
           Hãy thêm từ vựng để bắt đầu luyện tập
         </p>
-        <Link to="/books" className="btn btn-primary btn-sm font-[var(--br-heading-font)] uppercase">
-          Duyệt sách
-        </Link>
+        <Button asChild size="sm" className="font-[var(--br-heading-font)] uppercase">
+          <Link to="/books">Duyệt sách</Link>
+        </Button>
       </div>
     )
   }
@@ -44,13 +45,13 @@ export function SrsEmptyState({ totalCardCount, futureCards }: Props) {
       <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase text-success">
         TẤT CẢ ĐÃ XONG!
       </h1>
-      <p className="text-base-content/60 font-[var(--br-mono-font)] text-sm uppercase text-center">
+      <p className="text-foreground/60 font-[var(--br-mono-font)] text-sm uppercase text-center">
         Không có thẻ nào đến hạn hôm nay
         {nextLabel ? ` — thẻ tiếp theo ${nextLabel}` : ''}
       </p>
-      <Link to="/books" className="btn btn-outline btn-sm font-[var(--br-mono-font)] uppercase">
-        Xem sách
-      </Link>
+      <Button asChild size="sm" variant="outline" className="font-[var(--br-mono-font)] uppercase">
+        <Link to="/books">Xem sách</Link>
+      </Button>
     </div>
   )
 }
