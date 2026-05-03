@@ -72,7 +72,7 @@ function KanjiDetailPage() {
   if (isError || !kanji) {
     return (
       <div className="p-4 flex flex-col gap-4">
-        <p className="font-[var(--br-mono-font)] text-sm uppercase text-error">
+        <p className="font-[var(--br-mono-font)] text-sm uppercase text-destructive">
           Kanji not found:
           {' '}
           {char}

@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { DeckEditor } from '../../../components/custom-decks/DeckEditor'
 import { DeckList } from '../../../components/custom-decks/DeckList'
@@ -27,7 +28,7 @@ function CustomDecksPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center py-16">
-        <span className="loading loading-spinner loading-lg" />
+        <Loader2 className="animate-spin h-8 w-8" />
       </div>
     )
   }

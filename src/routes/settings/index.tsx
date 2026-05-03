@@ -26,11 +26,11 @@ function SettingsPage() {
       <SyncSection />
       <BackupSection />
       <AccountSection />
-      <div className="card bg-base-200 border border-base-content/10 p-4">
-        <h2 className="text-[11px] font-bold uppercase font-[var(--br-mono-font)] mb-3 text-neutral">
+      <div className="bg-card border border-border/10 p-4">
+        <h2 className="text-[11px] font-bold uppercase font-[var(--br-mono-font)] mb-3 text-muted-foreground">
           DATA CREDITS
         </h2>
-        <div className="flex flex-col gap-2 text-xs font-[var(--br-mono-font)] text-neutral">
+        <div className="flex flex-col gap-2 text-xs font-[var(--br-mono-font)] text-muted-foreground">
           <p>
             Kanji stroke data:
             {' '}

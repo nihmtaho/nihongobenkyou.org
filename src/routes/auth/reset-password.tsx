@@ -1,5 +1,8 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { AuthError, updatePassword } from '../../api/auth'
 import { supabase } from '../../api/supabase'
 
@@ -58,17 +61,19 @@ function ResetPasswordPage() {
   if (tokenExpired) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="card bg-base-100 border border-base-content/10 w-full max-w-sm">
-          <div className="card-body gap-4 text-center">
-            <h1 className="card-title font-[var(--br-heading-font)] text-2xl uppercase tracking-tight justify-center">
+        <div className="bg-background border border-border/10 w-full max-w-sm">
+          <div className="p-6 flex flex-col gap-4 text-center">
+            <h1 className="font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
               LIÊN KẾT HẾT HẠN
             </h1>
-            <p className="text-sm text-base-content/70">
+            <p className="text-sm text-foreground/70">
               Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ.
             </p>
-            <Link to="/auth/forgot-password" className="btn btn-primary btn-sm font-[var(--br-heading-font)] uppercase">
-              Yêu cầu liên kết mới
-            </Link>
+            <Button size="sm" asChild className="font-[var(--br-heading-font)] uppercase">
+              <Link to="/auth/forgot-password">
+                Yêu cầu liên kết mới
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -77,16 +82,16 @@ function ResetPasswordPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="card bg-base-100 border border-base-content/10 w-full max-w-sm">
-        <div className="card-body gap-4">
-          <h1 className="card-title font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
+      <div className="bg-background border border-border/10 w-full max-w-sm">
+        <div className="p-6 flex flex-col gap-4">
+          <h1 className="font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
             ĐẶT MẬT KHẨU MỚI
           </h1>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="form-control">
-              <label className="label" htmlFor="password">
-                <span className="label-text font-[var(--br-mono-font)] text-[11px] uppercase">Mật khẩu mới</span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="password" className="font-[var(--br-mono-font)] text-[11px] uppercase">
+                Mật khẩu mới
               </label>
               <input
                 id="password"
@@ -99,9 +104,9 @@ function ResetPasswordPage() {
               />
             </div>
 
-            <div className="form-control">
-              <label className="label" htmlFor="confirmPassword">
-                <span className="label-text font-[var(--br-mono-font)] text-[11px] uppercase">Xác nhận mật khẩu</span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="confirmPassword" className="font-[var(--br-mono-font)] text-[11px] uppercase">
+                Xác nhận mật khẩu
               </label>
               <input
                 id="confirmPassword"
@@ -115,20 +120,20 @@ function ResetPasswordPage() {
             </div>
 
             {error && (
-              <div role="alert" className="alert alert-error py-2">
-                <span className="text-sm font-[var(--br-mono-font)]">{error}</span>
-              </div>
+              <Alert role="alert" className="bg-destructive/10 border-destructive/50 py-2">
+                <AlertDescription className="text-sm font-[var(--br-mono-font)]">{error}</AlertDescription>
+              </Alert>
             )}
 
-            <button
+            <Button
               type="submit"
-              className="btn btn-primary w-full font-[var(--br-heading-font)] uppercase"
+              className="w-full font-[var(--br-heading-font)] uppercase"
               disabled={isLoading}
             >
               {isLoading
-                ? <span className="loading loading-spinner loading-sm" />
+                ? <Loader2 className="animate-spin h-4 w-4" />
                 : 'Đặt mật khẩu mới'}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

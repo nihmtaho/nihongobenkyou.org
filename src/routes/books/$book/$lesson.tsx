@@ -3,6 +3,7 @@ import type { StudyMode, TypeInputSubMode } from '../../../types/study'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { SRSProgressBar } from '../../../components/common/SRSProgressBar'
 import { VocabStudyModal } from '../../../components/study/VocabStudyModal'
 import { VocabList } from '../../../components/vocabulary/VocabList'
@@ -96,24 +97,24 @@ function LessonPage() {
             <Link
               to="/books/$book"
               params={{ book }}
-              className="inline-flex items-center gap-1 text-[11px] font-[var(--br-mono-font)] uppercase text-neutral hover:text-base-content transition-colors mb-2"
+              className="inline-flex items-center gap-1 text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground hover:text-foreground transition-colors mb-2"
             >
               ← LESSON LIST
             </Link>
-            <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral mb-1">
+            <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-1">
               {book.toUpperCase()}
             </p>
             <h1 className="text-7xl font-black font-[var(--br-heading-font)] tracking-tighter leading-none">
               {String(lessonNumber).padStart(2, '0')}
             </h1>
           </div>
-          <button
-            className="btn btn-primary font-[var(--br-mono-font)] mb-2"
+          <Button
+            className="font-[var(--br-mono-font)] mb-2"
             onClick={() => setShowConfig(true)}
             disabled={nonDeprecated.length === 0}
           >
             STUDY
-          </button>
+          </Button>
         </div>
 
         {/* Progress strip */}
@@ -122,7 +123,7 @@ function LessonPage() {
             <SRSProgressBar stats={srsStats} height="h-2" animDelay={0.05} />
             <div className="flex items-end gap-4 overflow-x-auto pb-0.5">
               {[
-                { count: newCount, label: 'CHƯA HỌC', color: 'text-base-content/50' },
+                { count: newCount, label: 'CHƯA HỌC', color: 'text-foreground/50' },
                 { count: learningCount, label: 'ĐANG HỌC', color: 'text-warning' },
                 { count: reviewCount, label: 'ÔN TẬP', color: 'text-info' },
                 { count: matureCount, label: 'ĐÃ THUỘC', color: 'text-success' },
@@ -131,17 +132,17 @@ function LessonPage() {
                   <span className={`text-sm font-black font-[var(--br-mono-font)] leading-none tabular-nums ${color}`}>
                     {count}
                   </span>
-                  <span className="text-[9px] font-[var(--br-mono-font)] text-neutral uppercase">{label}</span>
+                  <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground uppercase">{label}</span>
                 </div>
               ))}
               {dueCount > 0 && (
-                <div className="flex flex-col shrink-0 border-l border-base-content/10 pl-4">
-                  <span className="text-sm font-black font-[var(--br-mono-font)] text-error leading-none tabular-nums">{dueCount}</span>
-                  <span className="text-[9px] font-[var(--br-mono-font)] text-neutral uppercase">ĐẾN HẠN</span>
+                <div className="flex flex-col shrink-0 border-l border-border/10 pl-4">
+                  <span className="text-sm font-black font-[var(--br-mono-font)] text-destructive leading-none tabular-nums">{dueCount}</span>
+                  <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground uppercase">ĐẾN HẠN</span>
                 </div>
               )}
               {nextReview && (
-                <span className="ml-auto shrink-0 self-end text-[9px] font-[var(--br-mono-font)] uppercase text-base-content/40 pb-0.5">
+                <span className="ml-auto shrink-0 self-end text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/40 pb-0.5">
                   ôn tiếp:
                   {' '}
                   {nextReview}
@@ -153,10 +154,10 @@ function LessonPage() {
 
         {/* Retry banner — only shown when there are wrong cards from the last session */}
         {hasRetry && (
-          <div className="border-t-2 border-error bg-error/5 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="border-t-2 border-destructive bg-destructive/5 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-error tracking-widest">
+                <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-destructive tracking-widest">
                   ÔN LẠI —
                   {' '}
                   {retryCards.length}
@@ -174,7 +175,7 @@ function LessonPage() {
                   </span>
                 ))}
                 {retryCards.length > 6 && (
-                  <span className="text-[10px] font-[var(--br-mono-font)] text-neutral self-center">
+                  <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground self-center">
                     +
                     {retryCards.length - 6}
                   </span>
@@ -184,25 +185,26 @@ function LessonPage() {
 
             <div className="flex items-center gap-2 shrink-0">
               {/* Inline mode picker */}
-              <div className="join">
+              <div className="flex">
                 {RETRY_MODES.map(({ value, label }) => (
                   <button
                     key={value}
                     type="button"
                     onClick={() => setRetryMode(value)}
-                    className={`btn btn-xs join-item font-[var(--br-mono-font)] text-[10px] uppercase ${retryMode === value ? 'btn-error' : 'btn-outline border-error/30 text-error/70 hover:btn-error'}`}
+                    className={`h-6 px-2 text-[10px] font-[var(--br-mono-font)] uppercase border transition-colors ${retryMode === value ? 'bg-destructive text-destructive-foreground border-destructive' : 'border-destructive/30 text-destructive/70 hover:bg-destructive/10'}`}
                   >
                     {label}
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
+              <Button
+                size="sm"
+                variant="destructive"
+                className="font-[var(--br-mono-font)] uppercase text-[11px] shrink-0"
                 onClick={handleRetry}
-                className="btn btn-error btn-sm font-[var(--br-mono-font)] uppercase text-[11px] shrink-0"
               >
                 BẮT ĐẦU →
-              </button>
+              </Button>
             </div>
           </div>
         )}

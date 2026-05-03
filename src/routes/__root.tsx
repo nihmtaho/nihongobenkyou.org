@@ -38,11 +38,11 @@ function DesktopTopBar() {
     ?? ''
 
   return (
-    <div className="hidden lg:flex items-center justify-between px-6 border-b border-base-content/10 bg-base-100 flex-shrink-0 h-12">
-      <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-neutral tracking-widest">
+    <div className="hidden lg:flex items-center justify-between px-6 border-b border-border/10 bg-background flex-shrink-0 h-12">
+      <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
         {title}
       </span>
-      <span className="badge badge-primary font-[var(--br-mono-font)] text-[10px]">
+      <span className="inline-block text-[10px] font-[var(--br-mono-font)] bg-primary text-primary-foreground px-2 py-0.5">
         #
         {datasetBadge}
       </span>
@@ -107,7 +107,7 @@ function RootLayout() {
       <OfflineIndicator />
       {datasetUpdated && (
         <div className="toast toast-top toast-center z-50">
-          <div className="alert alert-info gap-2">
+          <div className="bg-info/10 border border-info/50 px-4 py-2 flex gap-2 items-center">
             <span className="font-[var(--br-mono-font)] text-[11px] uppercase">
               Vocabulary updated — new words available
             </span>

@@ -31,7 +31,7 @@ function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="card bg-base-100 border border-base-content/10 w-full max-w-sm">
+      <div className="bg-background border border-border/10 w-full max-w-sm">
         <div className="card-body gap-4">
           <h1 className="card-title font-[var(--br-heading-font)] text-2xl uppercase tracking-tight">
             ĐĂNG NHẬP
@@ -44,7 +44,11 @@ function LoginPage() {
             submitLabel="Đăng nhập"
           />
 
-          <div className="divider font-[var(--br-mono-font)] text-[11px] uppercase my-0">HOẶC</div>
+          <div className="flex items-center gap-3 my-0">
+            <div className="h-px flex-1 bg-border/20" />
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground">HOẶC</span>
+            <div className="h-px flex-1 bg-border/20" />
+          </div>
 
           {OAUTH_PROVIDERS.includes('google') && <GoogleSignInButton />}
 
@@ -55,7 +59,7 @@ function LoginPage() {
             >
               Quên mật khẩu?
             </Link>
-            <p className="text-sm text-base-content/60">
+            <p className="text-sm text-foreground/60">
               Chưa có tài khoản?
               {' '}
               <Link to="/auth/register" className="text-primary underline">
