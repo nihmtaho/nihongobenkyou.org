@@ -56,12 +56,12 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
     <div className="p-4 lg:p-6 xl:p-8 max-w-5xl mx-auto">
       <StatsGrid
         items={[
-          { label: 'ĐẾN HẠN', value: kanjiTotals?.due ?? 0, color: 'text-error' },
-          { label: 'MỚI', value: kanjiTotals?.new ?? 0, color: 'text-base-content/50' },
+          { label: 'ĐẾN HẠN', value: kanjiTotals?.due ?? 0, color: 'text-destructive' },
+          { label: 'MỚI', value: kanjiTotals?.new ?? 0, color: 'text-foreground/50' },
           { label: 'ĐANG HỌC', value: kanjiTotals?.learning ?? 0, color: 'text-warning' },
           { label: 'ÔN TẬP', value: kanjiTotals?.review ?? 0, color: 'text-info' },
           { label: 'ĐÃ THUỘC', value: kanjiTotals?.mature ?? 0, color: 'text-success' },
-          { label: 'ĐÃ HỌC QUA', value: kanjiTotals?.studied ?? 0, color: 'text-base-content' },
+          { label: 'ĐÃ HỌC QUA', value: kanjiTotals?.studied ?? 0, color: 'text-foreground' },
         ]}
         isLoading={isLoading}
       />
@@ -118,7 +118,7 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
                           {' '}
                           {String(lesson.lessonNumber).padStart(2, '0')}
                         </span>
-                        <span className="text-[10px] font-[var(--br-mono-font)] text-neutral">
+                        <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
                           {lesson.kanji.total}
                           {' '}
                           chữ ·
@@ -241,7 +241,7 @@ function KanjiSubRow({
   return (
     <div className="flex items-center gap-3 py-1.5">
       <div className="flex-none w-[72px]">
-        <p className="text-[11px] font-[var(--br-jp-font)] text-base-content/80">{label}</p>
+        <p className="text-[11px] font-[var(--br-jp-font)] text-foreground/80">{label}</p>
         <p className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground/60">{labelVi}</p>
       </div>
       <div className="flex-1 min-w-0">
