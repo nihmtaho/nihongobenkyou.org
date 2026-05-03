@@ -17,6 +17,8 @@ export default antfu(
       'dist/**',
       'public/data/**',
       'coverage/**',
+      'dataset/**',
+      '.kanjium/**',
     ],
     rules: {
       'ts/no-explicit-any': 'error',

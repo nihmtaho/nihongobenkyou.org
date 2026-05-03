@@ -1,0 +1,188 @@
+{
+  "id": "n5-lesson10",
+  "title": "漢字N5 Bài 10",
+  "type": "kanji",
+  "lesson": 10,
+  "kanjiCount": 8,
+  "vocabularyCount": 20,
+  "kanji": [
+    {
+      "kanji": "外",
+      "reading": "そと",
+      "readings": ["そと", "ガイ"],
+      "hanviet": "NGOẠI",
+      "meaning": "bên ngoài"
+    },
+    {
+      "kanji": "手",
+      "reading": "て",
+      "readings": ["て", "シュ"],
+      "hanviet": "THỦ",
+      "meaning": "tay"
+    },
+    {
+      "kanji": "早",
+      "reading": "はや・い",
+      "readings": ["はや・い", "ソウ"],
+      "hanviet": "TẢO",
+      "meaning": "sớm"
+    },
+    {
+      "kanji": "犬",
+      "reading": "いぬ",
+      "readings": ["いぬ", "ケン"],
+      "hanviet": "KHUYỂN",
+      "meaning": "con chó"
+    },
+    {
+      "kanji": "計",
+      "reading": "けい",
+      "readings": ["けい", "ケイ"],
+      "hanviet": "KẾ",
+      "meaning": "tính toán"
+    },
+    {
+      "kanji": "近",
+      "reading": "ちか・い",
+      "readings": ["ちか・い", "キン"],
+      "hanviet": "CẬN",
+      "meaning": "gần"
+    },
+    {
+      "kanji": "間",
+      "reading": "あいだ",
+      "readings": ["あいだ", "カン"],
+      "hanviet": "GIAN",
+      "meaning": "ở giữa"
+    },
+    {
+      "kanji": "魚",
+      "reading": "さかな",
+      "readings": ["さかな", "ギョ"],
+      "hanviet": "NGƯ",
+      "meaning": "cá"
+    }
+  ],
+  "vocabulary": [
+    {
+      "kanji": "外国人",
+      "reading": "がいこくじん",
+      "hanviet": "NGOÀI QUỐC NHÂN",
+      "meaning": "người nước ngoài"
+    },
+    {
+      "kanji": "外国語",
+      "reading": "がいこくご",
+      "hanviet": "NGOÀI QUỐC NGỮ",
+      "meaning": "tiếng nước ngoài"
+    },
+    {
+      "kanji": "手紙",
+      "reading": "てがみ",
+      "hanviet": "THỦ CHỈ",
+      "meaning": "bức thư"
+    },
+    {
+      "kanji": "上手",
+      "reading": "じょうず",
+      "hanviet": "THƯỢNG THỦ",
+      "meaning": "giỏi"
+    },
+    {
+      "kanji": "下手",
+      "reading": "へた",
+      "hanviet": "HẠ THỦ",
+      "meaning": "kém"
+    },
+    {
+      "kanji": "早い",
+      "reading": "はやい",
+      "hanviet": "TẢO",
+      "meaning": "sớm"
+    },
+    {
+      "kanji": "早退する",
+      "reading": "そうたいする",
+      "hanviet": "TẢO THỐI",
+      "meaning": "về sớm"
+    },
+    {
+      "kanji": "子犬",
+      "reading": "こいぬ",
+      "hanviet": "TỬ KHUYỂN",
+      "meaning": "con chó con"
+    },
+    {
+      "kanji": "日本犬",
+      "reading": "にほんけん",
+      "hanviet": "NHẬT BẢN KHUYỂN",
+      "meaning": "chó Nhật"
+    },
+    {
+      "kanji": "時計",
+      "reading": "とけい",
+      "hanviet": "THỜI KẾ",
+      "meaning": "đồng hồ"
+    },
+    {
+      "kanji": "お会計おねがいします",
+      "reading": "おかいけいおねがいします",
+      "hanviet": "HỘI KẾ",
+      "meaning": "tính tiền giúp tôi ạ"
+    },
+    {
+      "kanji": "近い",
+      "reading": "ちかい",
+      "hanviet": "CẬN",
+      "meaning": "gần"
+    },
+    {
+      "kanji": "近く",
+      "reading": "ちかく",
+      "hanviet": "CẬN",
+      "meaning": "chỗ gần"
+    },
+    {
+      "kanji": "近所",
+      "reading": "きんじょ",
+      "hanviet": "CẬN SỞ",
+      "meaning": "khu hàng xóm"
+    },
+    {
+      "kanji": "近所の人",
+      "reading": "きんじょのじん",
+      "hanviet": "CẬN SỞ NHÂN",
+      "meaning": "người hàng xóm"
+    },
+    {
+      "kanji": "時間",
+      "reading": "じかん",
+      "hanviet": "THỜI GIAN",
+      "meaning": "thời gian"
+    },
+    {
+      "kanji": "一時間",
+      "reading": "いちじかん",
+      "hanviet": "NHẤT THỜI GIAN",
+      "meaning": "1 tiếng"
+    },
+    {
+      "kanji": "一週間",
+      "reading": "いっしゅうかん",
+      "hanviet": "NHẤT TUẦN GIAN",
+      "meaning": "1 tuần"
+    },
+    {
+      "kanji": "人魚",
+      "reading": "じんぎょ",
+      "hanviet": "NHÂN NGƯ",
+      "meaning": "nhân ngư"
+    },
+    {
+      "kanji": "金魚",
+      "reading": "きんぎょ",
+      "hanviet": "KIM NGƯ",
+      "meaning": "cá vàng"
+    }
+  ]
+}

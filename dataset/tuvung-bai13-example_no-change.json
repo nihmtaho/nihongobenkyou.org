@@ -1,0 +1,194 @@
+{
+  "id": "vocabulary-13",
+  "title": "Từ Vựng Bài 13",
+  "type": "vocabulary",
+  "lesson": 13,
+  "words": [
+    {
+      "word": "遊びます",
+      "hiragana": "あそびます",
+      "mean": "chơi",
+      "example": "いつも公園で遊びます。(Tôi luôn chơi ở công viên.)"
+    },
+    {
+      "word": "泳ぎます",
+      "hiragana": "およぎます",
+      "mean": "bơi",
+      "example": "夏に海で泳ぎます。(Tôi bơi ở biển vào mùa hè.)"
+    },
+    {
+      "word": "しかえます",
+      "hiragana": "しかえます",
+      "mean": "đón",
+      "example": "しかえます。"
+    },
+    {
+      "word": "疲れます",
+      "hiragana": "つかれます",
+      "mean": "mệt",
+      "example": "たくさん働いて、疲れました。(Làm việc rất nhiều nên mệt.)"
+    },
+    {
+      "word": "結婚します",
+      "hiragana": "けっこんします",
+      "mean": "kết hôn, lập gia đình, cưới",
+      "example": "いつ結婚しますか。(Anh/chị kết hôn lúc nào?)"
+    },
+    {
+      "word": "買い物します",
+      "hiragana": "まいものします",
+      "mean": "mua sắm, mua hàng",
+      "example": "週末に買い物します。(Tôi mua sắm vào cuối tuần.)"
+    },
+    {
+      "word": "食事します",
+      "hiragana": "しょくじします",
+      "mean": "ăn cơm, dùng bữa",
+      "example": "レストランで食事しましょう。(Chúng ta ăn cơm tại nhà hàng nhé.)"
+    },
+    {
+      "word": "公園を散歩します",
+      "hiragana": "こうえんをさんぽします",
+      "mean": "đi dạo công viên",
+      "example": "公園を散歩します。"
+    },
+    {
+      "word": "たいへん",
+      "hiragana": "たいへん",
+      "mean": "vấn vả, khó khăn, khổ",
+      "example": "これはたいへんです。(Cái này khó.)"
+    },
+    {
+      "word": "欲しい",
+      "hiragana": "ほしい",
+      "mean": "muốn có",
+      "example": "新しい車が欲しいです。(Tôi muốn có chiếc xe mới.)"
+    },
+    {
+      "word": "広い",
+      "hiragana": "ひろい",
+      "mean": "rộng",
+      "example": "この部屋は広いです。(Căn phòng này rộng.)"
+    },
+    {
+      "word": "狭い",
+      "hiragana": "せまい",
+      "mean": "chật, hẹp",
+      "example": "その家は狭いです。(Ngôi nhà đó chật.)"
+    },
+    {
+      "word": "プール",
+      "hiragana": "プール",
+      "mean": "bể bơi",
+      "example": "プールで泳ぎましょう。(Chúng ta bơi ở bể bơi nhé.)"
+    },
+    {
+      "word": "川",
+      "hiragana": "かわ",
+      "mean": "sông",
+      "example": "この川はきれいです。(Dòng sông này sạch đẹp.)"
+    },
+    {
+      "word": "びじゅつ",
+      "hiragana": "びじゅつ",
+      "mean": "mĩ thuật",
+      "example": "びじゅつの展覧会に行きました。(Tôi đi xem triển lãm mỹ thuật.)"
+    },
+    {
+      "word": "つり",
+      "hiragana": "つり",
+      "mean": "việc câu cá",
+      "example": "釣りが好きです。(Tôi thích câu cá.)"
+    },
+    {
+      "word": "スキー",
+      "hiragana": "スキー",
+      "mean": "việc trược tuyết",
+      "example": "スキーはいいスポーツです。(Trượt tuyết là môn thể thao tốt.)"
+    },
+    {
+      "word": "週末",
+      "hiragana": "しゅうまつ",
+      "mean": "cuối tuần",
+      "example": "週末は何をしますか。(Bạn làm gì vào cuối tuần?)"
+    },
+    {
+      "word": "正月",
+      "hiragana": "しょうがつ",
+      "mean": "Tết",
+      "example": "正月に家族と一緒にいます。(Tết tôi ở cùng gia đình.)"
+    },
+    {
+      "word": "khoảng",
+      "hiragana": "〜ごろ",
+      "mean": "",
+      "example": "これはkhoảngです。"
+    },
+    {
+      "word": "何か",
+      "hiragana": "なにか",
+      "mean": "cái gì đó",
+      "example": "これは何かです。"
+    },
+    {
+      "word": "どこか",
+      "hiragana": "どこか",
+      "mean": "đâu đó, chỗ nào đó",
+      "example": "どこか行きたいですか。(Bạn muốn đi đâu?)"
+    },
+    {
+      "word": "のどがかわきます。",
+      "hiragana": "のどがかわきます。",
+      "mean": "khát",
+      "example": ""
+    },
+    {
+      "word": "おなかがすきます。",
+      "hiragana": "おなかがすきます。",
+      "mean": "đói",
+      "example": ""
+    },
+    {
+      "word": "そうしましょう。",
+      "hiragana": "そうしましょう。",
+      "mean": "nhất trí. / hãy làm vậy đi",
+      "example": ""
+    },
+    {
+      "word": "ご注文は",
+      "hiragana": "ごしゅうもんは?",
+      "mean": "anh/chị dùng món gì ạ",
+      "example": "これはご注文はです。"
+    },
+    {
+      "word": "定食",
+      "hiragana": "てしょく",
+      "mean": "cơm suất, cơm phần",
+      "example": "これは定食です。"
+    },
+    {
+      "word": "牛丼",
+      "hiragana": "ぎゅうどん",
+      "mean": "cơm thịt bò",
+      "example": "これは牛丼です。"
+    },
+    {
+      "word": "少々お待ちください。",
+      "hiragana": "しょうしょうおまちください。",
+      "mean": "xin vui lòng đợi một chút.",
+      "example": ""
+    },
+    {
+      "word": "〜でございます。",
+      "hiragana": "〜でございます。",
+      "mean": "cách nói lịch sự của です。",
+      "example": ""
+    },
+    {
+      "word": "別々に",
+      "hiragana": "べつべつに",
+      "mean": "để riêng ra",
+      "example": "これは別々にです。"
+    }
+  ]
+}
