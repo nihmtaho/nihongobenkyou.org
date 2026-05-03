@@ -5,7 +5,7 @@ interface PitchAccentBarsProps {
 
 export function PitchAccentBars({ pattern, kana }: PitchAccentBarsProps) {
   if (pattern === null) {
-    return <span className="text-[11px] font-[var(--br-mono-font)] text-neutral">—</span>
+    return <span className="text-[11px] font-[var(--br-mono-font)] text-muted-foreground">—</span>
   }
 
   const morae = splitIntoMorae(kana)
@@ -17,10 +17,10 @@ export function PitchAccentBars({ pattern, kana }: PitchAccentBarsProps) {
         <div key={`mora-${i}`} className="flex flex-col items-center gap-[2px]">
           {tone === 'H'
             ? (
-                <div className="w-[18px] h-[11px] bg-primary border border-base-content/30" />
+                <div className="w-[18px] h-[11px] bg-primary border border-border/30" />
               )
             : (
-                <div className="w-[18px] h-[5px] bg-base-300 border border-base-content/15 opacity-70" />
+                <div className="w-[18px] h-[5px] bg-secondary border border-border/15 opacity-70" />
               )}
           <span className="text-[11px] font-[var(--br-jp-font)] leading-none">
             {morae[i] ?? ''}

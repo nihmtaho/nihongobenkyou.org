@@ -42,7 +42,7 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect }
             </div>
             <div className="shrink-0 mt-0.5">
               {isDue && (
-                <span className="font-[var(--br-mono-font)] text-[9px] text-error uppercase tracking-wider">DUE</span>
+                <span className="font-[var(--br-mono-font)] text-[9px] text-destructive uppercase tracking-wider">DUE</span>
               )}
               {isKnown && (
                 <span className="font-[var(--br-mono-font)] text-[9px] text-success uppercase">✓</span>

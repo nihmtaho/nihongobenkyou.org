@@ -10,7 +10,7 @@ interface ReviewActivityWidgetProps {
 const TODAY = new Date().toISOString().slice(0, 10)
 
 const RATING_BAR_COLORS: Record<string, string> = {
-  'text-error': 'bg-error',
+  'text-destructive': 'bg-destructive',
   'text-warning': 'bg-warning',
   'text-success': 'bg-success',
   'text-info': 'bg-info',
@@ -44,7 +44,7 @@ export function ReviewActivityWidget({ userId }: ReviewActivityWidgetProps) {
         <div className="grid grid-cols-5 gap-1.5">
           <StatChip
             icon="◉"
-            iconColor="text-error"
+            iconColor="text-destructive"
             label="STREAK"
             isLoading={isLoading}
             value={stats ? `${stats.streak}` : '0'}
