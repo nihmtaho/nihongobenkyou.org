@@ -7,11 +7,11 @@ interface RetentionWidgetProps {
   userId: string
 }
 
-const RATING_BAR_BG: Record<string, string> = {
-  'text-error': 'bg-error',
-  'text-warning': 'bg-warning',
-  'text-success': 'bg-success',
-  'text-info': 'bg-info',
+const RATING_INDICATOR: Record<string, string> = {
+  'text-destructive': 'bg-destructive',
+  'text-[var(--warning)]': 'bg-[var(--warning)]',
+  'text-[var(--success)]': 'bg-[var(--success)]',
+  'text-[var(--info)]': 'bg-[var(--info)]',
 }
 
 export function RetentionWidget({ userId }: RetentionWidgetProps) {
@@ -46,7 +46,7 @@ export function RetentionWidget({ userId }: RetentionWidgetProps) {
                 <div className="flex items-baseline gap-1">
                   <span
                     className={`text-3xl font-bold font-[var(--br-mono-font)] leading-none ${
-                      retentionPct !== null ? 'text-success' : 'text-muted-foreground'
+                      retentionPct !== null ? 'text-[var(--success)]' : 'text-muted-foreground'
                     }`}
                   >
                     {retentionPct !== null ? `${retentionPct}%` : '—'}
@@ -62,7 +62,8 @@ export function RetentionWidget({ userId }: RetentionWidgetProps) {
                       </span>
                       <Progress
                         value={r.pct}
-                        className={`h-1 flex-1 [&>div]:${RATING_BAR_BG[r.color] ?? 'bg-neutral'}`}
+                        className="h-1 flex-1"
+                        indicatorClassName={RATING_INDICATOR[r.color]}
                       />
                     </div>
                   ))}

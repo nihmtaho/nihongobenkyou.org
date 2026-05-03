@@ -280,10 +280,10 @@ describe('useReviewStats', () => {
 
       const dist = result.current.data!.ratingDistribution
       expect(dist).toHaveLength(4)
-      expect(dist[0]).toMatchObject({ label: 'Quên', color: 'text-error' })
-      expect(dist[1]).toMatchObject({ label: 'Khó', color: 'text-warning' })
-      expect(dist[2]).toMatchObject({ label: 'Ôn', color: 'text-success' })
-      expect(dist[3]).toMatchObject({ label: 'Dễ', color: 'text-info' })
+      expect(dist[0]).toMatchObject({ label: 'Quên', color: 'text-destructive' })
+      expect(dist[1]).toMatchObject({ label: 'Khó', color: 'text-[var(--warning)]' })
+      expect(dist[2]).toMatchObject({ label: 'Ôn', color: 'text-[var(--success)]' })
+      expect(dist[3]).toMatchObject({ label: 'Dễ', color: 'text-[var(--info)]' })
     })
 
     it('counts and percentages are correct for known ratings', async () => {
