@@ -6,9 +6,8 @@ docs/**
 specs/**
 
 # datasets (never push to remote — git-workflow rule)
-# NOTE: dataset/ committed for Vercel CI (except kanjivg which is 75MB)
+# NOTE: dataset/ committed for Vercel CI (including kanjivg/ for stroke data)
 datasets/**
-dataset/kanjivg/
 
 # Pipeline intermediate artifacts
 .build/
