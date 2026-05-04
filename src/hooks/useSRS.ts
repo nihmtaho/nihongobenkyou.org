@@ -7,7 +7,7 @@ import { getDueKanjiCards, updateKanjiCard } from '../db/kanji'
 import { db } from '../db/schema'
 import { uploadPendingReviews } from '../db/sync'
 import { calculateNextReview } from '../lib/srs'
-import { toCardState, computeTypeInputRatingForDisplay } from '../lib/srs-utils'
+import { computeTypeInputRatingForDisplay, toCardState } from '../lib/srs-utils'
 
 const KNOWN_MIN_INTERVAL = 21
 const KNOWN_MIN_REVIEWS = 5

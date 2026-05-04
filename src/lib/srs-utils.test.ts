@@ -102,7 +102,7 @@ function makeKanjiCard(overrides: Partial<KanjiCardState> = {}): KanjiCardState 
 }
 
 describe('toCardState', () => {
-  describe('VocabWithSRS path', () => {
+  describe('vocabWithSRS path', () => {
     it('maps vocab_id to vocabId', () => {
       const card = makeVocabCard({ vocab_id: 'mnn1_abc0000042' })
       const state = toCardState(card, 'u1')
@@ -151,7 +151,7 @@ describe('toCardState', () => {
     })
   })
 
-  describe('KanjiCardState path', () => {
+  describe('kanjiCardState path', () => {
     it('maps char to vocabId', () => {
       const card = makeKanjiCard({ char: '水' })
       const state = toCardState(card, 'ignored-user')

@@ -16,7 +16,8 @@ interface RatingBarProps {
 }
 
 function getIntervalPreview(card: VocabWithSRS | KanjiCardState, userId: string, rating: SRSRating): string {
-  if (rating === 0) return '6–10 min'
+  if (rating === 0)
+    return '6–10 min'
   const state = toCardState(card, userId)
   const result = calculateNextReview(state, rating)
   return formatIntervalPreview(result.new_interval)
@@ -27,7 +28,7 @@ export function RatingBar({ card, onRate }: RatingBarProps) {
 
   return (
     <ButtonGroup className="w-full">
-      {([0, 1, 2, 3] as SRSRating[]).map((r) => (
+      {([0, 1, 2, 3] as SRSRating[]).map(r => (
         <Button
           key={r}
           type="button"
