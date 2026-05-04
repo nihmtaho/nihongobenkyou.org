@@ -7,9 +7,12 @@ import { KanjiStudyFlipCard } from '../../components/kanji/KanjiStudyFlipCard'
 import { SessionSummary } from '../../components/study/SessionSummary'
 import { Button } from '../../components/ui/button'
 import { Skeleton } from '../../components/ui/skeleton'
+import { getDueActiveKanjiSRS } from '../../db/active-deck'
 import { db } from '../../db/schema'
+import { useActiveDeckKanjiSRS } from '../../hooks/useActiveDeckSRS'
 import { useSRS } from '../../hooks/useSRS'
 import { useAuthStore } from '../../stores/authStore'
+import { useStudySessionStore } from '../../stores/studySessionStore'
 
 export const Route = createFileRoute('/kanji/review')({
   beforeLoad: () => {
@@ -30,8 +33,26 @@ interface SessionStats {
 
 function KanjiReviewPage() {
   const userId = useAuthStore(s => s.userId) ?? ''
-  const srs = useSRS('kanji', userId)
-  const dueCards = srs.dueCards
+  const deckSource = useStudySessionStore(s => s.deckSource)
+  const lessonSrs = useSRS('kanji', userId)
+  const activeDeckSrs = useActiveDeckKanjiSRS(userId)
+  const srs = deckSource === 'active-kanji-deck' ? activeDeckSrs : lessonSrs
+
+  const activeDeckDueCards = useQuery({
+    queryKey: ['active-kanji-due', userId],
+    queryFn: async () => {
+      const rows = await getDueActiveKanjiSRS(userId)
+      return rows.map((r): KanjiCardState => ({
+        ...r,
+        last_rating: r.last_rating as KanjiCardState['last_rating'],
+        pending_sync: false,
+      }))
+    },
+    enabled: deckSource === 'active-kanji-deck' && !!userId,
+    staleTime: 0,
+  })
+
+  const dueCards = deckSource === 'active-kanji-deck' ? activeDeckDueCards : lessonSrs.dueCards
 
   const [phase, setPhase] = useState<Phase>('loading')
   // Store full card objects so handleRate never depends on dueCards.data being current
