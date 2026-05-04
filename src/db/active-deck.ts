@@ -31,6 +31,8 @@ export async function addVocabToDeck(userId: string, vocabId: string): Promise<v
   })
 }
 
+// NOTE: active_vocab_items uses vocab_id as sole PK — single-user PWA assumption.
+// One user per device; _userId param kept for future multi-user support but not used in delete.
 export async function removeVocabFromDeck(_userId: string, vocabId: string): Promise<void> {
   await db.active_vocab_items.delete(vocabId)
   // SRS state intentionally kept — preserved if vocab is re-added later
@@ -57,9 +59,8 @@ export async function upsertActiveVocabSRS(srs: ActiveVocabSRS): Promise<void> {
 export async function getDueActiveVocabSRS(userId: string): Promise<ActiveVocabSRS[]> {
   const t = today()
   return db.active_vocab_srs
-    .where('due_date')
-    .belowOrEqual(t)
-    .filter(c => c.userId === userId)
+    .where('[userId+due_date]')
+    .between([userId, ''], [userId, t], true, true)
     .toArray()
 }
 
@@ -81,6 +82,8 @@ export async function addKanjiToDeck(userId: string, char: string): Promise<void
   })
 }
 
+// NOTE: active_kanji_items uses char as sole PK — single-user PWA assumption.
+// One user per device; _userId param kept for future multi-user support but not used in delete.
 export async function removeKanjiFromDeck(_userId: string, char: string): Promise<void> {
   await db.active_kanji_items.delete(char)
   // SRS state intentionally kept
@@ -107,9 +110,8 @@ export async function upsertActiveKanjiSRS(srs: ActiveKanjiSRS): Promise<void> {
 export async function getDueActiveKanjiSRS(userId: string): Promise<ActiveKanjiSRS[]> {
   const t = today()
   return db.active_kanji_srs
-    .where('due_date')
-    .belowOrEqual(t)
-    .filter(c => c.userId === userId)
+    .where('[userId+due_date]')
+    .between([userId, ''], [userId, t], true, true)
     .toArray()
 }
 
@@ -140,6 +142,8 @@ export async function importActiveDeck(
   let imported = 0
   let skipped = 0
 
+  // NOTE: Each item is atomically added but the import as a whole is not transactional.
+  // Re-running import is safe — addVocabToDeck/addKanjiToDeck are idempotent (upsert).
   for (const vocabId of (data.vocab ?? [])) {
     const exists = await db.vocabulary.get(vocabId)
     if (!exists) {

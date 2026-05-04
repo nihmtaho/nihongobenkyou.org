@@ -83,8 +83,8 @@ export class NihongoDB extends Dexie {
     this.version(8).stores({
       active_vocab_items: 'vocab_id, user_id, added_at',
       active_kanji_items: 'char, user_id, added_at',
-      active_vocab_srs: '[userId+vocabId], due_date',
-      active_kanji_srs: '[userId+char], due_date',
+      active_vocab_srs: '[userId+vocabId], due_date, [userId+due_date]',
+      active_kanji_srs: '[userId+char], due_date, [userId+due_date]',
     })
   }
 }

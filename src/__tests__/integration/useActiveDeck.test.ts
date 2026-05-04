@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import {
   addKanjiToDeck,
@@ -16,8 +17,8 @@ import {
   removeVocabFromDeck,
   upsertActiveVocabSRS,
 } from '../../db/active-deck'
-
 import { db } from '../../db/schema'
+
 import 'fake-indexeddb/auto'
 
 const USER = 'test-user'
