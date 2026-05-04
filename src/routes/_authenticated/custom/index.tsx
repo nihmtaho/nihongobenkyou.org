@@ -34,7 +34,10 @@ function CustomDecksPage() {
   }
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="p-4 max-w-4xl mx-auto flex flex-col gap-6">
+      <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
+        MY DECKS
+      </h1>
       <DeckList
         decks={decks}
         onNewDeck={() => setShowEditor(true)}

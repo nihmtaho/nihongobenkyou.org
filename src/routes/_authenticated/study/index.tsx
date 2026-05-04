@@ -26,6 +26,11 @@ function StudyDashboardPage() {
     <div className="flex flex-col min-h-full">
       <div className="sticky top-0 z-10 bg-background border-b border-border/10">
         <div className="max-w-5xl mx-auto">
+          <div className="px-4 pt-4 pb-2">
+            <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
+              STUDY
+            </h1>
+          </div>
           <div className="flex">
             {TABS.map(tab => (
               <button
