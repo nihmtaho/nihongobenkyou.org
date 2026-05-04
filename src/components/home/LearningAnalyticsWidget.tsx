@@ -71,8 +71,8 @@ function SubjectRow({
   const learningPct = pct(learning, total)
   const reviewPct = pct(review, total)
   const maturePct = pct(mature, total)
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
-  const nextReview = stats.nextDueDate ? formatNextReview([stats.nextDueDate], today) : null
+  const now = useMemo(() => new Date().toISOString(), [])
+  const nextReview = stats.nextDueDate ? formatNextReview([stats.nextDueDate], now) : null
 
   return (
     <div className="flex flex-col gap-3">

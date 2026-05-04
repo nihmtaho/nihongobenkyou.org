@@ -28,15 +28,15 @@ export function useBookProgress(userId: string, bookSource: string) {
         .anyOf(vocabIds.map(id => [userId, id]))
         .toArray()
 
-      const today = new Date().toISOString().slice(0, 10)
+      const now = new Date().toISOString()
 
-      const futureDates = cards.map(c => c.due_date).filter(d => d > today).sort()
+      const futureDates = cards.map(c => c.due_date).filter(d => d > now).sort()
 
       return {
         total: allVocab.length,
         known: cards.filter(c => c.is_known).length,
         studied: cards.filter(c => c.review_count > 0 && !c.is_known).length,
-        due: cards.filter(c => !c.is_known && c.due_date <= today).length,
+        due: cards.filter(c => !c.is_known && c.due_date <= now).length,
         newCards: Math.max(0, vocabIds.length - cards.length),
         learning: cards.filter(c => c.interval_days < 8).length,
         review: cards.filter(c => c.interval_days >= 8 && c.interval_days < 21).length,

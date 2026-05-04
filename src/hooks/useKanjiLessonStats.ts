@@ -33,7 +33,7 @@ export function useKanjiLessonStats(userId: string) {
           .toArray(),
       ])
 
-      const today = new Date().toISOString().slice(0, 10)
+      const now = new Date().toISOString()
       const kanjiCardMap = new Map(allKanjiCards.map(c => [c.char, c]))
 
       const kanjiByLesson = new Map<number, typeof allKanji>()
@@ -83,9 +83,9 @@ export function useKanjiLessonStats(userId: string) {
           learning: cardList.filter(c => c.interval_days < 8).length,
           review: cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21).length,
           mature: cardList.filter(c => c.interval_days >= 21).length,
-          due: cardList.filter(c => c.due_date <= today).length,
+          due: cardList.filter(c => c.due_date <= now).length,
           next_due_date: cardList
-            .filter(c => c.due_date > today)
+            .filter(c => c.due_date > now)
             .map(c => c.due_date)
             .sort()[0] ?? null,
         }
@@ -102,9 +102,9 @@ export function useKanjiLessonStats(userId: string) {
           learning: cardList.filter(c => c.interval_days < 8 && !c.is_known).length,
           review: cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21 && !c.is_known).length,
           mature: cardList.filter(c => c.interval_days >= 21 || c.is_known).length,
-          due: cardList.filter(c => !c.is_known && c.due_date <= today).length,
+          due: cardList.filter(c => !c.is_known && c.due_date <= now).length,
           next_due_date: cardList
-            .filter(c => !c.is_known && c.due_date > today)
+            .filter(c => !c.is_known && c.due_date > now)
             .map(c => c.due_date)
             .sort()[0] ?? null,
         }

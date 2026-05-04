@@ -46,15 +46,15 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
   const dueCards = useQuery({
     queryKey: subject === 'vocab' ? ['due-cards', userId] : ['kanji-srs-due', userId],
     queryFn: async () => {
-      const today = new Date().toISOString().slice(0, 10)
+      const now = new Date().toISOString()
       if (subject === 'vocab') {
         return db.user_cards
           .where('due_date')
-          .belowOrEqual(today)
+          .belowOrEqual(now)
           .filter(c => c.userId === userId && !c.is_known)
           .toArray()
       }
-      return getDueKanjiCards(userId, today)
+      return getDueKanjiCards(userId, now)
     },
     enabled: !!userId,
     staleTime: 0,

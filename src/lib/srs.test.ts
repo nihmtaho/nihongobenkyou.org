@@ -23,16 +23,24 @@ describe('calculateNextReview', () => {
     it('again → interval 1', () => {
       expect(calculateNextReview(firstCard, 0).new_interval).toBe(1)
     })
-    it('again → due_date is today (not tomorrow)', () => {
-      const today = new Date().toISOString().slice(0, 10)
-      expect(calculateNextReview(firstCard, 0).due_date).toBe(today)
+    it('again → due_date is ISO timestamp 6-10 min in the future', () => {
+      const before = Date.now()
+      const { due_date } = calculateNextReview(firstCard, 0)
+      const dueMs = new Date(due_date).getTime()
+      expect(due_date).toMatch(/T/)
+      expect(dueMs).toBeGreaterThanOrEqual(before + 6 * 60 * 1000)
+      expect(dueMs).toBeLessThanOrEqual(before + 10 * 60 * 1000 + 200)
     })
     it('hard → interval 1', () => {
       expect(calculateNextReview(firstCard, 1).new_interval).toBe(1)
     })
-    it('hard → due_date is today (~2h learning step)', () => {
-      const today = new Date().toISOString().slice(0, 10)
-      expect(calculateNextReview(firstCard, 1).due_date).toBe(today)
+    it('hard → due_date is ISO timestamp ~2h in the future', () => {
+      const before = Date.now()
+      const { due_date } = calculateNextReview(firstCard, 1)
+      const dueMs = new Date(due_date).getTime()
+      expect(due_date).toMatch(/T/)
+      expect(dueMs).toBeGreaterThanOrEqual(before + 2 * 60 * 60 * 1000)
+      expect(dueMs).toBeLessThanOrEqual(before + 2 * 60 * 60 * 1000 + 200)
     })
     it('good → interval 1', () => {
       expect(calculateNextReview(firstCard, 2).new_interval).toBe(1)
@@ -46,9 +54,13 @@ describe('calculateNextReview', () => {
     it('resets interval to 1', () => {
       expect(calculateNextReview({ ...baseCard, interval_days: 20 }, 0).new_interval).toBe(1)
     })
-    it('due_date is today, not tomorrow', () => {
-      const today = new Date().toISOString().slice(0, 10)
-      expect(calculateNextReview({ ...baseCard, interval_days: 5 }, 0).due_date).toBe(today)
+    it('due_date is ISO timestamp 6-10 min ahead', () => {
+      const before = Date.now()
+      const { due_date } = calculateNextReview({ ...baseCard, interval_days: 5 }, 0)
+      const dueMs = new Date(due_date).getTime()
+      expect(due_date).toMatch(/T/)
+      expect(dueMs).toBeGreaterThanOrEqual(before + 6 * 60 * 1000)
+      expect(dueMs).toBeLessThanOrEqual(before + 10 * 60 * 1000 + 200)
     })
     it('reduces ease by 0.2', () => {
       expect(calculateNextReview({ ...baseCard, ease_factor: 2.5 }, 0).new_ease).toBeCloseTo(2.3)
@@ -107,9 +119,9 @@ describe('calculateNextReview', () => {
   })
 
   describe('due_date', () => {
-    it('returns a future date string in YYYY-MM-DD format', () => {
+    it('returns a future ISO timestamp', () => {
       const result = calculateNextReview(baseCard, 2)
-      expect(result.due_date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+      expect(result.due_date).toMatch(/T/)
       expect(new Date(result.due_date).getTime()).toBeGreaterThan(Date.now())
     })
   })

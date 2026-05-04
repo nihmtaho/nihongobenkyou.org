@@ -2,6 +2,8 @@ import type { CardState, ReviewResult, SRSRating } from '../types/srs'
 
 export const AGAIN_DELAY_MIN_MS = 6 * 60 * 1000
 export const AGAIN_DELAY_MAX_MS = 10 * 60 * 1000
+const HARD_FIRST_DELAY_MS = 2 * 60 * 60 * 1000 // 2 hours
+const DAY_MS = 24 * 60 * 60 * 1000
 
 export function randomAgainDelay(): number {
   return (
@@ -27,14 +29,17 @@ const DEFAULT_EASE = 2.5
 export function calculateNextReview(card: CardState, rating: SRSRating): ReviewResult {
   const isFirstReview = card.review_count === 0
   // interval: stored for SM-2 calculation on the next review
-  // daysAhead: actual calendar offset from today for due_date
+  // daysAhead: day count used to compute dueMs for non-sub-day ratings
   let interval = 1
   let daysAhead = 0
   let ease = card.ease_factor ?? DEFAULT_EASE
 
+  let dueMs: number
+
   if (rating === 0) {
-    // Again: reset to learning, due today (in-session 6-10 min delay via deferred queue)
+    // Again: due in 6-10 min (widget shows countdown, not "DUE")
     ease = Math.max(MIN_EASE, ease - 0.2)
+    dueMs = Date.now() + randomAgainDelay()
   }
   else if (isFirstReview) {
     if (rating === 3) {
@@ -44,7 +49,8 @@ export function calculateNextReview(card: CardState, rating: SRSRating): ReviewR
     else if (rating === 2) {
       daysAhead = 1
     }
-    // Hard (rating === 1): interval=1, daysAhead=0 — due today (~2h learning step)
+    // Hard first: interval=1, daysAhead=0 — store actual 2h delay
+    dueMs = rating === 1 ? Date.now() + HARD_FIRST_DELAY_MS : Date.now() + daysAhead * DAY_MS
   }
   else {
     switch (rating) {
@@ -63,17 +69,15 @@ export function calculateNextReview(card: CardState, rating: SRSRating): ReviewR
         daysAhead = interval
         break
     }
+    dueMs = Date.now() + daysAhead * DAY_MS
   }
 
   interval = Math.min(interval, MAX_INTERVAL)
-
-  const due = new Date()
-  due.setDate(due.getDate() + daysAhead)
 
   return {
     vocab_id: card.vocabId,
     new_interval: interval,
     new_ease: ease,
-    due_date: due.toISOString().slice(0, 10),
+    due_date: new Date(dueMs).toISOString(),
   }
 }

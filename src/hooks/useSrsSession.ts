@@ -82,7 +82,7 @@ export function useSrsSession(): UseSrsSessionReturn {
     queryFn: async () =>
       db.user_cards
         .where('due_date')
-        .above(new Date().toISOString().slice(0, 10))
+        .above(new Date().toISOString())
         .filter(c => c.userId === userId && !c.is_known)
         .toArray(),
     enabled: !!userId && phase === 'empty',

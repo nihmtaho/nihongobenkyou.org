@@ -185,8 +185,8 @@ function LessonVocabRow({
   const { lesson_number, vocab_count, new: newCount, learning, review, mature, due, next_due_date } = lesson
   const studied = learning + review + mature
   const pctComplete = vocab_count > 0 ? Math.round((studied / vocab_count) * 100) : 0
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
-  const nextReview = due === 0 && next_due_date ? formatNextReview([next_due_date], today) : null
+  const now = useMemo(() => new Date().toISOString(), [])
+  const nextReview = due === 0 && next_due_date ? formatNextReview([next_due_date], now) : null
 
   return (
     <div

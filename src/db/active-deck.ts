@@ -57,10 +57,9 @@ export async function upsertActiveVocabSRS(srs: ActiveVocabSRS): Promise<void> {
 }
 
 export async function getDueActiveVocabSRS(userId: string): Promise<ActiveVocabSRS[]> {
-  const t = today()
   return db.active_vocab_srs
     .where('[userId+due_date]')
-    .between([userId, ''], [userId, t], true, true)
+    .between([userId, ''], [userId, new Date().toISOString()], true, true)
     .toArray()
 }
 
@@ -108,10 +107,9 @@ export async function upsertActiveKanjiSRS(srs: ActiveKanjiSRS): Promise<void> {
 }
 
 export async function getDueActiveKanjiSRS(userId: string): Promise<ActiveKanjiSRS[]> {
-  const t = today()
   return db.active_kanji_srs
     .where('[userId+due_date]')
-    .between([userId, ''], [userId, t], true, true)
+    .between([userId, ''], [userId, new Date().toISOString()], true, true)
     .toArray()
 }
 

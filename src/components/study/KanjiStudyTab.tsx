@@ -266,8 +266,8 @@ function KanjiSubRow({
   onOpenDue?: () => void
 }) {
   const { total, new: newCount, learning, review, mature, due, next_due_date } = stats
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
-  const nextReview = due === 0 && next_due_date ? formatNextReview([next_due_date], today) : null
+  const now = useMemo(() => new Date().toISOString(), [])
+  const nextReview = due === 0 && next_due_date ? formatNextReview([next_due_date], now) : null
 
   return (
     <div className="flex items-center gap-3 py-1.5">
