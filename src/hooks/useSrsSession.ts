@@ -4,6 +4,7 @@ import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { db } from '../db/schema'
+import { randomAgainDelay } from '../lib/srs'
 import { useAuthStore } from '../stores/authStore'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useSRS } from './useSRS'
@@ -40,6 +41,7 @@ export interface UseSrsSessionReturn {
   isVocabReady: boolean
   streak: number | undefined
   meaningLanguage: MeaningLanguage
+  deferred: { card: VocabWithSRS, showAfter: number }[]
 }
 
 const MAX_AGAIN_REQUEUES = 3
@@ -63,6 +65,7 @@ export function useSrsSession(): UseSrsSessionReturn {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [stats, setStats] = useState<SrsStats>(makeInitialStats)
   const [elapsed, setElapsed] = useState(0)
+  const [deferred, setDeferred] = useState<{ card: VocabWithSRS, showAfter: number }[]>([])
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const sessionWrittenRef = useRef(false)
   const againCountRef = useRef<Map<string, number>>(new Map())
@@ -138,6 +141,27 @@ export function useSrsSession(): UseSrsSessionReturn {
   }, [phase])
 
   useEffect(() => {
+    if (phase !== 'active')
+      return
+    const id = setInterval(() => {
+      const now = Date.now()
+      setDeferred((prev) => {
+        const ready = prev.filter(d => d.showAfter <= now)
+        if (ready.length === 0)
+          return prev
+        setQueue(q => {
+          const next = [...q]
+          // Insert ready cards right after the current card so they appear soon
+          next.splice(currentIndex + 1, 0, ...ready.map(d => d.card))
+          return next
+        })
+        return prev.filter(d => d.showAfter > now)
+      })
+    }, 30_000)
+    return () => clearInterval(id)
+  }, [phase, currentIndex])
+
+  useEffect(() => {
     if (phase !== 'complete' || sessionWrittenRef.current || !userId)
       return
     sessionWrittenRef.current = true
@@ -205,6 +229,7 @@ export function useSrsSession(): UseSrsSessionReturn {
     setElapsed(0)
     sessionWrittenRef.current = false
     againCountRef.current = new Map()
+    setDeferred([])
     setPhase('active')
   }
 
@@ -226,19 +251,18 @@ export function useSrsSession(): UseSrsSessionReturn {
     if (rating === 0) {
       const count = againCountRef.current.get(card.vocab_id) ?? 0
       if (count < MAX_AGAIN_REQUEUES) {
-        // Re-queue at end of session without changing Dexie until final rating
         againCountRef.current.set(card.vocab_id, count + 1)
-        setQueue(q => [...q, card])
+        setDeferred(d => [...d, { card, showAfter: Date.now() + randomAgainDelay() }])
         setCurrentIndex(i => i + 1)
         return
       }
-      // 4th Again: write to Dexie as due tomorrow and remove from session
+      // Exceeded MAX — fall through to write Again to Dexie
     }
 
     srs.rate(card, rating)
 
     const next = currentIndex + 1
-    if (next >= queue.length) {
+    if (next >= queue.length && deferred.length === 0) {
       setPhase('complete')
     }
     else {
@@ -247,6 +271,8 @@ export function useSrsSession(): UseSrsSessionReturn {
   }
 
   function handleAnswer(isCorrect: boolean) {
+    if (!userId)
+      return
     const card = queue[currentIndex]
     if (!card)
       return
@@ -261,16 +287,28 @@ export function useSrsSession(): UseSrsSessionReturn {
     }))
 
     if (shouldRequeue) {
-      setQueue(q => [...q, card])
-      setCurrentIndex(i => i + 1)
+      // Wrong answer — deferred requeue with 6–10 min delay
+      const count = againCountRef.current.get(card.vocab_id) ?? 0
+      if (count < MAX_AGAIN_REQUEUES) {
+        againCountRef.current.set(card.vocab_id, count + 1)
+        setDeferred(d => [...d, { card, showAfter: Date.now() + randomAgainDelay() }])
+        setCurrentIndex(i => i + 1)
+        return
+      }
+      // Exceeded MAX — write Again to Dexie
+      srs.rate(card, 0)
     }
     else {
+      // Correct — write computed rating to Dexie
       srs.rate(card, rating)
-      const next = currentIndex + 1
-      if (next >= queue.length)
-        setPhase('complete')
-      else
-        setCurrentIndex(next)
+    }
+
+    const next = currentIndex + 1
+    if (next >= queue.length && deferred.length === 0) {
+      setPhase('complete')
+    }
+    else {
+      setCurrentIndex(next)
     }
   }
 
@@ -296,5 +334,6 @@ export function useSrsSession(): UseSrsSessionReturn {
     vocabItems,
     streak: streak?.current_streak,
     meaningLanguage,
+    deferred,
   }
 }

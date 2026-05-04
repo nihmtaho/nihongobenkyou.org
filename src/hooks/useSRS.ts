@@ -7,14 +7,15 @@ import { getDueKanjiCards, updateKanjiCard } from '../db/kanji'
 import { db } from '../db/schema'
 import { uploadPendingReviews } from '../db/sync'
 import { calculateNextReview } from '../lib/srs'
-import { toCardState } from '../lib/srs-utils'
+import { toCardState, computeTypeInputRatingForDisplay } from '../lib/srs-utils'
 
 const KNOWN_MIN_INTERVAL = 21
 const KNOWN_MIN_REVIEWS = 5
 
 export interface TypeInputResult {
   rating: SRSRating
-  // True when rating is Hard (1) — caller should requeue the card for one retry
+  // True when the user answered incorrectly (rating === 0 / Again).
+  // Caller should requeue the card without writing to Dexie.
   shouldRequeue: boolean
 }
 
@@ -155,21 +156,10 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
   }
 
   function answerTypeInput(card: AnyCard, isCorrect: boolean): TypeInputResult {
-    if (!isCorrect) {
+    if (!isCorrect)
       return { rating: 0, shouldRequeue: true }
-    }
     const cardState = toCardState(card, userId)
-    const consecutive = cardState.consecutive_correct ?? 0
-    let rating: SRSRating
-    if (consecutive >= 4 && cardState.review_count >= 2) {
-      rating = 3
-    }
-    else if (cardState.review_count <= 1) {
-      rating = 1
-    }
-    else {
-      rating = 2
-    }
+    const rating = computeTypeInputRatingForDisplay(cardState, true)
     return { rating, shouldRequeue: false }
   }
 

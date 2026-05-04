@@ -363,4 +363,67 @@ describe('useSrsSession', () => {
       await waitFor(() => expect(result.current.isVocabReady).toBe(true))
     })
   })
+
+  describe('handleRate — deferred Again queue', () => {
+    async function seedVocab(card: ReturnType<typeof makeVocabWithSRS>) {
+      await db.vocabulary.put({
+        vocab_id: card.vocab_id,
+        word: card.word,
+        reading: card.reading,
+        romaji: card.romaji,
+        meaning_en: card.meaning_en,
+        meaning_vi: card.meaning_vi,
+        pitch_pattern: card.pitch_pattern,
+        pitch_type: card.pitch_type,
+        audio_filename: card.audio_filename,
+        pos: card.pos,
+        jlpt_level: card.jlpt_level,
+        book_source: card.book_source,
+        lesson_number: card.lesson_number,
+        examples: card.examples,
+        tags: card.tags,
+        deprecated: card.deprecated,
+      })
+    }
+
+    it('Again within MAX_AGAIN_REQUEUES adds card to deferred, not queue', async () => {
+      const card1 = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card1] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card1)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => { result.current.startSession() })
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      const initialQueueLength = result.current.queue.length
+
+      act(() => { result.current.handleRate(0) })
+
+      await waitFor(() => expect(result.current.deferred.length).toBe(1))
+      expect(result.current.queue.length).toBe(initialQueueLength)
+      expect(mockRate).not.toHaveBeenCalled()
+    })
+
+    it('session does not complete when deferred is non-empty', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => { result.current.startSession() })
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      // Rate the only card as Again — it goes to deferred, not end of queue
+      act(() => { result.current.handleRate(0) })
+
+      await waitFor(() => expect(result.current.deferred.length).toBe(1))
+      expect(result.current.phase).not.toBe('complete')
+    })
+  })
 })
