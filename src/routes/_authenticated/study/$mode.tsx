@@ -205,9 +205,15 @@ function StudyPage() {
 
   function handleRate(rating: 0 | 1 | 2 | 3) {
     srs.rate(currentCard, rating)
-    if (rating === 0)
-      markWrong(currentCard)
-    else markCorrect()
+    if (rating === 0) {
+      if (mode === 'flashcard')
+        markAttempted()
+      else
+        markWrong(currentCard)
+    }
+    else {
+      markCorrect()
+    }
     advanceCard()
   }
 
