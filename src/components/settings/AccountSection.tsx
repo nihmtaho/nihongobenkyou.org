@@ -53,6 +53,8 @@ export function AccountSection() {
     try {
       await db.user_cards.where('userId').equals(userId).delete()
       await db.kanji_cards.where('userId').equals(userId).delete()
+      await db.active_vocab_srs.toCollection().filter(c => c.userId === userId).delete()
+      await db.active_kanji_srs.toCollection().filter(c => c.userId === userId).delete()
       await db.streaks.where('userId').equals(userId).delete()
       await db.sync_queue.clear()
       await db.review_log.where('userId').equals(userId).delete()
@@ -94,6 +96,7 @@ export function AccountSection() {
       queryClient.invalidateQueries({ queryKey: ['streak', userId] })
       queryClient.invalidateQueries({ queryKey: ['total-user-cards', userId] })
       queryClient.invalidateQueries({ queryKey: ['future-due-cards', userId] })
+      queryClient.invalidateQueries({ queryKey: ['active-deck-due', userId] })
 
       setShowResetModal(false)
       setResetConfirmText('')
