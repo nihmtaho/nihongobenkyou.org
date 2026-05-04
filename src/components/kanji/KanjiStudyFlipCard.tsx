@@ -1,4 +1,4 @@
-import type { KanjiItem } from '../../types/kanji'
+import type { KanjiCardState, KanjiItem } from '../../types/kanji'
 import type { SRSRating } from '../../types/srs'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -7,13 +7,14 @@ import { RatingBar } from '../study/shared/RatingBar'
 
 interface KanjiStudyFlipCardProps {
   kanji: KanjiItem
+  srsState?: KanjiCardState
   onRate: (rating: SRSRating) => void
 }
 
 const GRID_FACE: React.CSSProperties = { gridArea: '1 / 1' }
 const GRID_FACE_BACK: React.CSSProperties = { ...GRID_FACE, transform: 'rotateY(180deg)' }
 
-export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
+export function KanjiStudyFlipCard({ kanji, srsState, onRate }: KanjiStudyFlipCardProps) {
   const { isFlipped, setIsFlipped, x, rotate, handleDragEnd } = useFlipCardState(onRate)
   const [hintRevealed, setHintRevealed] = useState(false)
 
@@ -234,7 +235,7 @@ export function KanjiStudyFlipCard({ kanji, onRate }: KanjiStudyFlipCardProps) {
       </motion.div>
 
       {/* Rating bar */}
-      {isFlipped && <RatingBar onRate={onRate} />}
+      {isFlipped && <RatingBar card={srsState} onRate={onRate} />}
 
       <p className="text-[10px] text-foreground/25 font-[var(--br-mono-font)] tracking-wide">
         {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · [h] hint'}

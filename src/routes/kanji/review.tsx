@@ -227,7 +227,7 @@ function KanjiReviewPage() {
 
       {!isCardReady
         ? <Skeleton className="h-64 w-full max-w-sm mx-auto" />
-        : <KanjiStudyFlipCard key={char} kanji={kanji} onRate={handleRate} />}
+        : <KanjiStudyFlipCard key={char} kanji={kanji} srsState={currentCard} onRate={handleRate} />}
     </div>
   )
 }
