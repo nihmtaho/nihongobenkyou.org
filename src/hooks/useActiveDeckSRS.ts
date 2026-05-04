@@ -93,6 +93,7 @@ export function useActiveDeckKanjiSRS(userId: string) {
       })
     },
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['active-kanji-due', userId] })
       qc.invalidateQueries({ queryKey: ['active-deck-due', userId] })
     },
     retry: 0,
