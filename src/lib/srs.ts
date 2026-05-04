@@ -1,5 +1,27 @@
 import type { CardState, ReviewResult, SRSRating } from '../types/srs'
 
+export const AGAIN_DELAY_MIN_MS = 6 * 60 * 1000
+export const AGAIN_DELAY_MAX_MS = 10 * 60 * 1000
+
+export function randomAgainDelay(): number {
+  return (
+    Math.floor(Math.random() * (AGAIN_DELAY_MAX_MS - AGAIN_DELAY_MIN_MS + 1))
+    + AGAIN_DELAY_MIN_MS
+  )
+}
+
+export function formatIntervalPreview(days: number): string {
+  if (days <= 0)
+    return '< 1d'
+  if (days === 1)
+    return '1d'
+  if (days < 30)
+    return `${days}d`
+  if (days < 365)
+    return `${Math.round(days / 30)}mo`
+  return `${Math.round(days / 365)}y`
+}
+
 const MIN_EASE = 1.3
 const MAX_INTERVAL = 180
 const DEFAULT_EASE = 2.5

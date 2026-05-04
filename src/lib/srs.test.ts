@@ -1,6 +1,6 @@
 import type { CardState } from '../types/srs'
 import { describe, expect, it } from 'vitest'
-import { calculateNextReview } from './srs'
+import { AGAIN_DELAY_MAX_MS, AGAIN_DELAY_MIN_MS, calculateNextReview, formatIntervalPreview, randomAgainDelay } from './srs'
 
 const baseCard: CardState = {
   userId: 'u1',
@@ -100,5 +100,39 @@ describe('calculateNextReview', () => {
       expect(result.due_date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
       expect(new Date(result.due_date).getTime()).toBeGreaterThan(Date.now())
     })
+  })
+})
+
+describe('formatIntervalPreview', () => {
+  it('negative/zero → < 1d', () => {
+    expect(formatIntervalPreview(0)).toBe('< 1d')
+  })
+  it('1 day', () => {
+    expect(formatIntervalPreview(1)).toBe('1d')
+  })
+  it('14 days', () => {
+    expect(formatIntervalPreview(14)).toBe('14d')
+  })
+  it('29 days', () => {
+    expect(formatIntervalPreview(29)).toBe('29d')
+  })
+  it('30 days → 1mo', () => {
+    expect(formatIntervalPreview(30)).toBe('1mo')
+  })
+  it('180 days → 6mo', () => {
+    expect(formatIntervalPreview(180)).toBe('6mo')
+  })
+  it('365 days → 1y', () => {
+    expect(formatIntervalPreview(365)).toBe('1y')
+  })
+})
+
+describe('randomAgainDelay', () => {
+  it('returns value in [6 min, 10 min] range', () => {
+    for (let i = 0; i < 100; i++) {
+      const delay = randomAgainDelay()
+      expect(delay).toBeGreaterThanOrEqual(AGAIN_DELAY_MIN_MS)
+      expect(delay).toBeLessThanOrEqual(AGAIN_DELAY_MAX_MS)
+    }
   })
 })
