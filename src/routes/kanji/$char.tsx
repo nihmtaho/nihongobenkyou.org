@@ -10,7 +10,7 @@ import { Separator } from '../../components/ui/separator'
 import { Skeleton } from '../../components/ui/skeleton'
 import { getAllKanji, upsertKanjiCard } from '../../db/kanji'
 import { db } from '../../db/schema'
-import { useActiveDeckKanji, useToggleKanjiInDeck } from '../../hooks/useActiveDeck'
+import { useActiveDeckKanji, useActiveDeckVocab, useToggleKanjiInDeck, useToggleVocabInDeck } from '../../hooks/useActiveDeck'
 import { useKanji } from '../../hooks/useKanji'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -30,9 +30,12 @@ function KanjiDetailPage() {
   const queryClient = useQueryClient()
 
   const { data: deckKanji } = useActiveDeckKanji(userId ?? '')
+  const { data: deckVocab } = useActiveDeckVocab(userId ?? '')
   const toggleKanji = useToggleKanjiInDeck(userId ?? '')
+  const toggleVocab = useToggleVocabInDeck(userId ?? '')
 
   const kanjiSet = useMemo(() => new Set((deckKanji ?? []).map(k => k.char)), [deckKanji])
+  const vocabSet = useMemo(() => new Set((deckVocab ?? []).map(v => v.vocab_id)), [deckVocab])
 
   const { data: lessonKanji } = useQuery({
     queryKey: ['kanji-lesson-neighbors', kanji?.lesson_number],
@@ -213,6 +216,9 @@ function KanjiDetailPage() {
     </svg>
   )
 
+  const handleToggleKanji = () => toggleKanji.mutate({ char: kanji.char, inDeck: kanjiSet.has(kanji.char) })
+  const handleToggleVocab = (vocabId: string) => toggleVocab.mutate({ vocabId, inDeck: vocabSet.has(vocabId) })
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
       {/* Navigation bar — back + lesson position + prev/next */}
@@ -281,7 +287,7 @@ function KanjiDetailPage() {
               {userId && (
                 <AddToActiveDeckButton
                   inDeck={kanjiSet.has(kanji.char)}
-                  onToggle={() => toggleKanji.mutate({ char: kanji.char, inDeck: kanjiSet.has(kanji.char) })}
+                  onToggle={handleToggleKanji}
                   isPending={toggleKanji.isPending}
                 />
               )}
@@ -296,7 +302,13 @@ function KanjiDetailPage() {
         {mnemonicBlock}
         {componentsBlock}
         {strokeOrderBlock}
-        <RelatedVocabulary char={kanji.char} curated={kanji.related_vocab} />
+        <RelatedVocabulary
+          char={kanji.char}
+          curated={kanji.related_vocab}
+          vocabSet={vocabSet}
+          onToggleVocab={handleToggleVocab}
+          isTogglePending={toggleVocab.isPending}
+        />
       </div>
 
       {/* Desktop layout (≥ lg): two-column sticky grid */}
@@ -315,7 +327,7 @@ function KanjiDetailPage() {
               {userId && (
                 <AddToActiveDeckButton
                   inDeck={kanjiSet.has(kanji.char)}
-                  onToggle={() => toggleKanji.mutate({ char: kanji.char, inDeck: kanjiSet.has(kanji.char) })}
+                  onToggle={handleToggleKanji}
                   isPending={toggleKanji.isPending}
                   className="mt-3"
                 />
@@ -360,7 +372,13 @@ function KanjiDetailPage() {
           {mnemonicBlock}
           {strokeOrderBlock}
           {componentsBlock}
-          <RelatedVocabulary char={kanji.char} curated={kanji.related_vocab} />
+          <RelatedVocabulary
+            char={kanji.char}
+            curated={kanji.related_vocab}
+            vocabSet={vocabSet}
+            onToggleVocab={handleToggleVocab}
+            isTogglePending={toggleVocab.isPending}
+          />
         </div>
       </div>
     </div>
@@ -377,9 +395,12 @@ interface VocabHit {
 interface RelatedVocabularyProps {
   char: string
   curated: RelatedVocabItem[] | null
+  vocabSet: Set<string>
+  onToggleVocab: (vocabId: string) => void
+  isTogglePending: boolean
 }
 
-function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
+function RelatedVocabulary({ char, curated, vocabSet, onToggleVocab, isTogglePending }: RelatedVocabularyProps) {
   const [expandedKey, setExpandedKey] = useState<string | null>(null)
 
   const { data: dynamic } = useQuery<VocabHit[]>({
@@ -395,37 +416,68 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
     enabled: !curated || curated.length === 0,
   })
 
+  // Curated items have no vocab_id — look up by kana from Dexie
+  const { data: curatedVocabIds } = useQuery<Record<string, string>>({
+    queryKey: ['curated-vocab-ids', char],
+    queryFn: async () => {
+      if (!curated || curated.length === 0)
+        return {}
+      const kanas = new Set(curated.map(v => v.kana))
+      const items = await db.vocabulary.toArray()
+      const map: Record<string, string> = {}
+      for (const item of items) {
+        if (kanas.has(item.reading))
+          map[item.reading] = item.vocab_id
+      }
+      return map
+    },
+    staleTime: Infinity,
+    enabled: !!(curated && curated.length > 0),
+  })
+
   if (curated && curated.length > 0) {
     return (
       <div className="flex flex-col gap-3">
         <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Related Vocabulary</p>
         <div className="flex flex-col gap-1">
-          {curated.map(v => (
-            <div key={`${v.word ?? v.kana}`} className="flex flex-col bg-card border border-border/10">
-              <button
-                type="button"
-                className="flex flex-col gap-0.5 p-2 text-left w-full"
-                onClick={() => setExpandedKey(expandedKey === v.kana ? null : v.kana)}
-              >
-                <div className="flex items-baseline gap-2">
-                  {v.word && (
-                    <span className="text-base font-bold font-[var(--br-jp-font)]">{v.word}</span>
-                  )}
-                  <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground">{v.kana}</span>
-                  {v.han_viet && (
-                    <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{v.han_viet}</span>
+          {curated.map((v) => {
+            const vocabId = curatedVocabIds?.[v.kana]
+            return (
+              <div key={`${v.word ?? v.kana}`} className="flex flex-col bg-card border border-border/10">
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    className="flex flex-col gap-0.5 p-2 text-left flex-1"
+                    onClick={() => setExpandedKey(expandedKey === v.kana ? null : v.kana)}
+                  >
+                    <div className="flex items-baseline gap-2">
+                      {v.word && (
+                        <span className="text-base font-bold font-[var(--br-jp-font)]">{v.word}</span>
+                      )}
+                      <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground">{v.kana}</span>
+                      {v.han_viet && (
+                        <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{v.han_viet}</span>
+                      )}
+                    </div>
+                    <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
+                  </button>
+                  {vocabId && (
+                    <AddToActiveDeckButton
+                      inDeck={vocabSet.has(vocabId)}
+                      onToggle={() => onToggleVocab(vocabId)}
+                      isPending={isTogglePending}
+                    />
                   )}
                 </div>
-                <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
-              </button>
-              {expandedKey === v.kana && v.example && (
-                <div className="border-t border-border/10 border-l-4 border-l-primary pl-3 pr-2 py-2">
-                  <p className="text-sm font-[var(--br-jp-font)]">{v.example.ja}</p>
-                  <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] mt-1">{v.example.vi}</p>
-                </div>
-              )}
-            </div>
-          ))}
+                {expandedKey === v.kana && v.example && (
+                  <div className="border-t border-border/10 border-l-4 border-l-primary pl-3 pr-2 py-2">
+                    <p className="text-sm font-[var(--br-jp-font)]">{v.example.ja}</p>
+                    <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] mt-1">{v.example.vi}</p>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     )
@@ -447,15 +499,22 @@ function RelatedVocabulary({ char, curated }: RelatedVocabularyProps) {
         {dynamic.map(v => (
           <div
             key={v.vocab_id}
-            className="flex flex-col gap-0.5 bg-card border border-border/10 p-2"
+            className="flex items-center bg-card border border-border/10"
           >
-            <div className="flex items-baseline gap-2">
-              {v.word && (
-                <span className="text-base font-bold font-[var(--br-jp-font)]">{v.word}</span>
-              )}
-              <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground">{v.reading}</span>
+            <div className="flex flex-col gap-0.5 p-2 flex-1">
+              <div className="flex items-baseline gap-2">
+                {v.word && (
+                  <span className="text-base font-bold font-[var(--br-jp-font)]">{v.word}</span>
+                )}
+                <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground">{v.reading}</span>
+              </div>
+              <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
             </div>
-            <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
+            <AddToActiveDeckButton
+              inDeck={vocabSet.has(v.vocab_id)}
+              onToggle={() => onToggleVocab(v.vocab_id)}
+              isPending={isTogglePending}
+            />
           </div>
         ))}
       </div>
