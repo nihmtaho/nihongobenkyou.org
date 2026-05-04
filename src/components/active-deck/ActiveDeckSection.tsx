@@ -21,8 +21,6 @@ import { ACTIVE_DECK_KANJI_SECTIONS, ACTIVE_DECK_VOCAB_SECTIONS } from '../study
 import { StudyModal } from '../study/StudyModal'
 import { KanjiDeckItem, VocabDeckItem } from './ActiveDeckItem'
 
-const TODAY = new Date().toISOString().slice(0, 10)
-
 // ─── Menu button (⋯) with inline popover ─────────────────────────────────────
 
 interface MenuProps {
@@ -213,7 +211,7 @@ export function ActiveDeckVocabSection({ userId }: ActiveDeckVocabSectionProps) 
                   <VocabDeckItem
                     key={item.vocab_id}
                     vocab={vocab}
-                    dueDate={srs?.due_date ?? TODAY}
+                    dueDate={srs?.due_date ?? new Date().toISOString().slice(0, 10)}
                     onRemove={() => toggleVocab.mutate({ vocabId: item.vocab_id, inDeck: true })}
                   />
                 )
@@ -283,7 +281,7 @@ export function ActiveDeckKanjiSection({ userId }: ActiveDeckKanjiSectionProps) 
 
   function handleLaunch(_mode: string, _options: StudyLaunchOptions) {
     setStudyModalOpen(false)
-    launch()
+    launch(_mode as StudyMode)
   }
 
   function handleClearConfirm() {
@@ -345,7 +343,7 @@ export function ActiveDeckKanjiSection({ userId }: ActiveDeckKanjiSectionProps) 
                   <KanjiDeckItem
                     key={item.char}
                     kanji={kanji}
-                    dueDate={srs?.due_date ?? TODAY}
+                    dueDate={srs?.due_date ?? new Date().toISOString().slice(0, 10)}
                     onRemove={() => toggleKanji.mutate({ char: item.char, inDeck: true })}
                   />
                 )

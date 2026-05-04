@@ -4,15 +4,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const TODAY = new Date().toISOString().slice(0, 10)
-
 function isDue(dueDate: string): boolean {
-  return dueDate <= TODAY
+  return dueDate <= new Date().toISOString().slice(0, 10)
 }
 
 function daysRemaining(dueDate: string): number {
   const due = new Date(dueDate)
-  const now = new Date(TODAY)
+  const now = new Date(new Date().toISOString().slice(0, 10))
   return Math.ceil((due.getTime() - now.getTime()) / 86_400_000)
 }
 
