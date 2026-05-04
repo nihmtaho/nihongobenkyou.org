@@ -1,6 +1,7 @@
 export { AccountSection } from './AccountSection'
 export { ActiveDeckBackupSection } from './ActiveDeckBackupSection'
 export { BackupSection } from './BackupSection'
+export { DangerZoneSection } from './DangerZoneSection'
 export { DarkModeSection } from './DarkModeSection'
 export { FontSizeSection } from './FontSizeSection'
 export { LanguageSection } from './LanguageSection'

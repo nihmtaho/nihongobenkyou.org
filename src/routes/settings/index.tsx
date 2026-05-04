@@ -3,6 +3,7 @@ import {
   AccountSection,
   ActiveDeckBackupSection,
   BackupSection,
+  DangerZoneSection,
   DarkModeSection,
   FontSizeSection,
   LanguageSection,
@@ -29,6 +30,7 @@ function SettingsPage() {
       <SyncSection />
       <BackupSection />
       <ActiveDeckBackupSection userId={userId} />
+      <DangerZoneSection />
       <AccountSection />
       <div className="bg-card border border-border/10 p-4">
         <h2 className="text-[11px] font-bold uppercase font-[var(--br-mono-font)] mb-3 text-muted-foreground">
