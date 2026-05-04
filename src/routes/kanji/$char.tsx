@@ -37,6 +37,14 @@ function KanjiDetailPage() {
   const kanjiSet = useMemo(() => new Set((deckKanji ?? []).map(k => k.char)), [deckKanji])
   const vocabSet = useMemo(() => new Set((deckVocab ?? []).map(v => v.vocab_id)), [deckVocab])
 
+  const [toastMsg, setToastMsg] = useState<string | null>(null)
+  useEffect(() => {
+    if (!toastMsg)
+      return
+    const id = setTimeout(setToastMsg, 2000, null)
+    return () => clearTimeout(id)
+  }, [toastMsg])
+
   const { data: lessonKanji } = useQuery({
     queryKey: ['kanji-lesson-neighbors', kanji?.lesson_number],
     queryFn: () => getAllKanji({ lesson_number: kanji!.lesson_number! }),
@@ -216,162 +224,113 @@ function KanjiDetailPage() {
     </svg>
   )
 
-  const handleToggleKanji = () => toggleKanji.mutate({ char: kanji.char, inDeck: kanjiSet.has(kanji.char) })
-  const handleToggleVocab = (vocabId: string) => toggleVocab.mutate({ vocabId, inDeck: vocabSet.has(vocabId) })
+  const handleToggleKanji = () => {
+    const inDeck = kanjiSet.has(kanji.char)
+    toggleKanji.mutate(
+      { char: kanji.char, inDeck },
+      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC CHỦ ĐỘNG' : 'Đã thêm vào HỌC CHỦ ĐỘNG') },
+    )
+  }
+
+  const handleToggleVocab = (vocabId: string) => {
+    const inDeck = vocabSet.has(vocabId)
+    toggleVocab.mutate(
+      { vocabId, inDeck },
+      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC CHỦ ĐỘNG' : 'Đã thêm vào HỌC CHỦ ĐỘNG') },
+    )
+  }
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      {/* Navigation bar — back + lesson position + prev/next */}
-      <div className="flex items-center mb-4 -ml-2">
-        <div title="Danh sách hán tự">
-          <Button
-            variant="ghost"
-            size="sm"
-            aria-label="Danh sách hán tự"
-            onClick={() => navigate({ to: '/kanji' })}
-          >
-            {chevronLeft}
-          </Button>
-        </div>
-
-        {kanji.lesson_number != null && lessonKanji && lessonKanji.length > 1 && (
-          <>
-            <span className="flex-1 text-center font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider">
-              BÀI
-              {' '}
-              {String(kanji.lesson_number).padStart(2, '0')}
-              {' '}
-              ·
-              {' '}
-              {currentIndex + 1}
-              /
-              {lessonKanji.length}
-            </span>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                aria-label="Hán tự trước"
-                disabled={!prevChar}
-                className="disabled:opacity-30"
-                onClick={() => prevChar && navigate({ to: '/kanji/$char', params: { char: prevChar } })}
-              >
-                {chevronLeft}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                aria-label="Hán tự tiếp theo"
-                disabled={!nextChar}
-                className="disabled:opacity-30"
-                onClick={() => nextChar && navigate({ to: '/kanji/$char', params: { char: nextChar } })}
-              >
-                {chevronRight}
-              </Button>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Mobile layout (< lg): single column */}
-      <div className="flex flex-col gap-6 lg:hidden">
-        <div className="flex items-start gap-4">
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="flex items-center gap-2">
-              <p
-                className="text-7xl font-bold leading-none"
-                style={{ fontFamily: 'var(--br-jp-font)' }}
-              >
-                {kanji.char}
-              </p>
-              {userId && (
-                <AddToActiveDeckButton
-                  inDeck={kanjiSet.has(kanji.char)}
-                  onToggle={handleToggleKanji}
-                  isPending={toggleKanji.isPending}
-                />
-              )}
-            </div>
-            {badgeRow}
+    <>
+      {toastMsg && (
+        <div className="toast toast-top toast-center z-50 pointer-events-none">
+          <div className="bg-success/10 border border-success/50 px-4 py-2">
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase">{toastMsg}</span>
           </div>
         </div>
-        <Separator className="my-0 opacity-20" />
-        {readingsBlock}
-        {meaningsBlock}
-        {hanVietBlock}
-        {mnemonicBlock}
-        {componentsBlock}
-        {strokeOrderBlock}
-        <RelatedVocabulary
-          char={kanji.char}
-          curated={kanji.related_vocab}
-          vocabSet={vocabSet}
-          onToggleVocab={handleToggleVocab}
-          isTogglePending={toggleVocab.isPending}
-        />
-      </div>
+      )}
+      <div className="p-4 max-w-5xl mx-auto">
+        {/* Navigation bar — back + lesson position + prev/next */}
+        <div className="flex items-center mb-4 -ml-2">
+          <div title="Danh sách hán tự">
+            <Button
+              variant="ghost"
+              size="sm"
+              aria-label="Danh sách hán tự"
+              onClick={() => navigate({ to: '/kanji' })}
+            >
+              {chevronLeft}
+            </Button>
+          </div>
 
-      {/* Desktop layout (≥ lg): two-column sticky grid */}
-      <div className="hidden lg:grid lg:grid-cols-[320px_1fr] lg:gap-8 lg:items-start">
-        {/* Left panel — sticky */}
-        <div className="sticky top-6 flex flex-col gap-6">
-          {/* Large character card */}
-          <div className="bg-card border border-border/10 flex flex-col items-center gap-3 p-6">
-            <div className="flex items-start gap-2">
-              <p
-                className="text-[120px] font-bold leading-none"
-                style={{ fontFamily: 'var(--br-jp-font)' }}
-              >
-                {kanji.char}
-              </p>
-              {userId && (
-                <AddToActiveDeckButton
-                  inDeck={kanjiSet.has(kanji.char)}
-                  onToggle={handleToggleKanji}
-                  isPending={toggleKanji.isPending}
-                  className="mt-3"
-                />
-              )}
-            </div>
-            {kanji.han_viet && (
-              <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center">
-                {kanji.han_viet}
-              </p>
-            )}
-            {!kanji.han_viet && (
-              <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center text-muted-foreground">
-                —
-              </p>
-            )}
-            <div className="flex gap-2 flex-wrap justify-center">
-              {kanji.jlpt_level && (
-                <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px] text-primary border-primary">
-                  {kanji.jlpt_level}
-                </Badge>
-              )}
-              <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
-                {kanji.stroke_count}
+          {kanji.lesson_number != null && lessonKanji && lessonKanji.length > 1 && (
+            <>
+              <span className="flex-1 text-center font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider">
+                BÀI
                 {' '}
-                strokes
-              </Badge>
-              {kanji.radical && (
-                <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
-                  radical:
-                  {' '}
-                  {kanji.radical}
-                </Badge>
-              )}
+                {String(kanji.lesson_number).padStart(2, '0')}
+                {' '}
+                ·
+                {' '}
+                {currentIndex + 1}
+                /
+                {lessonKanji.length}
+              </span>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Hán tự trước"
+                  disabled={!prevChar}
+                  className="disabled:opacity-30"
+                  onClick={() => prevChar && navigate({ to: '/kanji/$char', params: { char: prevChar } })}
+                >
+                  {chevronLeft}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Hán tự tiếp theo"
+                  disabled={!nextChar}
+                  className="disabled:opacity-30"
+                  onClick={() => nextChar && navigate({ to: '/kanji/$char', params: { char: nextChar } })}
+                >
+                  {chevronRight}
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Mobile layout (< lg): single column */}
+        <div className="flex flex-col gap-6 lg:hidden">
+          <div className="flex items-start gap-4">
+            <div className="flex flex-col gap-2 flex-1">
+              <div className="flex items-center gap-2">
+                <p
+                  className="text-7xl font-bold leading-none"
+                  style={{ fontFamily: 'var(--br-jp-font)' }}
+                >
+                  {kanji.char}
+                </p>
+                {userId && (
+                  <AddToActiveDeckButton
+                    inDeck={kanjiSet.has(kanji.char)}
+                    onToggle={handleToggleKanji}
+                    isPending={toggleKanji.isPending}
+                  />
+                )}
+              </div>
+              {badgeRow}
             </div>
           </div>
+          <Separator className="my-0 opacity-20" />
           {readingsBlock}
           {meaningsBlock}
-        </div>
-
-        {/* Right panel — flowing content */}
-        <div className="flex flex-col gap-6">
+          {hanVietBlock}
           {mnemonicBlock}
-          {strokeOrderBlock}
           {componentsBlock}
+          {strokeOrderBlock}
           <RelatedVocabulary
             char={kanji.char}
             curated={kanji.related_vocab}
@@ -380,8 +339,79 @@ function KanjiDetailPage() {
             isTogglePending={toggleVocab.isPending}
           />
         </div>
+
+        {/* Desktop layout (≥ lg): two-column sticky grid */}
+        <div className="hidden lg:grid lg:grid-cols-[320px_1fr] lg:gap-8 lg:items-start">
+          {/* Left panel — sticky */}
+          <div className="sticky top-6 flex flex-col gap-6">
+            {/* Large character card */}
+            <div className="bg-card border border-border/10 flex flex-col items-center gap-3 p-6">
+              <div className="flex items-start gap-2">
+                <p
+                  className="text-[120px] font-bold leading-none"
+                  style={{ fontFamily: 'var(--br-jp-font)' }}
+                >
+                  {kanji.char}
+                </p>
+                {userId && (
+                  <AddToActiveDeckButton
+                    inDeck={kanjiSet.has(kanji.char)}
+                    onToggle={handleToggleKanji}
+                    isPending={toggleKanji.isPending}
+                    className="mt-3"
+                  />
+                )}
+              </div>
+              {kanji.han_viet && (
+                <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center">
+                  {kanji.han_viet}
+                </p>
+              )}
+              {!kanji.han_viet && (
+                <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center text-muted-foreground">
+                  —
+                </p>
+              )}
+              <div className="flex gap-2 flex-wrap justify-center">
+                {kanji.jlpt_level && (
+                  <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px] text-primary border-primary">
+                    {kanji.jlpt_level}
+                  </Badge>
+                )}
+                <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
+                  {kanji.stroke_count}
+                  {' '}
+                  strokes
+                </Badge>
+                {kanji.radical && (
+                  <Badge variant="outline" className="font-[var(--br-mono-font)] text-[10px]">
+                    radical:
+                    {' '}
+                    {kanji.radical}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            {readingsBlock}
+            {meaningsBlock}
+          </div>
+
+          {/* Right panel — flowing content */}
+          <div className="flex flex-col gap-6">
+            {mnemonicBlock}
+            {strokeOrderBlock}
+            {componentsBlock}
+            <RelatedVocabulary
+              char={kanji.char}
+              curated={kanji.related_vocab}
+              vocabSet={vocabSet}
+              onToggleVocab={handleToggleVocab}
+              isTogglePending={toggleVocab.isPending}
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
