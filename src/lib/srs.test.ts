@@ -106,6 +106,7 @@ describe('calculateNextReview', () => {
 describe('formatIntervalPreview', () => {
   it('negative/zero → < 1d', () => {
     expect(formatIntervalPreview(0)).toBe('< 1d')
+    expect(formatIntervalPreview(-5)).toBe('< 1d')
   })
   it('1 day', () => {
     expect(formatIntervalPreview(1)).toBe('1d')

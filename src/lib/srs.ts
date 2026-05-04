@@ -13,8 +13,6 @@ export function randomAgainDelay(): number {
 export function formatIntervalPreview(days: number): string {
   if (days <= 0)
     return '< 1d'
-  if (days === 1)
-    return '1d'
   if (days < 30)
     return `${days}d`
   if (days < 365)
