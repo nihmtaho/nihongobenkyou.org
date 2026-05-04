@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import { useNextKanjiDue } from '../../hooks/useNextKanjiDue'
 import { formatNextReview } from '../../lib/next-review'
+import { ActiveDeckKanjiSection } from '../active-deck/ActiveDeckSection'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 import { KanjiStudyModal } from '../kanji/KanjiStudyModal'
 
@@ -155,6 +156,9 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
               )}
             </>
           )}
+
+      <div className="mt-6 border-t border-border/20" />
+      <ActiveDeckKanjiSection userId={userId} />
 
       {openLesson && (
         <KanjiStudyModal

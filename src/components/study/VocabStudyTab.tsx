@@ -10,6 +10,7 @@ import { useStreak } from '../../hooks/useStreak'
 import { fetchVocabLessonStats } from '../../hooks/useVocabLessonStats'
 import { datasets } from '../../lib/datasets.config'
 import { formatNextReview } from '../../lib/next-review'
+import { ActiveDeckVocabSection } from '../active-deck/ActiveDeckSection'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 import { DueCard } from './shared/DueCard'
 import { EmptyState } from './shared/EmptyState'
@@ -124,6 +125,9 @@ export function VocabStudyTab({ userId }: { userId: string }) {
                 ctaLink="/books"
               />
             )}
+      <div className="mt-6 border-t border-border/20" />
+      <ActiveDeckVocabSection userId={userId} />
+
       {modal && (
         <VocabStudyModal
           title={`Bài ${String(modal.lesson.lesson_number).padStart(2, '0')}`}
