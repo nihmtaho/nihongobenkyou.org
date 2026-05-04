@@ -4,23 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Primary Rule Always to apply
 
-**Alway** following the [karpathy-guidelines](.claude/rules/karpathy-guidelines.md) before to work.
+**Always** follow the [karpathy-guidelines](.claude/rules/karpathy-guidelines.md) before working.
 
 ## Project Overview
 
-Japanese vocabulary learning PWA targeting Vietnamese learners. Phase 1 focuses on Minna no Nihongo (Shokyuu I & II). **Offline-first architecture** with a strict content/index split:
+Japanese vocabulary learning PWA for Vietnamese learners. Phase 1: Minna no Nihongo (Shokyuu I & II). **Offline-first**:
 
-- **Content** (vocabulary, pitch, audio) — client-side only in IndexedDB (Dexie.js), seeded from YAML→JSON pipeline
-- **Index** (SRS state per user) — Supabase PostgreSQL, cached in IndexedDB, synced in background
+- **Content** (vocabulary, pitch, audio) — client-side only, IndexedDB (Dexie.js), seeded from YAML→JSON
+- **Index** (SRS state) — Supabase PostgreSQL, cached in IndexedDB, background-synced
 
-See `STRUCTURE.md` for full directory layout. Detailed rules are in `.claude/rules/` — read them before writing code.
+See `STRUCTURE.md` for directory layout. Detailed rules in `.claude/rules/` — read before writing code.
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
 | Frontend | React 19, TanStack Router v1, TanStack Query v5, Zustand v5 |
-| UI | DaisyUI v5 on Tailwind CSS v4 — "Raw Brutalist Editorial" theme |
+| UI | shadcn/ui (Lyra) on Tailwind CSS v4 — "Raw Brutalist Editorial" theme |
 | Local DB | Dexie.js v4 (IndexedDB) |
 | Remote DB | Supabase (Auth, PostgreSQL, Realtime) |
 | Testing | Vitest, @testing-library/react, MSW, fake-indexeddb, Playwright |
@@ -38,7 +38,6 @@ pnpm run lint
 pnpm run test             # Vitest watch mode
 pnpm run test:run         # Vitest single run (CI)
 pnpm run test:e2e         # Playwright E2E
-pnpm run test:coverage
 pnpm dlx vitest run src/lib/srs.test.ts  # single test file
 ```
 
@@ -47,19 +46,15 @@ pnpm dlx vitest run src/lib/srs.test.ts  # single test file
 ### Dependency Direction (enforced)
 
 ```
-routes / components
-        ↓
-      hooks/          ← only public interface for data; never skip this layer
-       ↓   ↓
-    db/   api/        ← Dexie and Supabase implementations
-        ↓
-      lib/            ← pure functions (vocab-id, srs, pitch)
+routes / components → hooks/ → db/ | api/ → lib/
 ```
+
+`hooks/` is the only public interface for data — never skip this layer.
 
 ### Data Flow
 
 ```
-YAML → build:dataset → public/data/{book_id}/lesson-XX.json + manifest.json
+YAML → build:dataset → public/data/{book_id}/lesson-XX.json
                               ↓ (app start)
                         Dexie `vocabulary` (seeded once, read-only)
                               ↓ (review)
@@ -92,7 +87,7 @@ const vocabId = `${bookCodePrefix}_${sha256(input).slice(0, 16)}`
 | `streaks` | `date` | `userId` |
 | `settings` | `key` | — |
 
-No JOINs in IndexedDB — merge in hooks: `vocabulary` + `user_cards` → `VocabWithSRS`. On new device: login → `db/onboarding.ts` fetches `user_cards` → extracts `book_source` → seeds Dexie.
+No JOINs in IndexedDB — merge in hooks: `vocabulary` + `user_cards` → `VocabWithSRS`.
 
 ### Zustand Stores
 
@@ -102,42 +97,23 @@ No JOINs in IndexedDB — merge in hooks: `vocabulary` + `user_cards` → `Vocab
 | `settingsStore` | Theme, language, SRS config — persisted to `localStorage` |
 | `authStore` | Supabase session mirror — `userId`, `isAuthenticated` |
 
-### Error Classification
-
-Classify in `src/api/` before errors reach hooks. Never classify in components.
-
-| Class | Condition | Hook behaviour |
-|---|---|---|
-| `NetworkError` | Supabase unreachable, timeout, 5xx | Silent Dexie fallback |
-| `AuthError` | 401, expired JWT | Re-throw → router redirects to `/auth/login` |
-| `SyncError` | UPSERT flush failed | Keep `pending_sync=true`; retry on `online` |
-| `SeedError` | Dexie seed from JSON failed | Re-throw → blocking error screen |
-
-`retry: 2` for Dexie-backed queries. `retry: 0` for Supabase mutations (double-write risk).
-
 ## Key Constraints
 
-**SRS (SM-2)** — `src/lib/srs.ts` → `calculateNextReview(card, rating)`. Ratings: 0=Again, 1=Hard, 2=Good, 3=Easy. Ease factor min 1.3, default 2.5. Interval max 180 days.
-
-**Testing** — do not mock Dexie (use `fake-indexeddb`); do not mock SM-2; use MSW for Supabase REST interception. Fixtures in `src/__fixtures__/vocabulary.ts` use real `vocab_id` hashes — never hardcoded strings.
-
-**UI** — all visual styling in `src/app.css` — no per-component CSS. Theme: `data-theme="brutalist-{dataset}"` on `<html>`. Never use `--br-heading-font` (Barlow Condensed) for Japanese — use `--br-jp-font` (Noto Sans JP).
-
-**Auth guard** — protected routes live under `src/routes/_authenticated.tsx`. Unauthenticated users are redirected to `/auth/login`.
+- **SRS (SM-2)** — `src/lib/srs.ts`: ratings 0=Again/1=Hard/2=Good/3=Easy; ease min 1.3, default 2.5; interval max 180d
+- **UI** — all styling in `src/app.css`; theme `data-theme="brutalist-{dataset}"`; use `--br-jp-font` for Japanese, never `--br-heading-font`
+- **Auth guard** — protected routes under `src/routes/_authenticated.tsx`
+- **Errors** — classify in `src/api/` only; see `.claude/rules/offline-first.md`
+- **Testing** — see `.claude/rules/testing.md`
 
 ## Dataset Pipeline
 
-```
-parse-yaml → enrich-pitch → generate-vocab-id → map-audio → validate → split-lessons → write-manifest
-```
+`parse-yaml → enrich-pitch → generate-vocab-id → map-audio → validate → split-lessons → write-manifest`
 
-To add a new dataset: create `datasets/<name>.yaml`, add entry to `src/lib/datasets.config.ts`, run `pnpm run build:dataset`. No other code changes required.
+Add dataset: create `datasets/<name>.yaml`, add to `src/lib/datasets.config.ts`, run `pnpm run build:dataset`.
 
 ## Git Workflow
 
-- `main` protected; `develop` protected — all features merge here via PR with owner approval
-- Feature branches base off `develop`; naming from `.specify/` speckit extension
-- **Always use `/create-pr`** to open PRs — enforces lint + test:run + tsc + forbidden-file checks
+- Always use `/create-pr` to open PRs — full rules in `.claude/rules/git-workflow.md`
 - **Never push** `docs/**`, `specs/**`, `datasets/**`, `public/data/**`, or `*.local.*` to remote
 - **Never add** `Co-Authored-By` trailers for any AI model to commits
 
