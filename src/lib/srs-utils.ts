@@ -16,8 +16,8 @@ export function toCardState(card: AnyCard, userId: string): CardState {
       last_rating: card.last_rating,
       pending_sync: card.pending_sync,
       updated_at: card.updated_at,
-      is_known: card.is_known ?? false,
-      consecutive_correct: card.consecutive_correct ?? 0,
+      is_known: card.is_known ?? false, // ?? false: safety net for rows written before Dexie v9 migration
+      consecutive_correct: card.consecutive_correct ?? 0, // ?? 0: safety net for rows written before Dexie v9 migration
     }
   }
   return {
@@ -31,14 +31,14 @@ export function toCardState(card: AnyCard, userId: string): CardState {
     pending_sync: card.pending_sync,
     updated_at: card.updated_at,
     is_known: false,
-    consecutive_correct: card.consecutive_correct ?? 0,
+    consecutive_correct: card.consecutive_correct ?? 0, // ?? 0: safety net for rows written before Dexie v9 migration
   }
 }
 
 export function computeTypeInputRatingForDisplay(card: CardState, isCorrect: boolean): SRSRating {
   if (!isCorrect)
     return 0
-  const consecutive = card.consecutive_correct ?? 0
+  const consecutive = card.consecutive_correct ?? 0 // ?? 0: safety net for rows written before Dexie v9 migration
   // Easy: 5th consecutive correct (consecutive_correct === 4 before this review)
   if (consecutive >= 4 && card.review_count >= 2)
     return 3
