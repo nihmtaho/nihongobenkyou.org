@@ -25,7 +25,7 @@ export function AddToActiveDeckButton({
         onToggle()
       }}
       disabled={isPending}
-      aria-label={inDeck ? 'Xóa khỏi HỌC CHỦ ĐỘNG' : 'Thêm vào HỌC CHỦ ĐỘNG'}
+      aria-label={inDeck ? 'Xóa khỏi HỌC NGẮT QUÃNG' : 'Thêm vào HỌC NGẮT QUÃNG'}
       className={cn(
         'flex-shrink-0 transition-colors duration-100',
         inDeck

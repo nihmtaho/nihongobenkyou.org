@@ -228,7 +228,7 @@ function KanjiDetailPage() {
     const inDeck = kanjiSet.has(kanji.char)
     toggleKanji.mutate(
       { char: kanji.char, inDeck },
-      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC CHỦ ĐỘNG' : 'Đã thêm vào HỌC CHỦ ĐỘNG') },
+      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC NGẮT QUÃNG' : 'Đã thêm vào HỌC NGẮT QUÃNG') },
     )
   }
 
@@ -236,7 +236,7 @@ function KanjiDetailPage() {
     const inDeck = vocabSet.has(vocabId)
     toggleVocab.mutate(
       { vocabId, inDeck },
-      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC CHỦ ĐỘNG' : 'Đã thêm vào HỌC CHỦ ĐỘNG') },
+      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC NGẮT QUÃNG' : 'Đã thêm vào HỌC NGẮT QUÃNG') },
     )
   }
 

@@ -80,7 +80,7 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
                   isPending={toggleMutation.isPending}
                   onToggle={() => toggleMutation.mutate(
                     { vocabId: item.vocab_id, inDeck },
-                    { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC CHỦ ĐỘNG' : 'Đã thêm vào HỌC CHỦ ĐỘNG') },
+                    { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC NGẮT QUÃNG' : 'Đã thêm vào HỌC NGẮT QUÃNG') },
                   )}
                   className="h-6 w-6"
                 />

@@ -164,7 +164,7 @@ export function ActiveDeckVocabSection({ userId }: ActiveDeckVocabSectionProps) 
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/10 bg-card">
         <h2 className="font-[var(--br-heading-font)] text-lg font-bold uppercase tracking-wide leading-none">
-          HỌC CHỦ ĐỘNG
+          HỌC NGẮT QUÃNG
         </h2>
         <DeckMenu onClear={() => setClearDialogOpen(true)} />
       </div>
@@ -222,7 +222,7 @@ export function ActiveDeckVocabSection({ userId }: ActiveDeckVocabSectionProps) 
       <StudyModal
         open={studyModalOpen}
         onClose={() => setStudyModalOpen(false)}
-        title="HỌC CHỦ ĐỘNG"
+        title="HỌC NGẮT QUÃNG"
         context={dueCount > 0 ? 'due' : 'all'}
         cardCount={dueCount > 0 ? dueCount : totalCount}
         sections={ACTIVE_DECK_VOCAB_SECTIONS}
@@ -296,7 +296,7 @@ export function ActiveDeckKanjiSection({ userId }: ActiveDeckKanjiSectionProps) 
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/10 bg-card">
         <h2 className="font-[var(--br-heading-font)] text-lg font-bold uppercase tracking-wide leading-none">
-          HỌC CHỦ ĐỘNG
+          HỌC NGẮT QUÃNG
         </h2>
         <DeckMenu onClear={() => setClearDialogOpen(true)} />
       </div>

@@ -61,7 +61,7 @@ export function ActiveDeckBackupSection({ userId }: { userId: string | null }) {
     <Card className="p-4">
       <CardContent className="p-0">
         <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-2">
-          HỌC CHỦ ĐỘNG — SAO LƯU
+          HỌC NGẮT QUÃNG — SAO LƯU
         </h2>
         <p className="text-xs text-muted-foreground font-[var(--br-mono-font)] mb-4 uppercase">
           Xuất / nhập danh sách từ vựng và kanji đang học chủ động.
