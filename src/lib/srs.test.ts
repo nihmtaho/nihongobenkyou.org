@@ -23,20 +23,32 @@ describe('calculateNextReview', () => {
     it('again → interval 1', () => {
       expect(calculateNextReview(firstCard, 0).new_interval).toBe(1)
     })
+    it('again → due_date is today (not tomorrow)', () => {
+      const today = new Date().toISOString().slice(0, 10)
+      expect(calculateNextReview(firstCard, 0).due_date).toBe(today)
+    })
     it('hard → interval 1', () => {
       expect(calculateNextReview(firstCard, 1).new_interval).toBe(1)
+    })
+    it('hard → due_date is today (~2h learning step)', () => {
+      const today = new Date().toISOString().slice(0, 10)
+      expect(calculateNextReview(firstCard, 1).due_date).toBe(today)
     })
     it('good → interval 1', () => {
       expect(calculateNextReview(firstCard, 2).new_interval).toBe(1)
     })
-    it('easy → interval 4', () => {
-      expect(calculateNextReview(firstCard, 3).new_interval).toBe(4)
+    it('easy → interval 3', () => {
+      expect(calculateNextReview(firstCard, 3).new_interval).toBe(3)
     })
   })
 
   describe('again (rating 0)', () => {
     it('resets interval to 1', () => {
       expect(calculateNextReview({ ...baseCard, interval_days: 20 }, 0).new_interval).toBe(1)
+    })
+    it('due_date is today, not tomorrow', () => {
+      const today = new Date().toISOString().slice(0, 10)
+      expect(calculateNextReview({ ...baseCard, interval_days: 5 }, 0).due_date).toBe(today)
     })
     it('reduces ease by 0.2', () => {
       expect(calculateNextReview({ ...baseCard, ease_factor: 2.5 }, 0).new_ease).toBeCloseTo(2.3)
