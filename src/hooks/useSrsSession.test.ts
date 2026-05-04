@@ -386,7 +386,7 @@ describe('useSrsSession', () => {
       })
     }
 
-    it('Again within MAX_AGAIN_REQUEUES adds card to deferred, not queue', async () => {
+    it('again within MAX_AGAIN_REQUEUES adds card to deferred, not queue', async () => {
       const card1 = makeVocabWithSRS()
       mockDueCardsQuery.mockReturnValue(
         makeDueCardsResult({ data: [card1] as unknown as CardState[], isLoading: false }),
@@ -395,12 +395,12 @@ describe('useSrsSession', () => {
 
       const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
       await waitFor(() => expect(result.current.isVocabReady).toBe(true))
-      act(() => { result.current.startSession() })
+      act(() => result.current.startSession())
       await waitFor(() => expect(result.current.phase).toBe('active'))
 
       const initialQueueLength = result.current.queue.length
 
-      act(() => { result.current.handleRate(0) })
+      act(() => result.current.handleRate(0))
 
       await waitFor(() => expect(result.current.deferred.length).toBe(1))
       expect(result.current.queue.length).toBe(initialQueueLength)
@@ -416,14 +416,134 @@ describe('useSrsSession', () => {
 
       const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
       await waitFor(() => expect(result.current.isVocabReady).toBe(true))
-      act(() => { result.current.startSession() })
+      act(() => result.current.startSession())
       await waitFor(() => expect(result.current.phase).toBe('active'))
 
       // Rate the only card as Again — it goes to deferred, not end of queue
-      act(() => { result.current.handleRate(0) })
+      act(() => result.current.handleRate(0))
 
       await waitFor(() => expect(result.current.deferred.length).toBe(1))
       expect(result.current.phase).not.toBe('complete')
+    })
+
+    it('poll timer splices deferred cards back at currentIndex + 1 after delay', async () => {
+      const cardA = makeVocabWithSRS()
+      const cardB = makeVocabWithSRS({
+        vocab_id: 'mnn1_test0000002',
+        word: '飲む',
+        reading: 'のむ',
+        romaji: 'nomu',
+      })
+      cardB.vocabId = 'mnn1_test0000002'
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [cardA, cardB] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(cardA)
+      await seedVocab(cardB)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      // Switch to fake timers AFTER reaching 'active'. handleRate(0) triggers
+      // the [phase, currentIndex] effect to re-run, re-registering the poll
+      // setInterval with the fake timer system.
+      vi.useFakeTimers()
+      try {
+        // Rate cardA as Again → deferred, currentIndex advances to 1 (pointing at cardB)
+        act(() => result.current.handleRate(0))
+        expect(result.current.deferred).toHaveLength(1)
+
+        // Advance past max again delay (10 min) + one poll tick (30 s)
+        await act(async () => vi.advanceTimersByTime(10 * 60 * 1000 + 30_000))
+
+        expect(result.current.deferred).toHaveLength(0)
+        expect(result.current.queue).toHaveLength(3) // [A, B, A] — A re-inserted at index 2
+        expect(result.current.currentIndex).toBe(1)
+      }
+      finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('mAX_AGAIN_REQUEUES exceeded — card does not go to deferred on final Again', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      vi.useFakeTimers()
+      try {
+        // Cycle the card through deferred 3 times (MAX_AGAIN_REQUEUES = 3).
+        // Each handleRate(0) re-registers the poll effect with fake setInterval.
+        for (let i = 0; i < 3; i++) {
+          act(() => result.current.handleRate(0))
+          expect(result.current.deferred).toHaveLength(1)
+          await act(async () => vi.advanceTimersByTime(10 * 60 * 1000 + 30_000))
+          expect(result.current.deferred).toHaveLength(0)
+        }
+
+        // 4th Again: count (3) >= MAX (3) → falls through to srs.rate, NOT deferred
+        act(() => result.current.handleRate(0))
+
+        expect(result.current.deferred).toHaveLength(0)
+        expect(mockRate).toHaveBeenCalledWith(
+          expect.objectContaining({ vocab_id: card.vocab_id }),
+          0,
+        )
+      }
+      finally {
+        vi.useRealTimers()
+      }
+    })
+  })
+
+  describe('handleAnswer — deferred Again queue', () => {
+    async function seedVocab(card: ReturnType<typeof makeVocabWithSRS>) {
+      await db.vocabulary.put({
+        vocab_id: card.vocab_id,
+        word: card.word,
+        reading: card.reading,
+        romaji: card.romaji,
+        meaning_en: card.meaning_en,
+        meaning_vi: card.meaning_vi,
+        pitch_pattern: card.pitch_pattern,
+        pitch_type: card.pitch_type,
+        audio_filename: card.audio_filename,
+        pos: card.pos,
+        jlpt_level: card.jlpt_level,
+        book_source: card.book_source,
+        lesson_number: card.lesson_number,
+        examples: card.examples,
+        tags: card.tags,
+        deprecated: card.deprecated,
+      })
+    }
+
+    it('wrong answer goes to deferred when shouldRequeue is true', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+      mockAnswerTypeInput.mockReturnValue({ rating: 0, shouldRequeue: true })
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleAnswer(false))
+
+      await waitFor(() => expect(result.current.deferred).toHaveLength(1))
+      expect(mockRate).not.toHaveBeenCalled()
     })
   })
 })

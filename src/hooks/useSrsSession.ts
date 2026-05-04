@@ -66,6 +66,7 @@ export function useSrsSession(): UseSrsSessionReturn {
   const [stats, setStats] = useState<SrsStats>(makeInitialStats)
   const [elapsed, setElapsed] = useState(0)
   const [deferred, setDeferred] = useState<{ card: VocabWithSRS, showAfter: number }[]>([])
+  const deferredRef = useRef<{ card: VocabWithSRS, showAfter: number }[]>([])
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const sessionWrittenRef = useRef(false)
   const againCountRef = useRef<Map<string, number>>(new Map())
@@ -145,19 +146,17 @@ export function useSrsSession(): UseSrsSessionReturn {
       return
     const id = setInterval(() => {
       const now = Date.now()
-      // Use stable snapshot from closure (effect re-registers on currentIndex change)
-      const ready = deferred.filter(d => d.showAfter <= now)
+      const ready = deferredRef.current.filter(d => d.showAfter <= now)
       if (ready.length === 0)
         return
-      // Two independent updates — avoid calling setQueue inside a setDeferred updater
-      // (StrictMode double-invokes updaters, which would insert duplicates in dev)
-      setQueue(q => {
+      deferredRef.current = deferredRef.current.filter(d => d.showAfter > now)
+      setDeferred([...deferredRef.current])
+      setQueue((q) => {
         const next = [...q]
         // Insert ready cards right after the current card so they appear soon
         next.splice(currentIndex + 1, 0, ...ready.map(d => d.card))
         return next
       })
-      setDeferred(prev => prev.filter(d => d.showAfter > now))
     }, 30_000)
     return () => clearInterval(id)
   }, [phase, currentIndex])
@@ -230,8 +229,19 @@ export function useSrsSession(): UseSrsSessionReturn {
     setElapsed(0)
     sessionWrittenRef.current = false
     againCountRef.current = new Map()
+    deferredRef.current = []
     setDeferred([])
     setPhase('active')
+  }
+
+  function advanceOrComplete() {
+    const next = currentIndex + 1
+    if (next >= queue.length && deferred.length === 0) {
+      setPhase('complete')
+    }
+    else {
+      setCurrentIndex(next)
+    }
   }
 
   function handleRate(rating: SRSRating) {
@@ -253,7 +263,9 @@ export function useSrsSession(): UseSrsSessionReturn {
       const count = againCountRef.current.get(card.vocab_id) ?? 0
       if (count < MAX_AGAIN_REQUEUES) {
         againCountRef.current.set(card.vocab_id, count + 1)
-        setDeferred(d => [...d, { card, showAfter: Date.now() + randomAgainDelay() }])
+        const entry = { card, showAfter: Date.now() + randomAgainDelay() }
+        deferredRef.current = [...deferredRef.current, entry]
+        setDeferred([...deferredRef.current])
         setCurrentIndex(i => i + 1)
         return
       }
@@ -262,13 +274,7 @@ export function useSrsSession(): UseSrsSessionReturn {
 
     srs.rate(card, rating)
 
-    const next = currentIndex + 1
-    if (next >= queue.length && deferred.length === 0) {
-      setPhase('complete')
-    }
-    else {
-      setCurrentIndex(next)
-    }
+    advanceOrComplete()
   }
 
   function handleAnswer(isCorrect: boolean) {
@@ -292,7 +298,9 @@ export function useSrsSession(): UseSrsSessionReturn {
       const count = againCountRef.current.get(card.vocab_id) ?? 0
       if (count < MAX_AGAIN_REQUEUES) {
         againCountRef.current.set(card.vocab_id, count + 1)
-        setDeferred(d => [...d, { card, showAfter: Date.now() + randomAgainDelay() }])
+        const entry = { card, showAfter: Date.now() + randomAgainDelay() }
+        deferredRef.current = [...deferredRef.current, entry]
+        setDeferred([...deferredRef.current])
         setCurrentIndex(i => i + 1)
         return
       }
@@ -304,13 +312,7 @@ export function useSrsSession(): UseSrsSessionReturn {
       srs.rate(card, rating)
     }
 
-    const next = currentIndex + 1
-    if (next >= queue.length && deferred.length === 0) {
-      setPhase('complete')
-    }
-    else {
-      setCurrentIndex(next)
-    }
+    advanceOrComplete()
   }
 
   return {
