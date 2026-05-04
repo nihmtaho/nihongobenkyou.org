@@ -266,6 +266,14 @@ export function useSrsSession(): UseSrsSessionReturn {
         const entry = { card, showAfter: Date.now() + randomAgainDelay() }
         deferredRef.current = [...deferredRef.current, entry]
         setDeferred([...deferredRef.current])
+        // Limbo prevention: if no queue items remain after advancing, flush all
+        // deferred cards directly to queue end so the session never gets stuck.
+        if (currentIndex + 1 >= queue.length) {
+          const toFlush = deferredRef.current.map(d => d.card)
+          deferredRef.current = []
+          setDeferred([])
+          setQueue(q => [...q, ...toFlush])
+        }
         setCurrentIndex(i => i + 1)
         return
       }
@@ -301,6 +309,13 @@ export function useSrsSession(): UseSrsSessionReturn {
         const entry = { card, showAfter: Date.now() + randomAgainDelay() }
         deferredRef.current = [...deferredRef.current, entry]
         setDeferred([...deferredRef.current])
+        // Limbo prevention: flush deferred to queue end if no cards remain
+        if (currentIndex + 1 >= queue.length) {
+          const toFlush = deferredRef.current.map(d => d.card)
+          deferredRef.current = []
+          setDeferred([])
+          setQueue(q => [...q, ...toFlush])
+        }
         setCurrentIndex(i => i + 1)
         return
       }
