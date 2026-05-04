@@ -46,6 +46,8 @@ export function useLaunchActiveVocabDeckSession(userId: string) {
         if (dueOnly && srs && srs.due_date > today)
           return []
 
+        // SRS defaults match addVocabToDeck initial state — srs is always present for deck items.
+        // Fallbacks guard against edge-case timing gaps only.
         return [{
           ...vocab,
           userId,
