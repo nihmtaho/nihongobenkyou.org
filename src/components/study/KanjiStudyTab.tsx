@@ -1,6 +1,7 @@
 import type { KanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import type { LessonStats } from '../../types/study'
 
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { useKanjiLessonStats } from '../../hooks/useKanjiLessonStats'
 import { useNextKanjiDue } from '../../hooks/useNextKanjiDue'
 import { formatNextReview } from '../../lib/next-review'
+import { ActiveDeckKanjiSection } from '../active-deck/ActiveDeckSection'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 import { KanjiStudyModal } from '../kanji/KanjiStudyModal'
 
@@ -23,6 +25,8 @@ import { UnstartedCollapse } from './shared/UnstartedCollapse'
 export function KanjiStudyTab({ userId }: { userId: string }) {
   const { data: lessons, isLoading } = useKanjiLessonStats(userId)
   const { data: nextKanjiDue } = useNextKanjiDue(userId)
+
+  const [lessonsOpen, setLessonsOpen] = useState(true)
 
   const [openModal, setOpenModal] = useState<{
     lessonNum: number
@@ -78,83 +82,102 @@ export function KanjiStudyTab({ userId }: { userId: string }) {
         <NextReviewCard nextDueDate={nextKanjiDue ?? null} />
       </div>
 
-      {isLoading
-        ? <SkeletonRows count={4} />
-        : (
-            <>
-              {activeLessons.length > 0 && (
-                <div className="mb-4">
-                  <SectionLabel label="BÀI ĐANG HỌC" count={activeLessons.length} />
-                  <div className="border border-border/10">
-                    {activeLessons.map((lesson, i) => (
-                      <KanjiLessonRow
-                        key={lesson.lessonNumber}
-                        lesson={lesson}
-                        animDelay={i * 0.04}
-                        onOpenModal={(type, stats, dueOnly) => setOpenModal({ lessonNum: lesson.lessonNumber, stats, type, dueOnly })}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+      <ActiveDeckKanjiSection userId={userId} />
 
-              {activeLessons.length === 0 && (
-                <EmptyState
-                  jp="まだ漢字を学習していません"
-                  label="Chưa bắt đầu học hán tự"
-                  hint="Khám phá danh sách hán tự để bắt đầu ôn tập"
-                  cta="KHÁM PHÁ HÁN TỰ"
-                  ctaLink="/kanji"
-                />
-              )}
+      <div className="border-t border-border/20 mt-2" />
 
-              {unstartedLessons.length > 0 && activeLessons.length > 0 && (
-                <UnstartedCollapse count={unstartedLessons.length} label="BÀI CHƯA HỌC">
-                  {unstartedLessons.map(lesson => (
-                    <div
-                      key={lesson.lessonNumber}
-                      className="flex items-center justify-between border-b border-border/10 last:border-b-0 px-4 py-2.5"
-                    >
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-[var(--br-heading-font)] text-sm font-bold uppercase">
-                          BÀI
-                          {' '}
-                          {String(lesson.lessonNumber).padStart(2, '0')}
-                        </span>
-                        <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
-                          {lesson.kanji.total}
-                          {' '}
-                          chữ ·
-                          {' '}
-                          {lesson.vocab.total}
-                          {' '}
-                          từ
-                        </span>
-                      </div>
-                      <Button
-                        size="xs"
-                        variant="outline"
-                        className="font-[var(--br-mono-font)] min-h-0 h-7"
-                        onClick={() =>
-                          setOpenModal({
-                            lessonNum: lesson.lessonNumber,
-                            stats: {
-                              total: lesson.kanji.total + lesson.vocab.total,
-                              new: lesson.kanji.new + lesson.vocab.new,
-                              learning: 0,
-                              review: 0,
-                              mature: 0,
-                            },
-                          })}
-                      >
-                        BẮT ĐẦU
-                      </Button>
+      <button
+        type="button"
+        onClick={() => setLessonsOpen(v => !v)}
+        className="flex items-center gap-2 w-full px-4 py-3 bg-secondary hover:bg-secondary/80 transition-colors"
+      >
+        {lessonsOpen
+          ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+        <span className="font-[var(--br-mono-font)] text-[10px] uppercase tracking-[3px] text-muted-foreground">
+          BÀI HỌC
+        </span>
+      </button>
+
+      {lessonsOpen && (
+        isLoading
+          ? <SkeletonRows count={4} />
+          : (
+              <>
+                {activeLessons.length > 0 && (
+                  <div className="mb-4">
+                    <SectionLabel label="BÀI ĐANG HỌC" count={activeLessons.length} />
+                    <div className="border border-border/10">
+                      {activeLessons.map((lesson, i) => (
+                        <KanjiLessonRow
+                          key={lesson.lessonNumber}
+                          lesson={lesson}
+                          animDelay={i * 0.04}
+                          onOpenModal={(type, stats, dueOnly) => setOpenModal({ lessonNum: lesson.lessonNumber, stats, type, dueOnly })}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </UnstartedCollapse>
-              )}
-            </>
-          )}
+                  </div>
+                )}
+
+                {activeLessons.length === 0 && (
+                  <EmptyState
+                    jp="まだ漢字を学習していません"
+                    label="Chưa bắt đầu học hán tự"
+                    hint="Khám phá danh sách hán tự để bắt đầu ôn tập"
+                    cta="KHÁM PHÁ HÁN TỰ"
+                    ctaLink="/kanji"
+                  />
+                )}
+
+                {unstartedLessons.length > 0 && activeLessons.length > 0 && (
+                  <UnstartedCollapse count={unstartedLessons.length} label="BÀI CHƯA HỌC">
+                    {unstartedLessons.map(lesson => (
+                      <div
+                        key={lesson.lessonNumber}
+                        className="flex items-center justify-between border-b border-border/10 last:border-b-0 px-4 py-2.5"
+                      >
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-[var(--br-heading-font)] text-sm font-bold uppercase">
+                            BÀI
+                            {' '}
+                            {String(lesson.lessonNumber).padStart(2, '0')}
+                          </span>
+                          <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
+                            {lesson.kanji.total}
+                            {' '}
+                            chữ ·
+                            {' '}
+                            {lesson.vocab.total}
+                            {' '}
+                            từ
+                          </span>
+                        </div>
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          className="font-[var(--br-mono-font)] min-h-0 h-7"
+                          onClick={() =>
+                            setOpenModal({
+                              lessonNum: lesson.lessonNumber,
+                              stats: {
+                                total: lesson.kanji.total + lesson.vocab.total,
+                                new: lesson.kanji.new + lesson.vocab.new,
+                                learning: 0,
+                                review: 0,
+                                mature: 0,
+                              },
+                            })}
+                        >
+                          BẮT ĐẦU
+                        </Button>
+                      </div>
+                    ))}
+                  </UnstartedCollapse>
+                )}
+              </>
+            )
+      )}
 
       {openLesson && (
         <KanjiStudyModal

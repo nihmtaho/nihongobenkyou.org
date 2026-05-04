@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import {
   AccountSection,
+  ActiveDeckBackupSection,
   BackupSection,
   DarkModeSection,
   FontSizeSection,
@@ -8,12 +9,14 @@ import {
   ProfileSection,
   SyncSection,
 } from '../../components/settings'
+import { useAuthStore } from '../../stores/authStore'
 
 export const Route = createFileRoute('/settings/')({
   component: SettingsPage,
 })
 
 function SettingsPage() {
+  const { userId } = useAuthStore()
   return (
     <div className="p-4 max-w-lg mx-auto flex flex-col gap-6">
       <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
@@ -25,6 +28,7 @@ function SettingsPage() {
       <DarkModeSection />
       <SyncSection />
       <BackupSection />
+      <ActiveDeckBackupSection userId={userId} />
       <AccountSection />
       <div className="bg-card border border-border/10 p-4">
         <h2 className="text-[11px] font-bold uppercase font-[var(--br-mono-font)] mb-3 text-muted-foreground">

@@ -15,8 +15,14 @@ interface StudySessionState {
   currentIndex: number
   mode: StudyMode | null
   typeInputSubMode: TypeInputSubMode
+  deckSource: 'lesson' | 'active-vocab-deck' | 'active-kanji-deck'
   stats: SessionStats
-  initSession: (queue: VocabWithSRS[], mode: StudyMode, typeInputSubMode?: TypeInputSubMode) => void
+  initSession: (
+    queue: VocabWithSRS[],
+    mode: StudyMode,
+    typeInputSubMode?: TypeInputSubMode,
+    deckSource?: 'lesson' | 'active-vocab-deck' | 'active-kanji-deck',
+  ) => void
   markCorrect: () => void
   markWrong: (card: VocabWithSRS) => void
   markAttempted: () => void
@@ -32,10 +38,11 @@ export const useStudySessionStore = create<StudySessionState>()(
       currentIndex: 0,
       mode: null,
       typeInputSubMode: 'word→hira',
+      deckSource: 'lesson',
       stats: { ...EMPTY_STATS },
 
-      initSession: (queue, mode, typeInputSubMode = 'word→hira') =>
-        set({ queue, mode, typeInputSubMode, currentIndex: 0, stats: { ...EMPTY_STATS, startTime: new Date() } }),
+      initSession: (queue, mode, typeInputSubMode = 'word→hira', deckSource = 'lesson') =>
+        set({ queue, mode, typeInputSubMode, deckSource, currentIndex: 0, stats: { ...EMPTY_STATS, startTime: new Date() } }),
 
       markCorrect: () =>
         set(s => ({ stats: { ...s.stats, correct: s.stats.correct + 1, total: s.stats.total + 1 } })),
@@ -59,7 +66,7 @@ export const useStudySessionStore = create<StudySessionState>()(
         })),
 
       resetSession: () =>
-        set({ queue: [], currentIndex: 0, mode: null, stats: { ...EMPTY_STATS } }),
+        set({ queue: [], currentIndex: 0, mode: null, deckSource: 'lesson', stats: { ...EMPTY_STATS } }),
     }),
     {
       name: 'study-session',

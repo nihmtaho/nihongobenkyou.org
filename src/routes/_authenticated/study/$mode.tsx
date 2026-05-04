@@ -15,6 +15,7 @@ import { SessionSummary } from '../../../components/study/SessionSummary'
 import { TypeInputCard } from '../../../components/study/TypeInputCard'
 import { VocabFlipCard } from '../../../components/study/VocabFlipCard'
 import { db } from '../../../db/schema'
+import { useActiveDeckVocabSRS } from '../../../hooks/useActiveDeckSRS'
 import { usePassages } from '../../../hooks/usePassages'
 import { useSRS } from '../../../hooks/useSRS'
 import { useAuthStore } from '../../../stores/authStore'
@@ -138,10 +139,12 @@ function StudyPage() {
   const { returnTab } = Route.useSearch()
   const navigate = useNavigate()
   const { userId } = useAuthStore()
-  const { queue, currentIndex, stats, mode: sessionMode, typeInputSubMode, markCorrect, markWrong, markAttempted, advanceCard }
+  const { queue, currentIndex, stats, mode: sessionMode, typeInputSubMode, deckSource, markCorrect, markWrong, markAttempted, advanceCard }
     = useStudySessionStore()
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage)
-  const srs = useSRS('vocab', userId ?? '')
+  const lessonSrs = useSRS('vocab', userId ?? '')
+  const activeDeckSrs = useActiveDeckVocabSRS(userId ?? '')
+  const srs = deckSource === 'active-vocab-deck' ? activeDeckSrs : lessonSrs
   const sessionWrittenRef = useRef(false)
   const [playbackRate, setPlaybackRate] = useState(1.0)
 
@@ -161,6 +164,8 @@ function StudyPage() {
   const isComplete = currentIndex >= queue.length && queue.length > 0
 
   useEffect(() => {
+    if (deckSource === 'active-vocab-deck')
+      return
     if (isComplete && !sessionWrittenRef.current && userId) {
       sessionWrittenRef.current = true
       const lessonIds = [...new Set(queue.map(c => `${c.book_source}:${c.lesson_number}`))]
@@ -174,7 +179,7 @@ function StudyPage() {
         studied_at: new Date(),
       })
     }
-  }, [isComplete, userId, queue, sessionMode, stats])
+  }, [isComplete, userId, queue, sessionMode, stats, deckSource])
 
   if (queue.length === 0) {
     return <EmptySessionScreen onNavigate={() => navigate({ to: '/study', search: { tab: undefined } })} />
@@ -245,7 +250,7 @@ function StudyPage() {
           current={currentIndex}
           total={queue.length}
           modeName={modeName}
-          lessonNumber={firstCard?.lesson_number}
+          lessonNumber={deckSource === 'lesson' ? firstCard?.lesson_number : undefined}
         />
       </div>
 

@@ -1,6 +1,7 @@
 import type { LessonVocabStats } from '../../hooks/useVocabLessonStats'
 import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import { useQueries } from '@tanstack/react-query'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { useStreak } from '../../hooks/useStreak'
 import { fetchVocabLessonStats } from '../../hooks/useVocabLessonStats'
 import { datasets } from '../../lib/datasets.config'
 import { formatNextReview } from '../../lib/next-review'
+import { ActiveDeckVocabSection } from '../active-deck/ActiveDeckSection'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 import { DueCard } from './shared/DueCard'
 import { EmptyState } from './shared/EmptyState'
@@ -37,6 +39,7 @@ export function VocabStudyTab({ userId }: { userId: string }) {
   const { data: nextDueDate } = useNextVocabDue(userId)
   const { data: streak } = useStreak(userId)
   const launchSession = useLaunchVocabSession(userId)
+  const [lessonsOpen, setLessonsOpen] = useState(true)
 
   const [activeModal, setActiveModal] = useState<{
     bookId: string
@@ -95,35 +98,55 @@ export function VocabStudyTab({ userId }: { userId: string }) {
         <NextReviewCard nextDueDate={nextDueDate ?? null} />
       </div>
 
+      <ActiveDeckVocabSection userId={userId} />
+
+      <div className="border-t border-border/20 mt-2" />
+
+      <button
+        type="button"
+        onClick={() => setLessonsOpen(v => !v)}
+        className="flex items-center gap-2 w-full px-4 py-3 bg-secondary hover:bg-secondary/80 transition-colors"
+      >
+        {lessonsOpen
+          ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+        <span className="font-[var(--br-mono-font)] text-[10px] uppercase tracking-[3px] text-muted-foreground">
+          BÀI HỌC
+        </span>
+      </button>
+
       {/* Lessons grouped by book */}
-      {isLoading
-        ? <SkeletonRows count={4} />
-        : bookGroups.length > 0
-          ? bookGroups.map(({ book, activeLessons }) => (
-              <div key={book.id} className="mb-6">
-                <SectionLabel label={book.title_vi} count={activeLessons.length} />
-                <div className="border border-border/10">
-                  {activeLessons.map((lesson, i) => (
-                    <LessonVocabRow
-                      key={lesson.lesson_number}
-                      lesson={lesson}
-                      animDelay={i * 0.04}
-                      onReview={() => setActiveModal({ bookId: book.id, lesson, context: 'due' })}
-                      onStudy={() => setActiveModal({ bookId: book.id, lesson, context: 'all' })}
-                    />
-                  ))}
+      {lessonsOpen && (
+        isLoading
+          ? <SkeletonRows count={4} />
+          : bookGroups.length > 0
+            ? bookGroups.map(({ book, activeLessons }) => (
+                <div key={book.id} className="mb-6">
+                  <SectionLabel label={book.title_vi} count={activeLessons.length} />
+                  <div className="border border-border/10">
+                    {activeLessons.map((lesson, i) => (
+                      <LessonVocabRow
+                        key={lesson.lesson_number}
+                        lesson={lesson}
+                        animDelay={i * 0.04}
+                        onReview={() => setActiveModal({ bookId: book.id, lesson, context: 'due' })}
+                        onStudy={() => setActiveModal({ bookId: book.id, lesson, context: 'all' })}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))
-          : (
-              <EmptyState
-                jp="まだ学習を始めていません"
-                label="Chưa bắt đầu học bài nào"
-                hint="Chọn một bài học để bắt đầu ôn tập với hệ thống SRS"
-                cta="KHÁM PHÁ BÀI HỌC"
-                ctaLink="/books"
-              />
-            )}
+              ))
+            : (
+                <EmptyState
+                  jp="まだ学習を始めていません"
+                  label="Chưa bắt đầu học bài nào"
+                  hint="Chọn một bài học để bắt đầu ôn tập với hệ thống SRS"
+                  cta="KHÁM PHÁ BÀI HỌC"
+                  ctaLink="/books"
+                />
+              )
+      )}
+
       {modal && (
         <VocabStudyModal
           title={`Bài ${String(modal.lesson.lesson_number).padStart(2, '0')}`}

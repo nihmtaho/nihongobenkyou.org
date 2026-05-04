@@ -1,4 +1,5 @@
 export { AccountSection } from './AccountSection'
+export { ActiveDeckBackupSection } from './ActiveDeckBackupSection'
 export { BackupSection } from './BackupSection'
 export { DarkModeSection } from './DarkModeSection'
 export { FontSizeSection } from './FontSizeSection'
