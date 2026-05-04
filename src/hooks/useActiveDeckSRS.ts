@@ -1,14 +1,10 @@
 import type { KanjiCardState } from '../types/kanji'
 import type { SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
+import type { TypeInputResult } from './useSRS'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { upsertActiveKanjiSRS, upsertActiveVocabSRS } from '../db/active-deck'
 import { calculateNextReview } from '../lib/srs'
-
-export interface TypeInputResult {
-  rating: SRSRating
-  shouldRequeue: boolean
-}
 
 // Used in $mode.tsx when deckSource === 'active-vocab-deck'
 export function useActiveDeckVocabSRS(userId: string) {
@@ -53,6 +49,8 @@ export function useActiveDeckVocabSRS(userId: string) {
     answer: (card: VocabWithSRS, isCorrect: boolean) =>
       mutation.mutate({ card, rating: isCorrect ? 2 : 0 }),
     answerTypeInput: (card: VocabWithSRS, isCorrect: boolean): TypeInputResult => {
+      // NOTE: Active deck type-input is intentionally simplified — no wrong-once requeue.
+      // shouldRequeue is always false; callers that act on shouldRequeue will not requeue cards.
       const rating: SRSRating = isCorrect ? 2 : 0
       mutation.mutate({ card, rating })
       return { rating, shouldRequeue: false }
@@ -105,6 +103,8 @@ export function useActiveDeckKanjiSRS(userId: string) {
     answer: (card: KanjiCardState, isCorrect: boolean) =>
       mutation.mutate({ card, rating: isCorrect ? 2 : 0 }),
     answerTypeInput: (card: KanjiCardState, isCorrect: boolean): TypeInputResult => {
+      // NOTE: Active deck type-input is intentionally simplified — no wrong-once requeue.
+      // shouldRequeue is always false; callers that act on shouldRequeue will not requeue cards.
       const rating: SRSRating = isCorrect ? 2 : 0
       mutation.mutate({ card, rating })
       return { rating, shouldRequeue: false }
