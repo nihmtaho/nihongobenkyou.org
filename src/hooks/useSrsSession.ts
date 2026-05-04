@@ -145,18 +145,19 @@ export function useSrsSession(): UseSrsSessionReturn {
       return
     const id = setInterval(() => {
       const now = Date.now()
-      setDeferred((prev) => {
-        const ready = prev.filter(d => d.showAfter <= now)
-        if (ready.length === 0)
-          return prev
-        setQueue(q => {
-          const next = [...q]
-          // Insert ready cards right after the current card so they appear soon
-          next.splice(currentIndex + 1, 0, ...ready.map(d => d.card))
-          return next
-        })
-        return prev.filter(d => d.showAfter > now)
+      // Use stable snapshot from closure (effect re-registers on currentIndex change)
+      const ready = deferred.filter(d => d.showAfter <= now)
+      if (ready.length === 0)
+        return
+      // Two independent updates — avoid calling setQueue inside a setDeferred updater
+      // (StrictMode double-invokes updaters, which would insert duplicates in dev)
+      setQueue(q => {
+        const next = [...q]
+        // Insert ready cards right after the current card so they appear soon
+        next.splice(currentIndex + 1, 0, ...ready.map(d => d.card))
+        return next
       })
+      setDeferred(prev => prev.filter(d => d.showAfter > now))
     }, 30_000)
     return () => clearInterval(id)
   }, [phase, currentIndex])
