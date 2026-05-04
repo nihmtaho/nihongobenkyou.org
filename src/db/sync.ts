@@ -58,7 +58,7 @@ export async function uploadPendingReviews(): Promise<void> {
         rating: e.rating,
         interval_days: e.intervalDays,
         ease_factor: e.easeFactor,
-        due_date: e.dueDate,
+        due_date: e.dueDate.slice(0, 10),
         review_count: e.reviewCount,
         is_known: e.isKnown,
         reviewed_at: e.reviewedAt,
@@ -150,6 +150,7 @@ export async function downloadNewReviews(userId: string): Promise<void> {
           pending_sync: false,
           updated_at: event.reviewed_at,
           is_known: event.is_known,
+          consecutive_correct: 0, // intentional: client-side only, not stored on server
         } satisfies CardState)
       }
     }
@@ -166,6 +167,7 @@ export async function downloadNewReviews(userId: string): Promise<void> {
           last_rating: event.rating as SRSRating,
           pending_sync: false,
           updated_at: event.reviewed_at,
+          consecutive_correct: 0, // intentional: client-side only, not stored on server
         } satisfies KanjiCardState)
       }
     }
@@ -217,7 +219,7 @@ async function exportCurrentStateAsSnapshot(
         card_type: 'vocab' as const,
         interval_days: card.interval_days,
         ease_factor: card.ease_factor,
-        due_date: card.due_date,
+        due_date: card.due_date.slice(0, 10),
         review_count: card.review_count,
         last_rating: card.last_rating,
         is_known: card.is_known,
@@ -240,7 +242,7 @@ async function exportCurrentStateAsSnapshot(
         card_type: 'kanji' as const,
         interval_days: card.interval_days,
         ease_factor: card.ease_factor,
-        due_date: card.due_date,
+        due_date: card.due_date.slice(0, 10),
         review_count: card.review_count,
         last_rating: card.last_rating ?? null,
         is_known: false,

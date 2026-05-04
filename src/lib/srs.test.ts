@@ -1,6 +1,6 @@
 import type { CardState } from '../types/srs'
 import { describe, expect, it } from 'vitest'
-import { calculateNextReview } from './srs'
+import { AGAIN_DELAY_MAX_MS, AGAIN_DELAY_MIN_MS, calculateNextReview, formatIntervalPreview, randomAgainDelay } from './srs'
 
 const baseCard: CardState = {
   userId: 'u1',
@@ -13,6 +13,7 @@ const baseCard: CardState = {
   pending_sync: false,
   updated_at: '2026-01-01T00:00:00Z',
   is_known: false,
+  consecutive_correct: 0,
 }
 
 describe('calculateNextReview', () => {
@@ -22,20 +23,44 @@ describe('calculateNextReview', () => {
     it('again → interval 1', () => {
       expect(calculateNextReview(firstCard, 0).new_interval).toBe(1)
     })
+    it('again → due_date is ISO timestamp 6-10 min in the future', () => {
+      const before = Date.now()
+      const { due_date } = calculateNextReview(firstCard, 0)
+      const dueMs = new Date(due_date).getTime()
+      expect(due_date).toMatch(/T/)
+      expect(dueMs).toBeGreaterThanOrEqual(before + 6 * 60 * 1000)
+      expect(dueMs).toBeLessThanOrEqual(before + 10 * 60 * 1000 + 200)
+    })
     it('hard → interval 1', () => {
       expect(calculateNextReview(firstCard, 1).new_interval).toBe(1)
+    })
+    it('hard → due_date is ISO timestamp ~2h in the future', () => {
+      const before = Date.now()
+      const { due_date } = calculateNextReview(firstCard, 1)
+      const dueMs = new Date(due_date).getTime()
+      expect(due_date).toMatch(/T/)
+      expect(dueMs).toBeGreaterThanOrEqual(before + 2 * 60 * 60 * 1000)
+      expect(dueMs).toBeLessThanOrEqual(before + 2 * 60 * 60 * 1000 + 200)
     })
     it('good → interval 1', () => {
       expect(calculateNextReview(firstCard, 2).new_interval).toBe(1)
     })
-    it('easy → interval 4', () => {
-      expect(calculateNextReview(firstCard, 3).new_interval).toBe(4)
+    it('easy → interval 3', () => {
+      expect(calculateNextReview(firstCard, 3).new_interval).toBe(3)
     })
   })
 
   describe('again (rating 0)', () => {
     it('resets interval to 1', () => {
       expect(calculateNextReview({ ...baseCard, interval_days: 20 }, 0).new_interval).toBe(1)
+    })
+    it('due_date is ISO timestamp 6-10 min ahead', () => {
+      const before = Date.now()
+      const { due_date } = calculateNextReview({ ...baseCard, interval_days: 5 }, 0)
+      const dueMs = new Date(due_date).getTime()
+      expect(due_date).toMatch(/T/)
+      expect(dueMs).toBeGreaterThanOrEqual(before + 6 * 60 * 1000)
+      expect(dueMs).toBeLessThanOrEqual(before + 10 * 60 * 1000 + 200)
     })
     it('reduces ease by 0.2', () => {
       expect(calculateNextReview({ ...baseCard, ease_factor: 2.5 }, 0).new_ease).toBeCloseTo(2.3)
@@ -94,10 +119,45 @@ describe('calculateNextReview', () => {
   })
 
   describe('due_date', () => {
-    it('returns a future date string in YYYY-MM-DD format', () => {
+    it('returns a future ISO timestamp', () => {
       const result = calculateNextReview(baseCard, 2)
-      expect(result.due_date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+      expect(result.due_date).toMatch(/T/)
       expect(new Date(result.due_date).getTime()).toBeGreaterThan(Date.now())
     })
+  })
+})
+
+describe('formatIntervalPreview', () => {
+  it('negative/zero → < 1d', () => {
+    expect(formatIntervalPreview(0)).toBe('< 1d')
+    expect(formatIntervalPreview(-5)).toBe('< 1d')
+  })
+  it('1 day', () => {
+    expect(formatIntervalPreview(1)).toBe('1d')
+  })
+  it('14 days', () => {
+    expect(formatIntervalPreview(14)).toBe('14d')
+  })
+  it('29 days', () => {
+    expect(formatIntervalPreview(29)).toBe('29d')
+  })
+  it('30 days → 1mo', () => {
+    expect(formatIntervalPreview(30)).toBe('1mo')
+  })
+  it('180 days → 6mo', () => {
+    expect(formatIntervalPreview(180)).toBe('6mo')
+  })
+  it('365 days → 1y', () => {
+    expect(formatIntervalPreview(365)).toBe('1y')
+  })
+})
+
+describe('randomAgainDelay', () => {
+  it('returns value in [6 min, 10 min] range', () => {
+    for (let i = 0; i < 100; i++) {
+      const delay = randomAgainDelay()
+      expect(delay).toBeGreaterThanOrEqual(AGAIN_DELAY_MIN_MS)
+      expect(delay).toBeLessThanOrEqual(AGAIN_DELAY_MAX_MS)
+    }
   })
 })

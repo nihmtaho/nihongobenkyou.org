@@ -86,6 +86,17 @@ export class NihongoDB extends Dexie {
       active_vocab_srs: '[userId+vocabId], due_date, [userId+due_date]',
       active_kanji_srs: '[userId+char], due_date, [userId+due_date]',
     })
+    // v9: backfill consecutive_correct (client-side only streak counter)
+    this.version(9).upgrade((tx) => {
+      return Promise.all([
+        tx.table('user_cards').toCollection().modify((card) => {
+          card.consecutive_correct ??= 0
+        }),
+        tx.table('kanji_cards').toCollection().modify((card) => {
+          card.consecutive_correct ??= 0
+        }),
+      ])
+    })
   }
 }
 

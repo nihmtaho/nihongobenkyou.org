@@ -46,6 +46,7 @@ function KanjiReviewPage() {
         ...r,
         last_rating: r.last_rating as KanjiCardState['last_rating'],
         pending_sync: false,
+        consecutive_correct: 0,
       }))
     },
     enabled: deckSource === 'active-kanji-deck' && !!userId,
@@ -226,7 +227,7 @@ function KanjiReviewPage() {
 
       {!isCardReady
         ? <Skeleton className="h-64 w-full max-w-sm mx-auto" />
-        : <KanjiStudyFlipCard key={char} kanji={kanji} onRate={handleRate} />}
+        : <KanjiStudyFlipCard key={char} kanji={kanji} srsState={currentCard} onRate={handleRate} />}
     </div>
   )
 }

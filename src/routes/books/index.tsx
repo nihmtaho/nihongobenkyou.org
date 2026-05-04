@@ -17,9 +17,9 @@ function BooksPage() {
 
   return (
     <div className="p-4 flex flex-col gap-4">
-      <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
-        TỪ VỰNG
-      </p>
+      <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
+        BOOKS
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {enabled.map(dataset => (
           <BookCard key={dataset.id} dataset={dataset} userId={userId} />

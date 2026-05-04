@@ -34,6 +34,7 @@ function makeCard(vocabIdx: number, overrides: Partial<Parameters<typeof db.user
     pending_sync: false,
     updated_at: PAST_DATE,
     is_known: false,
+    consecutive_correct: 0,
     ...overrides,
   }
 }
@@ -102,6 +103,7 @@ describe('sc-004 — card transition performance', () => {
         pending_sync: false,
         updated_at: PAST_DATE,
         is_known: false,
+        consecutive_correct: 0,
       })
     }
 
@@ -119,6 +121,7 @@ describe('sc-004 — card transition performance', () => {
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     }
 
     const start = performance.now()
@@ -150,6 +153,7 @@ describe('again re-queue limit (FR-004)', () => {
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     }
 
     // Simulate 4th Again (the mutation itself is stateless — just verify the Dexie write)
@@ -188,6 +192,7 @@ describe('useSRSMutation', () => {
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     }
 
     result.current.mutate({ userId: TEST_USER_ID, card: cardForMutation, rating: 2 })
@@ -219,6 +224,7 @@ describe('useSRSMutation', () => {
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     }
 
     result.current.mutate({ userId: TEST_USER_ID, card: cardForMutation, rating: 0 })
@@ -248,6 +254,7 @@ describe('useSRSMutation', () => {
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     }
 
     result.current.mutate({ userId: TEST_USER_ID, card: cardForMutation, rating: 3 })

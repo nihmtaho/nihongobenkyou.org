@@ -48,4 +48,5 @@ export interface KanjiCardState {
   last_rating: 0 | 1 | 2 | 3 | null
   pending_sync: boolean
   updated_at: string
+  consecutive_correct: number
 }

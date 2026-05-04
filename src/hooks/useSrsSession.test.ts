@@ -142,6 +142,7 @@ function makeVocabWithSRS(overrides: Partial<VocabWithSRS> = {}): VocabWithSRSAn
     updated_at: new Date().toISOString(),
     is_known: false,
     ...overrides,
+    consecutive_correct: overrides.consecutive_correct ?? 0,
   }
 }
 
@@ -360,6 +361,214 @@ describe('useSrsSession', () => {
       await waitFor(() => expect(result.current.phase).toBe('pre-session'))
       await waitFor(() => expect(result.current.vocabItems).toBeDefined())
       await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+    })
+  })
+
+  describe('handleRate — Again defers immediately', () => {
+    async function seedVocab(card: ReturnType<typeof makeVocabWithSRS>) {
+      await db.vocabulary.put({
+        vocab_id: card.vocab_id,
+        word: card.word,
+        reading: card.reading,
+        romaji: card.romaji,
+        meaning_en: card.meaning_en,
+        meaning_vi: card.meaning_vi,
+        pitch_pattern: card.pitch_pattern,
+        pitch_type: card.pitch_type,
+        audio_filename: card.audio_filename,
+        pos: card.pos,
+        jlpt_level: card.jlpt_level,
+        book_source: card.book_source,
+        lesson_number: card.lesson_number,
+        examples: card.examples,
+        tags: card.tags,
+        deprecated: card.deprecated,
+      })
+    }
+
+    it('again immediately writes srs.rate(0), adds to deferred, advances — queue never grows', async () => {
+      const card1 = makeVocabWithSRS()
+      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
+      card2.vocabId = 'mnn1_test0000002'
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card1)
+      await seedVocab(card2)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleRate(0))
+
+      await waitFor(() => expect(mockRate).toHaveBeenCalledWith(
+        expect.objectContaining({ vocab_id: card1.vocab_id }),
+        0,
+      ))
+      expect(result.current.deferred.length).toBe(1)
+      expect(result.current.queue.length).toBe(2) // queue frozen
+      expect(result.current.currentIndex).toBe(1)
+    })
+
+    it('again on last card defers then shows deferred card as currentCard', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleRate(0))
+
+      await waitFor(() => expect(result.current.currentCard).not.toBeNull())
+      expect(result.current.currentCard?.vocab_id).toBe(card.vocab_id)
+      expect(result.current.phase).toBe('active')
+      expect(result.current.queue.length).toBe(1) // queue frozen
+      expect(result.current.deferred.length).toBe(0) // consumed into deferredCurrent
+    })
+
+    it('deferred card rated Good completes 1-card session', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleRate(0)) // Again → defer
+      await waitFor(() => expect(result.current.currentCard).not.toBeNull())
+
+      act(() => result.current.handleRate(2)) // Good on deferred card
+
+      await waitFor(() => expect(result.current.phase).toBe('complete'))
+      expect(mockRate).toHaveBeenCalledTimes(2)
+      expect(mockRate).toHaveBeenNthCalledWith(1, expect.objectContaining({ vocab_id: card.vocab_id }), 0)
+      expect(mockRate).toHaveBeenNthCalledWith(2, expect.objectContaining({ vocab_id: card.vocab_id }), 2)
+    })
+
+    it('session does not complete when main queue has remaining cards after Again', async () => {
+      const card1 = makeVocabWithSRS()
+      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
+      card2.vocabId = 'mnn1_test0000002'
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card1)
+      await seedVocab(card2)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleRate(0)) // Again on card1
+
+      await waitFor(() => expect(result.current.deferred.length).toBe(1))
+      expect(result.current.phase).not.toBe('complete')
+      expect(result.current.currentIndex).toBe(1)
+    })
+
+    it('hard immediately writes srs.rate(1) and advances without deferring', async () => {
+      const card1 = makeVocabWithSRS()
+      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
+      card2.vocabId = 'mnn1_test0000002'
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card1)
+      await seedVocab(card2)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleRate(1))
+
+      expect(mockRate).toHaveBeenCalledWith(expect.objectContaining({ vocab_id: card1.vocab_id }), 1)
+      expect(result.current.deferred.length).toBe(0)
+      expect(result.current.currentIndex).toBe(1)
+    })
+  })
+
+  describe('handleAnswer — Again defers immediately', () => {
+    async function seedVocab(card: ReturnType<typeof makeVocabWithSRS>) {
+      await db.vocabulary.put({
+        vocab_id: card.vocab_id,
+        word: card.word,
+        reading: card.reading,
+        romaji: card.romaji,
+        meaning_en: card.meaning_en,
+        meaning_vi: card.meaning_vi,
+        pitch_pattern: card.pitch_pattern,
+        pitch_type: card.pitch_type,
+        audio_filename: card.audio_filename,
+        pos: card.pos,
+        jlpt_level: card.jlpt_level,
+        book_source: card.book_source,
+        lesson_number: card.lesson_number,
+        examples: card.examples,
+        tags: card.tags,
+        deprecated: card.deprecated,
+      })
+    }
+
+    it('wrong answer immediately writes srs.rate(0), defers, advances — queue never grows', async () => {
+      const card1 = makeVocabWithSRS()
+      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
+      card2.vocabId = 'mnn1_test0000002'
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card1)
+      await seedVocab(card2)
+      mockAnswerTypeInput.mockReturnValue({ rating: 0, shouldRequeue: true })
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleAnswer(false))
+
+      await waitFor(() => expect(mockRate).toHaveBeenCalledWith(
+        expect.objectContaining({ vocab_id: card1.vocab_id }),
+        0,
+      ))
+      expect(result.current.deferred.length).toBe(1)
+      expect(result.current.queue.length).toBe(2)
+      expect(result.current.currentIndex).toBe(1)
+    })
+
+    it('wrong answer on last card shows deferred card immediately', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+      mockAnswerTypeInput.mockReturnValue({ rating: 0, shouldRequeue: true })
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleAnswer(false))
+
+      await waitFor(() => expect(result.current.currentCard).not.toBeNull())
+      expect(result.current.queue.length).toBe(1) // queue frozen
+      expect(result.current.deferred.length).toBe(0)
+      expect(result.current.phase).toBe('active')
     })
   })
 })

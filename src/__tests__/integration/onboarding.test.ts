@@ -111,6 +111,7 @@ describe('mergeRemoteCardsIntoDexie (legacy fallback)', () => {
       pending_sync: false,
       updated_at: '2026-04-30T12:00:00Z',
       is_known: true,
+      consecutive_correct: 0,
     })
 
     await mergeRemoteCardsIntoDexie(TEST_USER_ID, [{
@@ -177,6 +178,7 @@ describe('onboardNewDevice — snapshot-based flow', () => {
       pending_sync: false,
       updated_at: '2026-04-30T20:00:00Z',
       is_known: true,
+      consecutive_correct: 0,
     })
 
     vi.mocked(fetchUserCardSnapshots).mockResolvedValue([

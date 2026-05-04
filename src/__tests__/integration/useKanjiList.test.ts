@@ -77,6 +77,7 @@ describe('useKanjiList', () => {
       last_rating: 3,
       pending_sync: false,
       updated_at: '2026-04-26T00:00:00Z',
+      consecutive_correct: 0,
     })
 
     const { result } = renderHook(() => useKanjiList(TEST_USER), {

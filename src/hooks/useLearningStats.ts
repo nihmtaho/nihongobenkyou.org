@@ -18,7 +18,7 @@ export interface LearningStats {
 function classify(
   total: number,
   cards: Array<{ interval_days: number, due_date: string }>,
-  today: string,
+  now: string,
 ): SubjectStats {
   let learning = 0
   let review = 0
@@ -32,7 +32,7 @@ function classify(
       review++
     else learning++
 
-    if (card.due_date > today && (nextDueDate === null || card.due_date < nextDueDate)) {
+    if (card.due_date > now && (nextDueDate === null || card.due_date < nextDueDate)) {
       nextDueDate = card.due_date
     }
   }
@@ -48,7 +48,7 @@ function classify(
 }
 
 async function fetchLearningStats(userId: string): Promise<LearningStats> {
-  const today = new Date().toISOString().slice(0, 10)
+  const now = new Date().toISOString()
 
   const [vocabCards, totalVocab, kanjiCards, totalKanji] = await Promise.all([
     db.user_cards.toArray().then(all => all.filter(c => c.userId === userId)),
@@ -58,8 +58,8 @@ async function fetchLearningStats(userId: string): Promise<LearningStats> {
   ])
 
   return {
-    vocab: classify(totalVocab, vocabCards, today),
-    kanji: classify(totalKanji, kanjiCards, today),
+    vocab: classify(totalVocab, vocabCards, now),
+    kanji: classify(totalKanji, kanjiCards, now),
   }
 }
 

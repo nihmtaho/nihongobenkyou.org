@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 
+function parseDueDate(d: string): Date {
+  return d.includes('T') ? new Date(d) : new Date(`${d}T00:00:00`)
+}
+
 function getRemaining(nextDueDate: string): { display: string, hint: string, isLive: boolean } {
-  const target = new Date(`${nextDueDate}T00:00:00`)
+  const target = parseDueDate(nextDueDate)
   const diffMs = target.getTime() - Date.now()
 
   if (diffMs <= 0) {

@@ -116,6 +116,7 @@ export function useVocabLessonData(userId: string, lesson: number) {
           pending_sync: c.pending_sync,
           updated_at: c.updated_at,
           is_known: c.is_known ?? false,
+          consecutive_correct: c.consecutive_correct ?? 0,
         }
       }
       return {
@@ -128,6 +129,7 @@ export function useVocabLessonData(userId: string, lesson: number) {
         pending_sync: false,
         updated_at: sessionTimestamp,
         is_known: false,
+        consecutive_correct: 0,
       }
     }),
     [relatedVocabItems, cards, lesson, sessionToday, sessionTimestamp],

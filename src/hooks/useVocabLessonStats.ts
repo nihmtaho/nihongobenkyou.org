@@ -36,7 +36,7 @@ export async function fetchVocabLessonStats(userId: string, bookSource: string):
     : []
 
   const cardMap = new Map(cards.map(c => [c.vocabId, c]))
-  const today = new Date().toISOString().slice(0, 10)
+  const now = new Date().toISOString()
 
   return lessons.map((lesson) => {
     const vocabIds = vocabIdsByLesson.get(lesson.lesson_number) ?? []
@@ -51,9 +51,9 @@ export async function fetchVocabLessonStats(userId: string, bookSource: string):
       learning: lessonCards.filter(c => c.interval_days < 8 && !c.is_known).length,
       review: lessonCards.filter(c => c.interval_days >= 8 && c.interval_days < 21 && !c.is_known).length,
       mature: lessonCards.filter(c => c.interval_days >= 21 || c.is_known).length,
-      due: lessonCards.filter(c => !c.is_known && c.due_date <= today).length,
+      due: lessonCards.filter(c => !c.is_known && c.due_date <= now).length,
       next_due_date: lessonCards
-        .filter(c => !c.is_known && c.due_date > today)
+        .filter(c => !c.is_known && c.due_date > now)
         .map(c => c.due_date)
         .sort()[0] ?? null,
     }

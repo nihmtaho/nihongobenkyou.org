@@ -136,12 +136,12 @@ interface LessonGridProps {
 
 function BookProgressOverview({ userId, bookSource }: { userId: string, bookSource: string }) {
   const { data: stats } = useBookProgress(userId, bookSource)
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const now = useMemo(() => new Date().toISOString(), [])
 
   if (!stats || !userId)
     return null
 
-  const nextReview = stats.nextDueDate ? formatNextReview([stats.nextDueDate], today) : null
+  const nextReview = stats.nextDueDate ? formatNextReview([stats.nextDueDate], now) : null
 
   const srsStats: SRSStats = {
     total: stats.total,
@@ -254,9 +254,9 @@ function LessonCard({ bookId, lesson, userId }: { bookId: string, lesson: Lesson
   }
 
   const hasProgress = cardList.length > 0
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const now = useMemo(() => new Date().toISOString(), [])
   const nextReview = hasProgress
-    ? formatNextReview(cardList.map(c => c.due_date), today)
+    ? formatNextReview(cardList.map(c => c.due_date), now)
     : null
 
   return (

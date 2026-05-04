@@ -1,14 +1,16 @@
-export function formatNextReview(dueDates: string[], today: string): string | null {
-  const next = dueDates.filter(d => d > today).sort()[0]
+export function formatNextReview(dueDates: string[], now: string): string | null {
+  const next = dueDates.filter(d => d > now).sort()[0]
   if (!next)
     return null
 
   const diffDays = Math.round(
-    (new Date(next).getTime() - new Date(today).getTime()) / 86_400_000,
+    (new Date(next).getTime() - new Date(now).getTime()) / 86_400_000,
   )
 
-  if (diffDays <= 0)
+  if (diffDays < 0)
     return null
+  if (diffDays === 0)
+    return 'hôm nay'
   if (diffDays === 1)
     return 'ngày mai'
   if (diffDays < 7)

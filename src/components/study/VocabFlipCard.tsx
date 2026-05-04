@@ -232,7 +232,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
         </div>
       </motion.div>
 
-      {isFlipped && <RatingBar onRate={onRate} />}
+      {isFlipped && <RatingBar card={card} onRate={onRate} />}
 
       <p className="text-[10px] text-foreground/25 font-[var(--br-mono-font)] tracking-wide">
         {isFlipped ? '← swipe again · good → · keys 1–4' : 'space · tap · [h] hint'}

@@ -30,6 +30,7 @@ function makeCard(id: string, reading: string): VocabWithSRS {
     pending_sync: false,
     updated_at: '2026-04-26T00:00:00Z',
     is_known: false,
+    consecutive_correct: 0,
   }
 }
 

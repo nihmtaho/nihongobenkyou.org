@@ -133,7 +133,7 @@ function KanjiLessonStudyPage() {
     const item = session.kanjiQueue[session.currentIndex]
     if (item) {
       if (mode === 'flashcard') {
-        activeCard = <KanjiStudyFlipCard key={item.kanji.char} kanji={item.kanji} onRate={session.handleKanjiRate} />
+        activeCard = <KanjiStudyFlipCard key={item.kanji.char} kanji={item.kanji} srsState={item.card ?? undefined} onRate={session.handleKanjiRate} />
       }
       else if (mode === 'quiz') {
         activeCard = (

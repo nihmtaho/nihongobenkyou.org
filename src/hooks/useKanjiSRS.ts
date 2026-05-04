@@ -38,6 +38,7 @@ export function useKanjiSRS(userId: string) {
           pending_sync: card.pending_sync,
           updated_at: card.updated_at,
           is_known: false,
+          consecutive_correct: 0,
         },
         rating,
       )

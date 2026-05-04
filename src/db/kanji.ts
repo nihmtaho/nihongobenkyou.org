@@ -46,17 +46,17 @@ export async function upsertKanjiCard(userId: string, char: string): Promise<voi
   if (existing)
     return
 
-  const today = new Date().toISOString().slice(0, 10)
   await db.kanji_cards.put({
     userId,
     char,
     interval_days: 0,
     ease_factor: 2.5,
-    due_date: today,
+    due_date: new Date().toISOString(),
     review_count: 0,
     last_rating: null,
     pending_sync: true,
     updated_at: new Date().toISOString(),
+    consecutive_correct: 0,
   })
 }
 

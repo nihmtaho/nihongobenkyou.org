@@ -35,9 +35,9 @@ afterEach(async () => {
 describe('useKanjiSRS', () => {
   it('returns due kanji cards', async () => {
     await db.kanji_cards.bulkPut([
-      { userId: TEST_USER, char: '日', interval_days: 1, ease_factor: 2.5, due_date: PAST, review_count: 1, last_rating: 2, pending_sync: false, updated_at: PAST },
-      { userId: TEST_USER, char: '月', interval_days: 1, ease_factor: 2.5, due_date: PAST, review_count: 0, last_rating: null, pending_sync: false, updated_at: PAST },
-      { userId: TEST_USER, char: '山', interval_days: 7, ease_factor: 2.5, due_date: PAST, review_count: 2, last_rating: 3, pending_sync: false, updated_at: PAST },
+      { userId: TEST_USER, char: '日', interval_days: 1, ease_factor: 2.5, due_date: PAST, review_count: 1, last_rating: 2, pending_sync: false, updated_at: PAST, consecutive_correct: 0 },
+      { userId: TEST_USER, char: '月', interval_days: 1, ease_factor: 2.5, due_date: PAST, review_count: 0, last_rating: null, pending_sync: false, updated_at: PAST, consecutive_correct: 0 },
+      { userId: TEST_USER, char: '山', interval_days: 7, ease_factor: 2.5, due_date: PAST, review_count: 2, last_rating: 3, pending_sync: false, updated_at: PAST, consecutive_correct: 0 },
     ])
 
     const { result } = renderHook(() => useKanjiSRS(TEST_USER), {
@@ -60,6 +60,7 @@ describe('useKanjiSRS', () => {
       last_rating: 2,
       pending_sync: false,
       updated_at: PAST,
+      consecutive_correct: 0,
     })
 
     const { result } = renderHook(() => useKanjiSRS(TEST_USER), {
@@ -81,6 +82,7 @@ describe('useKanjiSRS', () => {
       last_rating: 2,
       pending_sync: false,
       updated_at: PAST,
+      consecutive_correct: 0,
     })
 
     const { result } = renderHook(() => useKanjiSRS(TEST_USER), {

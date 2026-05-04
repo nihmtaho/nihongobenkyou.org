@@ -122,6 +122,7 @@ export function useKanjiLessonSession(
       last_rating: null,
       pending_sync: false,
       updated_at: now.toISOString(),
+      consecutive_correct: 0,
     }
   }
 

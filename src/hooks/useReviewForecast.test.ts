@@ -36,6 +36,7 @@ const baseCard: Omit<CardState, 'userId' | 'vocabId' | 'due_date'> = {
   pending_sync: false,
   updated_at: TODAY,
   is_known: false,
+  consecutive_correct: 0,
 }
 
 const baseKanjiCard: Omit<KanjiCardState, 'userId' | 'char' | 'due_date'> = {
@@ -45,6 +46,7 @@ const baseKanjiCard: Omit<KanjiCardState, 'userId' | 'char' | 'due_date'> = {
   last_rating: null,
   pending_sync: false,
   updated_at: TODAY,
+  consecutive_correct: 0,
 }
 
 beforeEach(async () => {

@@ -8,10 +8,9 @@ export function useNextVocabDue(userId: string) {
     queryFn: async () => {
       if (!userId)
         return null
-      const today = new Date().toISOString().slice(0, 10)
       const cards = await db.user_cards
         .where('due_date')
-        .above(today)
+        .above(new Date().toISOString())
         .filter(c => c.userId === userId && !c.is_known)
         .sortBy('due_date')
       return cards[0]?.due_date ?? null
