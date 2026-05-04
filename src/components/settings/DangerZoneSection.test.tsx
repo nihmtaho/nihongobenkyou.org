@@ -56,9 +56,22 @@ const SEED_CARD = {
   consecutive_correct: 0,
 }
 
+const SEED_ACTIVE_VOCAB_SRS = {
+  userId: 'u1',
+  vocabId: 'mnn1_abc123',
+  interval_days: 1,
+  ease_factor: 2.5,
+  due_date: '2026-01-01',
+  review_count: 0,
+  last_rating: null as null,
+  updated_at: '2026-01-01T00:00:00.000Z',
+}
+
 beforeEach(async () => {
   await db.user_cards.clear()
   await db.kanji_cards.clear()
+  await db.active_vocab_srs.clear()
+  await db.active_kanji_srs.clear()
   await db.streaks.clear()
   await db.review_log.clear()
   await db.sync_queue.clear()
@@ -69,6 +82,8 @@ beforeEach(async () => {
 afterEach(async () => {
   await db.user_cards.clear()
   await db.kanji_cards.clear()
+  await db.active_vocab_srs.clear()
+  await db.active_kanji_srs.clear()
   await db.streaks.clear()
   await db.review_log.clear()
   await db.sync_queue.clear()
@@ -112,6 +127,7 @@ describe('dangerZoneSection — guest user (userId: null)', () => {
 
   it('clears Dexie tables and skips markProgressReset', async () => {
     await db.user_cards.put(SEED_CARD)
+    await db.active_vocab_srs.put(SEED_ACTIVE_VOCAB_SRS)
     const user = userEvent.setup()
     render(<DangerZoneSection />, { wrapper: makeWrapper() })
     await user.click(screen.getByRole('button', { name: /đặt lại tiến trình/i }))
@@ -121,6 +137,7 @@ describe('dangerZoneSection — guest user (userId: null)', () => {
       expect(screen.queryByText('ĐẶT LẠI TIẾN TRÌNH')).not.toBeInTheDocument(),
     )
     expect(await db.user_cards.count()).toBe(0)
+    expect(await db.active_vocab_srs.count()).toBe(0)
     expect(mockMarkProgressReset).not.toHaveBeenCalled()
   })
 })
