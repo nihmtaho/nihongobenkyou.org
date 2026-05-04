@@ -201,7 +201,7 @@ export function ActiveDeckVocabSection({ userId }: ActiveDeckVocabSectionProps) 
             </div>
           )
         : (
-            <div>
+            <div className="max-h-64 overflow-y-auto">
               {deckItems.map((item) => {
                 const vocab = vocabMap?.get(item.vocab_id)
                 const srs = srsMap?.get(item.vocab_id)
@@ -333,7 +333,7 @@ export function ActiveDeckKanjiSection({ userId }: ActiveDeckKanjiSectionProps) 
             </div>
           )
         : (
-            <div>
+            <div className="max-h-64 overflow-y-auto">
               {deckItems.map((item) => {
                 const kanji = kanjiMap?.get(item.char)
                 const srs = srsMap?.get(item.char)
