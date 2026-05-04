@@ -8,7 +8,11 @@ import { cn } from '@/lib/utils'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
 import { gradeReading } from '../../lib/mora'
+import { calculateNextReview } from '../../lib/srs'
+import { computeTypeInputRatingForDisplay, toCardState } from '../../lib/srs-utils'
 import { normalizeViMeaning } from '../../lib/text-utils'
+import { useAuthStore } from '../../stores/authStore'
+import { AnswerFeedback } from './shared/AnswerFeedback'
 
 interface TypeInputCardProps {
   card: VocabWithSRS
@@ -33,11 +37,26 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
   const [wrongMorae, setWrongMorae] = useState<number[]>([])
   const [wasSkipped, setWasSkipped] = useState(false)
   const [hintedKey, setHintedKey] = useState<string | null>(null)
+  const [showFeedback, setShowFeedback] = useState(false)
+
+  const userId = useAuthStore(s => s.userId)
 
   const canonicalReading = normalizeAnswer(card.reading)
   const canonicalViMeaning = normalizeViMeaning(card.meaning_vi)
 
   const { phase, isCorrect, inputRef, commit, advance } = useTypeInput(onAnswer, card.vocab_id)
+
+  function handleAdvance() {
+    setShowFeedback(false)
+    setTimeout(advance, 800)
+  }
+
+  const feedbackRating = userId != null && phase === 'result'
+    ? computeTypeInputRatingForDisplay(toCardState(card, userId), isCorrect)
+    : null
+  const feedbackIntervalDays = feedbackRating != null && userId != null
+    ? calculateNextReview(toCardState(card, userId), feedbackRating).new_interval
+    : 0
 
   const showHint = hintedKey === card.vocab_id
 
@@ -53,6 +72,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
     setWasSkipped(true)
     setWrongMorae([])
     commit(false)
+    setShowFeedback(true)
   }
 
   function doCheck() {
@@ -65,6 +85,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
       // Accept any comma-separated segment of the meaning
       const segments = canonicalViMeaning.split(',').map(s => s.trim()).filter(Boolean)
       commit(segments.includes(answer))
+      setShowFeedback(true)
       return
     }
 
@@ -81,6 +102,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
       setWrongMorae([])
       commit(answer.trim() === canonicalReading)
     }
+    setShowFeedback(true)
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -105,7 +127,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
     if (e.key === 'Enter') {
       e.preventDefault()
       if (phase === 'result')
-        advance()
+        handleAdvance()
       else
         doCheck()
     }
@@ -114,7 +136,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
   function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault()
     if (phase === 'result')
-      advance()
+      handleAdvance()
     else
       doCheck()
   }
@@ -307,15 +329,24 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
                 </div>
               )
             : (
-                <Button
-                  type="submit"
-                  variant={isCorrect ? 'success' : 'destructive'}
-                  className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
-                >
-                  {isCorrect ? '✓' : '✗'}
-                  {' '}
-                  TIẾP TỤC [ENTER]
-                </Button>
+                <div className="flex flex-col items-center gap-3">
+                  {feedbackRating != null && (
+                    <AnswerFeedback
+                      rating={feedbackRating}
+                      intervalDays={feedbackIntervalDays}
+                      visible={showFeedback}
+                    />
+                  )}
+                  <Button
+                    type="submit"
+                    variant={isCorrect ? 'success' : 'destructive'}
+                    className="flex-1 w-full font-[var(--br-mono-font)] text-[11px] uppercase"
+                  >
+                    {isCorrect ? '✓' : '✗'}
+                    {' '}
+                    TIẾP TỤC [ENTER]
+                  </Button>
+                </div>
               )}
         </form>
 
