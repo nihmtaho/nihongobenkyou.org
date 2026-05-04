@@ -17,8 +17,7 @@ export function toCardState(card: AnyCard, userId: string): CardState {
       pending_sync: card.pending_sync,
       updated_at: card.updated_at,
       is_known: card.is_known ?? false,
-      // VocabWithSRS doesn't carry consecutive_correct yet — default to 0 for migration safety
-      consecutive_correct: (card as VocabWithSRS & { consecutive_correct?: number }).consecutive_correct ?? 0,
+      consecutive_correct: card.consecutive_correct ?? 0,
     }
   }
   return {

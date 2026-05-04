@@ -34,6 +34,7 @@ function makeCard(overrides: Partial<VocabWithSRS> = {}): VocabWithSRS {
     updated_at: '2026-04-26T00:00:00Z',
     is_known: false,
     ...overrides,
+    consecutive_correct: overrides.consecutive_correct ?? 0,
   }
 }
 

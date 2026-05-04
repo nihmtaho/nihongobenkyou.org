@@ -17,6 +17,7 @@ function makeCard(vocab: (typeof sampleVocabulary)[number]): VocabWithSRS {
     pending_sync: false,
     updated_at: NOW,
     is_known: false,
+    consecutive_correct: 0,
   }
 }
 

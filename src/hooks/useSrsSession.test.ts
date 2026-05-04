@@ -142,6 +142,7 @@ function makeVocabWithSRS(overrides: Partial<VocabWithSRS> = {}): VocabWithSRSAn
     updated_at: new Date().toISOString(),
     is_known: false,
     ...overrides,
+    consecutive_correct: overrides.consecutive_correct ?? 0,
   }
 }
 

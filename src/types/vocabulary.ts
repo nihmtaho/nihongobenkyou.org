@@ -39,4 +39,5 @@ export interface VocabWithSRS extends VocabItem {
   pending_sync: boolean
   updated_at: string
   is_known: boolean
+  consecutive_correct: number
 }

@@ -105,6 +105,7 @@ function DeckDetailPage() {
       pending_sync: false,
       updated_at: timestamp,
       is_known: false,
+      consecutive_correct: 0,
     }))
     initSession(queue, mode, subMode)
     navigate({ to: '/study/$mode', params: { mode }, search: { returnTab: 'decks' } })

@@ -59,7 +59,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
         let merged: VocabWithSRS[] = vocabItems.map((v) => {
           const c = cardMap.get(v.vocab_id)
           if (c)
-            return { ...v, ...c }
+            return { ...v, ...c, consecutive_correct: c.consecutive_correct ?? 0 }
           return {
             ...v,
             userId,
@@ -72,6 +72,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
             pending_sync: false,
             updated_at: NOW_ISO(),
             is_known: false,
+            consecutive_correct: 0,
           }
         })
 
@@ -105,7 +106,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
       let merged: VocabWithSRS[] = vocab.map((v) => {
         const c = cardMap.get(v.vocab_id)
         if (c)
-          return { ...v, ...c }
+          return { ...v, ...c, consecutive_correct: c.consecutive_correct ?? 0 }
         return {
           ...v,
           userId,
@@ -118,6 +119,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
           pending_sync: false,
           updated_at: NOW_ISO(),
           is_known: false,
+          consecutive_correct: 0,
         }
       })
 

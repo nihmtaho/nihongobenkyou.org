@@ -60,6 +60,7 @@ export function useLaunchActiveVocabDeckSession(userId: string) {
           pending_sync: false,
           updated_at: srs?.updated_at ?? timestamp,
           is_known: false,
+          consecutive_correct: 0,
         }]
       })
 
