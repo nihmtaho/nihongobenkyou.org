@@ -7,10 +7,10 @@ import { db } from '../../db/schema'
 import { useAuthStore } from '../../stores/authStore'
 import { DangerZoneSection } from './DangerZoneSection'
 
-const { mockMarkProgressReset, mockSupabaseEq, mockSupabaseMaybySingle } = vi.hoisted(() => ({
+const { mockMarkProgressReset, mockSupabaseEq, mockSupabaseMaybeSingle } = vi.hoisted(() => ({
   mockMarkProgressReset: vi.fn().mockResolvedValue(undefined),
   mockSupabaseEq: vi.fn().mockResolvedValue({ error: null }),
-  mockSupabaseMaybySingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+  mockSupabaseMaybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
 }))
 
 vi.mock('../../api/profiles', () => ({
@@ -25,7 +25,7 @@ vi.mock('../../api/supabase', () => ({
         eq: vi.fn(() => ({
           order: vi.fn(() => ({
             limit: vi.fn(() => ({
-              maybeSingle: mockSupabaseMaybySingle,
+              maybeSingle: mockSupabaseMaybeSingle,
             })),
           })),
         })),

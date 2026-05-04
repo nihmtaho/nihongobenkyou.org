@@ -52,7 +52,7 @@ export function DangerZoneSection() {
 
       if (isRealUser) {
         await Promise.allSettled([
-          markProgressReset(userId),
+          markProgressReset(userId!),
           supabase.from('user_card_snapshots').delete().eq('user_id', userId),
           supabase.from('user_sync_packages').delete().eq('user_id', userId),
           supabase.from('user_cards').delete().eq('user_id', userId),
@@ -110,7 +110,7 @@ export function DangerZoneSection() {
             type="button"
             variant="outline"
             onClick={handleOpenResetModal}
-            className="border-[var(--warning)] text-[var(--warning)] hover:bg-[var(--warning)]/10 w-full font-[var(--br-heading-font)] uppercase"
+            className="border-warning text-warning hover:bg-warning/10 w-full font-[var(--br-heading-font)] uppercase"
           >
             Đặt lại tiến trình
           </Button>
@@ -130,7 +130,7 @@ export function DangerZoneSection() {
             <li>Lịch sử streak học tập</li>
             {isRealUser && <li>Dữ liệu đồng bộ trên Supabase</li>}
           </ul>
-          <p className="text-xs text-[var(--warning)] font-[var(--br-mono-font)] uppercase mb-4">
+          <p className="text-xs text-warning font-[var(--br-mono-font)] uppercase mb-4">
             Nhập &quot;
             {RESET_CONFIRM_PHRASE}
             &quot; để xác nhận.
@@ -157,7 +157,7 @@ export function DangerZoneSection() {
               type="button"
               onClick={handleResetProgress}
               disabled={resetConfirmText !== RESET_CONFIRM_PHRASE || isResetting}
-              className="border-[var(--warning)] text-[var(--warning)] hover:bg-[var(--warning)]/10 font-[var(--br-heading-font)] uppercase"
+              className="border-warning text-warning hover:bg-warning/10 font-[var(--br-heading-font)] uppercase"
               variant="outline"
             >
               {isResetting
