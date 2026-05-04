@@ -71,8 +71,8 @@ function SrsPage() {
   }
 
   // active
-  const card = session.queue[session.currentIndex]
-  const progress = session.currentIndex + 1
+  const card = session.currentCard
+  const progress = Math.min(session.currentIndex + 1, session.queue.length)
 
   return (
     <div className={`flex flex-col gap-4 ${session.srsMode === 'type-input' ? 'pt-4' : 'p-4'}`}>

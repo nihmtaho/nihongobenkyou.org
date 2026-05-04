@@ -23,6 +23,8 @@ export interface UseSrsSessionReturn {
   phase: SrsState
   queue: VocabWithSRS[]
   currentIndex: number
+  /** The card to display: queue[currentIndex] during main queue, then deferred cards after */
+  currentCard: VocabWithSRS | null
   stats: SrsStats
   elapsed: number
   srsMode: 'flashcard' | 'type-input'
@@ -44,7 +46,8 @@ export interface UseSrsSessionReturn {
   deferred: { card: VocabWithSRS, showAfter: number }[]
 }
 
-const MAX_AGAIN_REQUEUES = 3
+/** Max in-place retries before a card is written as Again and deferred */
+const MAX_AGAIN_RETRIES = 3
 
 function makeInitialStats(): SrsStats {
   return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 0: 0, 1: 0, 2: 0, 3: 0 } }
@@ -61,15 +64,21 @@ export function useSrsSession(): UseSrsSessionReturn {
   const [startError, setStartError] = useState<string | null>(null)
   const [srsMode, setSrsMode] = useState<'flashcard' | 'type-input'>('flashcard')
   const [typeInputSubMode, setTypeInputSubMode] = useState<TypeInputSubMode>('word→hira')
+  // queue is frozen after startSession — never splice or append to it
   const [queue, setQueue] = useState<VocabWithSRS[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [stats, setStats] = useState<SrsStats>(makeInitialStats)
   const [elapsed, setElapsed] = useState(0)
+  // deferred: cards that exhausted in-place retries, waiting 6-10 min
   const [deferred, setDeferred] = useState<{ card: VocabWithSRS, showAfter: number }[]>([])
   const deferredRef = useRef<{ card: VocabWithSRS, showAfter: number }[]>([])
+  // deferredCurrent: the deferred card currently being shown (after main queue ends)
+  const [deferredCurrent, setDeferredCurrent] = useState<VocabWithSRS | null>(null)
+  const deferredCurrentRef = useRef<VocabWithSRS | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const sessionWrittenRef = useRef(false)
-  const againCountRef = useRef<Map<string, number>>(new Map())
+  // Tracks in-place Again retries per vocab_id within the current session
+  const againRetryRef = useRef<Map<string, number>>(new Map())
   const [vocabLoadFailed, setVocabLoadFailed] = useState(false)
   const vocabItemsRef = useRef<{ vocab_id: string }[] | undefined>(undefined)
 
@@ -141,25 +150,28 @@ export function useSrsSession(): UseSrsSessionReturn {
     }
   }, [phase])
 
+  // Poll timer: show next deferred card after main queue is done and card is ready.
+  // Fires every 30s; only activates when currentIndex >= queue.length (main queue exhausted).
   useEffect(() => {
     if (phase !== 'active')
       return
     const id = setInterval(() => {
-      const now = Date.now()
-      const ready = deferredRef.current.filter(d => d.showAfter <= now)
-      if (ready.length === 0)
+      // Only pull deferred when main queue done and no deferred card currently showing
+      if (deferredCurrentRef.current !== null)
         return
-      deferredRef.current = deferredRef.current.filter(d => d.showAfter > now)
+      const now = Date.now()
+      const readyIdx = deferredRef.current.findIndex(d => d.showAfter <= now)
+      if (readyIdx === -1)
+        return
+      const toShow = deferredRef.current[readyIdx]
+      deferredRef.current = deferredRef.current.filter((_, i) => i !== readyIdx)
       setDeferred([...deferredRef.current])
-      setQueue((q) => {
-        const next = [...q]
-        // Insert ready cards right after the current card so they appear soon
-        next.splice(currentIndex + 1, 0, ...ready.map(d => d.card))
-        return next
-      })
+      deferredCurrentRef.current = toShow.card
+      setDeferredCurrent(toShow.card)
     }, 30_000)
     return () => clearInterval(id)
-  }, [phase, currentIndex])
+    // deferredCurrent intentionally read via deferredCurrentRef to avoid stale closure
+  }, [phase])
 
   useEffect(() => {
     if (phase !== 'complete' || sessionWrittenRef.current || !userId)
@@ -228,25 +240,69 @@ export function useSrsSession(): UseSrsSessionReturn {
     setStats(makeInitialStats())
     setElapsed(0)
     sessionWrittenRef.current = false
-    againCountRef.current = new Map()
+    againRetryRef.current = new Map()
     deferredRef.current = []
+    deferredCurrentRef.current = null
     setDeferred([])
+    setDeferredCurrent(null)
     setPhase('active')
   }
 
-  function advanceOrComplete() {
-    const next = currentIndex + 1
-    if (next >= queue.length && deferred.length === 0) {
-      setPhase('complete')
+  /** Advance to next main-queue card or move to deferred phase / complete */
+  function advanceOrComplete(currentIdx: number) {
+    const next = currentIdx + 1
+    setCurrentIndex(next)
+    if (next >= queue.length) {
+      // Main queue exhausted — show first deferred card immediately (ignore delay)
+      if (deferredRef.current.length > 0) {
+        const toShow = deferredRef.current[0]
+        deferredRef.current = deferredRef.current.slice(1)
+        setDeferred([...deferredRef.current])
+        deferredCurrentRef.current = toShow.card
+        setDeferredCurrent(toShow.card)
+      }
+      else {
+        setPhase('complete')
+      }
+    }
+  }
+
+  /** Move to next deferred card or complete when a deferred card has been rated */
+  function advanceDeferred() {
+    deferredCurrentRef.current = null
+    setDeferredCurrent(null)
+    if (deferredRef.current.length > 0) {
+      const toShow = deferredRef.current[0]
+      deferredRef.current = deferredRef.current.slice(1)
+      setDeferred([...deferredRef.current])
+      deferredCurrentRef.current = toShow.card
+      setDeferredCurrent(toShow.card)
     }
     else {
-      setCurrentIndex(next)
+      setPhase('complete')
     }
   }
 
   function handleRate(rating: SRSRating) {
     if (!userId)
       return
+
+    // --- Deferred-card path (one final chance, any rating is final) ---
+    if (deferredCurrentRef.current !== null) {
+      const card = deferredCurrentRef.current
+      const isCorrect = rating >= 2
+      setStats(s => ({
+        ...s,
+        correct: isCorrect ? s.correct + 1 : s.correct,
+        total: s.total + 1,
+        ratingCounts: { ...s.ratingCounts, [rating]: s.ratingCounts[rating] + 1 },
+      }))
+      srs.rate(card, rating)
+      advanceDeferred()
+      return
+    }
+
+    // --- Main-queue path ---
     const card = queue[currentIndex]
     if (!card)
       return
@@ -260,34 +316,48 @@ export function useSrsSession(): UseSrsSessionReturn {
     }))
 
     if (rating === 0) {
-      const count = againCountRef.current.get(card.vocab_id) ?? 0
-      if (count < MAX_AGAIN_REQUEUES) {
-        againCountRef.current.set(card.vocab_id, count + 1)
-        const entry = { card, showAfter: Date.now() + randomAgainDelay() }
-        deferredRef.current = [...deferredRef.current, entry]
-        setDeferred([...deferredRef.current])
-        // Limbo prevention: if no queue items remain after advancing, flush all
-        // deferred cards directly to queue end so the session never gets stuck.
-        if (currentIndex + 1 >= queue.length) {
-          const toFlush = deferredRef.current.map(d => d.card)
-          deferredRef.current = []
-          setDeferred([])
-          setQueue(q => [...q, ...toFlush])
-        }
-        setCurrentIndex(i => i + 1)
+      const retries = againRetryRef.current.get(card.vocab_id) ?? 0
+      if (retries < MAX_AGAIN_RETRIES) {
+        // In-place retry: show the same card again without advancing
+        againRetryRef.current.set(card.vocab_id, retries + 1)
         return
       }
-      // Exceeded MAX — fall through to write Again to Dexie
+      // 3 retries exhausted → write Again, defer, advance
+      againRetryRef.current.delete(card.vocab_id)
+      srs.rate(card, 0)
+      const entry = { card, showAfter: Date.now() + randomAgainDelay() }
+      deferredRef.current = [...deferredRef.current, entry]
+      setDeferred([...deferredRef.current])
+      advanceOrComplete(currentIndex)
+      return
     }
 
+    // Hard/Good/Easy: reset retry count, write rating, advance
+    againRetryRef.current.delete(card.vocab_id)
     srs.rate(card, rating)
-
-    advanceOrComplete()
+    advanceOrComplete(currentIndex)
   }
 
   function handleAnswer(isCorrect: boolean) {
     if (!userId)
       return
+
+    // --- Deferred-card path ---
+    if (deferredCurrentRef.current !== null) {
+      const card = deferredCurrentRef.current
+      const { rating } = srs.answerTypeInput(card, isCorrect)
+      setStats(s => ({
+        ...s,
+        correct: rating >= 2 ? s.correct + 1 : s.correct,
+        total: s.total + 1,
+        ratingCounts: { ...s.ratingCounts, [rating]: s.ratingCounts[rating] + 1 },
+      }))
+      srs.rate(card, rating)
+      advanceDeferred()
+      return
+    }
+
+    // --- Main-queue path ---
     const card = queue[currentIndex]
     if (!card)
       return
@@ -302,38 +372,35 @@ export function useSrsSession(): UseSrsSessionReturn {
     }))
 
     if (shouldRequeue) {
-      // Wrong answer — deferred requeue with 6–10 min delay
-      const count = againCountRef.current.get(card.vocab_id) ?? 0
-      if (count < MAX_AGAIN_REQUEUES) {
-        againCountRef.current.set(card.vocab_id, count + 1)
-        const entry = { card, showAfter: Date.now() + randomAgainDelay() }
-        deferredRef.current = [...deferredRef.current, entry]
-        setDeferred([...deferredRef.current])
-        // Limbo prevention: flush deferred to queue end if no cards remain
-        if (currentIndex + 1 >= queue.length) {
-          const toFlush = deferredRef.current.map(d => d.card)
-          deferredRef.current = []
-          setDeferred([])
-          setQueue(q => [...q, ...toFlush])
-        }
-        setCurrentIndex(i => i + 1)
+      const retries = againRetryRef.current.get(card.vocab_id) ?? 0
+      if (retries < MAX_AGAIN_RETRIES) {
+        // In-place retry
+        againRetryRef.current.set(card.vocab_id, retries + 1)
         return
       }
-      // Exceeded MAX — write Again to Dexie
+      // Retries exhausted → write Again, defer, advance
+      againRetryRef.current.delete(card.vocab_id)
       srs.rate(card, 0)
-    }
-    else {
-      // Correct — write computed rating to Dexie
-      srs.rate(card, rating)
+      const entry = { card, showAfter: Date.now() + randomAgainDelay() }
+      deferredRef.current = [...deferredRef.current, entry]
+      setDeferred([...deferredRef.current])
+      advanceOrComplete(currentIndex)
+      return
     }
 
-    advanceOrComplete()
+    // Correct answer
+    againRetryRef.current.delete(card.vocab_id)
+    srs.rate(card, rating)
+    advanceOrComplete(currentIndex)
   }
+
+  const currentCard = queue[currentIndex] ?? deferredCurrent
 
   return {
     phase,
     queue,
     currentIndex,
+    currentCard,
     stats,
     elapsed,
     srsMode,

@@ -364,7 +364,7 @@ describe('useSrsSession', () => {
     })
   })
 
-  describe('handleRate — deferred Again queue', () => {
+  describe('handleRate — in-place Again retry', () => {
     async function seedVocab(card: ReturnType<typeof makeVocabWithSRS>) {
       await db.vocabulary.put({
         vocab_id: card.vocab_id,
@@ -386,30 +386,7 @@ describe('useSrsSession', () => {
       })
     }
 
-    it('again within MAX_AGAIN_REQUEUES adds card to deferred (2-card session)', async () => {
-      const card1 = makeVocabWithSRS()
-      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
-      card2.vocabId = 'mnn1_test0000002'
-      mockDueCardsQuery.mockReturnValue(
-        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
-      )
-      await seedVocab(card1)
-      await seedVocab(card2)
-
-      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
-      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
-      act(() => result.current.startSession())
-      await waitFor(() => expect(result.current.phase).toBe('active'))
-
-      // Rate first card as Again — still has card2 in queue, so uses deferred (not limbo prevention)
-      act(() => result.current.handleRate(0))
-
-      await waitFor(() => expect(result.current.deferred.length).toBe(1))
-      expect(result.current.queue.length).toBe(2) // original queue unchanged; card1 in deferred
-      expect(mockRate).not.toHaveBeenCalled()
-    })
-
-    it('again on last card (limbo prevention) appends directly to queue — no deferred, no limbo', async () => {
+    it('1st Again shows same card in-place: currentIndex unchanged, no deferred, srs.rate not called', async () => {
       const card = makeVocabWithSRS()
       mockDueCardsQuery.mockReturnValue(
         makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
@@ -423,14 +400,35 @@ describe('useSrsSession', () => {
 
       act(() => result.current.handleRate(0))
 
-      // Deferred is empty (flushed to queue end) and phase is still active
-      await waitFor(() => expect(result.current.queue.length).toBe(2))
+      expect(result.current.currentIndex).toBe(0)
       expect(result.current.deferred.length).toBe(0)
-      expect(result.current.phase).toBe('active')
+      expect(result.current.queue.length).toBe(1)
       expect(mockRate).not.toHaveBeenCalled()
     })
 
-    it('session does not complete when cards are still in queue', async () => {
+    it('3 in-place retries: currentIndex stays 0, queue unchanged', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+
+      expect(result.current.currentIndex).toBe(0)
+      expect(result.current.deferred.length).toBe(0)
+      expect(result.current.queue.length).toBe(1)
+      expect(mockRate).not.toHaveBeenCalled()
+    })
+
+    it('4th again exhausts retries: srs.rate(card, 0) called, card added to deferred, advances — queue never grows', async () => {
       const card1 = makeVocabWithSRS()
       const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
       card2.vocabId = 'mnn1_test0000002'
@@ -445,55 +443,51 @@ describe('useSrsSession', () => {
       act(() => result.current.startSession())
       await waitFor(() => expect(result.current.phase).toBe('active'))
 
-      // Rate first card as Again — still has card2 remaining, goes to deferred
+      // 3 in-place retries
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+      expect(mockRate).not.toHaveBeenCalled()
+
+      // 4th Again: exhausts retries
       act(() => result.current.handleRate(0))
 
-      await waitFor(() => expect(result.current.deferred.length).toBe(1))
-      expect(result.current.phase).not.toBe('complete')
+      await waitFor(() => expect(mockRate).toHaveBeenCalledWith(
+        expect.objectContaining({ vocab_id: card1.vocab_id }),
+        0,
+      ))
+      expect(result.current.deferred.length).toBe(1)
+      expect(result.current.queue.length).toBe(2) // queue NEVER grows
+      expect(result.current.currentIndex).toBe(1)
     })
 
-    it('poll timer splices deferred cards back at currentIndex + 1 after delay', async () => {
-      const cardA = makeVocabWithSRS()
-      const cardB = makeVocabWithSRS({
-        vocab_id: 'mnn1_test0000002',
-        word: '飲む',
-        reading: 'のむ',
-        romaji: 'nomu',
-      })
-      cardB.vocabId = 'mnn1_test0000002'
+    it('hard on 2nd retry: srs.rate(card, 1) called, index advances', async () => {
+      const card1 = makeVocabWithSRS()
+      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
+      card2.vocabId = 'mnn1_test0000002'
       mockDueCardsQuery.mockReturnValue(
-        makeDueCardsResult({ data: [cardA, cardB] as unknown as CardState[], isLoading: false }),
+        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
       )
-      await seedVocab(cardA)
-      await seedVocab(cardB)
+      await seedVocab(card1)
+      await seedVocab(card2)
 
       const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
       await waitFor(() => expect(result.current.isVocabReady).toBe(true))
       act(() => result.current.startSession())
       await waitFor(() => expect(result.current.phase).toBe('active'))
 
-      // Switch to fake timers AFTER reaching 'active'. handleRate(0) triggers
-      // the [phase, currentIndex] effect to re-run, re-registering the poll
-      // setInterval with the fake timer system.
-      vi.useFakeTimers()
-      try {
-        // Rate cardA as Again → deferred, currentIndex advances to 1 (pointing at cardB)
-        act(() => result.current.handleRate(0))
-        expect(result.current.deferred).toHaveLength(1)
+      act(() => result.current.handleRate(0)) // 1st retry in-place
+      act(() => result.current.handleRate(1)) // Hard on 2nd — should write and advance
 
-        // Advance past max again delay (10 min) + one poll tick (30 s)
-        await act(async () => vi.advanceTimersByTime(10 * 60 * 1000 + 30_000))
-
-        expect(result.current.deferred).toHaveLength(0)
-        expect(result.current.queue).toHaveLength(3) // [A, B, A] — A re-inserted at index 2
-        expect(result.current.currentIndex).toBe(1)
-      }
-      finally {
-        vi.useRealTimers()
-      }
+      expect(mockRate).toHaveBeenCalledWith(
+        expect.objectContaining({ vocab_id: card1.vocab_id }),
+        1,
+      )
+      expect(result.current.deferred.length).toBe(0)
+      expect(result.current.currentIndex).toBe(1)
     })
 
-    it('mAX_AGAIN_REQUEUES exceeded — card does not go to deferred on final Again; 1-card session completes', async () => {
+    it('1-card session: 4th again defers and immediately shows deferred card as currentCard', async () => {
       const card = makeVocabWithSRS()
       mockDueCardsQuery.mockReturnValue(
         makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
@@ -505,28 +499,74 @@ describe('useSrsSession', () => {
       act(() => result.current.startSession())
       await waitFor(() => expect(result.current.phase).toBe('active'))
 
-      // With limbo prevention: each Again appends card to queue end (no deferred in 1-card session).
-      // After MAX_AGAIN_REQUEUES (3) appends, the 4th Again exceeds the limit and falls through
-      // to srs.rate, then session completes.
-      for (let i = 0; i < 3; i++) {
-        act(() => result.current.handleRate(0))
-        await waitFor(() => expect(result.current.queue.length).toBe(i + 2))
-        expect(result.current.deferred.length).toBe(0) // always flushed immediately
-        expect(mockRate).not.toHaveBeenCalled()
-      }
-
-      // 4th Again: count (3) >= MAX (3) → falls through to srs.rate
+      // 3 in-place retries then 4th Again exhausts
       act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+
+      await waitFor(() => expect(result.current.currentCard).not.toBeNull())
+      expect(result.current.currentCard?.vocab_id).toBe(card.vocab_id)
+      expect(result.current.phase).toBe('active')
+      expect(result.current.queue.length).toBe(1) // queue frozen
+      expect(result.current.deferred.length).toBe(0) // deferred consumed into deferredCurrent
+    })
+
+    it('deferred card shown after main queue: rating it completes session (1-card)', async () => {
+      const card = makeVocabWithSRS()
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      // Exhaust retries to trigger defer
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+      act(() => result.current.handleRate(0))
+
+      // deferredCurrent should now be the deferred card
+      await waitFor(() => expect(result.current.currentCard).not.toBeNull())
+
+      // Rate deferred card → session completes
+      act(() => result.current.handleRate(2))
 
       await waitFor(() => expect(result.current.phase).toBe('complete'))
-      expect(mockRate).toHaveBeenCalledWith(
-        expect.objectContaining({ vocab_id: card.vocab_id }),
-        0,
+      // srs.rate called twice total: once for Again (4th), once for Good (deferred)
+      expect(mockRate).toHaveBeenCalledTimes(2)
+      expect(mockRate).toHaveBeenNthCalledWith(1, expect.objectContaining({ vocab_id: card.vocab_id }), 0)
+      expect(mockRate).toHaveBeenNthCalledWith(2, expect.objectContaining({ vocab_id: card.vocab_id }), 2)
+    })
+
+    it('session does not complete when main queue has remaining cards after Again', async () => {
+      const card1 = makeVocabWithSRS()
+      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
+      card2.vocabId = 'mnn1_test0000002'
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
       )
+      await seedVocab(card1)
+      await seedVocab(card2)
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      // 1st Again on card1 — in-place retry, no advance
+      act(() => result.current.handleRate(0))
+
+      expect(result.current.phase).not.toBe('complete')
+      expect(result.current.currentIndex).toBe(0)
     })
   })
 
-  describe('handleAnswer — deferred Again queue', () => {
+  describe('handleAnswer — in-place Again retry', () => {
     async function seedVocab(card: ReturnType<typeof makeVocabWithSRS>) {
       await db.vocabulary.put({
         vocab_id: card.vocab_id,
@@ -548,7 +588,7 @@ describe('useSrsSession', () => {
       })
     }
 
-    it('wrong answer on last card (limbo prevention) appends directly to queue', async () => {
+    it('wrong answer on 1-card session: in-place retry, queue frozen, no deferred', async () => {
       const card = makeVocabWithSRS()
       mockDueCardsQuery.mockReturnValue(
         makeDueCardsResult({ data: [card] as unknown as CardState[], isLoading: false }),
@@ -563,10 +603,45 @@ describe('useSrsSession', () => {
 
       act(() => result.current.handleAnswer(false))
 
-      await waitFor(() => expect(result.current.queue.length).toBe(2))
+      expect(result.current.currentIndex).toBe(0)
+      expect(result.current.queue.length).toBe(1) // queue never grows
       expect(result.current.deferred.length).toBe(0)
       expect(result.current.phase).toBe('active')
       expect(mockRate).not.toHaveBeenCalled()
+    })
+
+    it('wrong answer x4 defers card: srs.rate(0) called, deferred, advances', async () => {
+      const card1 = makeVocabWithSRS()
+      const card2 = makeVocabWithSRS({ vocab_id: 'mnn1_test0000002', word: '飲む', reading: 'のむ', romaji: 'nomu' })
+      card2.vocabId = 'mnn1_test0000002'
+      mockDueCardsQuery.mockReturnValue(
+        makeDueCardsResult({ data: [card1, card2] as unknown as CardState[], isLoading: false }),
+      )
+      await seedVocab(card1)
+      await seedVocab(card2)
+      mockAnswerTypeInput.mockReturnValue({ rating: 0, shouldRequeue: true })
+
+      const { result } = renderHook(() => useSrsSession(), { wrapper: makeWrapper() })
+      await waitFor(() => expect(result.current.isVocabReady).toBe(true))
+      act(() => result.current.startSession())
+      await waitFor(() => expect(result.current.phase).toBe('active'))
+
+      // 3 in-place retries
+      act(() => result.current.handleAnswer(false))
+      act(() => result.current.handleAnswer(false))
+      act(() => result.current.handleAnswer(false))
+      expect(mockRate).not.toHaveBeenCalled()
+
+      // 4th wrong answer exhausts retries
+      act(() => result.current.handleAnswer(false))
+
+      await waitFor(() => expect(mockRate).toHaveBeenCalledWith(
+        expect.objectContaining({ vocab_id: card1.vocab_id }),
+        0,
+      ))
+      expect(result.current.deferred.length).toBe(1)
+      expect(result.current.queue.length).toBe(2)
+      expect(result.current.currentIndex).toBe(1)
     })
   })
 })
