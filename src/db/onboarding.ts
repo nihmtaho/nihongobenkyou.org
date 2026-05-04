@@ -37,7 +37,7 @@ export async function mergeRemoteCardsIntoDexie(
         pending_sync: false,
         updated_at: remote.updated_at,
         is_known: remote.is_known,
-        consecutive_correct: 0,
+        consecutive_correct: 0, // intentional: client-side only, not stored on server
       })
     }
   }
@@ -62,7 +62,7 @@ async function seedFromSnapshots(userId: string, snapshots: RemoteSnapshot[]): P
           pending_sync: false,
           updated_at: s.snapshot_at,
           is_known: s.is_known,
-          consecutive_correct: 0,
+          consecutive_correct: 0, // intentional: client-side only, not stored on server
         })
       }
     }
@@ -79,7 +79,7 @@ async function seedFromSnapshots(userId: string, snapshots: RemoteSnapshot[]): P
           last_rating: s.last_rating as (0 | 1 | 2 | 3 | null),
           pending_sync: false,
           updated_at: s.snapshot_at,
-          consecutive_correct: 0,
+          consecutive_correct: 0, // intentional: client-side only, not stored on server
         })
       }
     }
