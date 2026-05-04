@@ -4,10 +4,8 @@ import { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { exportActiveDeck, importActiveDeck } from '../../db/active-deck'
-import { useAuthStore } from '../../stores/authStore'
 
-export function ActiveDeckBackupSection() {
-  const { userId } = useAuthStore()
+export function ActiveDeckBackupSection({ userId }: { userId: string | null }) {
   const queryClient = useQueryClient()
   const [importError, setImportError] = useState<string | null>(null)
   const [importSuccess, setImportSuccess] = useState<string | null>(null)
