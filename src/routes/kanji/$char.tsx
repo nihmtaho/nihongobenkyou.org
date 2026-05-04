@@ -1,7 +1,8 @@
 import type { RelatedVocabItem } from '../../types/kanji'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { AddToActiveDeckButton } from '../../components/common/AddToActiveDeckButton'
 import { StrokeOrderAnimation } from '../../components/kanji/StrokeOrderAnimation'
 import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
@@ -9,6 +10,7 @@ import { Separator } from '../../components/ui/separator'
 import { Skeleton } from '../../components/ui/skeleton'
 import { getAllKanji, upsertKanjiCard } from '../../db/kanji'
 import { db } from '../../db/schema'
+import { useActiveDeckKanji, useToggleKanjiInDeck } from '../../hooks/useActiveDeck'
 import { useKanji } from '../../hooks/useKanji'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -26,6 +28,11 @@ function KanjiDetailPage() {
   const userId = useAuthStore(s => s.userId)
   const { data: kanji, isLoading, isError } = useKanji(char)
   const queryClient = useQueryClient()
+
+  const { data: deckKanji } = useActiveDeckKanji(userId ?? '')
+  const toggleKanji = useToggleKanjiInDeck(userId ?? '')
+
+  const kanjiSet = useMemo(() => new Set((deckKanji ?? []).map(k => k.char)), [deckKanji])
 
   const { data: lessonKanji } = useQuery({
     queryKey: ['kanji-lesson-neighbors', kanji?.lesson_number],
@@ -264,12 +271,21 @@ function KanjiDetailPage() {
       <div className="flex flex-col gap-6 lg:hidden">
         <div className="flex items-start gap-4">
           <div className="flex flex-col gap-2 flex-1">
-            <p
-              className="text-7xl font-bold leading-none"
-              style={{ fontFamily: 'var(--br-jp-font)' }}
-            >
-              {kanji.char}
-            </p>
+            <div className="flex items-center gap-2">
+              <p
+                className="text-7xl font-bold leading-none"
+                style={{ fontFamily: 'var(--br-jp-font)' }}
+              >
+                {kanji.char}
+              </p>
+              {userId && (
+                <AddToActiveDeckButton
+                  inDeck={kanjiSet.has(kanji.char)}
+                  onToggle={() => toggleKanji.mutate({ char: kanji.char, inDeck: kanjiSet.has(kanji.char) })}
+                  isPending={toggleKanji.isPending}
+                />
+              )}
+            </div>
             {badgeRow}
           </div>
         </div>
@@ -289,12 +305,22 @@ function KanjiDetailPage() {
         <div className="sticky top-6 flex flex-col gap-6">
           {/* Large character card */}
           <div className="bg-card border border-border/10 flex flex-col items-center gap-3 p-6">
-            <p
-              className="text-[120px] font-bold leading-none"
-              style={{ fontFamily: 'var(--br-jp-font)' }}
-            >
-              {kanji.char}
-            </p>
+            <div className="flex items-start gap-2">
+              <p
+                className="text-[120px] font-bold leading-none"
+                style={{ fontFamily: 'var(--br-jp-font)' }}
+              >
+                {kanji.char}
+              </p>
+              {userId && (
+                <AddToActiveDeckButton
+                  inDeck={kanjiSet.has(kanji.char)}
+                  onToggle={() => toggleKanji.mutate({ char: kanji.char, inDeck: kanjiSet.has(kanji.char) })}
+                  isPending={toggleKanji.isPending}
+                  className="mt-3"
+                />
+              )}
+            </div>
             {kanji.han_viet && (
               <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center">
                 {kanji.han_viet}

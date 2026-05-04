@@ -1,6 +1,9 @@
 import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
+import { useToggleVocabInDeck } from '../../hooks/useActiveDeck'
+import { AddToActiveDeckButton } from '../common/AddToActiveDeckButton'
+
 interface VocabIndexRowProps {
   item: VocabItem
   card: CardState | null
@@ -8,12 +11,16 @@ interface VocabIndexRowProps {
   isSelected: boolean
   today: string
   onSelect: () => void
+  vocabIdSet: Set<string>
+  userId: string
 }
 
-export function VocabIndexRow({ item, card, index, isSelected, today, onSelect }: VocabIndexRowProps) {
+export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, vocabIdSet, userId }: VocabIndexRowProps) {
   const isKnown = card?.is_known === true
   const isDue = card != null && !isKnown && card.due_date <= today
   const isNew = card == null
+  const inDeck = vocabIdSet.has(item.vocab_id)
+  const toggleMutation = useToggleVocabInDeck(userId)
 
   return (
     <button
@@ -40,7 +47,7 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect }
               )}
               <p className="font-[var(--br-jp-font)] text-xs text-muted-foreground/60 mt-0.5 truncate">{item.meaning_vi}</p>
             </div>
-            <div className="shrink-0 mt-0.5">
+            <div className="flex items-center gap-1 shrink-0 mt-0.5">
               {isDue && (
                 <span className="font-[var(--br-mono-font)] text-[9px] text-destructive uppercase tracking-wider">DUE</span>
               )}
@@ -50,6 +57,12 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect }
               {isNew && !isDue && (
                 <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 uppercase">NEW</span>
               )}
+              <AddToActiveDeckButton
+                inDeck={inDeck}
+                isPending={toggleMutation.isPending}
+                onToggle={() => toggleMutation.mutate({ vocabId: item.vocab_id, inDeck })}
+                className="h-6 w-6"
+              />
             </div>
           </div>
         </div>
