@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import {
   AccountSection,
+  ActiveDeckBackupSection,
   BackupSection,
   DarkModeSection,
   FontSizeSection,
@@ -25,6 +26,7 @@ function SettingsPage() {
       <DarkModeSection />
       <SyncSection />
       <BackupSection />
+      <ActiveDeckBackupSection />
       <AccountSection />
       <div className="bg-card border border-border/10 p-4">
         <h2 className="text-[11px] font-bold uppercase font-[var(--br-mono-font)] mb-3 text-muted-foreground">
