@@ -7,7 +7,7 @@ import { getDueKanjiCards, updateKanjiCard } from '../db/kanji'
 import { db } from '../db/schema'
 import { uploadPendingReviews } from '../db/sync'
 import { calculateNextReview } from '../lib/srs'
-import { computeTypeInputRatingForDisplay, toCardState } from '../lib/srs-utils'
+import { toCardState } from '../lib/srs-utils'
 
 const KNOWN_MIN_INTERVAL = 21
 const KNOWN_MIN_REVIEWS = 5
@@ -26,7 +26,6 @@ interface VocabSRSReturn {
   rate: (card: VocabWithSRS, rating: SRSRating) => void
   answer: (card: VocabWithSRS, isCorrect: boolean) => void
   answerTypeInput: (card: VocabWithSRS, isCorrect: boolean) => TypeInputResult
-  resetTypeInputTracking: () => void
   isPending: boolean
 }
 
@@ -35,7 +34,6 @@ interface KanjiSRSReturn {
   rate: (card: KanjiCardState, rating: SRSRating) => void
   answer: (card: KanjiCardState, isCorrect: boolean) => void
   answerTypeInput: (card: KanjiCardState, isCorrect: boolean) => TypeInputResult
-  resetTypeInputTracking: () => void
   isPending: boolean
 }
 
@@ -69,6 +67,9 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       const result = calculateNextReview(cardState, rating)
       const newReviewCount = cardState.review_count + 1
       const is_known = result.new_interval >= KNOWN_MIN_INTERVAL && newReviewCount >= KNOWN_MIN_REVIEWS
+      const newConsecutiveCorrect = rating === 0
+        ? 0
+        : (cardState.consecutive_correct ?? 0) + 1
 
       const now = new Date().toISOString()
 
@@ -99,7 +100,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
           pending_sync: false,
           updated_at: now,
           is_known,
-          consecutive_correct: 0,
+          consecutive_correct: newConsecutiveCorrect,
         })
         uploadPendingReviews().catch(() => {})
       }
@@ -128,6 +129,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
           last_rating: rating,
           pending_sync: false,
           updated_at: now,
+          consecutive_correct: newConsecutiveCorrect,
         })
         uploadPendingReviews().catch(() => {})
       }
@@ -153,20 +155,29 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
   }
 
   function answerTypeInput(card: AnyCard, isCorrect: boolean): TypeInputResult {
+    if (!isCorrect) {
+      return { rating: 0, shouldRequeue: true }
+    }
     const cardState = toCardState(card, userId)
-    const rating = computeTypeInputRatingForDisplay(cardState, isCorrect)
-    rate(card, rating)
-    return { rating, shouldRequeue: rating === 1 }
+    const consecutive = cardState.consecutive_correct ?? 0
+    let rating: SRSRating
+    if (consecutive >= 4 && cardState.review_count >= 2) {
+      rating = 3
+    }
+    else if (cardState.review_count <= 1) {
+      rating = 1
+    }
+    else {
+      rating = 2
+    }
+    return { rating, shouldRequeue: false }
   }
-
-  function resetTypeInputTracking(): void {}
 
   return {
     dueCards,
     rate,
     answer,
     answerTypeInput,
-    resetTypeInputTracking,
     isPending: mutation.isPending,
   } as unknown as SRSReturn<T>
 }

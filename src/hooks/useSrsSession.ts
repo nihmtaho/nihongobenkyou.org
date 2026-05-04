@@ -205,7 +205,6 @@ export function useSrsSession(): UseSrsSessionReturn {
     setElapsed(0)
     sessionWrittenRef.current = false
     againCountRef.current = new Map()
-    srs.resetTypeInputTracking()
     setPhase('active')
   }
 
@@ -266,6 +265,7 @@ export function useSrsSession(): UseSrsSessionReturn {
       setCurrentIndex(i => i + 1)
     }
     else {
+      srs.rate(card, rating)
       const next = currentIndex + 1
       if (next >= queue.length)
         setPhase('complete')
