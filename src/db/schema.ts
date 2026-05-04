@@ -1,4 +1,5 @@
 import type { EntityTable } from 'dexie'
+import type { ActiveKanjiItem, ActiveKanjiSRS, ActiveVocabItem, ActiveVocabSRS } from '../types/active-deck'
 import type { CustomDeck, CustomVocabItem } from '../types/custom-deck'
 import type { LessonMeta } from '../types/dataset'
 import type { KanjiCardState, KanjiItem } from '../types/kanji'
@@ -43,6 +44,10 @@ export class NihongoDB extends Dexie {
   custom_vocabulary!: EntityTable<CustomVocabItem, 'id'>
   passages!: EntityTable<Passage, 'passage_id'>
   review_log!: EntityTable<ReviewLogEntry, 'id'>
+  active_vocab_items!: EntityTable<ActiveVocabItem, 'vocab_id'>
+  active_kanji_items!: EntityTable<ActiveKanjiItem, 'char'>
+  active_vocab_srs!: EntityTable<ActiveVocabSRS, never>
+  active_kanji_srs!: EntityTable<ActiveKanjiSRS, never>
 
   constructor() {
     super('NihongoDB')
@@ -74,6 +79,12 @@ export class NihongoDB extends Dexie {
     })
     this.version(7).stores({
       review_log: '++id, [userId+vocabId+cardType], pendingSync, reviewedAt',
+    })
+    this.version(8).stores({
+      active_vocab_items: 'vocab_id, user_id, added_at',
+      active_kanji_items: 'char, user_id, added_at',
+      active_vocab_srs: '[userId+vocabId], due_date',
+      active_kanji_srs: '[userId+char], due_date',
     })
   }
 }
