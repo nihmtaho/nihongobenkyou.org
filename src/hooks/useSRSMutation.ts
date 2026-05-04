@@ -30,6 +30,7 @@ export function useSRSMutation() {
           pending_sync: card.pending_sync,
           updated_at: card.updated_at,
           is_known: card.is_known ?? false,
+          consecutive_correct: 0,
         },
         rating,
       )
@@ -65,6 +66,7 @@ export function useSRSMutation() {
         pending_sync: false,
         updated_at: now,
         is_known,
+        consecutive_correct: 0,
       })
 
       uploadPendingReviews().catch(() => {})

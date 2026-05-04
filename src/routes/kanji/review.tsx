@@ -46,6 +46,7 @@ function KanjiReviewPage() {
         ...r,
         last_rating: r.last_rating as KanjiCardState['last_rating'],
         pending_sync: false,
+        consecutive_correct: 0,
       }))
     },
     enabled: deckSource === 'active-kanji-deck' && !!userId,

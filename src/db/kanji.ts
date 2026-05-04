@@ -57,6 +57,7 @@ export async function upsertKanjiCard(userId: string, char: string): Promise<voi
     last_rating: null,
     pending_sync: true,
     updated_at: new Date().toISOString(),
+    consecutive_correct: 0,
   })
 }
 

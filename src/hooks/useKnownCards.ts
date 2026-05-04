@@ -32,6 +32,7 @@ export function useKnownCards() {
         pending_sync: true,
         updated_at: now,
         is_known: true,
+        consecutive_correct: 0,
       })
     }
 

@@ -31,6 +31,7 @@ const baseCard: KanjiCardState = {
   last_rating: 2,
   pending_sync: false,
   updated_at: '2026-04-26T00:00:00Z',
+  consecutive_correct: 0,
 }
 
 describe('kanjiCard', () => {

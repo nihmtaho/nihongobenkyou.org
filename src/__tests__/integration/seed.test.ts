@@ -120,6 +120,7 @@ describe('seedDatabase', () => {
       pending_sync: false,
       updated_at: new Date().toISOString(),
       is_known: false,
+      consecutive_correct: 0,
     })
 
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)

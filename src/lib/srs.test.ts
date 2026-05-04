@@ -13,6 +13,7 @@ const baseCard: CardState = {
   pending_sync: false,
   updated_at: '2026-01-01T00:00:00Z',
   is_known: false,
+  consecutive_correct: 0,
 }
 
 describe('calculateNextReview', () => {

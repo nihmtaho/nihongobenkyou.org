@@ -150,6 +150,7 @@ export async function downloadNewReviews(userId: string): Promise<void> {
           pending_sync: false,
           updated_at: event.reviewed_at,
           is_known: event.is_known,
+          consecutive_correct: 0,
         } satisfies CardState)
       }
     }
@@ -166,6 +167,7 @@ export async function downloadNewReviews(userId: string): Promise<void> {
           last_rating: event.rating as SRSRating,
           pending_sync: false,
           updated_at: event.reviewed_at,
+          consecutive_correct: 0,
         } satisfies KanjiCardState)
       }
     }

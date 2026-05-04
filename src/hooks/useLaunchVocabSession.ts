@@ -68,6 +68,7 @@ export function useLaunchVocabSession(userId: string) {
           pending_sync: false,
           updated_at: timestamp,
           is_known: false,
+          consecutive_correct: 0,
         }]
       })
 

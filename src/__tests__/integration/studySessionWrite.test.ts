@@ -146,6 +146,7 @@ describe('per-rating Dexie writes — ratingCounts data coverage (T031)', () => 
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     })
     return vocab
   }
@@ -163,6 +164,7 @@ describe('per-rating Dexie writes — ratingCounts data coverage (T031)', () => 
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     }
   }
 

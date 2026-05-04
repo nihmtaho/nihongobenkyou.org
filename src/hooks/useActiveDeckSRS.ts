@@ -24,6 +24,7 @@ export function useActiveDeckVocabSRS(userId: string) {
           pending_sync: false,
           is_known: false,
           updated_at: card.updated_at,
+          consecutive_correct: 0,
         },
         rating,
       )
@@ -78,6 +79,7 @@ export function useActiveDeckKanjiSRS(userId: string) {
           pending_sync: false,
           is_known: false,
           updated_at: card.updated_at,
+          consecutive_correct: 0,
         },
         rating,
       )

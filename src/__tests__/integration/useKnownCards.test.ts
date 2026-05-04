@@ -54,6 +54,7 @@ describe('useKnownCards', () => {
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: false,
+      consecutive_correct: 0,
     })
 
     const wrapper = makeWrapper()
@@ -79,6 +80,7 @@ describe('useKnownCards', () => {
       pending_sync: false,
       updated_at: PAST_DATE,
       is_known: true,
+      consecutive_correct: 0,
     })
 
     const wrapper = makeWrapper()

@@ -58,6 +58,7 @@ function toCardState(card: AnyCard, userId: string): CardState {
       pending_sync: card.pending_sync,
       updated_at: card.updated_at,
       is_known: card.is_known ?? false,
+      consecutive_correct: 0,
     }
   }
   return {
@@ -71,6 +72,7 @@ function toCardState(card: AnyCard, userId: string): CardState {
     pending_sync: card.pending_sync,
     updated_at: card.updated_at,
     is_known: false,
+    consecutive_correct: 0,
   }
 }
 
@@ -133,6 +135,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
           pending_sync: false,
           updated_at: now,
           is_known,
+          consecutive_correct: 0,
         })
         uploadPendingReviews().catch(() => {})
       }

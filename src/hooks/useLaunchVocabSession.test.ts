@@ -72,6 +72,7 @@ function makeCardState(userId: string, vocabId: string, due_date: string) {
     pending_sync: false,
     updated_at: new Date().toISOString(),
     is_known: false,
+    consecutive_correct: 0,
   }
 }
 
