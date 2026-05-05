@@ -2,6 +2,7 @@ import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import type { CardTypeFilter } from '../../types/unified-card'
 import { Button } from '@/components/ui/button'
 
+/** typeInputSubMode and onSetTypeInputSubMode are reserved for a future sub-mode selector UI */
 interface PreSessionScreenProps {
   filter: CardTypeFilter
   vocabCount: number

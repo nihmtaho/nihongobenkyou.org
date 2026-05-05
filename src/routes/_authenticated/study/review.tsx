@@ -118,6 +118,7 @@ function renderCard(
   setPlaybackRate: (r: number) => void,
 ) {
   const { mode, meaningLanguage, currentIndex, queue } = session
+  // meaningLanguage comes from session (via useSettingsStore internally) — no need to duplicate the selector here
   const onRate = (rating: SRSRating) => session.handleRate(card, rating)
 
   if (card.kind === 'vocab') {
@@ -238,6 +239,9 @@ function renderCard(
   // Construct VocabWithSRS shape — KanjiVocabFlipCard and KanjiVocabTypeInputCard
   // require VocabWithSRS, but kanji-vocab cards only carry CardState + RelatedVocabItem.
   // Fields not available (romaji, meaning_en, audio) are left empty/null.
+  // Construct a VocabWithSRS-shaped object for components that need vocab display fields.
+  // card.rv provides kana/word/han_viet/meaning_vi; card.card provides SRS state.
+  // Fields unavailable for kanji-vocab (romaji, meaning_en, audio, etc.) default to empty/null.
   const vocabShaped: VocabWithSRS = {
     vocab_id: card.card.vocabId,
     word: card.rv.word ?? null,
