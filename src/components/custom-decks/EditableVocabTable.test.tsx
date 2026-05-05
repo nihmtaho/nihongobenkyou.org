@@ -58,7 +58,7 @@ describe('editableVocabTable', () => {
     expect(onUpdate).toHaveBeenCalledWith('w1', expect.objectContaining({ kanji: '会社' }))
   })
 
-  it('calls onDelete when ✕ is clicked', () => {
+  it('cancel edit (✕ in edit mode) does NOT delete', () => {
     const onDelete = vi.fn()
     render(
       <EditableVocabTable
@@ -68,7 +68,24 @@ describe('editableVocabTable', () => {
       />,
     )
     fireEvent.click(screen.getByText('会議'))
-    fireEvent.click(screen.getByRole('button', { name: '✕' }))
+    // ✕ in edit mode = cancel, not delete
+    fireEvent.click(screen.getByRole('button', { name: 'hủy' }))
+    expect(onDelete).not.toHaveBeenCalled()
+    // row returns to view mode
+    expect(screen.getByText('会議')).toBeTruthy()
+  })
+
+  it('calls onDelete via view-mode delete button', () => {
+    const onDelete = vi.fn()
+    render(
+      <EditableVocabTable
+        words={WORDS}
+        onUpdate={vi.fn()}
+        onDelete={onDelete}
+      />,
+    )
+    // Delete button is in view mode (aria-label="xóa")
+    fireEvent.click(screen.getByRole('button', { name: 'xóa' }))
     expect(onDelete).toHaveBeenCalledWith('w1')
   })
 })

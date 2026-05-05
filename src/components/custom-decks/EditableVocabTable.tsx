@@ -109,13 +109,10 @@ export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Pro
                       </Button>
                       <Button
                         size="icon"
-                        variant="outline"
-                        className="h-6 w-6 text-destructive border-destructive"
-                        aria-label="✕"
-                        onClick={() => {
-                          onDelete(word.id)
-                          cancelEdit()
-                        }}
+                        variant="ghost"
+                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        aria-label="hủy"
+                        onClick={cancelEdit}
                         disabled={isPending}
                       >
                         ✕
@@ -129,7 +126,7 @@ export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Pro
             return (
               <tr
                 key={word.id}
-                className="border-b border-border/20 hover:bg-accent/30 cursor-pointer"
+                className="border-b border-border/20 hover:bg-accent/30 cursor-pointer group"
                 onClick={() => startEdit(word)}
               >
                 <td className="p-2" style={{ fontFamily: 'var(--br-jp-font)' }}>
@@ -138,7 +135,21 @@ export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Pro
                 <td className="p-2" style={{ fontFamily: 'var(--br-jp-font)' }}>{word.kana}</td>
                 <td className="p-2 text-muted-foreground">{word.han_viet ?? '—'}</td>
                 <td className="p-2">{word.meaning_vi}</td>
-                <td className="p-2" />
+                <td className="p-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-opacity"
+                    aria-label="xóa"
+                    disabled={isPending}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDelete(word.id)
+                    }}
+                  >
+                    ✕
+                  </Button>
+                </td>
               </tr>
             )
           })}
