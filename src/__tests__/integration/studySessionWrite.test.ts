@@ -147,7 +147,7 @@ describe('per-rating Dexie writes — ratingCounts data coverage (T031)', () => 
   }
 
   async function applyRating(card: Parameters<typeof db.user_cards.put>[0], rating: SRSRating) {
-    const state = toCardState({ ...card, vocab_id: card.vocabId } as Parameters<typeof toCardState>[0])
+    const state = toCardState({ ...card, vocab_id: card.vocabId } as unknown as Parameters<typeof toCardState>[0], card.userId)
     const result = calculateNextReview(state, rating)
     const now = new Date().toISOString()
     const dueDate = new Date(Date.now() + result.new_interval * 86400000).toISOString().slice(0, 10)

@@ -1,3 +1,4 @@
+import type { StreakData } from '../db/schema'
 import type { ReviewLogEntry } from '../types/review-log'
 
 import { db } from '../db/schema'
@@ -134,11 +135,11 @@ function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
 }
 
 export function useReviewStats(userId: string): { data: ReviewStats | null, isLoading: boolean } {
-  const entries = useLiveQuery(
+  const entries = useLiveQuery<ReviewLogEntry[]>(
     () => userId ? db.review_log.filter(e => e.userId === userId).toArray() : Promise.resolve([]),
     [userId],
   )
-  const streaks = useLiveQuery(
+  const streaks = useLiveQuery<StreakData[]>(
     () => userId ? db.streaks.where('userId').equals(userId).sortBy('date') : Promise.resolve([]),
     [userId],
   )
