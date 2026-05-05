@@ -1,77 +1,45 @@
 import type { CustomDeck } from '../types/custom-deck'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  createDeck,
-  deleteDeck,
-  updateDeck,
-} from '../api/custom-decks'
-import { addWord, deleteWord } from '../api/custom-vocabulary'
+import { createDeck, deleteDeck, getDeck, updateDeck } from '../db/custom-decks-local'
+import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 
 export function useCustomDeckMutations(userId: string) {
-  const queryClient = useQueryClient()
-
-  const invalidateDecks = () =>
-    queryClient.invalidateQueries({ queryKey: ['custom-decks', userId] })
-
-  const invalidateWords = (deckId: string) =>
-    queryClient.invalidateQueries({ queryKey: ['custom-vocabulary', deckId] })
+  const qc = useQueryClient()
+  const invalidate = () => qc.invalidateQueries({ queryKey: CUSTOM_DECKS_KEY(userId) })
 
   const createDeckMutation = useMutation({
     mutationFn: (input: { title: string, description?: string }) =>
       createDeck(userId, input),
-    onSuccess: () => invalidateDecks(),
+    onSuccess: () => invalidate(),
   })
 
   const updateDeckMutation = useMutation({
-    mutationFn: ({
-      deckId,
-      updates,
-    }: {
+    mutationFn: ({ deckId, updates }: {
       deckId: string
-      updates: Partial<Pick<CustomDeck, 'title' | 'description' | 'is_public'>>
+      updates: Partial<Pick<CustomDeck, 'title' | 'description'>>
     }) => updateDeck(deckId, updates),
-    onSuccess: () => invalidateDecks(),
+    onSuccess: () => invalidate(),
   })
 
   const deleteDeckMutation = useMutation({
     mutationFn: (deckId: string) => deleteDeck(deckId),
-    onSuccess: () => invalidateDecks(),
+    onSuccess: () => invalidate(),
   })
 
-  const addWordMutation = useMutation({
-    mutationFn: ({
-      deckId,
-      input,
-    }: {
-      deckId: string
-      input: { kana: string, kanji?: string, meaning_vi: string, meaning_en?: string }
-    }) => addWord(deckId, userId, input),
-    onSuccess: (_, { deckId }) => {
-      invalidateWords(deckId)
-      invalidateDecks()
+  const toggleActiveMutation = useMutation({
+    mutationFn: async (deckId: string) => {
+      const deck = await getDeck(deckId)
+      if (!deck)
+        throw new Error('Deck not found')
+      await updateDeck(deckId, { is_active: !deck.is_active })
     },
+    onSuccess: () => invalidate(),
   })
-
-  const deleteWordMutation = useMutation({
-    mutationFn: ({ wordId, deckId }: { wordId: string, deckId: string }) =>
-      deleteWord(wordId).then(() => deckId),
-    onSuccess: (deckId) => {
-      invalidateWords(deckId)
-      invalidateDecks()
-    },
-  })
-
-  const refreshDeckAndWords = (deckId: string) => {
-    invalidateDecks()
-    invalidateWords(deckId)
-  }
 
   return {
     createDeck: createDeckMutation,
     updateDeck: updateDeckMutation,
     deleteDeck: deleteDeckMutation,
-    addWord: addWordMutation,
-    deleteWord: deleteWordMutation,
-    refresh: refreshDeckAndWords,
+    toggleActive: toggleActiveMutation,
   }
 }
