@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use `parseJsonVocab` / `parseCsvVocab` from `./vocab-parser` instead.
+ * Kept temporarily while tests still reference it.
+ */
 import type { CsvImportResult, CsvRow } from '../types/custom-deck'
 
 interface ParseResult {
