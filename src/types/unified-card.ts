@@ -18,7 +18,5 @@ export type UnifiedCard
 
 /** Returns the due_date of the underlying card for sorting/display. */
 export function unifiedCardDueDate(c: UnifiedCard): string {
-  if (c.kind === 'kanji')
-    return c.card.due_date
   return c.card.due_date
 }
