@@ -1,5 +1,6 @@
 import type { RelatedVocabItem } from '../../types/kanji'
 import type { CardState, SRSRating } from '../../types/srs'
+import type { VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
 
 import { shuffle } from '../../lib/quiz'
@@ -70,7 +71,7 @@ export function KanjiVocabQuizCard({ rv, card, pool, onRate }: KanjiVocabQuizCar
           <p className={`text-center text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest ${wasCorrect ? 'text-success' : 'text-destructive'}`}>
             {wasCorrect ? '✓ Đúng' : `✗ Sai — ${rv.han_viet ?? rv.kana}`}
           </p>
-          <RatingBar card={{ ...card, vocab_id: card.vocabId } as never} onRate={onRate} />
+          <RatingBar card={{ ...card, vocab_id: card.vocabId } as unknown as VocabWithSRS} onRate={onRate} />
         </div>
       )}
     </div>
