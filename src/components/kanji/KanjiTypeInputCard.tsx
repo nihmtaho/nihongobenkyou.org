@@ -12,7 +12,7 @@ interface KanjiTypeInputCardProps {
   prompt: string
   answer: string
   hint?: string
-  card: KanjiCardState
+  card?: KanjiCardState
   onRate: (rating: SRSRating) => void
 }
 

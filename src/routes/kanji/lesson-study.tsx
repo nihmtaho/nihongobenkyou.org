@@ -153,7 +153,8 @@ function KanjiLessonStudyPage() {
             prompt={item.kanji.char}
             answer={item.kanji.han_viet ?? ''}
             hint={item.kanji.meaning_vi.join(', ')}
-            onAnswer={session.handleKanjiAnswer}
+            card={item.card ?? undefined}
+            onRate={session.handleKanjiRate}
           />
         )
       }
