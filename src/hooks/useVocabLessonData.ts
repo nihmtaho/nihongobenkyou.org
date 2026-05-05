@@ -117,6 +117,9 @@ export function useVocabLessonData(userId: string, lesson: number) {
           updated_at: c.updated_at,
           is_known: c.is_known ?? false,
           consecutive_correct: c.consecutive_correct ?? 0,
+          card_stage: c.card_stage ?? 'review',
+          learning_step: c.learning_step ?? 0,
+          lapse_count: c.lapse_count ?? 0,
         }
       }
       return {
@@ -130,6 +133,9 @@ export function useVocabLessonData(userId: string, lesson: number) {
         updated_at: sessionTimestamp,
         is_known: false,
         consecutive_correct: 0,
+        card_stage: 'review' as const,
+        learning_step: 0,
+        lapse_count: 0,
       }
     }),
     [relatedVocabItems, cards, lesson, sessionToday, sessionTimestamp],

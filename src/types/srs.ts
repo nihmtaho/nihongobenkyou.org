@@ -13,9 +13,9 @@ export interface CardState {
   updated_at: string
   is_known: boolean
   consecutive_correct: number
-  card_stage: CardStage
-  learning_step: number
-  lapse_count: number
+  card_stage?: CardStage
+  learning_step?: number
+  lapse_count?: number
 }
 
 export interface ReviewResult {

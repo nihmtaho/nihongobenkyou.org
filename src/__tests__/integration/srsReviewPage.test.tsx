@@ -84,4 +84,3 @@ describe('useDueCards', () => {
     expect(result.current.data).toHaveLength(0)
   })
 })
-

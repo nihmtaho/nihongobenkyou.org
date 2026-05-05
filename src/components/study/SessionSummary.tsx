@@ -3,8 +3,8 @@ import type { SessionStats, StudyMode } from '../../types/study'
 import type { ActiveTab } from './study.config'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
-import { SessionStatsBar } from '../analytics/SessionStatsBar'
 import { useStudySessionStore } from '../../stores/studySessionStore'
+import { SessionStatsBar } from '../analytics/SessionStatsBar'
 
 interface SessionSummaryProps {
   stats: SessionStats

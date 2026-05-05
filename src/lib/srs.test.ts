@@ -33,7 +33,7 @@ function learningCard(step: number, stage: CardStage = 'learning'): CardState {
 
 describe('calculateNextReview — learning stage', () => {
   describe('step 0 (1 min)', () => {
-    it('Again → stays step 0, due ~1 min ahead', () => {
+    it('again → stays step 0, due ~1 min ahead', () => {
       const before = Date.now()
       const r = calculateNextReview(learningCard(0), 0)
       expect(r.new_card_stage).toBe('learning')
@@ -42,7 +42,7 @@ describe('calculateNextReview — learning stage', () => {
       expect(new Date(r.due_date).getTime()).toBeLessThanOrEqual(before + 65_000)
     })
 
-    it('Hard → stays step 0, due ~1 min ahead', () => {
+    it('hard → stays step 0, due ~1 min ahead', () => {
       const before = Date.now()
       const r = calculateNextReview(learningCard(0), 1)
       expect(r.new_card_stage).toBe('learning')
@@ -50,7 +50,7 @@ describe('calculateNextReview — learning stage', () => {
       expect(new Date(r.due_date).getTime()).toBeGreaterThanOrEqual(before + 55_000)
     })
 
-    it('Good → advances to step 1, due ~10 min ahead', () => {
+    it('good → advances to step 1, due ~10 min ahead', () => {
       const before = Date.now()
       const r = calculateNextReview(learningCard(0), 2)
       expect(r.new_card_stage).toBe('learning')
@@ -59,7 +59,7 @@ describe('calculateNextReview — learning stage', () => {
       expect(new Date(r.due_date).getTime()).toBeLessThanOrEqual(before + 11 * 60_000)
     })
 
-    it('Easy → graduates, interval 4, stage review', () => {
+    it('easy → graduates, interval 4, stage review', () => {
       const r = calculateNextReview(learningCard(0), 3)
       expect(r.new_card_stage).toBe('review')
       expect(r.new_interval).toBe(4)
@@ -68,17 +68,17 @@ describe('calculateNextReview — learning stage', () => {
   })
 
   describe('step 1 (10 min)', () => {
-    it('Again → back to step 0', () => {
+    it('again → back to step 0', () => {
       const r = calculateNextReview(learningCard(1), 0)
       expect(r.new_learning_step).toBe(0)
     })
 
-    it('Hard → stays step 1', () => {
+    it('hard → stays step 1', () => {
       const r = calculateNextReview(learningCard(1), 1)
       expect(r.new_learning_step).toBe(1)
     })
 
-    it('Good → advances to step 2, due ~1 day ahead', () => {
+    it('good → advances to step 2, due ~1 day ahead', () => {
       const before = Date.now()
       const r = calculateNextReview(learningCard(1), 2)
       expect(r.new_learning_step).toBe(2)
@@ -86,7 +86,7 @@ describe('calculateNextReview — learning stage', () => {
       expect(new Date(r.due_date).getTime()).toBeLessThanOrEqual(before + 25 * 3600_000)
     })
 
-    it('Easy → graduates, interval 4', () => {
+    it('easy → graduates, interval 4', () => {
       const r = calculateNextReview(learningCard(1), 3)
       expect(r.new_card_stage).toBe('review')
       expect(r.new_interval).toBe(4)
@@ -94,23 +94,23 @@ describe('calculateNextReview — learning stage', () => {
   })
 
   describe('step 2 (1 day)', () => {
-    it('Again → back to step 0', () => {
+    it('again → back to step 0', () => {
       const r = calculateNextReview(learningCard(2), 0)
       expect(r.new_learning_step).toBe(0)
     })
 
-    it('Hard → stays step 2', () => {
+    it('hard → stays step 2', () => {
       const r = calculateNextReview(learningCard(2), 1)
       expect(r.new_learning_step).toBe(2)
     })
 
-    it('Good → graduates, interval 1', () => {
+    it('good → graduates, interval 1', () => {
       const r = calculateNextReview(learningCard(2), 2)
       expect(r.new_card_stage).toBe('review')
       expect(r.new_interval).toBe(1)
     })
 
-    it('Easy → graduates, interval 4', () => {
+    it('easy → graduates, interval 4', () => {
       const r = calculateNextReview(learningCard(2), 3)
       expect(r.new_card_stage).toBe('review')
       expect(r.new_interval).toBe(4)
@@ -236,10 +236,18 @@ describe('formatIntervalPreview', () => {
     expect(formatIntervalPreview(0)).toBe('< 1d')
     expect(formatIntervalPreview(-5)).toBe('< 1d')
   })
-  it('1 day → 1d', () => { expect(formatIntervalPreview(1)).toBe('1d') })
-  it('14 days → 14d', () => { expect(formatIntervalPreview(14)).toBe('14d') })
-  it('30 days → 1mo', () => { expect(formatIntervalPreview(30)).toBe('1mo') })
-  it('365 days → 1y', () => { expect(formatIntervalPreview(365)).toBe('1y') })
+  it('1 day → 1d', () => {
+    expect(formatIntervalPreview(1)).toBe('1d')
+  })
+  it('14 days → 14d', () => {
+    expect(formatIntervalPreview(14)).toBe('14d')
+  })
+  it('30 days → 1mo', () => {
+    expect(formatIntervalPreview(30)).toBe('1mo')
+  })
+  it('365 days → 1y', () => {
+    expect(formatIntervalPreview(365)).toBe('1y')
+  })
 })
 
 describe('randomAgainDelay', () => {

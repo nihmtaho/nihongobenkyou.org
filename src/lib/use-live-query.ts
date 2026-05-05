@@ -13,7 +13,7 @@ export function useLiveQuery<T>(
       error: err => console.error('[useLiveQuery]', err),
     })
     return () => subscription.unsubscribe()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps
   }, deps)
 
   return result

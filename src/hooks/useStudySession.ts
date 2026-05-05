@@ -59,7 +59,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
 
         let merged: VocabWithSRS[] = vocabItems.map((v) => {
           const c = cardMap.get(v.vocab_id)
-          if (c)
+          if (c) {
             return {
               ...v,
               ...c,
@@ -68,6 +68,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
               learning_step: c.learning_step ?? 0,
               lapse_count: c.lapse_count ?? 0,
             }
+          }
           return {
             ...v,
             userId,
@@ -116,7 +117,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
 
       let merged: VocabWithSRS[] = vocab.map((v) => {
         const c = cardMap.get(v.vocab_id)
-        if (c)
+        if (c) {
           return {
             ...v,
             ...c,
@@ -125,6 +126,7 @@ export function useStudySession(userId: string, config: StudyConfig) {
             learning_step: c.learning_step ?? 0,
             lapse_count: c.lapse_count ?? 0,
           }
+        }
         return {
           ...v,
           userId,
