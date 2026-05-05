@@ -7,6 +7,8 @@ import { useMemo } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { db } from '../../db/schema'
+import { useActivateStudyDeck } from '../../hooks/useActivateStudyDeck'
+import { useCustomDeckMutations } from '../../hooks/useCustomDeckMutations'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
 import { formatNextReview } from '../../lib/next-review'
 import { EmptyState } from './shared/EmptyState'
@@ -124,11 +126,44 @@ function CustomDeckRow({ deck, userId }: { deck: CustomDeck, userId: string }) {
             )}
         </div>
       </div>
-      <Button asChild size="xs" variant="outline" className="font-[var(--br-mono-font)] min-h-0 h-7">
-        <Link to="/custom">
-          XEM BỘ THẺ
-        </Link>
-      </Button>
+      <div className="flex items-center gap-1.5 shrink-0">
+        <Button asChild size="xs" variant="ghost" className="font-[var(--br-mono-font)] min-h-0 h-7 text-muted-foreground">
+          <Link to="/custom">
+            XEM
+          </Link>
+        </Button>
+        <StudyToggleButton deck={deck} userId={userId} />
+      </div>
     </div>
+  )
+}
+
+function StudyToggleButton({ deck, userId }: { deck: CustomDeck, userId: string }) {
+  const activate = useActivateStudyDeck(userId)
+  const { toggleActive } = useCustomDeckMutations(userId)
+
+  if (deck.is_active) {
+    return (
+      <Button
+        size="xs"
+        variant="outline"
+        className="font-[var(--br-mono-font)] min-h-0 h-7 text-muted-foreground border-muted-foreground/30"
+        onClick={() => toggleActive.mutate(deck.id)}
+        disabled={toggleActive.isPending}
+      >
+        DỪNG HỌC
+      </Button>
+    )
+  }
+
+  return (
+    <Button
+      size="xs"
+      className="font-[var(--br-mono-font)] min-h-0 h-7"
+      onClick={() => activate.mutate(deck)}
+      disabled={activate.isPending}
+    >
+      HỌC NGAY
+    </Button>
   )
 }
