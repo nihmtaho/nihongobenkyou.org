@@ -140,8 +140,9 @@ function KanjiLessonStudyPage() {
           <KanjiQuizCard
             key={item.kanji.char}
             kanji={item.kanji}
+            srsState={item.card ?? undefined}
             pool={session.kanjiQueue.map(q => q.kanji)}
-            onAnswer={session.handleKanjiAnswer}
+            onRate={session.handleKanjiRate}
           />
         )
       }

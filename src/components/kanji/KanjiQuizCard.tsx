@@ -7,7 +7,7 @@ import { RatingBar } from '../study/shared/RatingBar'
 
 interface KanjiQuizCardProps {
   kanji: KanjiItem
-  srsState: KanjiCardState
+  srsState?: KanjiCardState
   pool: KanjiItem[]
   onRate: (rating: SRSRating) => void
 }
