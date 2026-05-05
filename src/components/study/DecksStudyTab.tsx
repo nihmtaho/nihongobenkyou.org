@@ -1,16 +1,18 @@
 import type { CustomDeck } from '../../types/custom-deck'
+import type { StudyMode, TypeInputSubMode } from '../../types/study'
 
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { db } from '../../db/schema'
-import { useActivateStudyDeck } from '../../hooks/useActivateStudyDeck'
+import { useLaunchCustomDeckSession } from '../../hooks/useLaunchCustomDeckSession'
 import { useCustomDeckMutations } from '../../hooks/useCustomDeckMutations'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
 import { formatNextReview } from '../../lib/next-review'
+import { DeckStudyModal } from './DeckStudyModal'
 import { EmptyState } from './shared/EmptyState'
 import { SectionLabel } from './shared/SectionLabel'
 import { SkeletonRows } from './shared/SkeletonRows'
@@ -139,31 +141,65 @@ function CustomDeckRow({ deck, userId }: { deck: CustomDeck, userId: string }) {
 }
 
 function StudyToggleButton({ deck, userId }: { deck: CustomDeck, userId: string }) {
-  const activate = useActivateStudyDeck(userId)
+  const { launch, isLaunching } = useLaunchCustomDeckSession(userId)
   const { toggleActive } = useCustomDeckMutations(userId)
+  const [showModal, setShowModal] = useState(false)
+
+  function handleLaunch(mode: StudyMode, subMode?: TypeInputSubMode) {
+    setShowModal(false)
+    launch(deck, mode, subMode)
+  }
 
   if (deck.is_active) {
     return (
-      <Button
-        size="xs"
-        variant="outline"
-        className="font-[var(--br-mono-font)] min-h-0 h-7 text-muted-foreground border-muted-foreground/30"
-        onClick={() => toggleActive.mutate(deck.id)}
-        disabled={toggleActive.isPending}
-      >
-        DỪNG HỌC
-      </Button>
+      <>
+        <Button
+          size="xs"
+          className="font-[var(--br-mono-font)] min-h-0 h-7"
+          onClick={() => setShowModal(true)}
+          disabled={isLaunching}
+        >
+          HỌC
+        </Button>
+        <Button
+          size="xs"
+          variant="outline"
+          className="font-[var(--br-mono-font)] min-h-0 h-7 text-muted-foreground border-muted-foreground/30"
+          onClick={() => toggleActive.mutate(deck.id)}
+          disabled={toggleActive.isPending}
+        >
+          DỪNG
+        </Button>
+        {showModal && (
+          <DeckStudyModal
+            title={deck.title}
+            wordCount={deck.word_count}
+            onLaunch={handleLaunch}
+            onClose={() => setShowModal(false)}
+          />
+        )}
+      </>
     )
   }
 
   return (
-    <Button
-      size="xs"
-      className="font-[var(--br-mono-font)] min-h-0 h-7"
-      onClick={() => activate.mutate(deck)}
-      disabled={activate.isPending}
-    >
-      HỌC NGAY
-    </Button>
+    <>
+      <Button
+        size="xs"
+        className="font-[var(--br-mono-font)] min-h-0 h-7"
+        onClick={() => setShowModal(true)}
+        disabled={isLaunching}
+      >
+        HỌC NGAY
+      </Button>
+      {showModal && (
+        <DeckStudyModal
+          title={deck.title}
+          wordCount={deck.word_count}
+          onLaunch={handleLaunch}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+    </>
   )
 }

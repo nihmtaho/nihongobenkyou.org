@@ -12,6 +12,7 @@ function customVocabToVocabItem(item: CustomVocabItem): import('../types/vocabul
     romaji: '',
     meaning_en: '',
     meaning_vi: item.meaning_vi,
+    han_viet: item.han_viet ?? null,
     pitch_pattern: null,
     pitch_type: null,
     audio_filename: null,

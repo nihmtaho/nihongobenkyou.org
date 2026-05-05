@@ -15,7 +15,7 @@ export type MeaningLanguage = 'vi' | 'en' | 'both'
 
 export type QuizQuestionType = 'word→meaning' | 'meaning→word' | 'word→reading'
 
-export type TypeInputSubMode = 'word→hira' | 'vi→hira' | 'word→vi'
+export type TypeInputSubMode = 'word→hira' | 'vi→hira' | 'word→vi' | 'word→han_viet'
 
 export interface StudyConfig {
   mode: StudyMode

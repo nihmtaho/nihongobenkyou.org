@@ -43,6 +43,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
 
   const canonicalReading = normalizeAnswer(card.reading)
   const canonicalViMeaning = normalizeViMeaning(card.meaning_vi)
+  const canonicalHanViet = (card.han_viet ?? '').toLowerCase().trim()
 
   const { phase, isCorrect, inputRef, commit, advance } = useTypeInput(onAnswer, card.vocab_id)
 
@@ -76,6 +77,17 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
   }
 
   function doCheck() {
+    if (subMode === 'word→han_viet') {
+      const answer = raw.trim().toLowerCase()
+      if (!answer)
+        return
+      setWasSkipped(false)
+      setWrongMorae([])
+      commit(!!canonicalHanViet && answer === canonicalHanViet)
+      setShowFeedback(true)
+      return
+    }
+
     if (subMode === 'word→vi') {
       const answer = raw.trim().toLowerCase()
       if (!answer)
@@ -109,7 +121,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
     if (phase === 'result')
       return
     // word→vi: store raw DOM value — wanakana would mangle Vietnamese diacritics
-    setRaw(subMode === 'word→vi' ? e.target.value : processTypeInput(e.target.value))
+    setRaw((subMode === 'word→vi' || subMode === 'word→han_viet') ? e.target.value : processTypeInput(e.target.value))
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -162,7 +174,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
           {String(card.lesson_number).padStart(2, '0')}
         </p>
 
-        {subMode === 'word→hira' || subMode === 'word→vi'
+        {subMode === 'word→hira' || subMode === 'word→vi' || subMode === 'word→han_viet'
           ? (
               <p className="text-6xl font-bold font-[var(--br-jp-font)] leading-tight break-all">
                 {word}
@@ -231,6 +243,15 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
             <p className="text-lg font-[var(--br-jp-font)] text-muted-foreground">{canonicalReading}</p>
           </div>
         )}
+
+        {/* Reveal reading after result in word→han_viet mode */}
+        {phase === 'result' && subMode === 'word→han_viet' && (
+          <div className="border-t border-border/10 pt-4 flex flex-col gap-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">CÁCH ĐỌC</p>
+            <p className="text-lg font-[var(--br-jp-font)] text-muted-foreground">{canonicalReading}</p>
+            <p className="text-sm text-muted-foreground/75">{card.meaning_vi}</p>
+          </div>
+        )}
       </div>
 
       {/* ── Input panel ── */}
@@ -240,7 +261,9 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
             ? 'GÕ CÁCH ĐỌC (HIRAGANA)'
             : subMode === 'vi→hira'
               ? 'GÕ HIRAGANA CỦA TỪ NÀY'
-              : 'GÕ NGHĨA TIẾNG VIỆT'}
+              : subMode === 'word→han_viet'
+                ? 'GÕ ÂM HÁN VIỆT'
+                : 'GÕ NGHĨA TIẾNG VIỆT'}
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -252,16 +275,20 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
             value={raw}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder={subMode === 'word→vi'
-              ? 'Gõ nghĩa tiếng Việt...'
-              : 'Gõ hiragana · # = romaji · @ = katakana · ! = hiragana'}
+            placeholder={
+              subMode === 'word→vi'
+                ? 'Gõ nghĩa tiếng Việt...'
+                : subMode === 'word→han_viet'
+                  ? 'Gõ âm Hán Việt...'
+                  : 'Gõ hiragana · # = romaji · @ = katakana · ! = hiragana'
+            }
             readOnly={phase === 'result'}
             className={cn(
               'w-full text-center text-2xl lg:text-3xl h-auto py-2 transition-colors',
               phase === 'result' && isCorrect && 'border-success focus-visible:border-success focus-visible:ring-success/20',
               phase === 'result' && !isCorrect && 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20',
             )}
-            style={subMode !== 'word→vi' ? { fontFamily: 'var(--br-jp-font)' } : undefined}
+            style={subMode !== 'word→vi' && subMode !== 'word→han_viet' ? { fontFamily: 'var(--br-jp-font)' } : undefined}
           />
 
           {/* word→vi: always show meaning_vi after check, coloured by result */}
@@ -276,8 +303,20 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
             </div>
           )}
 
+          {/* word→han_viet: show han_viet after check, coloured by result */}
+          {phase === 'result' && subMode === 'word→han_viet' && (
+            <div className="flex flex-col items-center gap-2 py-2">
+              <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
+                {isCorrect ? 'ÂM HÁN VIỆT ĐÚNG' : 'ĐÁP ÁN ĐÚNG'}
+              </p>
+              <p className={`text-xl lg:text-2xl font-bold text-center ${isCorrect ? 'text-success' : 'text-destructive'}`}>
+                {card.han_viet}
+              </p>
+            </div>
+          )}
+
           {/* Kana modes: only show correct answer on wrong */}
-          {phase === 'result' && !isCorrect && subMode !== 'word→vi' && (
+          {phase === 'result' && !isCorrect && subMode !== 'word→vi' && subMode !== 'word→han_viet' && (
             <div className="flex flex-col items-center gap-2 py-2">
               <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
                 ĐÁP ÁN ĐÚNG
@@ -312,7 +351,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
                 <div className="flex gap-2">
                   <Button
                     type="submit"
-                    disabled={subMode === 'word→vi' ? !raw.trim() : !extractAnswer(raw).replace(/\s+/g, '')}
+                    disabled={(subMode === 'word→vi' || subMode === 'word→han_viet') ? !raw.trim() : !extractAnswer(raw).replace(/\s+/g, '')}
                     className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
                   >
                     KIỂM TRA
