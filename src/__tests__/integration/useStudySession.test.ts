@@ -1,3 +1,4 @@
+import type { UnifiedCard } from '../../types/unified-card'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
@@ -6,8 +7,8 @@ import { useStudySessionStore } from '../../stores/studySessionStore'
 const NOW = new Date().toISOString()
 const TODAY = NOW.slice(0, 10)
 
-function makeCard(vocab: (typeof sampleVocabulary)[number]): VocabWithSRS {
-  return {
+function makeCard(vocab: (typeof sampleVocabulary)[number]): UnifiedCard {
+  const vocabWithSrs: VocabWithSRS = {
     ...vocab,
     interval_days: 1,
     ease_factor: 2.5,
@@ -19,6 +20,7 @@ function makeCard(vocab: (typeof sampleVocabulary)[number]): VocabWithSRS {
     is_known: false,
     consecutive_correct: 0,
   }
+  return { kind: 'vocab', card: vocabWithSrs }
 }
 
 beforeEach(() => {

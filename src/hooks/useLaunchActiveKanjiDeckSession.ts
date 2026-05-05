@@ -13,10 +13,8 @@ export function useLaunchActiveKanjiDeckSession(userId: string) {
       return
     setIsLaunching(true)
     try {
-      // Set deckSource so kanji/review.tsx uses active_kanji_srs instead of kanji_cards.
-      // Queue is empty — kanji review manages its own local queue from the active deck SRS query.
       initSession([], mode, undefined, 'active-kanji-deck')
-      navigate({ to: '/kanji/review' })
+      navigate({ to: '/study/review', search: { filter: 'kanji' } })
     }
     finally {
       setIsLaunching(false)

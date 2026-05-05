@@ -1,5 +1,4 @@
 import type { UnifiedCard } from './unified-card'
-import type { VocabItem } from './vocabulary'
 
 export type StudyMode
   = | 'flashcard'

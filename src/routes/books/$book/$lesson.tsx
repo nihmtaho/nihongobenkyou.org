@@ -1,5 +1,6 @@
 import type { SRSStats } from '../../../components/common/SRSProgressBar'
 import type { StudyMode, TypeInputSubMode } from '../../../types/study'
+import type { UnifiedCard } from '../../../types/unified-card'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
@@ -68,7 +69,7 @@ function LessonPage() {
   const retryCards = useMemo(() => {
     const seen = new Set<string>()
     const result: VocabWithSRS[] = []
-    for (const c of stats.wrongCards as VocabWithSRS[]) {
+    for (const c of stats.wrongCards as unknown as VocabWithSRS[]) {
       if (c.book_source === book && c.lesson_number === lessonNumber && !seen.has(c.vocab_id)) {
         seen.add(c.vocab_id)
         result.push(c)
@@ -80,8 +81,8 @@ function LessonPage() {
   const hasRetry = retryCards.length > 0
 
   function handleRetry() {
-    initSession(retryCards, retryMode, retryMode === 'type-input' ? retrySubMode : undefined)
-    navigate({ to: '/study/$mode', params: { mode: retryMode }, search: { returnTab: undefined } })
+    initSession(retryCards as unknown as UnifiedCard[], retryMode, retryMode === 'type-input' ? retrySubMode : undefined)
+    navigate({ to: '/study/review', search: { filter: 'all' } })
   }
 
   function handleLaunch(mode: StudyMode, subMode?: TypeInputSubMode, order?: 'random' | 'sequential') {

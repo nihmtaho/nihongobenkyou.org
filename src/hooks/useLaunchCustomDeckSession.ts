@@ -1,6 +1,7 @@
 import type { CustomDeck } from '../types/custom-deck'
 import type { SRSRating } from '../types/srs'
 import type { StudyMode, TypeInputSubMode } from '../types/study'
+import type { UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -109,8 +110,8 @@ export function useLaunchCustomDeckSession(userId: string) {
       if (queue.length === 0)
         return
 
-      initSession(queue, mode, subMode)
-      navigate({ to: '/study/$mode', params: { mode }, search: { returnTab: 'decks' } })
+      initSession(queue as unknown as UnifiedCard[], mode, subMode)
+      navigate({ to: '/study/review', search: { filter: 'all' } })
     }
     finally {
       setIsLaunching(false)

@@ -91,14 +91,14 @@ function HomePage() {
           {/* Quick-access links */}
           <div className="flex flex-col gap-1.5 mt-2">
             <Button variant="outline" size="sm" asChild className="font-[var(--br-mono-font)] justify-start gap-2">
-              <Link to="/srs">
+              <Link to="/study">
                 <span>◈</span>
                 {' '}
                 Ôn tập từ vựng
               </Link>
             </Button>
             <Button variant="outline" size="sm" asChild className="font-[var(--br-mono-font)] justify-start gap-2">
-              <Link to="/kanji/review">
+              <Link to="/study/review" search={{ filter: 'kanji' }}>
                 <span className="font-[var(--br-jp-font)]">字</span>
                 {' '}
                 Ôn tập hán tự
