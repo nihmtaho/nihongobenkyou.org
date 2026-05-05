@@ -139,7 +139,7 @@ function StudyPage() {
   const { returnTab } = Route.useSearch()
   const navigate = useNavigate()
   const { userId } = useAuthStore()
-  const { queue, currentIndex, stats, mode: sessionMode, typeInputSubMode, deckSource, markCorrect, markWrong, markAttempted, advanceCard }
+  const { queue, currentIndex, stats, mode: sessionMode, typeInputSubMode, deckSource, markCorrect, markWrong, markNeedsReview, markAttempted, advanceCard }
     = useStudySessionStore()
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage)
   const lessonSrs = useSRS('vocab', userId ?? '')
@@ -226,7 +226,7 @@ function StudyPage() {
     const { rating, shouldRequeue } = srs.answerTypeInput(currentCard, isCorrect)
 
     if (shouldRequeue) {
-      markWrong(currentCard)
+      markNeedsReview(currentCard)
       advanceCard()
     }
     else if (rating === 0) {

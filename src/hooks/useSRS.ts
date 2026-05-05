@@ -156,8 +156,11 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
   }
 
   function answerTypeInput(card: AnyCard, isCorrect: boolean): TypeInputResult {
-    if (!isCorrect)
+    if (!isCorrect) {
+      // Write SRS (rating 0 → 6-10min delay) immediately — no re-queue.
+      mutation.mutate({ card, rating: 0 })
       return { rating: 0, shouldRequeue: true }
+    }
     const cardState = toCardState(card, userId)
     const rating = computeTypeInputRatingForDisplay(cardState, true)
     return { rating, shouldRequeue: false }
