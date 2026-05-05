@@ -15,7 +15,9 @@ import { useCustomDeckMutations } from '../../hooks/useCustomDeckMutations'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
 import { formatNextReview } from '../../lib/next-review'
 import { DeckStudyModal } from './DeckStudyModal'
+import { DueCard } from './shared/DueCard'
 import { EmptyState } from './shared/EmptyState'
+import { NextReviewCard } from './shared/NextReviewCard'
 import { SectionLabel } from './shared/SectionLabel'
 import { SkeletonRows } from './shared/SkeletonRows'
 import { StatPip } from './shared/StatPip'
@@ -79,6 +81,13 @@ export function DecksStudyTab({ userId }: { userId: string }) {
     return { due, new: newCount, learning, review, mature, studied: learning + review + mature }
   }, [statsMap])
 
+  const nextGlobalDate = useMemo(() => {
+    if (!statsMap)
+      return null
+    const dates = [...statsMap.values()].map(s => s.nextDate).filter(Boolean) as string[]
+    return dates.sort()[0] ?? null
+  }, [statsMap])
+
   if (isLoading) {
     return (
       <div className="p-4 lg:p-6 xl:p-8 max-w-5xl mx-auto">
@@ -87,46 +96,56 @@ export function DecksStudyTab({ userId }: { userId: string }) {
     )
   }
 
-  if (!activeDecks.length) {
-    return (
-      <div className="p-4 lg:p-6 xl:p-8 max-w-5xl mx-auto">
-        <EmptyState
-          jp="学習中のデッキがありません"
-          label="Chưa có bộ thẻ nào đang học"
-          hint="Vào trang Bộ thẻ, bật SRS cho bộ thẻ bạn muốn học"
-          cta="ĐẾN BỘ THẺ"
-          ctaLink="/custom"
-        />
-      </div>
-    )
-  }
-
   return (
     <div className="p-4 lg:p-6 xl:p-8 max-w-5xl mx-auto">
-      <StatsGrid
-        isLoading={statsLoading}
-        items={[
-          { label: 'ĐẾN HẠN', value: totals.due, color: 'text-destructive' },
-          { label: 'MỚI', value: totals.new, color: 'text-foreground/50' },
-          { label: 'ĐANG HỌC', value: totals.learning, color: 'text-warning' },
-          { label: 'ÔN TẬP', value: totals.review, color: 'text-info' },
-          { label: 'ĐÃ THUỘC', value: totals.mature, color: 'text-success' },
-          { label: 'ĐÃ HỌC QUA', value: totals.studied, color: 'text-foreground' },
-        ]}
-      />
-
-      <SectionLabel label="BỘ THẺ ĐANG HỌC" count={activeDecks.length} />
-      <div className="border border-border/10">
-        {activeDecks.map((deck, i) => (
-          <CustomDeckRow
-            key={deck.id}
-            deck={deck}
-            userId={userId}
-            stats={statsMap?.get(deck.id) ?? null}
-            animDelay={i * 0.04}
-          />
-        ))}
+      {/* Action widgets — always visible */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
+        <DueCard
+          count={totals.due}
+          label="THẺ BỘ THẺ CẦN ÔN HÔM NAY"
+          reviewLink="/custom"
+        />
+        <NextReviewCard nextDueDate={nextGlobalDate} />
       </div>
+
+      {activeDecks.length === 0
+        ? (
+            <EmptyState
+              jp="学習中のデッキがありません"
+              label="Chưa có bộ thẻ nào đang học"
+              hint="Vào trang Bộ thẻ, bật SRS cho bộ thẻ bạn muốn học"
+              cta="ĐẾN BỘ THẺ"
+              ctaLink="/custom"
+            />
+          )
+        : (
+            <>
+              <StatsGrid
+                isLoading={statsLoading}
+                items={[
+                  { label: 'ĐẾN HẠN', value: totals.due, color: 'text-destructive' },
+                  { label: 'MỚI', value: totals.new, color: 'text-foreground/50' },
+                  { label: 'ĐANG HỌC', value: totals.learning, color: 'text-warning' },
+                  { label: 'ÔN TẬP', value: totals.review, color: 'text-info' },
+                  { label: 'ĐÃ THUỘC', value: totals.mature, color: 'text-success' },
+                  { label: 'ĐÃ HỌC QUA', value: totals.studied, color: 'text-foreground' },
+                ]}
+              />
+
+              <SectionLabel label="BỘ THẺ ĐANG HỌC" count={activeDecks.length} />
+              <div className="border border-border/10">
+                {activeDecks.map((deck, i) => (
+                  <CustomDeckRow
+                    key={deck.id}
+                    deck={deck}
+                    userId={userId}
+                    stats={statsMap?.get(deck.id) ?? null}
+                    animDelay={i * 0.04}
+                  />
+                ))}
+              </div>
+            </>
+          )}
     </div>
   )
 }
