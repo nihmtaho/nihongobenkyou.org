@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { SRSProgressBar } from '../../components/common/SRSProgressBar'
 import { getKanjiLessons } from '../../db/kanji'
 import { useKanjiList } from '../../hooks/useKanjiList'
-import { useKanjiSRS } from '../../hooks/useKanjiSRS'
+import { useSRS } from '../../hooks/useSRS'
 import { formatNextReview } from '../../lib/next-review'
 import { KanjiStudyModal } from './KanjiStudyModal'
 
@@ -26,7 +26,7 @@ interface KanjiLessonPanelProps {
 
 export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLessonPanelProps) {
   const { data: allKanji, isLoading } = useKanjiList(userId)
-  const { dueCards } = useKanjiSRS(userId)
+  const { dueCards } = useSRS('kanji', userId)
   const { data: lessonNums } = useQuery({
     queryKey: ['kanji-lessons'],
     queryFn: getKanjiLessons,
