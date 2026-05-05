@@ -1,6 +1,6 @@
 import type { StudyMode, TypeInputSubMode } from '../../types/study'
-import { StudyModal } from './StudyModal'
 import { CUSTOM_DECK_SECTIONS } from './config/active-deck-modes.config'
+import { StudyModal } from './StudyModal'
 
 interface Props {
   title: string
