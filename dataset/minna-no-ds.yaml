@@ -11099,106 +11099,106 @@ lesson-16:
     edition:
       - 1
       - 2
-    kanji: 乗ります［電車に～］
+    kanji: '［電車に～］乗ります'
     han_viet: ~
-    kana: のります［でんしゃに～］
+    kana: '［でんしゃに～］のります'
     romaji: norimasu [denshani~]
     meaning:
       en: ride, get on [a train]
       fr: prendre [un train]
-      vi: lên xe
+      vi: lên [tàu]
   - id:
       - 16
       - 2
     edition:
       - 1
       - 2
-    kanji: 降ります［電車を～］
+    kanji: '［電車を～］降ります'
     han_viet: ~
-    kana: おります［でんしゃを～］
+    kana: '［でんしゃを～］おります'
     romaji: orimasu [denshawo~]
     meaning:
       en: get off
       fr: descendre [d'un train]
-      vi: xuống xe
+      vi: xuống [tàu]
   - id:
       - 16
       - 3
     edition:
       - 1
       - 2
-    kanji: 乗り換えます
+    kanji: '［Nに〜］乗り換えます'
     han_viet: ~
-    kana: のりかえます
+    kana: '［Nに〜］のりかえます'
     romaji: norikaemasu
     meaning:
       en: change (trains, etc.)
       fr: changer (de train, etc.)
-      vi: chuyển tàu
+      vi: chuyển, đổi (tàu, etc.)
   - id:
       - 16
       - 4
     edition:
       - 1
       - 2
-    kanji: 浴びます［シャワーを～］
+    kanji: '［シャワーを～］浴びます'
     han_viet: ~
-    kana: あびます［シャワーを～］
+    kana: '［シャワーを～］あびます'
     romaji: abimasu [shawāwo~]
     meaning:
       en: take [a shower]
       fr: prendre [une douche]
-      vi: tắm
+      vi: tắm [vòi hoa sen]
   - id:
       - 16
       - 5
     edition:
       - 1
       - 2
-    kanji: 入れます
-    han_viet: ~
-    kana: いれます
+    kanji: '［N(物)を〜］入れます'
+    han_viet: NHẬP
+    kana: '［N(もの)を〜］いれます'
     romaji: iremasu
     meaning:
       en: put in, insert
       fr: mettre dans, insérer
-      vi: đặt vào
+      vi: cho vào, bỏ vào
   - id:
       - 16
       - 6
     edition:
       - 1
       - 2
-    kanji: 出します
-    han_viet: ~
-    kana: だします
+    kanji: '［を〜］出します'
+    han_viet: XUẤT
+    kana: '［を〜］だします'
     romaji: dashimasu
     meaning:
       en: take out, hand in, send
       fr: sortir (quelque chose de), remettre (quelque chose), envoyer (une lettre)
-      vi: giao ra
+      vi: lấy ra, nộp, gửi (thư)
   - id:
       - 16
       - 7
     edition:
       - 2
-    kanji: 下ろします［お金を～］
-    han_viet: ~
-    kana: おろします［おかねを～］
+    kanji: '［お金を～］下ろします'
+    han_viet: HẠ
+    kana: 'おろします［おかねを～］'
     romaji: oroshimasu [okanewo~]
     meaning:
       en: withdraw
       fr: retirer [de l'argent]
-      vi: rút tiền
+      vi: rút [tiền]
   - id:
       - 16
       - 8
     edition:
       - 1
       - 2
-    kanji: 入ります［大学に～］
-    han_viet: ~
-    kana: はいります［だいがくに～］
+    kanji: '［大学に～］入ります'
+    han_viet: NHẬP
+    kana: 'はいります［だいがくに～］'
     romaji: hairimasu [daigakuni~]
     meaning:
       en: enter [university]
@@ -11210,49 +11210,49 @@ lesson-16:
     edition:
       - 1
       - 2
-    kanji: 出ます［大学を～］
-    han_viet: ~
-    kana: でます［だいがくを～］
+    kanji: '［大学を～］出ます'
+    han_viet: XUẤT
+    kana: 'でます［だいがくを～］'
     romaji: demasu [daigakuwo~]
     meaning:
       en: graduate from [university]
       fr: sortir [d'une université]
-      vi: tốt nghiệp [đại học]
+      vi: ra, tốt nghiệp [đại học]
   - id:
       - 16
       - 10
     edition:
       - 1
       - 2
-    kanji: 押します
+    kanji: '［ボタンを～］押します'
     han_viet: ~
-    kana: おします
-    romaji: oshimasu
+    kana: '［ボタンを～］おします'
+    romaji: oshimasu [botanwo~]
     meaning:
       en: push, press
       fr: appuyer (sur), presser, pousser
-      vi: ép, nhấn
+      vi: bấm, ấn (nút)
   - id:
       - 16
       - 11
     edition:
       - 2
     kanji: 飲みます
-    han_viet: ~
+    han_viet: ẨM
     kana: のみます
     romaji: nomimasu
     meaning:
       en: drink alcohol
       fr: boire de l'alcool
-      vi: uống rượu
+      vi: uống (bia, rượu)
   - id:
       - 16
       - 12
     edition:
       - 2
-    kanji: 始めます
-    han_viet: ~
-    kana: はじめます
+    kanji: '［〜を～］始めます'
+    han_viet: THỦY
+    kana: '［〜を～］はじめます'
     romaji: hajimemasu
     meaning:
       en: start, begin
@@ -11263,22 +11263,22 @@ lesson-16:
       - 13
     edition:
       - 2
-    kanji: 見学します
-    han_viet: ~
-    kana: けんがくします
+    kanji: '［〜を～］見学します'
+    han_viet: KIẾN HỌC
+    kana: '［〜を～］けんがくします'
     romaji: kengakushimasu
     meaning:
       en: tour, visit a place to study it
       fr: visiter un lieu pour ses études
-      vi: tham quan, ghé thăm để học hành
+      vi: tham quan kiến tập, ghé thăm để học hành
   - id:
       - 16
       - 14
     edition:
       - 2
-    kanji: 電話します
-    han_viet: ~
-    kana: でんわします
+    kanji: '［〜を〜］電話します'
+    han_viet: ĐIỆN THOẠI
+    kana: '［〜を〜］でんわします'
     romaji: denwashimasu
     meaning:
       en: phone
@@ -11339,7 +11339,7 @@ lesson-16:
     meaning:
       en: bright, light
       fr: clair, lumineux
-      vi: sáng
+      vi: sáng, người thông minh
   - id:
       - 16
       - 19
@@ -11403,7 +11403,7 @@ lesson-16:
       - 1
       - 2
     kanji: 顔
-    han_viet: ~
+    han_viet: NHAN
     kana: かお
     romaji: kao
     meaning:
@@ -11417,7 +11417,7 @@ lesson-16:
       - 1
       - 2
     kanji: 目
-    han_viet: ~
+    han_viet: MỤC
     kana: め
     romaji: me
     meaning:
@@ -11431,7 +11431,7 @@ lesson-16:
       - 1
       - 2
     kanji: 耳
-    han_viet: ~
+    han_viet: NHĨ
     kana: みみ
     romaji: mimi
     meaning:
@@ -11444,7 +11444,7 @@ lesson-16:
     edition:
       - 2
     kanji: 鼻
-    han_viet: ~
+    han_viet: BI
     kana: はな
     romaji: hana
     meaning:
@@ -11458,7 +11458,7 @@ lesson-16:
       - 1
       - 2
     kanji: 口
-    han_viet: ~
+    han_viet: KHẨU
     kana: くち
     romaji: kuchi
     meaning:
@@ -11472,7 +11472,7 @@ lesson-16:
       - 1
       - 2
     kanji: 歯
-    han_viet: ~
+    han_viet: XỈ
     kana: は
     romaji: ha
     meaning:
@@ -11491,7 +11491,7 @@ lesson-16:
     meaning:
       en: stomach
       fr: ventre
-      vi: dạ dày
+      vi: bụng
   - id:
       - 16
       - 30
@@ -11499,7 +11499,7 @@ lesson-16:
       - 1
       - 2
     kanji: 足
-    han_viet: ~
+    han_viet: TÚC
     kana: あし
     romaji: ashi
     meaning:
@@ -11512,13 +11512,13 @@ lesson-16:
     edition:
       - 2
     kanji: 背
-    han_viet: ~
+    han_viet: BỐI
     kana: せ
     romaji: se
     meaning:
       en: height
       fr: taille
-      vi: chiều cao
+      vi: chiều cao (cơ thể)
   - id:
       - 16
       - 32
@@ -11544,7 +11544,7 @@ lesson-16:
     meaning:
       en: 'jogging (～を します : jog)'
       fr: 'jogging (～を します : faire un jogging)'
-      vi: đi chạy (running)
+      vi: 'việc chạy bộ (～を します : chạy bộ)'
   - id:
       - 16
       - 34
@@ -11557,7 +11557,7 @@ lesson-16:
     meaning:
       en: shower
       fr: douche
-      vi: phun xăm
+      vi: vòi hoa sen
   - id:
       - 16
       - 35
@@ -11571,7 +11571,7 @@ lesson-16:
     meaning:
       en: green, greenery
       fr: vert, verdure
-      vi: lá cây màu xanh
+      vi: màu xanh lá cây, cây xanh
   - id:
       - 16
       - 36
@@ -11585,7 +11585,7 @@ lesson-16:
     meaning:
       en: Buddhist temple
       fr: temple bouddhiste
-      vi: '[ông] thờ Thần'
+      vi: chùa
   - id:
       - 16
       - 37
@@ -11599,7 +11599,7 @@ lesson-16:
     meaning:
       en: Shinto shrine
       fr: temple shinto
-      vi: Đền Shinto
+      vi: đền thờ Thần đạo
   - id:
       - 16
       - 38
@@ -11626,7 +11626,7 @@ lesson-16:
     meaning:
       en: in what way, how
       fr: comment, de quelle manière
-      vi: theo cách nào
+      vi: làm thế nào, bằng cách nào
   - id:
       - 16
       - 40
@@ -11663,7 +11663,7 @@ lesson-16:
     meaning:
       en: That's amazing!
       fr: Vous m'épatez, vous m'impressionnez.
-      vi: Thật tuyệt đấy!
+      vi: Thật là tuyệt vời!/Kinh quá nhỉ!
   - id:
       - 16
       - 43
@@ -11676,7 +11676,7 @@ lesson-16:
     meaning:
       en: '[No,] I still have a long way to go.'
       fr: '[Non...] Je suis encore loin.'
-      vi: '[Không,] Tôi vẫn còn rất xa.'
+      vi: '[Không,] Tôi còn phải cố gắng nhiều.'
   - id:
       - 16
       - 44
@@ -11703,7 +11703,7 @@ lesson-16:
     meaning:
       en: first of all
       fr: d'abord
-      vi: Đầu tiên
+      vi: trước hết, đầu tiên
   - id:
       - 16
       - 46
@@ -11717,7 +11717,7 @@ lesson-16:
     meaning:
       en: next, as a next step
       fr: ensuite
-      vi: Sau đó, theo một bước tiếp theo
+      vi: tiếp theo, sau đó
   - id:
       - 16
       - 47
@@ -11730,7 +11730,7 @@ lesson-16:
     meaning:
       en: cash dispensing card
       fr: carte bancaire
-      vi: thẻ ATM
+      vi: thẻ ATM, thẻ rút tiền mặt
   - id:
       - 16
       - 48
@@ -11744,7 +11744,7 @@ lesson-16:
     meaning:
       en: personal identification number, PIN
       fr: code secret
-      vi: số PIN
+      vi: số PIN (mã số bí mật)
   - id:
       - 16
       - 49
@@ -11758,7 +11758,7 @@ lesson-16:
     meaning:
       en: amount of money
       fr: montant, somme d'argent
-      vi: số tiền
+      vi: số tiền, khoản tiền
   - id:
       - 16
       - 50
@@ -11772,7 +11772,7 @@ lesson-16:
     meaning:
       en: 'confirmation (～します : confirm)'
       fr: 'confirmation (～します : confirmer)'
-      vi: xác nhận
+      vi: 'sự xác nhận (～します : xác nhận)'
   - id:
       - 16
       - 51
@@ -11877,7 +11877,7 @@ lesson-16:
     meaning:
       en: a fictitious bus stop
       fr: arrêt de bus fictif
-      vi: chỗ dừng giả định (tuyên truyền)
+      vi: trạm xe buýt giả tưởng
   - id:
       - 16
       - 59
