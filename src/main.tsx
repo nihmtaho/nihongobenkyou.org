@@ -40,9 +40,9 @@ setInterval(triggerSync, PACKAGE_SYNC_INTERVAL_MS)
 const updateSW = registerSW({
   onNeedRefresh() {
     toast('Có phiên bản mới!', {
-      description: 'Tải lại trang để cập nhật ứng dụng',
+      description: 'Nhấn Cập nhật để tải phiên bản mới nhất',
       action: {
-        label: 'Tải lại',
+        label: 'Cập nhật',
         onClick: () => updateSW(true),
       },
       duration: Infinity,
@@ -69,7 +69,11 @@ async function bootstrap() {
 
   seedDatabase().then((result) => {
     if (result === 'seeded') {
-      window.dispatchEvent(new CustomEvent('dataset-updated'))
+      toast('Đã cập nhật dữ liệu từ vựng!', {
+        description: 'Trang sẽ tự động tải lại sau 3 giây...',
+        duration: 3000,
+      })
+      setTimeout(() => window.location.reload(), 3000)
     }
   }).catch(console.error)
 
