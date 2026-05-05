@@ -3,8 +3,7 @@ export interface CustomDeck {
   user_id: string
   title: string
   description: string | null
-  is_public: boolean
-  share_code: string
+  is_active: boolean
   word_count: number
   created_at: string
   updated_at: string
@@ -16,22 +15,20 @@ export interface CustomVocabItem {
   user_id: string
   kana: string
   kanji: string | null
+  han_viet: string | null
   meaning_vi: string
-  meaning_en: string | null
-  pitch_pattern: number | null
-  source: 'manual' | 'csv' | 'imported'
+  source: 'manual' | 'json' | 'csv'
   created_at: string
 }
 
-export interface CsvRow {
+export interface ParsedVocabItem {
+  word: string | null // kanji form (if present)
   kana: string
-  kanji?: string
+  han_viet: string | null
   meaning_vi: string
-  meaning_en?: string
 }
 
-export interface CsvImportResult {
-  imported: number
-  skipped: number
+export interface VocabParseResult {
+  items: ParsedVocabItem[]
   errors: Array<{ row: number, reason: string }>
 }

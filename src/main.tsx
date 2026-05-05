@@ -2,6 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
+import { toast } from 'sonner'
+import { registerSW } from 'virtual:pwa-register'
+import { Toaster } from '@/components/ui/sonner'
 import { syncPackage } from './db/package-sync'
 import { seedDatabase, seedKanji } from './db/seed'
 import { uploadPendingReviews } from './db/sync'
@@ -34,6 +37,22 @@ function triggerSync(): void {
 window.addEventListener('online', triggerSync)
 setInterval(triggerSync, PACKAGE_SYNC_INTERVAL_MS)
 
+const updateSW = registerSW({
+  onNeedRefresh() {
+    toast('Có phiên bản mới!', {
+      description: 'Tải lại trang để cập nhật ứng dụng',
+      action: {
+        label: 'Tải lại',
+        onClick: () => updateSW(true),
+      },
+      duration: Infinity,
+    })
+  },
+  onOfflineReady() {
+    toast('Ứng dụng sẵn sàng dùng offline', { duration: 3000 })
+  },
+})
+
 const queryClient = new QueryClient()
 const router = createRouter({ routeTree })
 
@@ -64,6 +83,7 @@ async function bootstrap() {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <Toaster position="bottom-right" />
       </QueryClientProvider>
     </StrictMode>,
   )

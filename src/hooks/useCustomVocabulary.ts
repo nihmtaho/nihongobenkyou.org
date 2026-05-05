@@ -1,26 +1,13 @@
 import type { CustomVocabItem } from '../types/custom-deck'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { NetworkError } from '../api/auth'
-import { fetchWords } from '../api/custom-vocabulary'
-import { cacheWords, getCachedWords } from '../db/custom-decks'
+import { getDeckWords } from '../db/custom-decks-local'
 
 export function useCustomVocabulary(deckId: string) {
   const queryClient = useQueryClient()
 
   const query = useQuery<CustomVocabItem[]>({
     queryKey: ['custom-vocabulary', deckId],
-    queryFn: async () => {
-      try {
-        const words = await fetchWords(deckId)
-        await cacheWords(words)
-        return words
-      }
-      catch (err) {
-        if (err instanceof NetworkError)
-          return getCachedWords(deckId)
-        throw err
-      }
-    },
+    queryFn: () => getDeckWords(deckId),
     enabled: !!deckId,
     staleTime: 60_000,
   })

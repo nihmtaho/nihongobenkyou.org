@@ -16,6 +16,7 @@ import { db } from '../db/schema'
 import { SeedError } from '../db/seed'
 import { migrateAnonymousData } from '../lib/auth-migration'
 import { useAuthStore } from '../stores/authStore'
+import { runGuestMigration } from './useMigrateGuestDecks'
 
 async function handleFirstSignIn(userId: string, queryClient: QueryClient): Promise<void> {
   // 1. Migrate anonymous SRS data if this is a first-time login
@@ -24,6 +25,9 @@ async function handleFirstSignIn(userId: string, queryClient: QueryClient): Prom
   if (anonId && anonId !== userId) {
     await migrateAnonymousData(anonId, userId)
   }
+
+  // Migrate any custom decks created as guest → real user
+  await runGuestMigration(userId)
 
   // 2. Check if account was soft-deleted within grace period — reactivate silently
   try {

@@ -1,4 +1,19 @@
-import type { CsvImportResult, CsvRow } from '../types/custom-deck'
+/**
+ * @deprecated Use `parseJsonVocab` / `parseCsvVocab` from `./vocab-parser` instead.
+ * Kept temporarily while tests still reference it.
+ */
+interface CsvRow {
+  kana: string
+  meaning_vi: string
+  kanji?: string
+  meaning_en?: string
+}
+
+interface CsvImportResult {
+  imported: number
+  skipped: number
+  errors: Array<{ row: number, reason: string }>
+}
 
 interface ParseResult {
   rows: CsvRow[]

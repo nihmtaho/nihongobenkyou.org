@@ -25,6 +25,7 @@ interface StudySessionState {
   ) => void
   markCorrect: () => void
   markWrong: (card: VocabWithSRS) => void
+  markNeedsReview: (card: VocabWithSRS) => void
   markAttempted: () => void
   advanceCard: () => void
   requeueWrongCards: () => void
@@ -50,6 +51,12 @@ export const useStudySessionStore = create<StudySessionState>()(
       markWrong: card =>
         set(s => ({
           queue: [...s.queue, card],
+          stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card] },
+        })),
+
+      // Records as wrong for session summary but does NOT re-queue the card.
+      markNeedsReview: card =>
+        set(s => ({
           stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card] },
         })),
 

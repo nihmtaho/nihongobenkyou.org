@@ -23,6 +23,7 @@ interface AnswerFeedbackProps {
 }
 
 export function AnswerFeedback({ rating, intervalDays, visible }: AnswerFeedbackProps) {
+  const intervalLabel = rating === 0 ? '6-10min' : formatIntervalPreview(intervalDays)
   return (
     <AnimatePresence>
       {visible && (
@@ -35,7 +36,7 @@ export function AnswerFeedback({ rating, intervalDays, visible }: AnswerFeedback
         >
           {RATING_LABELS[rating]}
           {' · '}
-          {formatIntervalPreview(intervalDays)}
+          {intervalLabel}
         </motion.div>
       )}
     </AnimatePresence>
