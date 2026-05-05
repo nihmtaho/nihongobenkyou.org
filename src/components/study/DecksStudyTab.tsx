@@ -8,12 +8,12 @@ import { useMemo, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { SRSProgressBar } from '../common/SRSProgressBar'
 import { db } from '../../db/schema'
-import { useLaunchCustomDeckSession } from '../../hooks/useLaunchCustomDeckSession'
 import { useCustomDeckMutations } from '../../hooks/useCustomDeckMutations'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
+import { useLaunchCustomDeckSession } from '../../hooks/useLaunchCustomDeckSession'
 import { formatNextReview } from '../../lib/next-review'
+import { SRSProgressBar } from '../common/SRSProgressBar'
 import { DeckStudyModal } from './DeckStudyModal'
 import { DueCard } from './shared/DueCard'
 import { EmptyState } from './shared/EmptyState'
@@ -71,7 +71,11 @@ export function DecksStudyTab({ userId }: { userId: string }) {
   const totals = useMemo(() => {
     if (!statsMap)
       return { due: 0, new: 0, learning: 0, review: 0, mature: 0, studied: 0 }
-    let due = 0, newCount = 0, learning = 0, review = 0, mature = 0
+    let due = 0
+    let newCount = 0
+    let learning = 0
+    let review = 0
+    let mature = 0
     for (const s of statsMap.values()) {
       due += s.due
       newCount += s.new
