@@ -1,6 +1,7 @@
 import type { SRSRating } from '../types/srs'
 import type { MeaningLanguage, StudyMode, TypeInputSubMode } from '../types/study'
 import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
+import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { getDueKanjiCards } from '../db/kanji'
@@ -34,6 +35,15 @@ function buildRvIdSet(
     }
   }
   return ids
+}
+
+function fisherYates<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
 }
 
 export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
@@ -89,7 +99,10 @@ export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
         else {
           const vocabItem = vocabMap.get(card.vocabId)
           if (vocabItem) {
-            vocab.push({ kind: 'vocab', card: { ...vocabItem, ...card } as never })
+            vocab.push({
+              kind: 'vocab',
+              card: { ...vocabItem, ...card, vocab_id: vocabItem.vocab_id } as VocabWithSRS,
+            })
           }
         }
       }
@@ -141,8 +154,10 @@ export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
   }
 
   function startSession() {
-    const shuffled = [...buildQueue()].sort(() => Math.random() - 0.5)
-    setQueue(shuffled)
+    const built = fisherYates(buildQueue())
+    if (built.length === 0)
+      return // nothing to study
+    setQueue(built)
     setCurrentIndex(0)
     setStats(makeStats())
     setDeferred([])
