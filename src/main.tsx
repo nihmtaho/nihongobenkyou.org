@@ -9,6 +9,7 @@ import { initAnonymousUser } from './lib/anonymous-user'
 import { routeTree } from './routeTree.gen'
 import { useAuthStore } from './stores/authStore'
 import { useSettingsStore } from './stores/settingsStore'
+import { Toaster } from '@/components/ui/sonner'
 import './app.css'
 
 const PACKAGE_SYNC_INTERVAL_MS = 60_000
@@ -64,6 +65,7 @@ async function bootstrap() {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <Toaster position="bottom-right" />
       </QueryClientProvider>
     </StrictMode>,
   )
