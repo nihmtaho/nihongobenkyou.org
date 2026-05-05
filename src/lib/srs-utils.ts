@@ -16,8 +16,11 @@ export function toCardState(card: AnyCard, userId: string): CardState {
       last_rating: card.last_rating,
       pending_sync: card.pending_sync,
       updated_at: card.updated_at,
-      is_known: card.is_known ?? false, // ?? false: safety net for rows written before Dexie v9 migration
-      consecutive_correct: card.consecutive_correct ?? 0, // ?? 0: safety net for rows written before Dexie v9 migration
+      is_known: card.is_known ?? false,
+      consecutive_correct: card.consecutive_correct ?? 0,
+      card_stage: card.card_stage ?? 'review',
+      learning_step: card.learning_step ?? 0,
+      lapse_count: card.lapse_count ?? 0,
     }
   }
   return {
@@ -31,7 +34,10 @@ export function toCardState(card: AnyCard, userId: string): CardState {
     pending_sync: card.pending_sync,
     updated_at: card.updated_at,
     is_known: false,
-    consecutive_correct: card.consecutive_correct ?? 0, // ?? 0: safety net for rows written before Dexie v9 migration
+    consecutive_correct: card.consecutive_correct ?? 0,
+    card_stage: card.card_stage ?? 'review',
+    learning_step: card.learning_step ?? 0,
+    lapse_count: card.lapse_count ?? 0,
   }
 }
 

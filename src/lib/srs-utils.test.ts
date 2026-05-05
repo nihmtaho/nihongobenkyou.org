@@ -1,5 +1,5 @@
 import type { KanjiCardState } from '../types/kanji'
-import type { CardState } from '../types/srs'
+import type { CardStage, CardState } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { describe, expect, it } from 'vitest'
 import { computeTypeInputRatingForDisplay, toCardState } from './srs-utils'
@@ -16,6 +16,9 @@ const base: CardState = {
   updated_at: '2026-01-01T00:00:00Z',
   is_known: false,
   consecutive_correct: 0,
+  card_stage: 'review',
+  learning_step: 0,
+  lapse_count: 0,
 }
 
 describe('computeTypeInputRatingForDisplay', () => {
@@ -81,6 +84,9 @@ function makeVocabCard(overrides: Partial<VocabWithSRS> = {}): VocabWithSRS {
     updated_at: NOW,
     is_known: false,
     consecutive_correct: 2,
+    card_stage: 'review' as CardStage,
+    learning_step: 0,
+    lapse_count: 0,
     ...overrides,
   }
 }
@@ -97,6 +103,9 @@ function makeKanjiCard(overrides: Partial<KanjiCardState> = {}): KanjiCardState 
     pending_sync: false,
     updated_at: NOW,
     consecutive_correct: 4,
+    card_stage: 'review' as CardStage,
+    learning_step: 0,
+    lapse_count: 0,
     ...overrides,
   }
 }
@@ -140,6 +149,39 @@ describe('toCardState', () => {
       expect(state.consecutive_correct).toBe(0)
     })
 
+    it('preserves card_stage from the card', () => {
+      const state = toCardState(makeVocabCard({ card_stage: 'relearning' }), 'u1')
+      expect(state.card_stage).toBe('relearning')
+    })
+
+    it('defaults card_stage to "review" when undefined (pre-migration row)', () => {
+      const card = makeVocabCard({ card_stage: undefined as unknown as CardStage })
+      const state = toCardState(card, 'u1')
+      expect(state.card_stage).toBe('review')
+    })
+
+    it('preserves learning_step from the card', () => {
+      const state = toCardState(makeVocabCard({ learning_step: 2 }), 'u1')
+      expect(state.learning_step).toBe(2)
+    })
+
+    it('defaults learning_step to 0 when undefined', () => {
+      const card = makeVocabCard({ learning_step: undefined as unknown as number })
+      const state = toCardState(card, 'u1')
+      expect(state.learning_step).toBe(0)
+    })
+
+    it('preserves lapse_count from the card', () => {
+      const state = toCardState(makeVocabCard({ lapse_count: 3 }), 'u1')
+      expect(state.lapse_count).toBe(3)
+    })
+
+    it('defaults lapse_count to 0 when undefined', () => {
+      const card = makeVocabCard({ lapse_count: undefined as unknown as number })
+      const state = toCardState(card, 'u1')
+      expect(state.lapse_count).toBe(0)
+    })
+
     it('passes through all SRS fields unchanged', () => {
       const card = makeVocabCard()
       const state = toCardState(card, 'u1')
@@ -178,6 +220,23 @@ describe('toCardState', () => {
       const card = makeKanjiCard({ consecutive_correct: undefined as unknown as number })
       const state = toCardState(card, 'u1')
       expect(state.consecutive_correct).toBe(0)
+    })
+
+    it('defaults card_stage to "review" when undefined (pre-migration row)', () => {
+      const card = makeKanjiCard({ card_stage: undefined as unknown as CardStage })
+      const state = toCardState(card, 'u1')
+      expect(state.card_stage).toBe('review')
+    })
+
+    it('preserves learning_step from the card', () => {
+      const state = toCardState(makeKanjiCard({ learning_step: 1 }), 'u1')
+      expect(state.learning_step).toBe(1)
+    })
+
+    it('defaults lapse_count to 0 when undefined', () => {
+      const card = makeKanjiCard({ lapse_count: undefined as unknown as number })
+      const state = toCardState(card, 'u1')
+      expect(state.lapse_count).toBe(0)
     })
   })
 })
