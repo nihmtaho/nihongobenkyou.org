@@ -91,9 +91,16 @@ function CustomDeckRow({ deck, userId }: { deck: CustomDeck, userId: string }) {
     ].join(' ')}
     >
       <div className="min-w-0">
-        <p className="font-[var(--br-heading-font)] text-sm font-bold uppercase tracking-tight truncate">
-          {deck.title}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="font-[var(--br-heading-font)] text-sm font-bold uppercase tracking-tight truncate">
+            {deck.title}
+          </p>
+          {deck.is_active && (
+            <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-primary tracking-widest shrink-0">
+              ● SRS ACTIVE
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-0.5">
           <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
             {deck.word_count}
