@@ -1,10 +1,10 @@
-import 'fake-indexeddb/auto'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
 import { createElement } from 'react'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { db } from '../db/schema'
 import { useCustomDeckMutations } from './useCustomDeckMutations'
+import 'fake-indexeddb/auto'
 
 const USER_ID = 'u1'
 

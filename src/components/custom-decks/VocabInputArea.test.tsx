@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import React from 'react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import * as React from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { VocabInputArea } from './VocabInputArea'
 
@@ -14,7 +14,7 @@ function wrapper({ children }: { children: React.ReactNode }) {
 
 const mockOnSave = vi.fn().mockResolvedValue(undefined)
 
-describe('VocabInputArea', () => {
+describe('vocabInputArea', () => {
   it('renders textarea and save button', () => {
     render(<VocabInputArea deckId="d1" userId="u1" onSave={mockOnSave} />, { wrapper })
     expect(screen.getByRole('textbox')).toBeTruthy()

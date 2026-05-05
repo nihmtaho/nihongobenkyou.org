@@ -15,8 +15,8 @@ import { downloadPackageForNewDevice } from '../db/package-sync'
 import { db } from '../db/schema'
 import { SeedError } from '../db/seed'
 import { migrateAnonymousData } from '../lib/auth-migration'
-import { runGuestMigration } from './useMigrateGuestDecks'
 import { useAuthStore } from '../stores/authStore'
+import { runGuestMigration } from './useMigrateGuestDecks'
 
 async function handleFirstSignIn(userId: string, queryClient: QueryClient): Promise<void> {
   // 1. Migrate anonymous SRS data if this is a first-time login

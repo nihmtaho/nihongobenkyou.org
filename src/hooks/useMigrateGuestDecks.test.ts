@@ -1,7 +1,7 @@
-import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { addWords, createDeck, migrateGuestDecks } from '../db/custom-decks-local'
 import { db } from '../db/schema'
-import { createDeck, addWords, migrateGuestDecks } from '../db/custom-decks-local'
+import 'fake-indexeddb/auto'
 
 beforeEach(async () => {
   await db.custom_decks.clear()
@@ -21,7 +21,7 @@ describe('migrateGuestDecks (via db layer)', () => {
   })
 
   it('is idempotent — second call does nothing extra', async () => {
-    const deck = await createDeck('guest', { title: 'G' })
+    await createDeck('guest', { title: 'G' })
     await migrateGuestDecks('real-user')
     await migrateGuestDecks('real-user')
     const realDecks = await db.custom_decks.where('user_id').equals('real-user').toArray()

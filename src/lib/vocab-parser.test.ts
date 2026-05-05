@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseJsonVocab, parseCsvVocab } from './vocab-parser'
+import { parseCsvVocab, parseJsonVocab } from './vocab-parser'
 
 describe('parseJsonVocab', () => {
   it('parses valid JSON array', () => {
@@ -10,7 +10,10 @@ describe('parseJsonVocab', () => {
     expect(result.errors).toHaveLength(0)
     expect(result.items).toHaveLength(1)
     expect(result.items[0]).toEqual({
-      word: '会議', kana: 'かいぎ', han_viet: 'hội nghị', meaning_vi: 'cuộc họp',
+      word: '会議',
+      kana: 'かいぎ',
+      han_viet: 'hội nghị',
+      meaning_vi: 'cuộc họp',
     })
   })
 
@@ -47,7 +50,10 @@ describe('parseCsvVocab', () => {
     const result = parseCsvVocab(csv)
     expect(result.errors).toHaveLength(0)
     expect(result.items[0]).toEqual({
-      word: '会議', kana: 'かいぎ', han_viet: 'hội nghị', meaning_vi: 'cuộc họp',
+      word: '会議',
+      kana: 'かいぎ',
+      han_viet: 'hội nghị',
+      meaning_vi: 'cuộc họp',
     })
   })
 

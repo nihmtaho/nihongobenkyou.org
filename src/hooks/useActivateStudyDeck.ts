@@ -2,8 +2,8 @@ import type { CustomDeck } from '../types/custom-deck'
 import type { CardState } from '../types/srs'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
+import { getDeckWords, updateDeck } from '../db/custom-decks-local'
 import { db } from '../db/schema'
-import { updateDeck, getDeckWords } from '../db/custom-decks-local'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 
 async function seedUserCards(userId: string, deckId: string): Promise<void> {

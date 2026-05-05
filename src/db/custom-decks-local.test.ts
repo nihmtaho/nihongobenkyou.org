@@ -1,18 +1,17 @@
-import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { db } from './schema'
 import {
+  addWords,
   createDeck,
   deleteDeck,
-  getDeck,
+  deleteWord,
   getDecks,
   getDeckWords,
-  updateDeck,
-  addWords,
-  deleteWord,
-  updateWord,
   migrateGuestDecks,
+  updateDeck,
+  updateWord,
 } from './custom-decks-local'
+import { db } from './schema'
+import 'fake-indexeddb/auto'
 
 const USER_ID = 'user-123'
 const GUEST_ID = 'guest'

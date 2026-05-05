@@ -22,7 +22,7 @@ export interface CustomVocabItem {
 }
 
 export interface ParsedVocabItem {
-  word: string | null   // kanji form (if present)
+  word: string | null // kanji form (if present)
   kana: string
   han_viet: string | null
   meaning_vi: string
