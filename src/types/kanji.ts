@@ -38,6 +38,8 @@ export interface KanjiItem {
   related_vocab: RelatedVocabItem[] | null
 }
 
+import type { CardStage } from './srs'
+
 export interface KanjiCardState {
   userId: string
   char: string
@@ -49,4 +51,7 @@ export interface KanjiCardState {
   pending_sync: boolean
   updated_at: string
   consecutive_correct: number
+  card_stage: CardStage
+  learning_step: number
+  lapse_count: number
 }

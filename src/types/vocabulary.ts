@@ -30,6 +30,8 @@ export interface VocabItem {
   han_viet?: string | null
 }
 
+import type { CardStage } from './srs'
+
 export interface VocabWithSRS extends VocabItem {
   interval_days: number
   ease_factor: number
@@ -40,4 +42,7 @@ export interface VocabWithSRS extends VocabItem {
   updated_at: string
   is_known: boolean
   consecutive_correct: number
+  card_stage: CardStage
+  learning_step: number
+  lapse_count: number
 }
