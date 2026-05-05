@@ -50,14 +50,3 @@ export const ACTIVE_DECK_KANJI_SECTIONS: StudySection[] = [
     ],
   },
 ]
-  {
-    id: 'kanji',
-    icon: '単漢字',
-    sublabel: 'KANJI ĐƠN',
-    modes: [
-      { id: 'kanji:flashcard', mode: 'flashcard', name: 'Flashcard', desc: 'Lật thẻ · ghi nhớ theo SRS', tag: 'SRS' },
-      { id: 'kanji:quiz', mode: 'quiz', name: 'Trắc nghiệm', desc: 'Chọn Hán Việt đúng · 4 đáp án', tag: '4×' },
-      { id: 'kanji:type', mode: 'type', name: 'Gõ Hán Việt', desc: 'Gõ Hán Việt · không cần dấu', tag: 'GÕ' },
-    ],
-  },
-]
