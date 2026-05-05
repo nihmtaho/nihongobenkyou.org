@@ -192,7 +192,7 @@ function KanjiLessonStudyPage() {
             card={vocab}
             hanVietMap={session.hanVietMap}
             subMode={subMode}
-            onAnswer={session.handleVocabAnswer}
+            onRate={session.handleVocabRate}
           />
         )
       }
