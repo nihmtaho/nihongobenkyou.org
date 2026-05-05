@@ -135,13 +135,16 @@ function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
 
 export function useReviewStats(userId: string): { data: ReviewStats | null, isLoading: boolean } {
   const entries = useLiveQuery(
-    () => db.review_log.filter(e => e.userId === userId).toArray(),
+    () => userId ? db.review_log.filter(e => e.userId === userId).toArray() : Promise.resolve([]),
     [userId],
   )
   const streaks = useLiveQuery(
-    () => db.streaks.where('userId').equals(userId).sortBy('date'),
+    () => userId ? db.streaks.where('userId').equals(userId).sortBy('date') : Promise.resolve([]),
     [userId],
   )
+
+  if (!userId)
+    return { data: null, isLoading: false }
 
   const isLoading = entries === undefined || streaks === undefined
   if (isLoading)

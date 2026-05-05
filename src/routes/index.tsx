@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { DueCardsWidget } from '../components/home/DueCardsWidget'
-import { LearningAnalyticsWidget } from '../components/home/LearningAnalyticsWidget'
-import { RetentionWidget } from '../components/home/RetentionWidget'
-import { ReviewActivityWidget } from '../components/home/ReviewActivityWidget'
-import { ReviewForecastWidget } from '../components/home/ReviewForecastWidget'
-import { StreakWidget } from '../components/home/StreakWidget'
+import {
+  LearningAnalyticsWidget,
+  RetentionWidget,
+  ReviewActivityWidget,
+  ReviewForecastWidget,
+  StreakWidget,
+} from '../components/analytics'
 import { useDueCards } from '../hooks/useDueCards'
 import { useAuthStore } from '../stores/authStore'
 
@@ -61,11 +62,8 @@ function HomePage() {
             <div className="h-px flex-1 bg-foreground/10" />
           </div>
 
-          {/* 2-col row: Due cards + Retention */}
-          <div className="grid grid-cols-2 gap-4">
-            <DueCardsWidget userId={userId} />
-            <RetentionWidget userId={userId} />
-          </div>
+          {/* Retention */}
+          <RetentionWidget userId={userId} />
 
           {/* Review activity (improved 7-day chart) */}
           <ReviewActivityWidget userId={userId} />

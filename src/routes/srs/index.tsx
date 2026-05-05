@@ -19,6 +19,7 @@ export const Route = createFileRoute('/srs/')({
 
 function SrsPage() {
   const session = useSrsSession()
+  const userId = useAuthStore(s => s.userId) ?? ''
 
   if (session.phase === 'loading') {
     return (
@@ -41,6 +42,7 @@ function SrsPage() {
   if (session.phase === 'pre-session') {
     return (
       <SrsPreSession
+        userId={userId}
         dueCardsCount={session.dueCards?.length ?? 0}
         srsMode={session.srsMode}
         onSetSrsMode={session.setSrsMode}
@@ -57,6 +59,7 @@ function SrsPage() {
   if (session.phase === 'complete') {
     return (
       <SessionSummary
+        userId={userId}
         stats={{
           correct: session.stats.correct,
           total: session.stats.total,
