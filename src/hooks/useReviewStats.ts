@@ -1,7 +1,7 @@
 import type { ReviewLogEntry } from '../types/review-log'
 
-import { useQuery } from '@tanstack/react-query'
 import { db } from '../db/schema'
+import { useLiveQuery } from '../lib/use-live-query'
 
 export interface DayActivity {
   date: string // 'YYYY-MM-DD'
@@ -35,8 +35,6 @@ const RATING_CONFIG = [
   { label: 'Ôn', color: 'text-success' },
   { label: 'Dễ', color: 'text-info' },
 ] as const
-
-const STALE_TIME = 60_000
 
 function getToday(): string {
   return new Date().toISOString().slice(0, 10)
@@ -135,31 +133,20 @@ function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
   }
 }
 
-async function fetchReviewStats(userId: string): Promise<ReviewStats> {
-  const [entries, latestStreak] = await Promise.all([
-    // review_log has no standalone userId index — compound index is [userId+vocabId+cardType].
-    // A full-table filter is acceptable here; review logs are per-device and bounded in size.
-    db.review_log.filter(e => e.userId === userId).toArray(),
-    // Sort ascending by date; the last element is the most recent streak record.
-    db.streaks
-      .where('userId')
-      .equals(userId)
-      .sortBy('date')
-      .then(rows => rows.at(-1) ?? null),
-  ])
-
-  const streak = latestStreak?.current_streak ?? 0
-  return computeStats(entries, streak)
-}
-
 export function useReviewStats(userId: string): { data: ReviewStats | null, isLoading: boolean } {
-  const { data = null, isLoading } = useQuery({
-    queryKey: ['review-stats', userId],
-    queryFn: () => fetchReviewStats(userId),
-    staleTime: STALE_TIME,
-    enabled: !!userId,
-    retry: 2,
-  })
+  const entries = useLiveQuery(
+    () => db.review_log.filter(e => e.userId === userId).toArray(),
+    [userId],
+  )
+  const streaks = useLiveQuery(
+    () => db.streaks.where('userId').equals(userId).sortBy('date'),
+    [userId],
+  )
 
-  return { data, isLoading }
+  const isLoading = entries === undefined || streaks === undefined
+  if (isLoading)
+    return { data: null, isLoading: true }
+
+  const streak = streaks.at(-1)?.current_streak ?? 0
+  return { data: computeStats(entries, streak), isLoading: false }
 }
