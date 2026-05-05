@@ -1,3 +1,4 @@
+import type { UnifiedCard } from './unified-card'
 import type { VocabItem } from './vocabulary'
 
 export type StudyMode
@@ -31,7 +32,7 @@ export interface SessionStats {
   correct: number
   total: number
   startTime: Date
-  wrongCards: VocabItem[]
+  wrongCards: UnifiedCard[]
 }
 
 export interface StudySession {

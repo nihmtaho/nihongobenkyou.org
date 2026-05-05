@@ -54,12 +54,12 @@ export const useStudySessionStore = create<StudySessionState>()(
       markWrong: card =>
         set(s => ({
           queue: [...s.queue, card],
-          stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card as never] },
+          stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card] },
         })),
 
       markNeedsReview: card =>
         set(s => ({
-          stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card as never] },
+          stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card] },
         })),
 
       markAttempted: () =>
@@ -69,7 +69,7 @@ export const useStudySessionStore = create<StudySessionState>()(
 
       requeueWrongCards: () =>
         set(s => ({
-          queue: s.stats.wrongCards as unknown as UnifiedCard[],
+          queue: s.stats.wrongCards,
           currentIndex: 0,
           stats: { ...EMPTY_STATS, startTime: new Date() },
         })),
@@ -84,7 +84,7 @@ export const useStudySessionStore = create<StudySessionState>()(
         ...current,
         stats: {
           ...current.stats,
-          wrongCards: ((persisted as unknown as { wrongCards?: UnifiedCard[] })?.wrongCards ?? []) as unknown as typeof current.stats.wrongCards,
+          wrongCards: (persisted as { wrongCards?: UnifiedCard[] })?.wrongCards ?? [],
         },
       }),
     },
