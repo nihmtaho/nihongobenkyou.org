@@ -4,6 +4,7 @@ import type { ActiveTab } from './study.config'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { useStudySessionStore } from '../../stores/studySessionStore'
+import { SessionStatsBar } from '../analytics/SessionStatsBar'
 
 interface SessionSummaryProps {
   stats: SessionStats
@@ -12,6 +13,7 @@ interface SessionSummaryProps {
   streak?: number
   lessonContext?: { book: string, lesson: number }
   returnTab?: ActiveTab
+  userId?: string
 }
 
 const MODE_LABELS: Record<StudyMode, string> = {
@@ -31,7 +33,7 @@ function formatDuration(startTime: Date): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContext, returnTab }: SessionSummaryProps) {
+export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContext, returnTab, userId }: SessionSummaryProps) {
   const requeueWrongCards = useStudySessionStore(s => s.requeueWrongCards)
   const navigate = useNavigate()
   const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
@@ -79,6 +81,9 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
           <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground">CHÍNH XÁC</p>
         </div>
       </div>
+
+      {/* Live stats bar */}
+      {userId && <SessionStatsBar userId={userId} />}
 
       {/* Stats row */}
       <div className="grid grid-cols-3 w-full border border-border/10 divide-x divide-border/10">

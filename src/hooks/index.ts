@@ -1,5 +1,4 @@
 export { useDueCards } from './useDueCards'
 export { useLesson } from './useLesson'
-export { useSRSMutation } from './useSRSMutation'
 export { useStudySession } from './useStudySession'
 export { useVocabulary } from './useVocabulary'

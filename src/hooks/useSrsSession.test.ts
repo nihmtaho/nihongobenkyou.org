@@ -141,6 +141,9 @@ function makeVocabWithSRS(overrides: Partial<VocabWithSRS> = {}): VocabWithSRSAn
     pending_sync: false,
     updated_at: new Date().toISOString(),
     is_known: false,
+    card_stage: 'review' as const,
+    learning_step: 0,
+    lapse_count: 0,
     ...overrides,
     consecutive_correct: overrides.consecutive_correct ?? 0,
   }

@@ -1,3 +1,5 @@
+import type { CardStage } from './srs'
+
 export interface Example {
   ja: string
   en: string
@@ -40,4 +42,7 @@ export interface VocabWithSRS extends VocabItem {
   updated_at: string
   is_known: boolean
   consecutive_correct: number
+  card_stage?: CardStage
+  learning_step?: number
+  lapse_count?: number
 }

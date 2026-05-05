@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
 import { db } from '../db/schema'
+import { useLiveQuery } from '../lib/use-live-query'
 
 export interface SubjectStats {
   total: number
@@ -47,27 +47,27 @@ function classify(
   }
 }
 
-async function fetchLearningStats(userId: string): Promise<LearningStats> {
-  const now = new Date().toISOString()
-
-  const [vocabCards, totalVocab, kanjiCards, totalKanji] = await Promise.all([
-    db.user_cards.toArray().then(all => all.filter(c => c.userId === userId)),
-    db.vocabulary.count(),
-    db.kanji_cards.toArray().then(all => all.filter(c => c.userId === userId)),
-    db.kanji.count(),
-  ])
-
-  return {
-    vocab: classify(totalVocab, vocabCards, now),
-    kanji: classify(totalKanji, kanjiCards, now),
-  }
-}
-
 export function useLearningStats(userId: string) {
-  return useQuery({
-    queryKey: ['learning-stats', userId],
-    queryFn: () => fetchLearningStats(userId),
-    staleTime: 0,
-    enabled: Boolean(userId),
-  })
+  const vocabCards = useLiveQuery(
+    () => db.user_cards.toArray().then(all => all.filter(c => c.userId === userId)),
+    [userId],
+  )
+  const kanjiCards = useLiveQuery(
+    () => db.kanji_cards.toArray().then(all => all.filter(c => c.userId === userId)),
+    [userId],
+  )
+  const totalVocab = useLiveQuery(() => db.vocabulary.count(), [])
+  const totalKanji = useLiveQuery(() => db.kanji.count(), [])
+
+  const isLoading = vocabCards === undefined || kanjiCards === undefined
+    || totalVocab === undefined || totalKanji === undefined
+
+  const data: LearningStats | undefined = isLoading
+    ? undefined
+    : {
+        vocab: classify(totalVocab, vocabCards, new Date().toISOString()),
+        kanji: classify(totalKanji, kanjiCards, new Date().toISOString()),
+      }
+
+  return { data: data ?? null, isLoading }
 }

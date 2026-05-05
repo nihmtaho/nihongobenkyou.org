@@ -102,6 +102,9 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
           updated_at: now,
           is_known,
           consecutive_correct: newConsecutiveCorrect,
+          card_stage: result.new_card_stage,
+          learning_step: result.new_learning_step,
+          lapse_count: result.new_lapse_count,
         })
         uploadPendingReviews().catch(() => {})
       }
@@ -131,6 +134,9 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
           pending_sync: false,
           updated_at: now,
           consecutive_correct: newConsecutiveCorrect,
+          card_stage: result.new_card_stage,
+          learning_step: result.new_learning_step,
+          lapse_count: result.new_lapse_count,
         })
         uploadPendingReviews().catch(() => {})
       }

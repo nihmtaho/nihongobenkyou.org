@@ -108,6 +108,21 @@ export class NihongoDB extends Dexie {
         }),
       ])
     })
+    // v11: add card_stage, learning_step, lapse_count for SM-2 learning steps
+    this.version(11).upgrade((tx) => {
+      return Promise.all([
+        tx.table('user_cards').toCollection().modify((card) => {
+          card.card_stage ??= 'review'
+          card.learning_step ??= 0
+          card.lapse_count ??= 0
+        }),
+        tx.table('kanji_cards').toCollection().modify((card) => {
+          card.card_stage ??= 'review'
+          card.learning_step ??= 0
+          card.lapse_count ??= 0
+        }),
+      ])
+    })
   }
 }
 

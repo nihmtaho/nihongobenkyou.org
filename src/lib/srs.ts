@@ -1,9 +1,17 @@
-import type { CardState, ReviewResult, SRSRating } from '../types/srs'
+import type { CardStage, CardState, ReviewResult, SRSRating } from '../types/srs'
 
 export const AGAIN_DELAY_MIN_MS = 6 * 60 * 1000
 export const AGAIN_DELAY_MAX_MS = 10 * 60 * 1000
-const HARD_FIRST_DELAY_MS = 2 * 60 * 60 * 1000 // 2 hours
-const DAY_MS = 24 * 60 * 60 * 1000
+
+const LEARNING_STEP_DELAYS_MS = [
+  1 * 60 * 1000, // step 0: 1 min
+  10 * 60 * 1000, // step 1: 10 min
+  24 * 60 * 60 * 1000, // step 2: 1 day
+]
+
+const MIN_EASE = 1.3
+const MAX_INTERVAL = 180
+const DEFAULT_EASE = 2.5
 
 export function randomAgainDelay(): number {
   return (
@@ -22,62 +30,100 @@ export function formatIntervalPreview(days: number): string {
   return `${Math.round(days / 365)}y`
 }
 
-const MIN_EASE = 1.3
-const MAX_INTERVAL = 180
-const DEFAULT_EASE = 2.5
-
-export function calculateNextReview(card: CardState, rating: SRSRating): ReviewResult {
-  const isFirstReview = card.review_count === 0
-  // interval: stored for SM-2 calculation on the next review
-  // daysAhead: day count used to compute dueMs for non-sub-day ratings
-  let interval = 1
-  let daysAhead = 0
-  let ease = card.ease_factor ?? DEFAULT_EASE
-
-  let dueMs: number
-
-  if (rating === 0) {
-    // Again: due in 6-10 min (widget shows countdown, not "DUE")
-    ease = Math.max(MIN_EASE, ease - 0.2)
-    dueMs = Date.now() + randomAgainDelay()
+function graduateCard(rating: SRSRating, card: CardState): ReviewResult {
+  const interval = rating === 3 ? 4 : 1
+  return {
+    vocab_id: card.vocabId,
+    new_interval: interval,
+    new_ease: card.ease_factor ?? DEFAULT_EASE,
+    due_date: new Date(Date.now() + interval * 24 * 60 * 60 * 1000).toISOString(),
+    new_card_stage: 'review',
+    new_learning_step: 0,
+    new_lapse_count: card.lapse_count ?? 0,
   }
-  else if (isFirstReview) {
-    if (rating === 3) {
-      interval = 3
-      daysAhead = 3
-    }
-    else if (rating === 2) {
-      daysAhead = 1
-    }
-    // Hard first: interval=1, daysAhead=0 — store actual 2h delay
-    dueMs = rating === 1 ? Date.now() + HARD_FIRST_DELAY_MS : Date.now() + daysAhead * DAY_MS
+}
+
+function handleLearningStep(card: CardState, rating: SRSRating): ReviewResult {
+  const step = card.learning_step ?? 0
+  const stage = card.card_stage as CardStage
+
+  if (rating === 3)
+    return graduateCard(3, card)
+
+  if (rating === 2 && step >= 2)
+    return graduateCard(2, card)
+
+  let nextStep: number
+  if (rating === 0) {
+    nextStep = 0
+  }
+  else if (rating === 1) {
+    nextStep = step // Hard: stay at same step
   }
   else {
-    switch (rating) {
-      case 1:
-        interval = Math.max(1, Math.floor(card.interval_days * 1.2))
-        ease = Math.max(MIN_EASE, ease - 0.15)
-        daysAhead = interval
-        break
-      case 2:
-        interval = Math.max(1, Math.round(card.interval_days * ease))
-        daysAhead = interval
-        break
-      case 3:
-        interval = Math.max(1, Math.round(card.interval_days * ease * 1.3))
-        ease = ease + 0.15
-        daysAhead = interval
-        break
-    }
-    dueMs = Date.now() + daysAhead * DAY_MS
+    nextStep = step + 1
   }
 
-  interval = Math.min(interval, MAX_INTERVAL)
+  const dueMs = Date.now() + LEARNING_STEP_DELAYS_MS[nextStep]
+
+  return {
+    vocab_id: card.vocabId,
+    new_interval: 1,
+    new_ease: card.ease_factor ?? DEFAULT_EASE,
+    due_date: new Date(dueMs).toISOString(),
+    new_card_stage: stage,
+    new_learning_step: nextStep,
+    new_lapse_count: card.lapse_count ?? 0,
+  }
+}
+
+export function calculateNextReview(card: CardState, rating: SRSRating): ReviewResult {
+  const stage = card.card_stage ?? 'review'
+  const ease = card.ease_factor ?? DEFAULT_EASE
+
+  if (stage === 'learning' || stage === 'relearning') {
+    return handleLearningStep(card, rating)
+  }
+
+  // Review stage — standard SM-2
+  if (rating === 0) {
+    return {
+      vocab_id: card.vocabId,
+      new_interval: 1,
+      new_ease: Math.max(MIN_EASE, ease - 0.2),
+      due_date: new Date(Date.now() + randomAgainDelay()).toISOString(),
+      new_card_stage: 'relearning',
+      new_learning_step: 0,
+      new_lapse_count: (card.lapse_count ?? 0) + 1,
+    }
+  }
+
+  let interval: number
+  let newEase = ease
+
+  switch (rating) {
+    case 1:
+      interval = Math.max(1, Math.floor(card.interval_days * 1.2))
+      newEase = Math.max(MIN_EASE, ease - 0.15)
+      break
+    case 2:
+      interval = Math.max(1, Math.round(card.interval_days * ease))
+      break
+    case 3:
+      interval = Math.max(1, Math.round(card.interval_days * ease * 1.3))
+      newEase = ease + 0.15
+      break
+  }
+
+  interval = Math.min(interval!, MAX_INTERVAL)
 
   return {
     vocab_id: card.vocabId,
     new_interval: interval,
-    new_ease: ease,
-    due_date: new Date(dueMs).toISOString(),
+    new_ease: newEase,
+    due_date: new Date(Date.now() + interval * 24 * 60 * 60 * 1000).toISOString(),
+    new_card_stage: 'review',
+    new_learning_step: 0,
+    new_lapse_count: card.lapse_count ?? 0,
   }
 }

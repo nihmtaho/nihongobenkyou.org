@@ -3,6 +3,7 @@ import type { TypeInputSubMode } from '../../types/study'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
+import { SessionStatsBar } from '../analytics/SessionStatsBar'
 
 const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string }[] = [
   { value: 'word→hira', label: 'Từ → Đọc' },
@@ -11,6 +12,7 @@ const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string }[] = [
 ]
 
 interface Props {
+  userId: string
   dueCardsCount: number
   srsMode: 'flashcard' | 'type-input'
   onSetSrsMode: (m: 'flashcard' | 'type-input') => void
@@ -23,6 +25,7 @@ interface Props {
 }
 
 export function SrsPreSession({
+  userId,
   dueCardsCount,
   srsMode,
   onSetSrsMode,
@@ -43,6 +46,7 @@ export function SrsPreSession({
         {' '}
         thẻ đến hạn
       </p>
+      <SessionStatsBar userId={userId} />
 
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <p className="font-[var(--br-mono-font)] text-[11px] uppercase text-foreground/50">Chế độ ôn tập</p>
