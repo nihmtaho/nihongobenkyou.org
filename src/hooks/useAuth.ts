@@ -15,6 +15,7 @@ import { downloadPackageForNewDevice } from '../db/package-sync'
 import { db } from '../db/schema'
 import { SeedError } from '../db/seed'
 import { migrateAnonymousData } from '../lib/auth-migration'
+import { runGuestMigration } from './useMigrateGuestDecks'
 import { useAuthStore } from '../stores/authStore'
 
 async function handleFirstSignIn(userId: string, queryClient: QueryClient): Promise<void> {
@@ -24,6 +25,9 @@ async function handleFirstSignIn(userId: string, queryClient: QueryClient): Prom
   if (anonId && anonId !== userId) {
     await migrateAnonymousData(anonId, userId)
   }
+
+  // Migrate any custom decks created as guest → real user
+  await runGuestMigration(userId)
 
   // 2. Check if account was soft-deleted within grace period — reactivate silently
   try {
