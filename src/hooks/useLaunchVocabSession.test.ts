@@ -127,12 +127,13 @@ describe('useLaunchVocabSession', () => {
     expect(queue).toHaveLength(2)
     // New card objects must have the correct defaults.
     for (const card of queue) {
-      expect(card.userId).toBe(TEST_USER)
-      expect(card.interval_days).toBe(0)
-      expect(card.ease_factor).toBe(2.5)
-      expect(card.review_count).toBe(0)
-      expect(card.pending_sync).toBe(false)
-      expect(card.is_known).toBe(false)
+      expect(card.kind).toBe('vocab')
+      expect(card.card.userId).toBe(TEST_USER)
+      expect(card.card.interval_days).toBe(0)
+      expect(card.card.ease_factor).toBe(2.5)
+      expect(card.card.review_count).toBe(0)
+      expect(card.card.pending_sync).toBe(false)
+      expect(card.card.is_known).toBe(false)
     }
     expect(mockNavigate).toHaveBeenCalledOnce()
   })
@@ -161,7 +162,7 @@ describe('useLaunchVocabSession', () => {
     expect(mockInitSession).toHaveBeenCalledOnce()
     const [queue] = mockInitSession.mock.calls[0]
     expect(queue).toHaveLength(1)
-    expect(queue[0].vocabId).toBe(dueVocabId)
+    expect(queue[0].card.vocabId).toBe(dueVocabId)
     expect(mockNavigate).toHaveBeenCalledOnce()
   })
 
@@ -197,7 +198,7 @@ describe('useLaunchVocabSession', () => {
 
     expect(mockInitSession).toHaveBeenCalledOnce()
     expect(mockInitSession.mock.calls[0][1]).toBe('quiz')
-    expect(mockNavigate).toHaveBeenCalledWith({ to: '/study/$mode', params: { mode: 'quiz' }, search: { returnTab: undefined } })
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/study/review', search: { filter: 'vocab' } })
   })
 
   it('passes subMode to initSession when subMode is specified', async () => {
