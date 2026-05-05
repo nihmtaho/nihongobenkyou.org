@@ -125,7 +125,7 @@ function CustomDeckRow({ deck, userId }: { deck: CustomDeck, userId: string }) {
         </div>
       </div>
       <Button asChild size="xs" variant="outline" className="font-[var(--br-mono-font)] min-h-0 h-7">
-        <Link to="/custom/$deckId" params={{ deckId: deck.id }}>
+        <Link to="/custom">
           XEM BỘ THẺ
         </Link>
       </Button>
