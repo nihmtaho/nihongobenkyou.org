@@ -34,7 +34,7 @@ function useActiveDeckStats(userId: string, activeDecks: CustomDeck[]) {
   return useQuery({
     queryKey: ['active-decks-srs-stats', userId, deckIds],
     queryFn: async () => {
-      const today = new Date().toISOString().slice(0, 10)
+      const now = new Date().toISOString()
       const statsMap = new Map<string, DeckSRSStats>()
 
       for (const deck of activeDecks) {
@@ -43,13 +43,13 @@ function useActiveDeckStats(userId: string, activeDecks: CustomDeck[]) {
           ? await db.user_cards.where('[userId+vocabId]').anyOf(words.map(w => [userId, w.id])).toArray()
           : []
 
-        const due = cards.filter(c => !c.is_known && c.due_date <= today).length
+        const due = cards.filter(c => !c.is_known && c.due_date <= now).length
         const newCount = Math.max(0, words.length - cards.length)
         const learning = cards.filter(c => c.interval_days < 8 && !c.is_known).length
         const review = cards.filter(c => c.interval_days >= 8 && c.interval_days < 21 && !c.is_known).length
         const mature = cards.filter(c => c.interval_days >= 21 || c.is_known).length
         const nextDate = due === 0
-          ? (cards.filter(c => !c.is_known && c.due_date > today).map(c => c.due_date).sort()[0] ?? null)
+          ? (cards.filter(c => !c.is_known && c.due_date > now).map(c => c.due_date).sort()[0] ?? null)
           : null
 
         statsMap.set(deck.id, { due, new: newCount, learning, review, mature, total: words.length, nextDate })
@@ -59,6 +59,7 @@ function useActiveDeckStats(userId: string, activeDecks: CustomDeck[]) {
     },
     enabled: !!userId && activeDecks.length > 0,
     staleTime: 0,
+    refetchInterval: 30_000,
   })
 }
 
