@@ -97,6 +97,17 @@ export class NihongoDB extends Dexie {
         }),
       ])
     })
+    // v10: add is_active to custom_decks; add han_viet to custom_vocabulary (local-only)
+    this.version(10).upgrade((tx) => {
+      return Promise.all([
+        tx.table('custom_decks').toCollection().modify((deck) => {
+          deck.is_active ??= false
+        }),
+        tx.table('custom_vocabulary').toCollection().modify((word) => {
+          word.han_viet ??= null
+        }),
+      ])
+    })
   }
 }
 
