@@ -43,6 +43,8 @@ function StudyReviewPage() {
   const storeQueue = useStudySessionStore(s => s.queue)
   const storeMode = useStudySessionStore(s => s.mode)
   const storeSubMode = useStudySessionStore(s => s.typeInputSubMode)
+  const storeDeckSource = useStudySessionStore(s => s.deckSource)
+  const storeCustomDeckId = useStudySessionStore(s => s.customDeckId)
   const clearSession = useStudySessionStore(s => s.clearSession)
 
   // Captured at mount: true means the user already chose a mode in the lesson/deck popup.
@@ -52,7 +54,12 @@ function StudyReviewPage() {
 
   const prebuilt = storeQueue.length > 0 ? storeQueue : undefined
   const session = useUnifiedSrsSession(userId, filter, prebuilt
-    ? { prebuiltQueue: prebuilt, initialMode: storeMode ?? 'flashcard', initialSubMode: storeSubMode }
+    ? {
+        prebuiltQueue: prebuilt,
+        initialMode: storeMode ?? 'flashcard',
+        initialSubMode: storeSubMode,
+        customDeckId: storeDeckSource === 'custom-deck' ? (storeCustomDeckId ?? undefined) : undefined,
+      }
     : undefined)
 
   // Clear the store once the session ends so a next navigation starts fresh.

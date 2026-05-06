@@ -8,6 +8,7 @@ import { getDueKanjiCards } from '../db/kanji'
 import { db } from '../db/schema'
 import { randomAgainDelay } from '../lib/srs'
 import { useSettingsStore } from '../stores/settingsStore'
+import { useCustomDeckVocabSRS } from './useCustomDeckVocabSRS'
 import { useSRS } from './useSRS'
 
 export type UnifiedSessionPhase = 'loading' | 'pre-session' | 'active' | 'complete'
@@ -23,6 +24,7 @@ export interface UnifiedSrsSessionOptions {
   prebuiltQueue?: UnifiedCard[]
   initialMode?: StudyMode
   initialSubMode?: TypeInputSubMode
+  customDeckId?: string // when set, vocab ratings go to custom_deck_srs
 }
 
 function makeStats(): UnifiedSessionStats {
@@ -63,6 +65,8 @@ export function useUnifiedSrsSession(
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage) as MeaningLanguage
   const vocabSRS = useSRS('vocab', userId)
   const kanjiSRS = useSRS('kanji', userId)
+  const customDeckId = options?.customDeckId ?? ''
+  const customDeckSRS = useCustomDeckVocabSRS(userId, customDeckId)
 
   // When a prebuilt queue is provided, start directly at pre-session — no DB load needed.
   const [phase, setPhase] = useState<UnifiedSessionPhase>(hasPrebuilt ? 'pre-session' : 'loading')
@@ -221,7 +225,12 @@ export function useUnifiedSrsSession(
       kanjiSRS.rate(card.card, rating)
     }
     else if (card.kind === 'vocab') {
-      vocabSRS.rate(card.card, rating)
+      if (customDeckId) {
+        customDeckSRS.rate(card.card, rating)
+      }
+      else {
+        vocabSRS.rate(card.card, rating)
+      }
     }
     else {
       // kanji-vocab: card.card is CardState (has vocabId, not vocab_id) — coerce for useSRS
