@@ -33,8 +33,6 @@ export function RatingBar({ card, onRate }: RatingBarProps) {
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
-        return
       if (!(e.metaKey || e.ctrlKey))
         return
       const rating = ({ 1: 0, 2: 1, 3: 2, 4: 3 } as Record<string, SRSRating>)[e.key]
