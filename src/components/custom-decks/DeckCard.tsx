@@ -15,9 +15,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useCustomDeckProgress } from '../../hooks/useCustomDeckProgress'
 
 interface Props {
   deck: CustomDeck
+  userId: string
   isSelected: boolean
   onClick: () => void
   onStudy: () => void
@@ -25,7 +27,9 @@ interface Props {
   onDelete: () => void
 }
 
-export function DeckCard({ deck, isSelected, onClick, onStudy, onToggleActive, onDelete }: Props) {
+export function DeckCard({ deck, userId, isSelected, onClick, onStudy, onToggleActive, onDelete }: Props) {
+  const { data: progress } = useCustomDeckProgress(userId, deck.id)
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -40,11 +44,39 @@ export function DeckCard({ deck, isSelected, onClick, onStudy, onToggleActive, o
             <p className="font-[var(--br-heading-font)] text-sm font-bold uppercase tracking-tight truncate">
               {deck.title}
             </p>
-            <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground mt-1">
-              {deck.word_count}
-              {' '}
-              TỪ
-            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
+                {deck.word_count}
+                {' '}
+                TỪ
+              </p>
+              {progress && progress.dueToday > 0 && (
+                <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-destructive tracking-widest">
+                  •
+                  {' '}
+                  {progress.dueToday}
+                  {' '}
+                  đến hạn
+                </span>
+              )}
+            </div>
+
+            {/* Progress bar */}
+            {progress && progress.total > 0 && (
+              <div className="mt-2">
+                <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all"
+                    style={{ width: `${progress.percentComplete}%` }}
+                  />
+                </div>
+                <p className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground/60 mt-0.5">
+                  {progress.percentComplete}
+                  % hoàn thành
+                </p>
+              </div>
+            )}
+
             {deck.is_active && (
               <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-primary tracking-widest">
                 ● ĐANG HỌC

@@ -68,6 +68,7 @@ function CustomDecksPage() {
 
       <DeckGrid
         decks={decks}
+        userId={effectiveUserId}
         selectedDeckId={selectedDeckId}
         onSelectDeck={id => setSelectedDeckId(prev => prev === id ? null : id)}
         onNewDeck={() => setShowCreateDialog(true)}

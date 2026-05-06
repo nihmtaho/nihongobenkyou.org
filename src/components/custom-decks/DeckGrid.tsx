@@ -5,6 +5,7 @@ import { DeckCard } from './DeckCard'
 
 interface Props {
   decks: CustomDeck[]
+  userId: string
   selectedDeckId: string | null
   onSelectDeck: (deckId: string) => void
   onNewDeck: () => void
@@ -15,6 +16,7 @@ interface Props {
 
 export function DeckGrid({
   decks,
+  userId,
   selectedDeckId,
   onSelectDeck,
   onNewDeck,
@@ -47,6 +49,7 @@ export function DeckGrid({
                 <DeckCard
                   key={deck.id}
                   deck={deck}
+                  userId={userId}
                   isSelected={deck.id === selectedDeckId}
                   onClick={() => onSelectDeck(deck.id)}
                   onStudy={() => onStudy(deck)}
