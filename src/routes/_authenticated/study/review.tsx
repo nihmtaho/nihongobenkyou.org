@@ -167,7 +167,7 @@ function renderCard(
             card={card.card}
             pool={vocabPool}
             meaningLanguage={meaningLanguage as MeaningLanguage}
-            onAnswer={(isCorrect) => { onRate(isCorrect ? 2 : 0) }}
+            onRate={onRate}
           />
         )
       case 'type-input':
@@ -176,7 +176,7 @@ function renderCard(
             key={card.card.vocab_id + currentIndex}
             card={card.card}
             subMode={session.typeInputSubMode}
-            onAnswer={(isCorrect) => { onRate(isCorrect ? 2 : 0) }}
+            onRate={onRate}
           />
         )
       case 'sentence-flashcard':
