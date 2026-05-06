@@ -6,8 +6,10 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ActiveDeckKanjiSection, ActiveDeckVocabSection } from '../../../components/active-deck/ActiveDeckSection'
+import { useNow } from '../../../hooks/useNow'
 import { useStreak } from '../../../hooks/useStreak'
 import { useUnifiedDueStats } from '../../../hooks/useUnifiedDueStats'
+import { formatCountdown } from '../../../lib/format-countdown'
 import { useAuthStore } from '../../../stores/authStore'
 
 export const Route = createFileRoute('/_authenticated/study/')({
@@ -27,6 +29,7 @@ function StudyDashboardPage() {
   const [filter, setFilter] = useState<CardTypeFilter>('all')
   const { data: stats, isLoading } = useUnifiedDueStats(userId)
   const { data: streak } = useStreak(userId)
+  const nowMs = useNow(30_000)
 
   const dueCount = stats
     ? filter === 'vocab'
@@ -137,15 +140,50 @@ function StudyDashboardPage() {
               SẮP ĐẾN HẠN
             </p>
             {[
-              ...(stats.dueLaterToday > 0 ? [{ label: 'Hôm nay', count: stats.dueLaterToday, color: 'text-warning' }] : []),
-              { label: 'Ngày mai', count: stats.dueTomorrow, color: 'text-info' },
-              { label: 'Tuần này', count: stats.dueThisWeek, color: 'text-foreground/50' },
-            ].map(({ label, count, color }) => (
-              <div key={label} className="flex items-center justify-between px-3 py-2 border border-border/10">
-                <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{label}</span>
-                <span className={`font-bold text-lg ${color}`}>{count}</span>
-              </div>
-            ))}
+              ...(stats.dueLaterToday > 0
+                ? [{
+                    label: 'Hôm nay',
+                    count: stats.dueLaterToday,
+                    color: 'text-warning',
+                    countdownMs: stats.nextDueLaterTodayMs,
+                  }]
+                : []),
+              {
+                label: 'Ngày mai',
+                count: stats.dueTomorrow,
+                color: 'text-info',
+                countdownMs: stats.nextDueTomorrowMs,
+              },
+              {
+                label: 'Tuần này',
+                count: stats.dueThisWeek,
+                color: 'text-foreground/50',
+                countdownMs: stats.nextDueThisWeekMs,
+              },
+              ...(stats.due21Days > 0
+                ? [{
+                    label: '21 ngày tới',
+                    count: stats.due21Days,
+                    color: 'text-foreground/30',
+                    countdownMs: stats.nextDue21DaysMs,
+                  }]
+                : []),
+            ].map(({ label, count, color, countdownMs }) => {
+              const countdown = formatCountdown(nowMs, countdownMs)
+              return (
+                <div key={label} className="flex items-center justify-between px-3 py-2 border border-border/10">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{label}</span>
+                    {countdown && (
+                      <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground/50">
+                        {`còn ${countdown}`}
+                      </span>
+                    )}
+                  </div>
+                  <span className={`font-bold text-lg ${color}`}>{count}</span>
+                </div>
+              )
+            })}
           </div>
         )}
 

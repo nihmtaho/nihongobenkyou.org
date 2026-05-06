@@ -8,12 +8,17 @@ export interface UnifiedDueStats {
   dueLaterToday: number
   dueTomorrow: number
   dueThisWeek: number
+  due21Days: number
   vocabDue: number
   kanjiDue: number
   kanjiVocabDue: number
   learning: number
   review: number
   mature: number
+  nextDueLaterTodayMs: number | null
+  nextDueTomorrowMs: number | null
+  nextDueThisWeekMs: number | null
+  nextDue21DaysMs: number | null
 }
 
 export function useUnifiedDueStats(userId: string) {
@@ -65,7 +70,44 @@ export function useUnifiedDueStats(userId: string) {
       const dueTomorrow = allDueFuture.filter(c => c.due_date.slice(0, 10) === tomorrow).length
       const dueThisWeek = allDueFuture.filter(c => c.due_date.slice(0, 10) > tomorrow && c.due_date.slice(0, 10) <= weekEnd).length
 
-      return { dueToday, dueLaterToday, dueTomorrow, dueThisWeek, vocabDue, kanjiDue, kanjiVocabDue, learning, review, mature }
+      // 21 days window: after weekEnd up to 21 days from now
+      const days21End = new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+      const due21Days = allDueFuture.filter(c => c.due_date.slice(0, 10) > weekEnd && c.due_date.slice(0, 10) <= days21End).length
+
+      // Earliest due times per bucket (for countdown display in UI)
+      const laterTodayCards = allDueFuture.filter(c => c.due_date.slice(0, 10) === todayDate)
+      const tomorrowCards = allDueFuture.filter(c => c.due_date.slice(0, 10) === tomorrow)
+      const thisWeekCards = allDueFuture.filter(c => c.due_date.slice(0, 10) > tomorrow && c.due_date.slice(0, 10) <= weekEnd)
+      const next21DaysCards = allDueFuture.filter(c => c.due_date.slice(0, 10) > weekEnd && c.due_date.slice(0, 10) <= days21End)
+
+      function earliestMs(cards: typeof allDueFuture): number | null {
+        if (cards.length === 0)
+          return null
+        return Math.min(...cards.map(c => new Date(c.due_date).getTime()))
+      }
+
+      const nextDueLaterTodayMs = earliestMs(laterTodayCards)
+      const nextDueTomorrowMs = earliestMs(tomorrowCards)
+      const nextDueThisWeekMs = earliestMs(thisWeekCards)
+      const nextDue21DaysMs = earliestMs(next21DaysCards)
+
+      return {
+        dueToday,
+        dueLaterToday,
+        dueTomorrow,
+        dueThisWeek,
+        due21Days,
+        vocabDue,
+        kanjiDue,
+        kanjiVocabDue,
+        learning,
+        review,
+        mature,
+        nextDueLaterTodayMs,
+        nextDueTomorrowMs,
+        nextDueThisWeekMs,
+        nextDue21DaysMs,
+      }
     },
     staleTime: 0,
     enabled: !!userId,
