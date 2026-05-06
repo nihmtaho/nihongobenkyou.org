@@ -44,7 +44,7 @@ export async function updateDeck(
 }
 
 export async function deleteDeck(deckId: string): Promise<void> {
-  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary, db.custom_deck_srs], async () => {
+  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary, 'custom_deck_srs'], async () => {
     await db.custom_vocabulary.where('deck_id').equals(deckId).delete()
     await db.custom_deck_srs.where('deckId').equals(deckId).delete()
     await db.custom_decks.delete(deckId)
