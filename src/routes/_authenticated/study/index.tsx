@@ -1,7 +1,8 @@
 import type { CardTypeFilter } from '../../../types/unified-card'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -29,9 +30,27 @@ function StudyDashboardPage() {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<CardTypeFilter>('all')
   const [guideOpen, setGuideOpen] = useState(false)
+  const queryClient = useQueryClient()
   const { data: stats, isLoading } = useUnifiedDueStats(userId)
   const { data: streak } = useStreak(userId)
   const nowMs = useNow(30_000)
+
+  // Auto-invalidate stats when the soonest upcoming due card becomes overdue.
+  // This makes the review button appear immediately when a countdown reaches zero.
+  useEffect(() => {
+    const soonest = stats?.nextDueLaterTodayMs ?? null
+    if (!soonest)
+      return
+    const delay = soonest - Date.now()
+    if (delay <= 0) {
+      queryClient.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
+      return
+    }
+    const id = setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
+    }, delay)
+    return () => clearTimeout(id)
+  }, [stats?.nextDueLaterTodayMs, queryClient, userId])
 
   const dueCount = stats
     ? filter === 'vocab'
