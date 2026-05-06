@@ -19,6 +19,10 @@ export interface UnifiedDueStats {
   nextDueTomorrowMs: number | null
   nextDueThisWeekMs: number | null
   nextDue21DaysMs: number | null
+  customDecksDueToday: number
+  customDecksDueTomorrow: number
+  customDecksDueThisWeek: number
+  customDecksDue21Days: number
 }
 
 export function useUnifiedDueStats(userId: string) {
@@ -40,9 +44,10 @@ export function useUnifiedDueStats(userId: string) {
         }
       }
 
-      const [vocabCards, kanjiCards] = await Promise.all([
+      const [vocabCards, kanjiCards, customRows] = await Promise.all([
         db.user_cards.filter(c => c.userId === userId && !c.is_known).toArray(),
         getDueKanjiCards(userId, todayISO),
+        db.custom_deck_srs.filter(r => r.userId === userId).toArray(),
       ])
 
       const regularVocab = vocabCards.filter(c => !rvIdSet.has(c.vocabId))
@@ -52,14 +57,23 @@ export function useUnifiedDueStats(userId: string) {
       const kanjiVocabDue = kanjiVocabCards.filter(c => c.due_date <= todayISO).length
       const kanjiDue = kanjiCards.length
 
-      const allCards = [...regularVocab, ...kanjiVocabCards]
-      const learning = allCards.filter(c => c.interval_days < 8).length
-      const review = allCards.filter(c => c.interval_days >= 8 && c.interval_days < 21).length
-      const mature = allCards.filter(c => c.interval_days >= 21 || c.is_known).length
-
-      const dueToday = vocabDue + kanjiVocabDue + kanjiDue
-
       const todayDate = todayISO.slice(0, 10)
+      const customDeckDue = customRows.filter(r => r.due_date <= todayDate).length
+      const customDeckLearning = customRows.filter(r => r.review_count >= 1 && r.interval_days < 7).length
+      const customDeckReview = customRows.filter(r => r.interval_days >= 7 && r.interval_days < 21).length
+      const customDeckMature = customRows.filter(r => r.interval_days >= 21).length
+
+      const allCards = [...regularVocab, ...kanjiVocabCards]
+      let learning = allCards.filter(c => c.interval_days < 8).length
+      let review = allCards.filter(c => c.interval_days >= 8 && c.interval_days < 21).length
+      let mature = allCards.filter(c => c.interval_days >= 21 || c.is_known).length
+
+      learning += customDeckLearning
+      review += customDeckReview
+      mature += customDeckMature
+
+      const dueToday = vocabDue + kanjiVocabDue + kanjiDue + customDeckDue
+
       const allDueFuture = [
         ...regularVocab.filter(c => c.due_date > todayISO),
         ...kanjiVocabCards.filter(c => c.due_date > todayISO),
@@ -73,6 +87,12 @@ export function useUnifiedDueStats(userId: string) {
       // 21 days window: after weekEnd up to 21 days from now
       const days21End = new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
       const due21Days = allDueFuture.filter(c => c.due_date.slice(0, 10) > weekEnd && c.due_date.slice(0, 10) <= days21End).length
+
+      // Custom deck upcoming due dates
+      const customFuture = customRows.filter(r => r.due_date > todayDate)
+      const customDecksDueTomorrow = customFuture.filter(r => r.due_date === tomorrow).length
+      const customDecksDueThisWeek = customFuture.filter(r => r.due_date > tomorrow && r.due_date <= weekEnd).length
+      const customDecksDue21Days = customFuture.filter(r => r.due_date > weekEnd && r.due_date <= days21End).length
 
       // Earliest due times per bucket (for countdown display in UI)
       const laterTodayCards = allDueFuture.filter(c => c.due_date.slice(0, 10) === todayDate)
@@ -107,6 +127,10 @@ export function useUnifiedDueStats(userId: string) {
         nextDueTomorrowMs,
         nextDueThisWeekMs,
         nextDue21DaysMs,
+        customDecksDueToday: customDeckDue,
+        customDecksDueTomorrow,
+        customDecksDueThisWeek,
+        customDecksDue21Days,
       }
     },
     staleTime: 0,
