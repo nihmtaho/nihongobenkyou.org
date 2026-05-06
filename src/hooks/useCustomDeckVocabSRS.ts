@@ -35,6 +35,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deckId] })
       qc.invalidateQueries({ queryKey: ['all-custom-deck-srs-summary', userId] })
+      qc.invalidateQueries({ queryKey: ['started-deck-ids', userId] })
       qc.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
       // TODO: trigger Supabase sync flush for custom_deck_srs when sync layer is implemented
     },
