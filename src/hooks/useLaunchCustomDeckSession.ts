@@ -67,6 +67,10 @@ export function useLaunchCustomDeckSession(userId: string) {
         await bulkUpsertCustomDeckSRS(newEntries)
         for (const entry of newEntries)
           srsMap.set(entry.itemId, entry)
+        // Invalidate immediately so Study/custom reflect the deck as "started"
+        qc.invalidateQueries({ queryKey: ['all-custom-deck-srs-summary', userId] })
+        qc.invalidateQueries({ queryKey: ['started-deck-ids', userId] })
+        qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deck.id] })
       }
 
       let queue: VocabWithSRS[] = words.map((w) => {

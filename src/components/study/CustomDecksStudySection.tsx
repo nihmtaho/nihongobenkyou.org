@@ -148,7 +148,7 @@ export function CustomDecksStudySection({ userId }: Props) {
     queryKey: ['all-custom-deck-srs-summary', userId],
     queryFn: () =>
       db.custom_deck_srs
-        .filter(r => r.userId === userId && r.review_count >= 1)
+        .filter(r => r.userId === userId)
         .toArray()
         .then(rows => new Set(rows.map(r => r.deckId))),
     staleTime: 0,

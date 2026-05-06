@@ -38,14 +38,9 @@ function CustomDecksPage() {
     queryKey: ['started-deck-ids', effectiveUserId],
     queryFn: async () => {
       const rows = await db.custom_deck_srs
-        .where('userId')
-        .equals(effectiveUserId)
+        .filter(r => r.userId === effectiveUserId)
         .toArray()
-      return new Set(
-        rows
-          .filter(r => r.review_count >= 1)
-          .map(r => r.deckId),
-      )
+      return new Set(rows.map(r => r.deckId))
     },
     enabled: !!effectiveUserId,
     staleTime: 0,

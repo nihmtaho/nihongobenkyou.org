@@ -26,8 +26,8 @@ export function useCustomDeckProgress(userId: string, deckId: string) {
       const now = new Date().toISOString()
       const today = now.slice(0, 10)
 
-      // started = any row exists (all rows have review_count >= 1 on first write)
-      const started = srsRows.filter(r => r.review_count >= 1).length
+      // started = any SRS entry exists (deck was launched at least once)
+      const started = srsRows.length
       const learning = srsRows.filter(r => r.review_count >= 1 && r.interval_days < 7).length
       const learned = srsRows.filter(r => r.interval_days >= 7 && r.interval_days < 21).length
       const mature = srsRows.filter(r => r.interval_days >= 21).length

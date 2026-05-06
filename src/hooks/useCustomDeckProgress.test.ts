@@ -61,7 +61,7 @@ describe('useCustomDeckProgress', () => {
     await waitFor(() => expect(result.current.data).toBeDefined())
     const d = result.current.data!
     expect(d.total).toBe(4) // word_count from custom_decks
-    expect(d.started).toBe(3) // 3 have SRS entries with review_count >= 1
+    expect(d.started).toBe(3) // 3 have SRS entries (deck was launched)
     expect(d.learning).toBe(1) // entry a: review_count >= 1, interval_days 1 (< 7)
     expect(d.learned).toBe(1) // entry b: interval_days 10 (7 to <21)
     expect(d.mature).toBe(1) // entry c: interval_days 30 (>= 21)
