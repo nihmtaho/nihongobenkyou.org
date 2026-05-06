@@ -62,9 +62,11 @@ describe('useCustomDeckProgress', () => {
     const d = result.current.data!
     expect(d.total).toBe(4) // word_count from custom_decks
     expect(d.started).toBe(3) // 3 have SRS entries with review_count >= 1
-    expect(d.learned).toBe(1) // interval_days 10 (7 to <21)
-    expect(d.mature).toBe(1) // interval_days 30 (>= 21)
+    expect(d.learning).toBe(1) // entry a: review_count >= 1, interval_days 1 (< 7)
+    expect(d.learned).toBe(1) // entry b: interval_days 10 (7 to <21)
+    expect(d.mature).toBe(1) // entry c: interval_days 30 (>= 21)
     expect(d.dueToday).toBe(2) // entries a and b have due_date '2026-01-01' (past); c has '2099-01-01'
     expect(d.percentComplete).toBe(50) // (learned + mature) / total * 100 = 2/4 * 100
+    expect(d.nextDueDateStr).toBe('2099-01-01') // c is due in future, only future date
   })
 })

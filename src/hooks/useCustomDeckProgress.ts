@@ -5,10 +5,12 @@ import { db } from '../db/schema'
 export interface DeckProgress {
   total: number
   started: number
+  learning: number
   learned: number
   mature: number
   dueToday: number
   percentComplete: number
+  nextDueDateStr: string | null
 }
 
 export function useCustomDeckProgress(userId: string, deckId: string) {
@@ -26,12 +28,21 @@ export function useCustomDeckProgress(userId: string, deckId: string) {
 
       // started = any row exists (all rows have review_count >= 1 on first write)
       const started = srsRows.filter(r => r.review_count >= 1).length
+      const learning = srsRows.filter(r => r.review_count >= 1 && r.interval_days < 7).length
       const learned = srsRows.filter(r => r.interval_days >= 7 && r.interval_days < 21).length
       const mature = srsRows.filter(r => r.interval_days >= 21).length
       const dueToday = srsRows.filter(r => r.due_date <= today).length
       const percentComplete = total === 0 ? 0 : Math.round(((learned + mature) / total) * 100)
 
-      return { total, started, learned, mature, dueToday, percentComplete }
+      // Find earliest future due date (due_date > today)
+      const futureDates = srsRows
+        .filter(r => r.due_date > today)
+        .map(r => r.due_date)
+      const nextDueDateStr = futureDates.length > 0
+        ? futureDates.sort()[0]
+        : null
+
+      return { total, started, learning, learned, mature, dueToday, percentComplete, nextDueDateStr }
     },
     enabled: !!userId && !!deckId,
     staleTime: 0,
