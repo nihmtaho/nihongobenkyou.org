@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ActiveDeckKanjiSection, ActiveDeckVocabSection } from '../../../components/active-deck/ActiveDeckSection'
+import { SrsGuideDialog } from '../../../components/study/SrsGuideDialog'
 import { useNow } from '../../../hooks/useNow'
 import { useStreak } from '../../../hooks/useStreak'
 import { useUnifiedDueStats } from '../../../hooks/useUnifiedDueStats'
@@ -27,6 +28,7 @@ function StudyDashboardPage() {
   const userId = useAuthStore(s => s.userId) ?? ''
   const navigate = useNavigate()
   const [filter, setFilter] = useState<CardTypeFilter>('all')
+  const [guideOpen, setGuideOpen] = useState(false)
   const { data: stats, isLoading } = useUnifiedDueStats(userId)
   const { data: streak } = useStreak(userId)
   const nowMs = useNow(30_000)
@@ -54,15 +56,25 @@ function StudyDashboardPage() {
             <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
               STUDY
             </h1>
-            {streak && streak.current_streak > 0 && (
-              <div className="flex items-center gap-1 text-warning">
-                <span className="text-lg">🔥</span>
-                <span className="font-black text-xl">{streak.current_streak}</span>
-                <span className="text-[9px] font-[var(--br-mono-font)] uppercase tracking-widest text-muted-foreground">
-                  NGÀY
-                </span>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest text-muted-foreground h-7 px-2"
+                onClick={() => setGuideOpen(true)}
+              >
+                ? Hướng dẫn
+              </Button>
+              {streak && streak.current_streak > 0 && (
+                <div className="flex items-center gap-1 text-warning">
+                  <span className="text-lg">🔥</span>
+                  <span className="font-black text-xl">{streak.current_streak}</span>
+                  <span className="text-[9px] font-[var(--br-mono-font)] uppercase tracking-widest text-muted-foreground">
+                    NGÀY
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Stats row */}
@@ -200,6 +212,8 @@ function StudyDashboardPage() {
           </Link>
         </div>
       </div>
+
+      <SrsGuideDialog open={guideOpen} onOpenChange={setGuideOpen} />
     </div>
   )
 }
