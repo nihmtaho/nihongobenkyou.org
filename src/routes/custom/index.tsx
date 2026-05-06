@@ -1,5 +1,6 @@
 import type { CustomDeck } from '../../types/custom-deck'
 import type { StudyMode, TypeInputSubMode } from '../../types/study'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
@@ -7,6 +8,7 @@ import { DeckCreateDialog } from '../../components/custom-decks/DeckCreateDialog
 import { DeckGrid } from '../../components/custom-decks/DeckGrid'
 import { DeckSheet } from '../../components/custom-decks/DeckSheet'
 import { VocabStudyModal } from '../../components/study/VocabStudyModal'
+import { db } from '../../db/schema'
 import { useCustomDeckMutations } from '../../hooks/useCustomDeckMutations'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
 import { useLaunchCustomDeckSession } from '../../hooks/useLaunchCustomDeckSession'
@@ -31,6 +33,26 @@ function CustomDecksPage() {
   const mutations = useCustomDeckMutations(effectiveUserId)
   const { launch: launchDeck } = useLaunchCustomDeckSession(effectiveUserId)
 
+  // Query to find started deck IDs (decks with at least one review)
+  const { data: startedDeckIds = new Set<string>() } = useQuery({
+    queryKey: ['started-deck-ids', effectiveUserId],
+    queryFn: async () => {
+      const rows = await db.custom_deck_srs
+        .where('userId')
+        .equals(effectiveUserId)
+        .toArray()
+      return new Set(
+        rows
+          .filter(r => r.review_count >= 1)
+          .map(r => r.deckId),
+      )
+    },
+    enabled: !!effectiveUserId,
+    staleTime: 0,
+  })
+
+  const startedDecks = decks.filter(d => startedDeckIds.has(d.id))
+  const unstartedDecks = decks.filter(d => !startedDeckIds.has(d.id))
   const selectedDeck = decks.find(d => d.id === selectedDeckId) ?? null
 
   function handleCreateDeck(data: { title: string, description?: string }) {
@@ -67,7 +89,8 @@ function CustomDecksPage() {
       )}
 
       <DeckGrid
-        decks={decks}
+        startedDecks={startedDecks}
+        unstartedDecks={unstartedDecks}
         userId={effectiveUserId}
         selectedDeckId={selectedDeckId}
         onSelectDeck={id => setSelectedDeckId(prev => prev === id ? null : id)}
