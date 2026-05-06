@@ -1,8 +1,10 @@
+import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage, QuizQuestionType } from '../../types/study'
 import type { VocabItem, VocabWithSRS } from '../../types/vocabulary'
 import { useEffect, useState } from 'react'
 import { selectDistractors, shuffle } from '../../lib/quiz'
 import { QuizOptions } from './QuizOptions'
+import { RatingBar } from './shared/RatingBar'
 
 const QUESTION_TYPES: QuizQuestionType[] = ['word→meaning', 'meaning→word', 'word→reading']
 
@@ -26,10 +28,10 @@ interface QuizCardProps {
   card: VocabWithSRS
   pool: VocabWithSRS[]
   meaningLanguage: MeaningLanguage
-  onAnswer: (isCorrect: boolean) => void
+  onRate: (rating: SRSRating) => void
 }
 
-export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProps) {
+export function QuizCard({ card, pool, meaningLanguage, onRate }: QuizCardProps) {
   const [{ questionType, options, correctId }] = useState(() => {
     const type = QUESTION_TYPES[Math.floor(Math.random() * QUESTION_TYPES.length)]
     const distractors = selectDistractors(card, pool)
@@ -45,6 +47,7 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
   })
 
   const [showHint, setShowHint] = useState(false)
+  const [answeredCorrect, setAnsweredCorrect] = useState<boolean | null>(null)
   const canShowHint = questionType !== 'word→reading'
 
   useEffect(() => {
@@ -104,10 +107,20 @@ export function QuizCard({ card, pool, meaningLanguage, onAnswer }: QuizCardProp
           </div>
           {/* Options — right on desktop, bottom on mobile */}
           <div className="px-[18px] py-[14px] lg:flex lg:flex-col lg:justify-center lg:py-8 lg:px-8">
-            <QuizOptions options={options} correctId={correctId} onAnswer={onAnswer} />
+            <QuizOptions
+              options={options}
+              correctId={correctId}
+              onAnswer={setAnsweredCorrect}
+              locked={answeredCorrect !== null}
+            />
           </div>
         </div>
       </div>
+      {answeredCorrect !== null && (
+        <div className="px-4 pb-4">
+          <RatingBar card={card} onRate={onRate} correct={answeredCorrect} />
+        </div>
+      )}
     </div>
   )
 }

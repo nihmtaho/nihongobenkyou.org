@@ -1,23 +1,27 @@
+import type { KanjiCardState } from '../../types/kanji'
+import type { SRSRating } from '../../types/srs'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { removeDiacritics } from '../../lib/text-utils'
+import { RatingBar } from '../study/shared/RatingBar'
 
 interface KanjiTypeInputCardProps {
   prompt: string
   answer: string
   hint?: string
-  onAnswer: (correct: boolean) => void
+  card?: KanjiCardState
+  onRate: (rating: SRSRating) => void
 }
 
-export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiTypeInputCardProps) {
+export function KanjiTypeInputCard({ prompt, answer, hint, card, onRate }: KanjiTypeInputCardProps) {
   const [raw, setRaw] = useState('')
   const [hintedKey, setHintedKey] = useState<string | null>(null)
 
   const resetKey = `${prompt}:${answer}`
-  const { phase, isCorrect, inputRef, commit, advance } = useTypeInput(onAnswer, resetKey)
+  const { phase, isCorrect, inputRef, commit } = useTypeInput(() => {}, resetKey)
 
   const showHint = hintedKey === resetKey
 
@@ -53,18 +57,14 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
     }
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (phase === 'result')
-        advance()
-      else
+      if (phase !== 'result')
         doCheck()
     }
   }
 
   function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault()
-    if (phase === 'result')
-      advance()
-    else
+    if (phase !== 'result')
       doCheck()
   }
 
@@ -169,14 +169,7 @@ export function KanjiTypeInputCard({ prompt, answer, hint, onAnswer }: KanjiType
                 </div>
               )
             : (
-                <Button
-                  type="submit"
-                  className={`flex-1 font-[var(--br-mono-font)] text-[11px] uppercase ${isCorrect ? 'bg-success hover:bg-success/90 text-foreground' : 'bg-destructive hover:bg-destructive/90'}`}
-                >
-                  {isCorrect ? '✓' : '✗'}
-                  {' '}
-                  TIẾP TỤC [ENTER]
-                </Button>
+                <RatingBar card={card} onRate={onRate} correct={isCorrect} />
               )}
         </form>
 

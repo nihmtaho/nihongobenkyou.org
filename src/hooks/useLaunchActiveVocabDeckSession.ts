@@ -1,5 +1,6 @@
 import type { SRSRating } from '../types/srs'
 import type { StudyMode, TypeInputSubMode } from '../types/study'
+import type { UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -68,8 +69,9 @@ export function useLaunchActiveVocabDeckSession(userId: string) {
         return
 
       const shuffled = [...queue].sort(() => Math.random() - 0.5)
-      initSession(shuffled, mode, subMode, 'active-vocab-deck')
-      navigate({ to: '/study/$mode', params: { mode }, search: { returnTab: 'vocab' } })
+      const unifiedQueue: UnifiedCard[] = shuffled.map(card => ({ kind: 'vocab' as const, card }))
+      initSession(unifiedQueue, mode, subMode, 'active-vocab-deck')
+      navigate({ to: '/study/review', search: { filter: 'vocab' } })
     }
     finally {
       setIsLaunching(false)

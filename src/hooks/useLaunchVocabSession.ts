@@ -1,5 +1,6 @@
 import type { ActiveTab } from '../components/study/study.config'
 import type { StudyMode, TypeInputSubMode } from '../types/study'
+import type { UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -18,7 +19,7 @@ export function useLaunchVocabSession(userId: string) {
     mode: StudyMode = 'flashcard',
     subMode?: TypeInputSubMode,
     order?: 'random' | 'sequential',
-    returnTab?: ActiveTab,
+    _returnTab?: ActiveTab,
   ) {
     if (isLaunching || !userId)
       return
@@ -75,9 +76,10 @@ export function useLaunchVocabSession(userId: string) {
       if (queue.length === 0)
         return
 
-      const finalQueue = order === 'sequential' ? queue : [...queue].sort(() => Math.random() - 0.5)
-      initSession(finalQueue, mode, subMode)
-      navigate({ to: '/study/$mode', params: { mode }, search: { returnTab } })
+      const finalQueue = (order === 'sequential' ? queue : [...queue].sort(() => Math.random() - 0.5))
+        .map((card): UnifiedCard => ({ kind: 'vocab', card }))
+      initSession(finalQueue, mode, subMode, 'lesson', 'vocab')
+      navigate({ to: '/study/review', search: { filter: 'vocab' } })
     }
     finally {
       setIsLaunching(false)

@@ -112,7 +112,8 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
 
       {due > 0 && (
         <Link
-          to="/kanji/review"
+          to="/study/review"
+          search={{ filter: 'kanji' }}
           className="inline-flex items-center justify-center w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 h-9 px-3 font-[var(--br-mono-font)] uppercase text-[11px]"
         >
           Ôn tập

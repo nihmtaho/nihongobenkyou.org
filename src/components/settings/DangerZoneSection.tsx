@@ -33,6 +33,7 @@ export function DangerZoneSection() {
         await db.kanji_cards.where('userId').equals(userId).delete()
         await db.active_vocab_srs.toCollection().filter(c => c.userId === userId).delete()
         await db.active_kanji_srs.toCollection().filter(c => c.userId === userId).delete()
+        await db.custom_deck_srs.filter(c => c.userId === userId).delete()
         await db.streaks.where('userId').equals(userId).delete()
         await db.review_log.toCollection().filter(r => r.userId === userId).delete()
       }
@@ -41,6 +42,7 @@ export function DangerZoneSection() {
         await db.kanji_cards.clear()
         await db.active_vocab_srs.clear()
         await db.active_kanji_srs.clear()
+        await db.custom_deck_srs.clear()
         await db.streaks.clear()
         await db.review_log.clear()
       }
@@ -82,6 +84,10 @@ export function DangerZoneSection() {
       queryClient.invalidateQueries({ queryKey: ['total-user-cards', userId] })
       queryClient.invalidateQueries({ queryKey: ['future-due-cards', userId] })
       queryClient.invalidateQueries({ queryKey: ['active-deck-due', userId] })
+      queryClient.invalidateQueries({ queryKey: ['custom-deck-progress', userId] })
+      queryClient.invalidateQueries({ queryKey: ['all-custom-deck-srs-summary', userId] })
+      queryClient.invalidateQueries({ queryKey: ['started-deck-ids', userId] })
+      queryClient.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
 
       setShowResetModal(false)
       setResetConfirmText('')

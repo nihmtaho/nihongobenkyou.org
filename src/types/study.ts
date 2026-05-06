@@ -1,4 +1,4 @@
-import type { VocabItem } from './vocabulary'
+import type { UnifiedCard } from './unified-card'
 
 export type StudyMode
   = | 'flashcard'
@@ -31,7 +31,7 @@ export interface SessionStats {
   correct: number
   total: number
   startTime: Date
-  wrongCards: VocabItem[]
+  wrongCards: UnifiedCard[]
 }
 
 export interface StudySession {

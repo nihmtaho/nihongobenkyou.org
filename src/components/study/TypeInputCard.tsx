@@ -1,3 +1,4 @@
+import type { SRSRating } from '../../types/srs'
 import type { TypeInputSubMode } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { Eye, EyeOff } from 'lucide-react'
@@ -8,16 +9,13 @@ import { cn } from '@/lib/utils'
 import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
 import { gradeReading } from '../../lib/mora'
-import { calculateNextReview } from '../../lib/srs'
-import { computeTypeInputRatingForDisplay, toCardState } from '../../lib/srs-utils'
 import { normalizeViMeaning } from '../../lib/text-utils'
-import { useAuthStore } from '../../stores/authStore'
-import { AnswerFeedback } from './shared/AnswerFeedback'
+import { RatingBar } from './shared/RatingBar'
 
 interface TypeInputCardProps {
   card: VocabWithSRS
   subMode?: TypeInputSubMode
-  onAnswer: (isCorrect: boolean) => void
+  onRate: (rating: SRSRating) => void
 }
 
 function normalizeAnswer(text: string): string {
@@ -32,32 +30,17 @@ function normalizeAnswer(text: string): string {
     .trim()
 }
 
-export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeInputCardProps) {
+export function TypeInputCard({ card, subMode = 'word→hira', onRate }: TypeInputCardProps) {
   const [raw, setRaw] = useState('')
   const [wrongMorae, setWrongMorae] = useState<number[]>([])
   const [wasSkipped, setWasSkipped] = useState(false)
   const [hintedKey, setHintedKey] = useState<string | null>(null)
-  const [showFeedback, setShowFeedback] = useState(false)
-
-  const userId = useAuthStore(s => s.userId)
 
   const canonicalReading = normalizeAnswer(card.reading)
   const canonicalViMeaning = normalizeViMeaning(card.meaning_vi)
   const canonicalHanViet = (card.han_viet ?? '').toLowerCase().trim()
 
-  const { phase, isCorrect, inputRef, commit, advance } = useTypeInput(onAnswer, card.vocab_id)
-
-  function handleAdvance() {
-    setShowFeedback(false)
-    setTimeout(advance, 800)
-  }
-
-  const feedbackRating = userId != null && phase === 'result'
-    ? computeTypeInputRatingForDisplay(toCardState(card, userId), isCorrect)
-    : null
-  const feedbackIntervalDays = feedbackRating != null && userId != null
-    ? calculateNextReview(toCardState(card, userId), feedbackRating).new_interval
-    : 0
+  const { phase, isCorrect, inputRef, commit } = useTypeInput(() => {}, card.vocab_id)
 
   const showHint = hintedKey === card.vocab_id
 
@@ -73,7 +56,6 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
     setWasSkipped(true)
     setWrongMorae([])
     commit(false)
-    setShowFeedback(true)
   }
 
   function doCheck() {
@@ -84,7 +66,6 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
       setWasSkipped(false)
       setWrongMorae([])
       commit(!!canonicalHanViet && answer === canonicalHanViet)
-      setShowFeedback(true)
       return
     }
 
@@ -97,7 +78,6 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
       // Accept any comma-separated segment of the meaning
       const segments = canonicalViMeaning.split(',').map(s => s.trim()).filter(Boolean)
       commit(segments.includes(answer))
-      setShowFeedback(true)
       return
     }
 
@@ -114,7 +94,6 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
       setWrongMorae([])
       commit(answer.trim() === canonicalReading)
     }
-    setShowFeedback(true)
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -138,18 +117,14 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
     }
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (phase === 'result')
-        handleAdvance()
-      else
+      if (phase !== 'result')
         doCheck()
     }
   }
 
   function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault()
-    if (phase === 'result')
-      handleAdvance()
-    else
+    if (phase !== 'result')
       doCheck()
   }
 
@@ -368,24 +343,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onAnswer }: TypeI
                 </div>
               )
             : (
-                <div className="flex flex-col items-center gap-3">
-                  {feedbackRating != null && (
-                    <AnswerFeedback
-                      rating={feedbackRating}
-                      intervalDays={feedbackIntervalDays}
-                      visible={showFeedback}
-                    />
-                  )}
-                  <Button
-                    type="submit"
-                    variant={isCorrect ? 'success' : 'destructive'}
-                    className="flex-1 w-full font-[var(--br-mono-font)] text-[11px] uppercase"
-                  >
-                    {isCorrect ? '✓' : '✗'}
-                    {' '}
-                    TIẾP TỤC [ENTER]
-                  </Button>
-                </div>
+                <RatingBar card={card} onRate={onRate} correct={isCorrect} />
               )}
         </form>
 

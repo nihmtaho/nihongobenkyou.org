@@ -1,6 +1,6 @@
-import type { LessonStats } from '../../types/study'
-import type { VocabTypeSubMode } from './KanjiVocabTypeInputCard'
-import { useNavigate } from '@tanstack/react-router'
+import type { LessonStats, StudyMode } from '../../types/study'
+import { useLaunchKanjiLessonSession } from '../../hooks/useLaunchKanjiLessonSession'
+import { useAuthStore } from '../../stores/authStore'
 import { KANJI_STUDY_SECTIONS } from '../study/config/kanji-study-modes.config'
 import { StudyModal } from '../study/StudyModal'
 
@@ -15,7 +15,8 @@ interface KanjiStudyModalProps {
 }
 
 export function KanjiStudyModal({ lessonNum, stats, type, dueOnly, onClose }: KanjiStudyModalProps) {
-  const navigate = useNavigate()
+  const userId = useAuthStore(s => s.userId) ?? ''
+  const { launch } = useLaunchKanjiLessonSession(userId)
   const { total, new: newCount, learning, review, mature } = stats
 
   const sections = type === 'kanji'
@@ -36,16 +37,12 @@ export function KanjiStudyModal({ lessonNum, stats, type, dueOnly, onClose }: Ka
       sections={sections}
       onLaunch={(mode, options) => {
         onClose()
-        navigate({
-          to: '/kanji/lesson-study',
-          search: {
-            lesson: lessonNum,
-            type: options.sectionId as 'kanji' | 'vocab',
-            mode: mode as 'flashcard' | 'quiz' | 'type',
-            ...(options.subMode ? { vocabSubMode: options.subMode as VocabTypeSubMode } : {}),
-            ...(dueOnly ? { dueOnly: true } : {}),
-          },
-        })
+        void launch(
+          lessonNum,
+          options.sectionId as 'kanji' | 'vocab',
+          dueOnly ?? false,
+          mode as StudyMode,
+        )
       }}
       onClose={onClose}
     />

@@ -1,3 +1,4 @@
+import type { SRSRating } from '../../types/srs'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { Eye, EyeOff } from 'lucide-react'
 import { useRef, useState } from 'react'
@@ -6,6 +7,7 @@ import { useTypeInput } from '../../hooks/useTypeInput'
 import { extractAnswer, processTypeInput } from '../../lib/convert-input'
 import { gradeReading } from '../../lib/mora'
 import { normalizeViMeaning, removeDiacritics } from '../../lib/text-utils'
+import { RatingBar } from '../study/shared/RatingBar'
 import { AnnotatedWord } from './AnnotatedWord'
 
 export type VocabTypeSubMode = 'word→hira' | 'vi→hira' | 'word→vi+hanviet'
@@ -14,7 +16,7 @@ interface KanjiVocabTypeInputCardProps {
   card: VocabWithSRS
   hanVietMap: Map<string, string>
   subMode: VocabTypeSubMode
-  onAnswer: (correct: boolean) => void
+  onRate: (rating: SRSRating) => void
 }
 
 function normalizeCanonical(text: string): string {
@@ -31,17 +33,17 @@ interface SingleHiraCardProps {
   card: VocabWithSRS
   hanVietMap: Map<string, string>
   subMode: 'word→hira' | 'vi→hira'
-  onAnswer: (correct: boolean) => void
+  onRate: (rating: SRSRating) => void
 }
 
-function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardProps) {
+function SingleHiraCard({ card, hanVietMap, subMode, onRate }: SingleHiraCardProps) {
   const [raw, setRaw] = useState('')
   const [wrongMorae, setWrongMorae] = useState<number[]>([])
   const [wasSkipped, setWasSkipped] = useState(false)
   const [hintedKey, setHintedKey] = useState<string | null>(null)
 
   const canonicalReading = normalizeCanonical(card.reading)
-  const { phase, isCorrect, inputRef, commit, advance } = useTypeInput(onAnswer, `${card.vocab_id}:${subMode}`)
+  const { phase, isCorrect, inputRef, commit } = useTypeInput(() => {}, `${card.vocab_id}:${subMode}`)
 
   const word = card.word ?? card.reading
   const hasAnnotations = card.word !== null && hanVietMap.size > 0
@@ -90,18 +92,14 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
     }
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (phase === 'result')
-        advance()
-      else
+      if (phase !== 'result')
         doCheck()
     }
   }
 
   function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault()
-    if (phase === 'result')
-      advance()
-    else
+    if (phase !== 'result')
       doCheck()
   }
 
@@ -277,15 +275,7 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
                 </div>
               )
             : (
-                <Button
-                  type="submit"
-                  variant={isCorrect ? 'success' : 'destructive'}
-                  className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
-                >
-                  {isCorrect ? '✓' : '✗'}
-                  {' '}
-                  TIẾP TỤC [ENTER]
-                </Button>
+                <RatingBar card={card} onRate={onRate} correct={isCorrect} />
               )}
         </form>
 
@@ -302,16 +292,15 @@ function SingleHiraCard({ card, hanVietMap, subMode, onAnswer }: SingleHiraCardP
 interface DualViHvCardProps {
   card: VocabWithSRS
   hanVietMap: Map<string, string>
-  onAnswer: (correct: boolean) => void
+  onRate: (rating: SRSRating) => void
 }
 
-function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
+function DualViHvCard({ card, hanVietMap, onRate }: DualViHvCardProps) {
   const [viRaw, setViRaw] = useState('')
   const [hvRaw, setHvRaw] = useState('')
   const [phase, setPhase] = useState<'input' | 'result'>('input')
   const [viResult, setViResult] = useState(false)
   const [hvResult, setHvResult] = useState(false)
-  const isCorrectRef = useRef(false)
   const viRef = useRef<HTMLInputElement>(null)
 
   const canonicalViMeaning = normalizeViMeaning(card.meaning_vi)
@@ -334,7 +323,6 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
       hv = removeDiacritics(hvRaw.trim()) === removeDiacritics(card.han_viet!.trim())
     }
 
-    isCorrectRef.current = vi && hv
     setViResult(vi)
     setHvResult(hv)
     setPhase('result')
@@ -343,14 +331,9 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
   function doSkip() {
     if (phase !== 'input')
       return
-    isCorrectRef.current = false
     setViResult(false)
     setHvResult(false)
     setPhase('result')
-  }
-
-  function advance() {
-    onAnswer(isCorrectRef.current)
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -361,18 +344,14 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
     }
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (phase === 'result')
-        advance()
-      else
+      if (phase !== 'result')
         doCheck()
     }
   }
 
   function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault()
-    if (phase === 'result')
-      advance()
-    else
+    if (phase !== 'result')
       doCheck()
   }
 
@@ -498,15 +477,7 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
                 </div>
               )
             : (
-                <Button
-                  type="submit"
-                  variant={isAllCorrect ? 'success' : 'destructive'}
-                  className="flex-1 font-[var(--br-mono-font)] text-[11px] uppercase"
-                >
-                  {isAllCorrect ? '✓' : '✗'}
-                  {' '}
-                  TIẾP TỤC [ENTER]
-                </Button>
+                <RatingBar card={card} onRate={onRate} correct={isAllCorrect} />
               )}
         </form>
 
@@ -520,9 +491,9 @@ function DualViHvCard({ card, hanVietMap, onAnswer }: DualViHvCardProps) {
 
 // ─── Public component ─────────────────────────────────────────────────────────
 
-export function KanjiVocabTypeInputCard({ card, hanVietMap, subMode, onAnswer }: KanjiVocabTypeInputCardProps) {
+export function KanjiVocabTypeInputCard({ card, hanVietMap, subMode, onRate }: KanjiVocabTypeInputCardProps) {
   if (subMode === 'word→vi+hanviet') {
-    return <DualViHvCard card={card} hanVietMap={hanVietMap} onAnswer={onAnswer} />
+    return <DualViHvCard card={card} hanVietMap={hanVietMap} onRate={onRate} />
   }
-  return <SingleHiraCard card={card} hanVietMap={hanVietMap} subMode={subMode} onAnswer={onAnswer} />
+  return <SingleHiraCard card={card} hanVietMap={hanVietMap} subMode={subMode} onRate={onRate} />
 }

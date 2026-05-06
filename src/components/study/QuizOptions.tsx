@@ -6,9 +6,10 @@ interface QuizOptionsProps {
   options: { id: string, label: string }[]
   correctId: string
   onAnswer: (isCorrect: boolean) => void
+  locked?: boolean
 }
 
-export function QuizOptions({ options, correctId, onAnswer }: QuizOptionsProps) {
+export function QuizOptions({ options, correctId, onAnswer, locked = false }: QuizOptionsProps) {
   // Store options reference alongside selected so the reset happens synchronously during render
   // when a new card is dealt, avoiding a setState-in-effect pattern.
   const [prevOptions, setPrevOptions] = useState(options)
@@ -28,6 +29,8 @@ export function QuizOptions({ options, correctId, onAnswer }: QuizOptionsProps) 
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
+      if (locked)
+        return
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
         return
       if (selected === null) {
@@ -42,10 +45,10 @@ export function QuizOptions({ options, correctId, onAnswer }: QuizOptionsProps) 
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [selected, options, correctId, onAnswer])
+  }, [selected, options, correctId, onAnswer, locked])
 
   function handleSelect(id: string) {
-    if (selected !== null)
+    if (selected !== null || locked)
       return
     setSelected(id)
   }

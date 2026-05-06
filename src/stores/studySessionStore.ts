@@ -1,5 +1,5 @@
 import type { SessionStats, StudyMode, TypeInputSubMode } from '../types/study'
-import type { VocabWithSRS } from '../types/vocabulary'
+import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -11,25 +11,30 @@ const EMPTY_STATS: SessionStats = {
 }
 
 interface StudySessionState {
-  queue: VocabWithSRS[]
+  queue: UnifiedCard[]
   currentIndex: number
   mode: StudyMode | null
   typeInputSubMode: TypeInputSubMode
-  deckSource: 'lesson' | 'active-vocab-deck' | 'active-kanji-deck'
+  deckSource: 'lesson' | 'active-vocab-deck' | 'active-kanji-deck' | 'custom-deck'
+  filter: CardTypeFilter
+  customDeckId: string | null
   stats: SessionStats
   initSession: (
-    queue: VocabWithSRS[],
+    queue: UnifiedCard[],
     mode: StudyMode,
     typeInputSubMode?: TypeInputSubMode,
-    deckSource?: 'lesson' | 'active-vocab-deck' | 'active-kanji-deck',
+    deckSource?: 'lesson' | 'active-vocab-deck' | 'active-kanji-deck' | 'custom-deck',
+    filter?: CardTypeFilter,
+    customDeckId?: string | null,
   ) => void
   markCorrect: () => void
-  markWrong: (card: VocabWithSRS) => void
-  markNeedsReview: (card: VocabWithSRS) => void
+  markWrong: (card: UnifiedCard) => void
+  markNeedsReview: (card: UnifiedCard) => void
   markAttempted: () => void
   advanceCard: () => void
   requeueWrongCards: () => void
   resetSession: () => void
+  clearSession: () => void
 }
 
 export const useStudySessionStore = create<StudySessionState>()(
@@ -40,10 +45,12 @@ export const useStudySessionStore = create<StudySessionState>()(
       mode: null,
       typeInputSubMode: 'word→hira',
       deckSource: 'lesson',
+      filter: 'all',
+      customDeckId: null,
       stats: { ...EMPTY_STATS },
 
-      initSession: (queue, mode, typeInputSubMode = 'word→hira', deckSource = 'lesson') =>
-        set({ queue, mode, typeInputSubMode, deckSource, currentIndex: 0, stats: { ...EMPTY_STATS, startTime: new Date() } }),
+      initSession: (queue, mode, typeInputSubMode = 'word→hira', deckSource = 'lesson', filter = 'all', customDeckId = null) =>
+        set({ queue, mode, typeInputSubMode, deckSource, filter, customDeckId, currentIndex: 0, stats: { ...EMPTY_STATS, startTime: new Date() } }),
 
       markCorrect: () =>
         set(s => ({ stats: { ...s.stats, correct: s.stats.correct + 1, total: s.stats.total + 1 } })),
@@ -54,7 +61,6 @@ export const useStudySessionStore = create<StudySessionState>()(
           stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card] },
         })),
 
-      // Records as wrong for session summary but does NOT re-queue the card.
       markNeedsReview: card =>
         set(s => ({
           stats: { ...s.stats, total: s.stats.total + 1, wrongCards: [...s.stats.wrongCards, card] },
@@ -67,23 +73,25 @@ export const useStudySessionStore = create<StudySessionState>()(
 
       requeueWrongCards: () =>
         set(s => ({
-          queue: s.stats.wrongCards as VocabWithSRS[],
+          queue: s.stats.wrongCards,
           currentIndex: 0,
           stats: { ...EMPTY_STATS, startTime: new Date() },
         })),
 
       resetSession: () =>
-        set({ queue: [], currentIndex: 0, mode: null, deckSource: 'lesson', stats: { ...EMPTY_STATS } }),
+        set({ queue: [], currentIndex: 0, mode: null, deckSource: 'lesson', filter: 'all', customDeckId: null, stats: { ...EMPTY_STATS } }),
+
+      clearSession: () =>
+        set({ queue: [], currentIndex: 0, mode: null, deckSource: 'lesson', filter: 'all', customDeckId: null, stats: { ...EMPTY_STATS } }),
     }),
     {
       name: 'study-session',
-      // Only persist wrongCards — the active session queue/index/mode are ephemeral
       partialize: state => ({ wrongCards: state.stats.wrongCards }),
       merge: (persisted, current) => ({
         ...current,
         stats: {
           ...current.stats,
-          wrongCards: (persisted as { wrongCards?: VocabWithSRS[] })?.wrongCards ?? [],
+          wrongCards: (persisted as { wrongCards?: UnifiedCard[] })?.wrongCards ?? [],
         },
       }),
     },

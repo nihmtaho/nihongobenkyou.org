@@ -12,12 +12,11 @@ import { useSettingsStore } from '../stores/settingsStore'
 const ROUTE_TITLES: Record<string, string> = {
   '/': 'Home',
   '/books': 'Books',
-  '/srs': 'Study',
+  '/study': 'Study',
   '/custom': 'My Decks',
   '/profile': 'Profile',
   '/settings': 'Settings',
   '/kanji': 'Kanji',
-  '/kanji/review': 'Kanji Review',
   '/stats': 'Statistics',
   '/leaderboard': 'Leaderboard',
 }

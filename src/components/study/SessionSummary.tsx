@@ -42,7 +42,7 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
 
   function handleRetryWrong() {
     requeueWrongCards()
-    navigate({ to: '/study/$mode', params: { mode }, search: { returnTab } })
+    navigate({ to: '/study/review', search: { filter: 'all' } })
   }
 
   function navigateToStudy() {
@@ -146,14 +146,18 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
             TỪ CẦN ÔN LẠI
           </p>
           <div className="flex flex-wrap gap-2">
-            {stats.wrongCards.slice(0, 8).map(c => (
-              <span
-                key={c.vocab_id}
-                className="text-sm font-[var(--br-jp-font)] bg-card border border-border/10 px-2 py-0.5"
-              >
-                {c.word ?? c.reading}
-              </span>
-            ))}
+            {stats.wrongCards.slice(0, 8).map((c) => {
+              const key = c.kind === 'vocab' ? c.card.vocab_id : c.kind === 'kanji' ? c.card.char : c.card.vocabId
+              const label = c.kind === 'vocab' ? (c.card.word ?? c.card.reading) : c.kind === 'kanji' ? c.kanji.char : (c.rv.word ?? c.rv.kana)
+              return (
+                <span
+                  key={key}
+                  className="text-sm font-[var(--br-jp-font)] bg-card border border-border/10 px-2 py-0.5"
+                >
+                  {label}
+                </span>
+              )
+            })}
             {stats.wrongCards.length > 8 && (
               <span className="text-[11px] font-[var(--br-mono-font)] text-muted-foreground self-center">
                 +
