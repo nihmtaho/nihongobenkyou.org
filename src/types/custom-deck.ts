@@ -1,3 +1,5 @@
+import type { CardStage, SRSRating } from './srs'
+
 export interface CustomDeck {
   id: string
   user_id: string
@@ -31,4 +33,26 @@ export interface ParsedVocabItem {
 export interface VocabParseResult {
   items: ParsedVocabItem[]
   errors: Array<{ row: number, reason: string }>
+}
+
+/**
+ * SRS state for a custom deck vocabulary item.
+ * Unlike CardState, card_stage / learning_step / lapse_count are
+ * required — custom deck SRS is always fully initialised on first insert.
+ */
+export interface CustomDeckSRS {
+  userId: string
+  itemId: string // custom_vocabulary.id (unique per word per deck)
+  deckId: string // custom_decks.id — stored for index queries
+  interval_days: number
+  ease_factor: number
+  due_date: string // ISO 8601 datetime string
+  review_count: number
+  card_stage: CardStage
+  learning_step: number
+  lapse_count: number
+  last_rating: SRSRating | null
+  consecutive_correct: number
+  pending_sync: boolean
+  updated_at: string // ISO 8601 datetime string
 }
