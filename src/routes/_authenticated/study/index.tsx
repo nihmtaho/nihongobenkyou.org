@@ -45,10 +45,14 @@ function StudyDashboardPage() {
     const delay = soonest - Date.now()
     if (delay <= 0) {
       queryClient.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
+      queryClient.invalidateQueries({ queryKey: ['custom-deck-progress', userId] })
+      queryClient.invalidateQueries({ queryKey: ['all-custom-deck-srs-summary', userId] })
       return
     }
     const id = setTimeout(() => {
       queryClient.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
+      queryClient.invalidateQueries({ queryKey: ['custom-deck-progress', userId] })
+      queryClient.invalidateQueries({ queryKey: ['all-custom-deck-srs-summary', userId] })
     }, delay)
     return () => clearTimeout(id)
   }, [stats?.nextDueLaterTodayMs, queryClient, userId])
@@ -59,7 +63,7 @@ function StudyDashboardPage() {
       : filter === 'kanji'
         ? stats.kanjiDue
         : filter === 'decks'
-          ? 0
+          ? stats.customDecksDueToday
           : stats.dueToday
     : 0
 
@@ -135,7 +139,7 @@ function StudyDashboardPage() {
                       ? stats.vocabDue
                       : f === 'kanji'
                         ? stats.kanjiDue
-                        : 0}
+                        : stats.customDecksDueToday}
                   </span>
                 )}
               </button>
@@ -167,56 +171,75 @@ function StudyDashboardPage() {
         )}
 
         {/* Time groups */}
-        {stats && filter !== 'decks' && (
+        {stats && (
           <div className="flex flex-col gap-2">
             <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
               SẮP ĐẾN HẠN
             </p>
-            {[
-              ...(stats.dueLaterToday > 0
-                ? [{
-                    label: 'Hôm nay',
-                    count: stats.dueLaterToday,
-                    color: 'text-warning',
-                    countdownMs: stats.nextDueLaterTodayMs,
-                  }]
-                : []),
-              {
-                label: 'Ngày mai',
-                count: stats.dueTomorrow,
-                color: 'text-info',
-                countdownMs: stats.nextDueTomorrowMs,
-              },
-              {
-                label: 'Tuần này',
-                count: stats.dueThisWeek,
-                color: 'text-foreground/50',
-                countdownMs: stats.nextDueThisWeekMs,
-              },
-              ...(stats.due21Days > 0
-                ? [{
-                    label: '21 ngày tới',
-                    count: stats.due21Days,
-                    color: 'text-foreground/30',
-                    countdownMs: stats.nextDue21DaysMs,
-                  }]
-                : []),
-            ].map(({ label, count, color, countdownMs }) => {
-              const countdown = formatCountdown(nowMs, countdownMs)
-              return (
-                <div key={label} className="flex items-center justify-between px-3 py-2 border border-border/10">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{label}</span>
-                    {countdown && (
-                      <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground/50">
-                        {`còn ${countdown}`}
-                      </span>
-                    )}
-                  </div>
-                  <span className={`font-bold text-lg ${color}`}>{count}</span>
-                </div>
-              )
-            })}
+            {filter === 'decks'
+              ? (
+                  [
+                    { label: 'Ngày mai', count: stats.customDecksDueTomorrow, color: 'text-info' },
+                    { label: 'Tuần này', count: stats.customDecksDueThisWeek, color: 'text-foreground/50' },
+                    ...(stats.customDecksDue21Days > 0
+                      ? [{ label: '21 ngày tới', count: stats.customDecksDue21Days, color: 'text-foreground/30' }]
+                      : []),
+                  ]
+                    .filter(row => row.count > 0)
+                    .map(({ label, count, color }) => (
+                      <div key={label} className="flex items-center justify-between px-3 py-2 border border-border/10">
+                        <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{label}</span>
+                        <span className={`font-bold text-lg ${color}`}>{count}</span>
+                      </div>
+                    ))
+                )
+              : (
+                  [
+                    ...(stats.dueLaterToday > 0
+                      ? [{
+                          label: 'Hôm nay',
+                          count: stats.dueLaterToday,
+                          color: 'text-warning',
+                          countdownMs: stats.nextDueLaterTodayMs,
+                        }]
+                      : []),
+                    {
+                      label: 'Ngày mai',
+                      count: stats.dueTomorrow,
+                      color: 'text-info',
+                      countdownMs: stats.nextDueTomorrowMs,
+                    },
+                    {
+                      label: 'Tuần này',
+                      count: stats.dueThisWeek,
+                      color: 'text-foreground/50',
+                      countdownMs: stats.nextDueThisWeekMs,
+                    },
+                    ...(stats.due21Days > 0
+                      ? [{
+                          label: '21 ngày tới',
+                          count: stats.due21Days,
+                          color: 'text-foreground/30',
+                          countdownMs: stats.nextDue21DaysMs,
+                        }]
+                      : []),
+                  ].map(({ label, count, color, countdownMs }) => {
+                    const countdown = formatCountdown(nowMs, countdownMs)
+                    return (
+                      <div key={label} className="flex items-center justify-between px-3 py-2 border border-border/10">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">{label}</span>
+                          {countdown && (
+                            <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground/50">
+                              {`còn ${countdown}`}
+                            </span>
+                          )}
+                        </div>
+                        <span className={`font-bold text-lg ${color}`}>{count}</span>
+                      </div>
+                    )
+                  })
+                )}
           </div>
         )}
 
