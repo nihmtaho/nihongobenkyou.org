@@ -1,13 +1,15 @@
 import type { CustomDeck } from '../../types/custom-deck'
+import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { DeckCreateDialog } from '../../components/custom-decks/DeckCreateDialog'
 import { DeckGrid } from '../../components/custom-decks/DeckGrid'
 import { DeckSheet } from '../../components/custom-decks/DeckSheet'
-import { useActivateStudyDeck } from '../../hooks/useActivateStudyDeck'
+import { VocabStudyModal } from '../../components/study/VocabStudyModal'
 import { useCustomDeckMutations } from '../../hooks/useCustomDeckMutations'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
+import { useLaunchCustomDeckSession } from '../../hooks/useLaunchCustomDeckSession'
 import { useAuthStore } from '../../stores/authStore'
 
 export const Route = createFileRoute('/custom/')({
@@ -23,10 +25,11 @@ function CustomDecksPage() {
 
   const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [studyDeck, setStudyDeck] = useState<CustomDeck | null>(null)
 
   const { data: decks = [], isLoading } = useCustomDecks(effectiveUserId)
   const mutations = useCustomDeckMutations(effectiveUserId)
-  const activateMutation = useActivateStudyDeck(effectiveUserId)
+  const { launch: launchDeck } = useLaunchCustomDeckSession(effectiveUserId)
 
   const selectedDeck = decks.find(d => d.id === selectedDeckId) ?? null
 
@@ -68,7 +71,7 @@ function CustomDecksPage() {
         selectedDeckId={selectedDeckId}
         onSelectDeck={id => setSelectedDeckId(prev => prev === id ? null : id)}
         onNewDeck={() => setShowCreateDialog(true)}
-        onStudy={deck => activateMutation.mutate(deck)}
+        onStudy={deck => setStudyDeck(deck)}
         onToggleActive={deckId => mutations.toggleActive.mutate(deckId)}
         onDeleteDeck={(deckId) => {
           if (selectedDeckId === deckId)
@@ -89,6 +92,18 @@ function CustomDecksPage() {
         onSave={handleCreateDeck}
         onClose={() => setShowCreateDialog(false)}
       />
+
+      {studyDeck && (
+        <VocabStudyModal
+          title={studyDeck.title}
+          context="all"
+          onLaunch={(mode: StudyMode, subMode?: TypeInputSubMode) => {
+            launchDeck(studyDeck, mode, subMode)
+            setStudyDeck(null)
+          }}
+          onClose={() => setStudyDeck(null)}
+        />
+      )}
     </div>
   )
 }

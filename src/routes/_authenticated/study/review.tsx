@@ -4,7 +4,7 @@ import type { CardTypeFilter, UnifiedCard } from '../../../types/unified-card'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { KanjiQuizCard } from '../../../components/kanji/KanjiQuizCard'
 import { KanjiStudyFlipCard } from '../../../components/kanji/KanjiStudyFlipCard'
@@ -45,6 +45,11 @@ function StudyReviewPage() {
   const storeSubMode = useStudySessionStore(s => s.typeInputSubMode)
   const clearSession = useStudySessionStore(s => s.clearSession)
 
+  // Captured at mount: true means the user already chose a mode in the lesson/deck popup.
+  // Using a ref because storeQueue will be cleared after session init, so a variable would
+  // lose this signal on re-renders.
+  const wasPrebuiltLaunchRef = useRef(storeQueue.length > 0)
+
   const prebuilt = storeQueue.length > 0 ? storeQueue : undefined
   const session = useUnifiedSrsSession(userId, filter, prebuilt
     ? { prebuiltQueue: prebuilt, initialMode: storeMode ?? 'flashcard', initialSubMode: storeSubMode }
@@ -56,6 +61,16 @@ function StudyReviewPage() {
       clearSession()
     }
   }, [session.phase, clearSession])
+
+  // Auto-start for lesson/deck launches — mode was already chosen in the popup.
+  useEffect(() => {
+    if (wasPrebuiltLaunchRef.current && session.phase === 'pre-session') {
+      session.startSession()
+    }
+    // session object identity is not stable but session.phase and session.startSession are the
+    // only values read here. Adding session would re-run on every render unnecessarily.
+    // eslint-disable-next-line react/exhaustive-deps
+  }, [session.phase, session.startSession])
 
   // Managed here so it persists across cards in listening mode
   const [playbackRate, setPlaybackRate] = useState(1.0)
