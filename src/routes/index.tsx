@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
+import { Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   LearningAnalyticsWidget,
@@ -33,13 +34,27 @@ function HomePage() {
         <div className="flex flex-col gap-6">
 
           {/* Masthead */}
-          <div className="flex flex-col gap-1">
-            <h1 className="text-7xl lg:text-[6rem] xl:text-[7rem] font-black font-[var(--br-heading-font)] tracking-tighter leading-none">
-              NIHONGO.
-            </h1>
-            <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
-              NHẬT NGỮ · HỌC MỖI NGÀY
-            </p>
+          <div className="flex items-start justify-between">
+            <div className="flex flex-col gap-1">
+              <h1 className="text-7xl lg:text-[6rem] xl:text-[7rem] font-black font-[var(--br-heading-font)] tracking-tighter leading-none">
+                NIHONGO.
+              </h1>
+              <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
+                NHẬT NGỮ · HỌC MỖI NGÀY
+              </p>
+            </div>
+            {/* Settings shortcut — mobile only (bottom dock replaces SETTINGS tab) */}
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="lg:hidden mt-1 text-muted-foreground"
+              aria-label="Cài đặt"
+            >
+              <Link to="/settings">
+                <Settings size={20} strokeWidth={1.75} />
+              </Link>
+            </Button>
           </div>
 
           {/* Quick start */}
