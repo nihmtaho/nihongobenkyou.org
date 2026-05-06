@@ -6,8 +6,8 @@ import type { VocabWithSRS } from '../types/vocabulary'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { bulkUpsertCustomDeckSRS, getCustomDeckSRS } from '../db/custom-deck-srs'
 import { getDeckWords, updateDeck } from '../db/custom-decks-local'
-import { db } from '../db/schema'
 import { useStudySessionStore } from '../stores/studySessionStore'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 
@@ -39,38 +39,38 @@ export function useLaunchCustomDeckSession(userId: string) {
       if (words.length === 0)
         return
 
-      const existingCards = await db.user_cards
-        .where('[userId+vocabId]')
-        .anyOf(words.map(w => [userId, w.id]))
-        .toArray()
-      const existingIds = new Set(existingCards.map(c => c.vocabId))
+      // Load existing SRS state from custom_deck_srs
+      const existingSRS = await getCustomDeckSRS(userId, deck.id)
+      const srsMap = new Map(existingSRS.map(s => [s.itemId, s]))
 
-      const toAdd = words
-        .filter(w => !existingIds.has(w.id))
+      // Initialise SRS entries for words that have never been rated
+      const newEntries = words
+        .filter(w => !srsMap.has(w.id))
         .map(w => ({
           userId,
-          vocabId: w.id,
-          interval_days: 1,
+          itemId: w.id,
+          deckId: deck.id,
+          interval_days: 0,
           ease_factor: 2.5,
           due_date: today,
           review_count: 0,
+          card_stage: 'learning' as const,
+          learning_step: 0,
+          lapse_count: 0,
           last_rating: null as SRSRating | null,
-          pending_sync: false,
-          updated_at: now,
-          is_known: false,
           consecutive_correct: 0,
+          pending_sync: true,
+          updated_at: now,
         }))
-      if (toAdd.length > 0)
-        await db.user_cards.bulkAdd(toAdd)
 
-      const allCards = await db.user_cards
-        .where('[userId+vocabId]')
-        .anyOf(words.map(w => [userId, w.id]))
-        .toArray()
-      const cardMap = new Map(allCards.map(c => [c.vocabId, c]))
+      if (newEntries.length > 0) {
+        await bulkUpsertCustomDeckSRS(newEntries)
+        for (const entry of newEntries)
+          srsMap.set(entry.itemId, entry)
+      }
 
       let queue: VocabWithSRS[] = words.map((w) => {
-        const c = cardMap.get(w.id)
+        const s = srsMap.get(w.id)
         return {
           vocab_id: w.id,
           word: w.kanji ?? null,
@@ -91,15 +91,18 @@ export function useLaunchCustomDeckSession(userId: string) {
           deprecated: false,
           userId,
           vocabId: w.id,
-          interval_days: c?.interval_days ?? 1,
-          ease_factor: c?.ease_factor ?? 2.5,
-          due_date: c?.due_date ?? today,
-          review_count: c?.review_count ?? 0,
-          last_rating: (c?.last_rating ?? null) as SRSRating | null,
+          interval_days: s?.interval_days ?? 0,
+          ease_factor: s?.ease_factor ?? 2.5,
+          due_date: s?.due_date ?? today,
+          review_count: s?.review_count ?? 0,
+          last_rating: (s?.last_rating ?? null) as SRSRating | null,
           pending_sync: false,
-          updated_at: c?.updated_at ?? now,
+          updated_at: s?.updated_at ?? now,
           is_known: false,
-          consecutive_correct: c?.consecutive_correct ?? 0,
+          consecutive_correct: s?.consecutive_correct ?? 0,
+          card_stage: s?.card_stage ?? 'learning',
+          learning_step: s?.learning_step ?? 0,
+          lapse_count: s?.lapse_count ?? 0,
         }
       })
 
@@ -111,7 +114,7 @@ export function useLaunchCustomDeckSession(userId: string) {
         return
 
       const unifiedQueue: UnifiedCard[] = queue.map(card => ({ kind: 'vocab' as const, card }))
-      initSession(unifiedQueue, mode, subMode)
+      initSession(unifiedQueue, mode, subMode, 'custom-deck', 'all', deck.id)
       navigate({ to: '/study/review', search: { filter: 'all' } })
     }
     finally {

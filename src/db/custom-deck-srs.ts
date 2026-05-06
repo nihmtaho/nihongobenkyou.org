@@ -16,6 +16,12 @@ export async function upsertCustomDeckSRS(entry: CustomDeckSRS): Promise<void> {
   await db.custom_deck_srs.put(entry)
 }
 
+export async function bulkUpsertCustomDeckSRS(entries: CustomDeckSRS[]): Promise<void> {
+  if (entries.length === 0)
+    return
+  await db.custom_deck_srs.bulkPut(entries)
+}
+
 export async function getCustomDeckDue(
   userId: string,
   deckId: string,
