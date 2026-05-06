@@ -23,9 +23,15 @@ function getIntervalPreview(card: VocabWithSRS | KanjiCardState, userId: string,
   if (rating === 0)
     return '6–10 min'
   const state = toCardState(card, userId)
-  if (rating === 1 && state.review_count === 0)
-    return '2h'
   const result = calculateNextReview(state, rating)
+  if (result.new_card_stage === 'learning' || result.new_card_stage === 'relearning') {
+    const ms = new Date(result.due_date).getTime() - Date.now()
+    if (ms < 60 * 60 * 1000)
+      return `${Math.round(ms / 60000)} min`
+    if (ms < 24 * 60 * 60 * 1000)
+      return `${Math.round(ms / 3600000)}h`
+    return formatIntervalPreview(Math.round(ms / (24 * 60 * 60 * 1000)))
+  }
   return formatIntervalPreview(result.new_interval)
 }
 

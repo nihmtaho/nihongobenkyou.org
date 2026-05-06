@@ -18,7 +18,7 @@ export function toCardState(card: AnyCard, userId: string): CardState {
       updated_at: card.updated_at,
       is_known: card.is_known ?? false,
       consecutive_correct: card.consecutive_correct ?? 0,
-      card_stage: card.card_stage ?? 'review',
+      card_stage: card.card_stage ?? ((card.review_count ?? 0) === 0 ? 'learning' : 'review'),
       learning_step: card.learning_step ?? 0,
       lapse_count: card.lapse_count ?? 0,
     }
@@ -35,7 +35,7 @@ export function toCardState(card: AnyCard, userId: string): CardState {
     updated_at: card.updated_at,
     is_known: false,
     consecutive_correct: card.consecutive_correct ?? 0,
-    card_stage: card.card_stage ?? 'review',
+    card_stage: card.card_stage ?? ((card.review_count ?? 0) === 0 ? 'learning' : 'review'),
     learning_step: card.learning_step ?? 0,
     lapse_count: card.lapse_count ?? 0,
   }
