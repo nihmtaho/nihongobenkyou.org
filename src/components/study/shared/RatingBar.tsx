@@ -20,9 +20,10 @@ interface RatingBarProps {
 }
 
 function getIntervalPreview(card: VocabWithSRS | KanjiCardState, userId: string, rating: SRSRating): string {
-  if (rating === 0)
-    return '6–10 min'
   const state = toCardState(card, userId)
+  // Review-phase Again uses randomAgainDelay (6–10 min) — don't call calculateNextReview to avoid random noise
+  if (rating === 0 && state.card_stage === 'review')
+    return '6–10 min'
   const result = calculateNextReview(state, rating)
   if (result.new_card_stage === 'learning' || result.new_card_stage === 'relearning') {
     const ms = new Date(result.due_date).getTime() - Date.now()
