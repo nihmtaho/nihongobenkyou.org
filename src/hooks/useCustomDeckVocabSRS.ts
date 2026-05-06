@@ -21,7 +21,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
         deckId,
         interval_days: result.new_interval,
         ease_factor: result.new_ease,
-        due_date: result.due_date,
+        due_date: result.due_date.slice(0, 10),
         review_count: newReviewCount,
         card_stage: result.new_card_stage,
         learning_step: result.new_learning_step,
@@ -34,6 +34,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deckId] })
+      // TODO: trigger Supabase sync flush for custom_deck_srs when sync layer is implemented
     },
     retry: 0,
   })
