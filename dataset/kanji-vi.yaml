@@ -224,7 +224,7 @@ lesson-01:
         meaning_vi: tên người (Yamamoto)
         example:
           ja: 山本さんは日本人です。
-          vi: Anh Yamamoto là người Nhật. 
+          vi: Anh Yamamoto là người Nhật.
       - word: 本当
         kana: ほんとう
         han_viet: Bản Đương
@@ -277,7 +277,7 @@ lesson-01:
     meaning_vi: [gì, cái gì]
     han_viet: Hà
     mnemonic_vi: "Cái gì (何) có một dấu hỏi ở trên"
-    components: 
+    components:
       - { char: 亻, meaning_en: person, meaning_vi: người, han_viet: Nhân }
       - { char: 可, meaning_en: can, meaning_vi: có thể, han_viet: Khả }
     related_vocab:
@@ -327,7 +327,7 @@ lesson-01:
     meaning_vi: [lớn, to, đại]
     han_viet: Đại
     mnemonic_vi: "Người (大) giang tay to lớn"
-    components: 
+    components:
       - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
     related_vocab:
       - word: 大きい
@@ -362,7 +362,7 @@ lesson-01:
     meaning_vi: [học]
     han_viet: Học
     mnemonic_vi: "Học (学) có một mái nhà và một đứa trẻ bên dưới"
-    components: 
+    components:
       - { char: 子, meaning_en: child, meaning_vi: đứa trẻ, han_viet: Tử }
       - { char: 龸, meaning_en: cover, meaning_vi: mái nhà, han_viet: Mịch }
     related_vocab:
@@ -688,14 +688,14 @@ lesson-03:
         meaning_vi: tám nghìn
         example:
           ja: 八千円です。
-          vi: Giá là tám nghìn yên. 
+          vi: Giá là tám nghìn yên.
       - word: 三千
         kana: さんぜん
         han_viet: Tam thiên
         meaning_vi: ba nghìn
         example:
           ja: 三千円です。
-          vi: Giá là ba nghìn yên.  
+          vi: Giá là ba nghìn yên.
   - char: 万
     meaning_vi: [vạn, mười nghìn]
     han_viet: Vạn
@@ -715,7 +715,7 @@ lesson-03:
         meaning_vi: một trăm nghìn
         example:
           ja: 十万円です。
-          vi: Giá là một trăm nghìn yên. 
+          vi: Giá là một trăm nghìn yên.
       - word: 百万
         kana: ひゃくまん
         han_viet: Bách Vạn
@@ -813,7 +813,7 @@ lesson-03:
         meaning_vi: thời gian
         example:
           ja: 三時間勉強します。
-          vi: Tôi học ba giờ. 
+          vi: Tôi học ba giờ.
   - char: 分
     meaning_vi: [phút, phần]
     han_viet: Phân
@@ -951,7 +951,7 @@ lesson-04:
         meaning_vi: thứ Hai
         example:
           ja: 月曜日に会いましょう。
-          vi: Hãy gặp nhau vào thứ Hai. 
+          vi: Hãy gặp nhau vào thứ Hai.
   - char: 火
     meaning_vi: [lửa, hỏa]
     han_viet: Hỏa
@@ -1209,7 +1209,7 @@ lesson-05:
         meaning_vi: năm 2026
         example:
           ja: 2026年にオリンピックがあります。
-          vi: Năm 2026 sẽ có Olympic. 
+          vi: Năm 2026 sẽ có Olympic.
   - char: 今
     meaning_vi: [bây giờ, hiện tại]
     han_viet: Kim
@@ -2113,7 +2113,7 @@ lesson-08:
         meaning_vi: bầu trời xanh
         example:
           ja: 青空が広がっています。
-          vi: Bầu trời xanh đang trải rộng. 
+          vi: Bầu trời xanh đang trải rộng.
       - word: 青春
         kana: せいしゅん
         han_viet: Thanh Xuân
@@ -2442,7 +2442,7 @@ lesson-09:
         meaning_vi: tay phải
         example:
           ja: 右手でボールを投げます。
-          vi: Tôi ném bóng bằng tay phải. 
+          vi: Tôi ném bóng bằng tay phải.
       - word: 左右
         kana: さゆう
         han_viet: Tả Hữu
@@ -3693,3 +3693,210 @@ lesson-14:
         example:
           ja: 英語が話せますか？
           vi: Bạn có thể nói tiếng Anh không?
+
+lesson-15:
+  - char: 体
+    meaning_vi: [thể, cơ thể]
+    han_viet: Thể
+    mnemonic_vi: "Thể (体) là toàn bộ phần vật chất của một sinh vật sống, bao gồm xương, cơ bắp, da và các cơ quan nội tạng"
+    components:
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 本, meaning_en: book/origin, meaning_vi: sách/gốc, han_viet: Bản }
+    related_vocab:
+      - word: 体
+        kana: からだ
+        han_viet: Thể
+        meaning_vi: cơ thể
+        example:
+          ja: 健康な体が大切です。
+          vi: Một cơ thể khỏe mạnh là quan trọng.
+      - word: 全体
+        kana: ぜんたい
+        han_viet: Toàn Thể
+        meaning_vi: toàn thể, toàn bộ
+        example:
+          ja: 全体のバランスが重要です。
+          vi: Cân bằng toàn thể là quan trọng.
+  - char: 足
+    meaning_vi: [túc, chân]
+    han_viet: Túc
+    mnemonic_vi: "Chân (足) là phần của cơ thể con người hoặc động vật dùng để đi lại và đứng vững"
+    components:
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+    related_vocab:
+      - word: 足
+        kana: あし
+        han_viet: Túc
+        meaning_vi: chân
+        example:
+          ja: 足が痛いです。
+          vi: Chân tôi đau.
+      - word: 〜足
+        kana: 〜そく
+        han_viet: Túc
+        meaning_vi: đôi (đơn vị đếm giày dép)
+        example:
+          ja: 靴を二足買います。
+          vi: Tôi mua hai đôi giày.
+  - char: 口
+    meaning_vi: [khẩu, miệng]
+    han_viet: Khẩu
+    mnemonic_vi: "Miệng (口) là phần của khuôn mặt con người hoặc động vật dùng để ăn uống và nói chuyện"
+    components:
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+    related_vocab:
+      - word: 口
+        kana: くち
+        han_viet: Khẩu
+        meaning_vi: miệng
+        example:
+          ja: 口を開けてください。
+          vi: Hãy mở miệng ra.
+      - word: 人口
+        kana: じんこう
+        han_viet: Nhân Khẩu
+        meaning_vi: dân số
+        example:
+          ja: 日本の人口は約1億2000万人です。
+          vi: Dân số Nhật Bản khoảng 120 triệu người.
+      - word: 出口
+        kana: でぐち
+        han_viet: Xuất Khẩu
+        meaning_vi: lối ra, cửa ra
+        example:
+          ja: 出口はどこですか？
+          vi: Lối ra ở đâu?
+      - word: 入口
+        kana: いりぐち
+        han_viet: Nhập Khẩu
+        meaning_vi: lối vào, cửa vào
+        example:
+          ja: 入口はどこですか？
+          vi: Lối vào ở đâu?
+  - char: 顔
+    meaning_vi: [nhan, khuôn mặt]
+    han_viet: Nhan
+    mnemonic_vi: "Khuôn mặt (顔) là phần trước của đầu người hoặc động vật, bao gồm mắt, mũi, miệng và các đặc điểm khác dùng để nhận diện và thể hiện cảm xúc"
+    components:
+      - { char: 頁, meaning_en: page/head, meaning_vi: trang/đầu, han_viet: Hiệt }
+    related_vocab:
+      - word: 顔
+        kana: かお
+        han_viet: Nhan
+        meaning_vi: khuôn mặt
+        example:
+          ja: 彼は笑顔が素敵です。
+          vi: Anh ấy có nụ cười đẹp.
+      - word: 笑顔
+        kana: えがお
+        han_viet: Tiếu Nhan
+        meaning_vi: nụ cười
+        example:
+          ja: 笑顔は人を幸せにします。
+          vi: Nụ cười làm cho mọi người hạnh phúc.
+  - char: 耳
+    meaning_vi: [nhĩ, tai]
+    han_viet: Nhĩ
+    mnemonic_vi: "Tai (耳) là cơ quan của cơ thể con người hoặc động vật dùng để nghe và duy trì thăng bằng"
+    components:
+      - { char: 耳, meaning_en: ear, meaning_vi: tai, han_viet: Nhĩ }
+    related_vocab:
+      - word: 耳
+        kana: みみ
+        han_viet: Nhĩ
+        meaning_vi: tai
+        example:
+          ja: 耳が痛いです。
+          vi: Tai tôi đau.
+      - word: バンの耳
+        kana: バンのみみ
+        han_viet: Nhĩ
+        meaning_vi: viền bánh mì (phần vỏ cứng của bánh mì)
+        example:
+          ja: バンの耳が好きです。
+          vi: Tôi thích phần vỏ bánh mì.
+  - char: 目
+    meaning_vi: [mục, mắt]
+    han_viet: Mục
+    mnemonic_vi: "Mắt (目) là cơ quan của cơ thể con người hoặc động vật dùng để nhìn và nhận biết ánh sáng"
+    components:
+      - { char: 目, meaning_en: eye, meaning_vi: mắt, han_viet: Mục }
+    related_vocab:
+      - word: 目
+        kana: め
+        han_viet: Mục
+        meaning_vi: mắt
+        example:
+          ja: 目が疲れています。
+          vi: Mắt tôi mỏi.
+      - word: 目的
+        kana: もくてき
+        han_viet: Mục Đích
+        meaning_vi: mục đích
+        example:
+          ja: 目的を達成します。
+          vi: Tôi sẽ đạt được mục đích.
+      - word: 一日目
+        kana: いちにちめ
+        han_viet: Nhất Nhật Mục
+        meaning_vi: ngày đầu tiên
+        example:
+          ja: 一日目はとても忙しかったです。
+          vi: Ngày đầu tiên rất bận rộn.
+  - char: 立
+    meaning_vi: [lập, đứng]
+    han_viet: Lập
+    mnemonic_vi: "Đứng (立つ) là hành động giữ cơ thể thẳng đứng trên chân và không ngồi hoặc nằm"
+    components:
+      - { char: 立, meaning_en: stand, meaning_vi: đứng, han_viet: Lập }
+    related_vocab:
+      - word: 立つ
+        kana: たつ
+        han_viet: Lập
+        meaning_vi: đứng lên (động từ)
+        example:
+          ja: 立ってください。
+          vi: Hãy đứng lên.
+      - word: 立てる
+        kana: たてる
+        han_viet: Lập
+        meaning_vi: dựng lên, xây dựng (động từ)
+        example:
+          ja: テントを立てます。
+          vi: Tôi dựng lều lên.
+      - word: 国立
+        kana: こくりつ
+        han_viet: Quốc Lập
+        meaning_vi: quốc lập (thuộc về nhà nước)
+        example:
+          ja: 国立大学に通います。
+          vi: Tôi học tại một trường đại học quốc lập.
+      - word: 私立
+        kana: しりつ
+        han_viet: Tư Lập
+        meaning_vi: tư lập (thuộc về tư nhân)
+        example:
+          ja: 私立学校に通います。
+          vi: Tôi học tại một trường tư lập.
+  - char: 知
+    meaning_vi: [tri, biết]
+    han_viet: Tri
+    mnemonic_vi: "Biết (知る) là khi một người có thông tin hoặc hiểu biết về một sự vật, hiện tượng hoặc tình huống nào đó"
+    components:
+      - { char: 矢, meaning_en: arrow, meaning_vi: mũi tên, han_viet: Thỉ }
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+    related_vocab:
+      - word: 知る
+        kana: しる
+        han_viet: Tri
+        meaning_vi: biết (động từ)
+        example:
+          ja: それを知っていますか？
+          vi: Bạn có biết điều đó không?
+      - word: 知り合い
+        kana: しりあい
+        han_viet: Tri Hợp
+        meaning_vi: người quen, bạn bè
+        example:
+          ja: 彼は私の知り合いです。
+          vi: Anh ấy là người quen của tôi.
