@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ActiveDeckKanjiSection, ActiveDeckVocabSection } from '../../../components/active-deck/ActiveDeckSection'
+import { CustomDecksStudySection } from '../../../components/study/CustomDecksStudySection'
 import { SrsGuideDialog } from '../../../components/study/SrsGuideDialog'
 import { useNow } from '../../../hooks/useNow'
 import { useStreak } from '../../../hooks/useStreak'
@@ -156,9 +157,10 @@ function StudyDashboardPage() {
           </Button>
         )}
 
-        {/* Active deck sections */}
+        {/* Active deck sections + custom decks */}
         {filter === 'decks' && (
           <div className="flex flex-col gap-4">
+            <CustomDecksStudySection userId={userId} />
             <ActiveDeckVocabSection userId={userId} />
             <ActiveDeckKanjiSection userId={userId} />
           </div>
