@@ -16,6 +16,7 @@ const MOD = isMac ? '⌘' : 'Ctrl'
 interface RatingBarProps {
   card?: VocabWithSRS | KanjiCardState
   onRate: (rating: SRSRating) => void
+  correct?: boolean
 }
 
 function getIntervalPreview(card: VocabWithSRS | KanjiCardState, userId: string, rating: SRSRating): string {
@@ -28,7 +29,7 @@ function getIntervalPreview(card: VocabWithSRS | KanjiCardState, userId: string,
   return formatIntervalPreview(result.new_interval)
 }
 
-export function RatingBar({ card, onRate }: RatingBarProps) {
+export function RatingBar({ card, onRate, correct }: RatingBarProps) {
   const userId = useAuthStore(s => s.userId) ?? ''
 
   useEffect(() => {
@@ -46,29 +47,36 @@ export function RatingBar({ card, onRate }: RatingBarProps) {
   }, [onRate])
 
   return (
-    <ButtonGroup className="w-full">
-      {([0, 1, 2, 3] as SRSRating[]).map(r => (
-        <Button
-          key={r}
-          type="button"
-          variant={RATING_VARIANTS[r]}
-          className="flex-1 font-[var(--br-mono-font)] text-[11px] flex flex-col gap-0.5 py-2 h-auto"
-          onClick={(e) => {
-            e.stopPropagation()
-            onRate(r)
-          }}
-        >
-          <span className="font-bold">{RATING_LABELS[r]}</span>
-          <span className="opacity-60 text-[9px]">
-            {card !== undefined ? getIntervalPreview(card, userId, r) : r === 0 ? '6–10 min' : '--'}
-          </span>
-          <span className="opacity-30 text-[8px]">
-            {MOD}
-            +
-            {r + 1}
-          </span>
-        </Button>
-      ))}
-    </ButtonGroup>
+    <div className="flex flex-col gap-1.5 w-full">
+      {correct !== undefined && (
+        <p className={`text-center text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest ${correct ? 'text-success' : 'text-destructive'}`}>
+          {correct ? '✓ Đúng' : '✗ Sai'}
+        </p>
+      )}
+      <ButtonGroup className="w-full">
+        {([0, 1, 2, 3] as SRSRating[]).map(r => (
+          <Button
+            key={r}
+            type="button"
+            variant={RATING_VARIANTS[r]}
+            className="flex-1 font-[var(--br-mono-font)] text-[11px] flex flex-col gap-0.5 py-2 h-auto"
+            onClick={(e) => {
+              e.stopPropagation()
+              onRate(r)
+            }}
+          >
+            <span className="font-bold">{RATING_LABELS[r]}</span>
+            <span className="opacity-60 text-[9px]">
+              {card !== undefined ? getIntervalPreview(card, userId, r) : r === 0 ? '6–10 min' : '--'}
+            </span>
+            <span className="opacity-30 text-[8px]">
+              {MOD}
+              +
+              {r + 1}
+            </span>
+          </Button>
+        ))}
+      </ButtonGroup>
+    </div>
   )
 }

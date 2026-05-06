@@ -343,7 +343,7 @@ export function TypeInputCard({ card, subMode = 'word→hira', onRate }: TypeInp
                 </div>
               )
             : (
-                <RatingBar card={card} onRate={onRate} />
+                <RatingBar card={card} onRate={onRate} correct={isCorrect} />
               )}
         </form>
 

@@ -169,7 +169,7 @@ export function KanjiTypeInputCard({ prompt, answer, hint, card, onRate }: Kanji
                 </div>
               )
             : (
-                <RatingBar card={card} onRate={onRate} />
+                <RatingBar card={card} onRate={onRate} correct={isCorrect} />
               )}
         </form>
 

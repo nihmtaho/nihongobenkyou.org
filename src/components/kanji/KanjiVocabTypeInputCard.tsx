@@ -275,7 +275,7 @@ function SingleHiraCard({ card, hanVietMap, subMode, onRate }: SingleHiraCardPro
                 </div>
               )
             : (
-                <RatingBar card={card} onRate={onRate} />
+                <RatingBar card={card} onRate={onRate} correct={isCorrect} />
               )}
         </form>
 
@@ -477,7 +477,7 @@ function DualViHvCard({ card, hanVietMap, onRate }: DualViHvCardProps) {
                 </div>
               )
             : (
-                <RatingBar card={card} onRate={onRate} />
+                <RatingBar card={card} onRate={onRate} correct={isAllCorrect} />
               )}
         </form>
 

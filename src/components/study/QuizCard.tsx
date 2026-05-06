@@ -118,7 +118,7 @@ export function QuizCard({ card, pool, meaningLanguage, onRate }: QuizCardProps)
       </div>
       {answeredCorrect !== null && (
         <div className="px-4 pb-4">
-          <RatingBar card={card} onRate={onRate} />
+          <RatingBar card={card} onRate={onRate} correct={answeredCorrect} />
         </div>
       )}
     </div>
