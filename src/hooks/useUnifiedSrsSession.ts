@@ -93,6 +93,33 @@ export function useUnifiedSrsSession(
       const vocabItems = await db.vocabulary.where('vocab_id').anyOf(regularVocabIds).toArray()
       const vocabMap = new Map(vocabItems.map(v => [v.vocab_id, v]))
 
+      // Fall back to custom_vocabulary for IDs not found in standard vocabulary
+      const missingIds = regularVocabIds.filter(id => !vocabMap.has(id))
+      if (missingIds.length > 0) {
+        const customItems = await db.custom_vocabulary.where('id').anyOf(missingIds).toArray()
+        for (const cv of customItems) {
+          vocabMap.set(cv.id, {
+            vocab_id: cv.id,
+            word: cv.kanji ?? null,
+            reading: cv.kana,
+            romaji: '',
+            meaning_en: '',
+            meaning_vi: cv.meaning_vi,
+            han_viet: cv.han_viet ?? null,
+            pitch_pattern: null,
+            pitch_type: null,
+            audio_filename: null,
+            pos: [],
+            jlpt_level: null,
+            book_source: 'custom',
+            lesson_number: 0,
+            examples: [],
+            tags: [],
+            deprecated: false,
+          })
+        }
+      }
+
       const vocab: UnifiedCard[] = []
       const kanjiVocab: UnifiedCard[] = []
 

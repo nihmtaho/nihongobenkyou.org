@@ -137,6 +137,7 @@ function StudyDashboardPage() {
               SẮP ĐẾN HẠN
             </p>
             {[
+              ...(stats.dueLaterToday > 0 ? [{ label: 'Hôm nay', count: stats.dueLaterToday, color: 'text-warning' }] : []),
               { label: 'Ngày mai', count: stats.dueTomorrow, color: 'text-info' },
               { label: 'Tuần này', count: stats.dueThisWeek, color: 'text-foreground/50' },
             ].map(({ label, count, color }) => (

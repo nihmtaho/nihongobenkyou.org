@@ -5,6 +5,7 @@ import { db } from '../db/schema'
 
 export interface UnifiedDueStats {
   dueToday: number
+  dueLaterToday: number
   dueTomorrow: number
   dueThisWeek: number
   vocabDue: number
@@ -53,14 +54,18 @@ export function useUnifiedDueStats(userId: string) {
 
       const dueToday = vocabDue + kanjiVocabDue + kanjiDue
 
+      const todayDate = todayISO.slice(0, 10)
       const allDueFuture = [
         ...regularVocab.filter(c => c.due_date > todayISO),
         ...kanjiVocabCards.filter(c => c.due_date > todayISO),
       ]
+      // Cards in learning steps (e.g. 6 min, 1 hr) have a full datetime due later today.
+      // They pass the `> todayISO` check but their date portion equals today — not tomorrow.
+      const dueLaterToday = allDueFuture.filter(c => c.due_date.slice(0, 10) === todayDate).length
       const dueTomorrow = allDueFuture.filter(c => c.due_date.slice(0, 10) === tomorrow).length
       const dueThisWeek = allDueFuture.filter(c => c.due_date.slice(0, 10) > tomorrow && c.due_date.slice(0, 10) <= weekEnd).length
 
-      return { dueToday, dueTomorrow, dueThisWeek, vocabDue, kanjiDue, kanjiVocabDue, learning, review, mature }
+      return { dueToday, dueLaterToday, dueTomorrow, dueThisWeek, vocabDue, kanjiDue, kanjiVocabDue, learning, review, mature }
     },
     staleTime: 0,
     enabled: !!userId,
