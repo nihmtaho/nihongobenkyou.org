@@ -32,6 +32,7 @@ interface StudySessionState {
   advanceCard: () => void
   requeueWrongCards: () => void
   resetSession: () => void
+  clearSession: () => void
 }
 
 export const useStudySessionStore = create<StudySessionState>()(
@@ -75,6 +76,9 @@ export const useStudySessionStore = create<StudySessionState>()(
         })),
 
       resetSession: () =>
+        set({ queue: [], currentIndex: 0, mode: null, deckSource: 'lesson', filter: 'all', stats: { ...EMPTY_STATS } }),
+
+      clearSession: () =>
         set({ queue: [], currentIndex: 0, mode: null, deckSource: 'lesson', filter: 'all', stats: { ...EMPTY_STATS } }),
     }),
     {

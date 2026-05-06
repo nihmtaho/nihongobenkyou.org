@@ -4,7 +4,7 @@ import type { CardTypeFilter, UnifiedCard } from '../../../types/unified-card'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { KanjiQuizCard } from '../../../components/kanji/KanjiQuizCard'
 import { KanjiStudyFlipCard } from '../../../components/kanji/KanjiStudyFlipCard'
@@ -22,6 +22,7 @@ import { TypeInputCard } from '../../../components/study/TypeInputCard'
 import { VocabFlipCard } from '../../../components/study/VocabFlipCard'
 import { useUnifiedSrsSession } from '../../../hooks/useUnifiedSrsSession'
 import { useAuthStore } from '../../../stores/authStore'
+import { useStudySessionStore } from '../../../stores/studySessionStore'
 
 const VALID_FILTERS: CardTypeFilter[] = ['all', 'vocab', 'kanji', 'decks']
 
@@ -38,7 +39,24 @@ function StudyReviewPage() {
   const { filter } = Route.useSearch()
   const userId = useAuthStore(s => s.userId) ?? ''
   const navigate = useNavigate()
-  const session = useUnifiedSrsSession(userId, filter)
+
+  const storeQueue = useStudySessionStore(s => s.queue)
+  const storeMode = useStudySessionStore(s => s.mode)
+  const storeSubMode = useStudySessionStore(s => s.typeInputSubMode)
+  const clearSession = useStudySessionStore(s => s.clearSession)
+
+  const prebuilt = storeQueue.length > 0 ? storeQueue : undefined
+  const session = useUnifiedSrsSession(userId, filter, prebuilt
+    ? { prebuiltQueue: prebuilt, initialMode: storeMode ?? 'flashcard', initialSubMode: storeSubMode }
+    : undefined)
+
+  // Clear the store once the session ends so a next navigation starts fresh.
+  useEffect(() => {
+    if (session.phase === 'complete') {
+      clearSession()
+    }
+  }, [session.phase, clearSession])
+
   // Managed here so it persists across cards in listening mode
   const [playbackRate, setPlaybackRate] = useState(1.0)
 

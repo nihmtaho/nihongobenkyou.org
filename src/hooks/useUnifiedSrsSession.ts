@@ -19,6 +19,12 @@ export interface UnifiedSessionStats {
   ratingCounts: Record<SRSRating, number>
 }
 
+export interface UnifiedSrsSessionOptions {
+  prebuiltQueue?: UnifiedCard[]
+  initialMode?: StudyMode
+  initialSubMode?: TypeInputSubMode
+}
+
 function makeStats(): UnifiedSessionStats {
   return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 0: 0, 1: 0, 2: 0, 3: 0 } }
 }
@@ -46,17 +52,25 @@ function fisherYates<T>(arr: T[]): T[] {
   return a
 }
 
-export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
+export function useUnifiedSrsSession(
+  userId: string,
+  filter: CardTypeFilter,
+  options?: UnifiedSrsSessionOptions,
+) {
+  const prebuilt = options?.prebuiltQueue
+  const hasPrebuilt = prebuilt != null && prebuilt.length > 0
+
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage) as MeaningLanguage
   const vocabSRS = useSRS('vocab', userId)
   const kanjiSRS = useSRS('kanji', userId)
 
-  const [phase, setPhase] = useState<UnifiedSessionPhase>('loading')
+  // When a prebuilt queue is provided, start directly at pre-session — no DB load needed.
+  const [phase, setPhase] = useState<UnifiedSessionPhase>(hasPrebuilt ? 'pre-session' : 'loading')
   const [queue, setQueue] = useState<UnifiedCard[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [stats, setStats] = useState<UnifiedSessionStats>(makeStats)
-  const [mode, setMode] = useState<StudyMode>('flashcard')
-  const [typeInputSubMode, setTypeInputSubMode] = useState<TypeInputSubMode>('word→hira')
+  const [mode, setMode] = useState<StudyMode>(options?.initialMode ?? 'flashcard')
+  const [typeInputSubMode, setTypeInputSubMode] = useState<TypeInputSubMode>(options?.initialSubMode ?? 'word→hira')
   const [deferred, setDeferred] = useState<{ card: UnifiedCard, showAfter: number }[]>([])
 
   const { data: dueVocab, isLoading: vocabLoading } = useQuery({
@@ -109,7 +123,7 @@ export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
 
       return { vocab, kanjiVocab }
     },
-    enabled: !!userId && (filter === 'all' || filter === 'vocab'),
+    enabled: !hasPrebuilt && !!userId && (filter === 'all' || filter === 'vocab'),
     staleTime: 0,
   })
 
@@ -125,11 +139,11 @@ export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
         return kanji ? [{ kind: 'kanji', card, kanji }] : []
       })
     },
-    enabled: !!userId && (filter === 'all' || filter === 'kanji'),
+    enabled: !hasPrebuilt && !!userId && (filter === 'all' || filter === 'kanji'),
     staleTime: 0,
   })
 
-  const isLoading = vocabLoading || kanjiLoading
+  const isLoading = !hasPrebuilt && (vocabLoading || kanjiLoading)
 
   // Transition loading → pre-session once both queries settle.
   // The `phase === 'loading'` guard ensures this fires at most once, so there
@@ -142,6 +156,9 @@ export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
   }, [phase, isLoading])
 
   function buildQueue(): UnifiedCard[] {
+    if (hasPrebuilt)
+      return prebuilt
+
     const all: UnifiedCard[] = []
     if (filter === 'all' || filter === 'vocab') {
       all.push(...(dueVocab?.vocab ?? []))
@@ -209,6 +226,17 @@ export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
 
   const allCards = buildQueue()
 
+  // When using a prebuilt queue, compute counts from the queue directly.
+  const vocabCount = hasPrebuilt
+    ? prebuilt.filter(c => c.kind === 'vocab').length
+    : (dueVocab?.vocab.length ?? 0)
+  const kanjiVocabCount = hasPrebuilt
+    ? prebuilt.filter(c => c.kind === 'kanji-vocab').length
+    : (dueVocab?.kanjiVocab.length ?? 0)
+  const kanjiCount = hasPrebuilt
+    ? prebuilt.filter(c => c.kind === 'kanji').length
+    : (dueKanji?.length ?? 0)
+
   return {
     phase,
     queue,
@@ -224,8 +252,8 @@ export function useUnifiedSrsSession(userId: string, filter: CardTypeFilter) {
     handleRate,
     isLoading,
     totalDue: allCards.length,
-    vocabCount: dueVocab?.vocab.length ?? 0,
-    kanjiVocabCount: dueVocab?.kanjiVocab.length ?? 0,
-    kanjiCount: dueKanji?.length ?? 0,
+    vocabCount,
+    kanjiVocabCount,
+    kanjiCount,
   }
 }

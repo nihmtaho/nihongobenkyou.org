@@ -69,7 +69,8 @@ export function useLaunchActiveVocabDeckSession(userId: string) {
         return
 
       const shuffled = [...queue].sort(() => Math.random() - 0.5)
-      initSession(shuffled as unknown as UnifiedCard[], mode, subMode, 'active-vocab-deck')
+      const unifiedQueue: UnifiedCard[] = shuffled.map(card => ({ kind: 'vocab' as const, card }))
+      initSession(unifiedQueue, mode, subMode, 'active-vocab-deck')
       navigate({ to: '/study/review', search: { filter: 'vocab' } })
     }
     finally {

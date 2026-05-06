@@ -110,7 +110,8 @@ export function useLaunchCustomDeckSession(userId: string) {
       if (queue.length === 0)
         return
 
-      initSession(queue as unknown as UnifiedCard[], mode, subMode)
+      const unifiedQueue: UnifiedCard[] = queue.map(card => ({ kind: 'vocab' as const, card }))
+      initSession(unifiedQueue, mode, subMode)
       navigate({ to: '/study/review', search: { filter: 'all' } })
     }
     finally {
