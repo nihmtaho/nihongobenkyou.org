@@ -46,7 +46,7 @@ export interface CustomDeckSRS {
   deckId: string // custom_decks.id — stored for index queries
   interval_days: number
   ease_factor: number
-  due_date: string // ISO 8601 datetime string
+  due_date: string // YYYY-MM-DD date string
   review_count: number
   card_stage: CardStage
   learning_step: number

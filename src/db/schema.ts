@@ -1,6 +1,6 @@
 import type { EntityTable } from 'dexie'
 import type { ActiveKanjiItem, ActiveKanjiSRS, ActiveVocabItem, ActiveVocabSRS } from '../types/active-deck'
-import type { CustomDeck, CustomVocabItem } from '../types/custom-deck'
+import type { CustomDeck, CustomDeckSRS, CustomVocabItem } from '../types/custom-deck'
 import type { LessonMeta } from '../types/dataset'
 import type { KanjiCardState, KanjiItem } from '../types/kanji'
 import type { Passage } from '../types/passages'
@@ -48,6 +48,7 @@ export class NihongoDB extends Dexie {
   active_kanji_items!: EntityTable<ActiveKanjiItem, 'char'>
   active_vocab_srs!: EntityTable<ActiveVocabSRS, never>
   active_kanji_srs!: EntityTable<ActiveKanjiSRS, never>
+  custom_deck_srs!: EntityTable<CustomDeckSRS, never>
 
   constructor() {
     super('NihongoDB')
@@ -122,6 +123,64 @@ export class NihongoDB extends Dexie {
           card.lapse_count ??= 0
         }),
       ])
+    })
+    // v12: custom_deck_srs — independent SRS per custom deck vocabulary item
+    this.version(12).stores({
+      custom_deck_srs: '[userId+itemId], deckId, due_date, pending_sync, [userId+deckId], [userId+deckId+due_date]',
+    }).upgrade(async (tx) => {
+      const allCustomVocab = await tx.table('custom_vocabulary').toArray()
+      if (allCustomVocab.length === 0)
+        return
+
+      const customIdToDeckId = new Map<string, string>(
+        allCustomVocab.map((v: CustomVocabItem) => [v.id, v.deck_id]),
+      )
+      const customIds = new Set(customIdToDeckId.keys())
+
+      const customCards = await tx.table('user_cards')
+        .filter((c: { vocabId: string }) => customIds.has(c.vocabId))
+        .toArray()
+
+      if (customCards.length === 0)
+        return
+
+      const now = new Date().toISOString()
+      type MigratedCard = Partial<CardState> & { userId: string, vocabId: string }
+      const typedCards = customCards as MigratedCard[]
+      const srsEntries: CustomDeckSRS[] = typedCards.map(c => ({
+        userId: c.userId,
+        itemId: c.vocabId,
+        deckId: customIdToDeckId.get(c.vocabId)!,
+        interval_days: c.interval_days ?? 0,
+        ease_factor: c.ease_factor ?? 2.5,
+        due_date: c.due_date ?? now.slice(0, 10),
+        review_count: c.review_count ?? 0,
+        card_stage: (c.card_stage === 'learning' || c.card_stage === 'review' || c.card_stage === 'relearning')
+          ? c.card_stage
+          : 'learning',
+        learning_step: c.learning_step ?? 0,
+        lapse_count: c.lapse_count ?? 0,
+        last_rating: c.last_rating ?? null,
+        consecutive_correct: c.consecutive_correct ?? 0,
+        pending_sync: c.pending_sync ?? false,
+        updated_at: c.updated_at ?? now,
+      }))
+
+      await tx.table('custom_deck_srs').bulkAdd(srsEntries)
+
+      const keysToDelete = customCards.map((c: MigratedCard) => [c.userId, c.vocabId])
+      await tx.table('user_cards').bulkDelete(keysToDelete)
+
+      // Second pass: clean up orphaned user_cards for custom vocab IDs that no
+      // longer have a parent custom_vocabulary record (vocab was deleted)
+      const allCustomIds = new Set(allCustomVocab.map((v: CustomVocabItem) => v.id))
+      const remainingCustomCards = await tx.table('user_cards')
+        .filter((c: { vocabId: string }) => allCustomIds.has(c.vocabId))
+        .toArray() as MigratedCard[]
+      if (remainingCustomCards.length > 0) {
+        const orphanKeys = remainingCustomCards.map(c => [c.userId, c.vocabId])
+        await tx.table('user_cards').bulkDelete(orphanKeys)
+      }
     })
   }
 }
