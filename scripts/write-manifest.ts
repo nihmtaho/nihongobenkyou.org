@@ -5,6 +5,16 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 
+export function bumpPatch(version: string): string {
+  const parts = version.split('.')
+  if (parts.length !== 3)
+    return '1.0.0'
+  const patch = Number(parts[2])
+  if (Number.isNaN(patch))
+    return '1.0.0'
+  return `${parts[0]}.${parts[1]}.${patch + 1}`
+}
+
 function buildKanjiSection(outputBase: string): KanjiManifestSection | undefined {
   const kanjiPath = path.join(outputBase, 'kanji', 'n5-kanji.json')
   if (!existsSync(kanjiPath))
