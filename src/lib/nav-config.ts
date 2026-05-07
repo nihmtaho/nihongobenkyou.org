@@ -21,7 +21,7 @@ export const ROUTE_NAV_CONFIG: Record<string, RouteNavConfig> = {
   '/study': { title: 'STUDY' },
   '/study/review': { hideNav: true },
   '/custom': { title: 'MY DECKS' },
-  '/profile': { title: 'PROFILE', showBack: true },
+  '/profile': { title: 'PROFILE', showBack: true, backTo: '/' },
   '/settings': { title: 'SETTINGS', showBack: true, backTo: '/', hideBottomBar: true },
   '/auth/login': { hideNav: true },
   '/auth/register': { hideNav: true },
@@ -30,17 +30,21 @@ export const ROUTE_NAV_CONFIG: Record<string, RouteNavConfig> = {
   '/auth/callback': { hideNav: true },
 }
 
+const SORTED_PATTERNS = Object.keys(ROUTE_NAV_CONFIG).sort((a, b) => {
+  const paramCount = (p: string) => p.split('/').filter(s => s.startsWith('$')).length
+  return (b.length - a.length) || (paramCount(a) - paramCount(b))
+})
+
 function matchPattern(pattern: string, pathname: string): boolean {
   const regexStr = pattern
     .split('/')
-    .map(seg => (seg.startsWith('$') ? '[^/]+' : seg))
+    .map(seg => seg.startsWith('$') ? '[^/]+' : seg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
     .join('/')
   return new RegExp(`^${regexStr}$`).test(pathname)
 }
 
 export function getNavConfig(pathname: string): RouteNavConfig | undefined {
-  const patterns = Object.keys(ROUTE_NAV_CONFIG).sort((a, b) => b.length - a.length)
-  for (const pattern of patterns) {
+  for (const pattern of SORTED_PATTERNS) {
     if (matchPattern(pattern, pathname)) {
       return ROUTE_NAV_CONFIG[pattern]
     }
