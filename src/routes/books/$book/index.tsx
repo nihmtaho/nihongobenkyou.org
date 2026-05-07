@@ -10,6 +10,7 @@ import { useUserCards } from '../../../hooks/useUserCards'
 import { useVocabulary } from '../../../hooks/useVocabulary'
 import { datasets } from '../../../lib/datasets.config'
 import { formatNextReview } from '../../../lib/next-review'
+import { cn } from '../../../lib/utils'
 import { useAuthStore } from '../../../stores/authStore'
 
 function AnimatedNumber({ value, delay = 0 }: { value: number, delay?: number }) {
@@ -79,21 +80,29 @@ function BookPage() {
         </div>
 
         {/* Tabs — mobile only */}
-        <div className="lg:hidden tabs tabs-border">
-          <button
-            type="button"
-            className={`tab font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest ${activeTab === 'vocab' ? 'tab-active font-bold' : ''}`}
-            onClick={() => setActiveTab('vocab')}
-          >
-            Từ vựng
-          </button>
-          <button
-            type="button"
-            className={`tab font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest ${activeTab === 'kanji' ? 'tab-active font-bold' : ''}`}
-            onClick={() => setActiveTab('kanji')}
-          >
-            漢字 Hán tự
-          </button>
+        <div className="lg:hidden flex border-b-2 border-border" role="tablist">
+          {(['vocab', 'kanji'] as const).map((tab) => {
+            const isActive = activeTab === tab
+            return (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  'flex-1 h-11 flex items-center justify-center gap-1.5',
+                  'font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest',
+                  'border-b-2 -mb-[2px] transition-colors duration-150',
+                  isActive
+                    ? 'border-primary text-foreground font-bold'
+                    : 'border-transparent text-muted-foreground',
+                )}
+              >
+                {tab === 'vocab' ? 'Từ vựng' : '漢字 Hán tự'}
+              </button>
+            )
+          })}
         </div>
       </div>
 
