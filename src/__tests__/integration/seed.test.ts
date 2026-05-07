@@ -157,12 +157,15 @@ describe('invalidateLessonCache', () => {
   })
 
   it('is a no-op when caches is not available', async () => {
-    const saved = (globalThis as Record<string, unknown>).caches
+    const hadCaches = 'caches' in globalThis
+    const savedValue = (globalThis as Record<string, unknown>).caches
     delete (globalThis as Record<string, unknown>).caches
-
-    await expect(invalidateLessonCache('mnn1')).resolves.toBeUndefined()
-
-    if (saved !== undefined)
-      vi.stubGlobal('caches', saved)
+    try {
+      await expect(invalidateLessonCache('mnn1')).resolves.toBeUndefined()
+    }
+    finally {
+      if (hadCaches)
+        (globalThis as Record<string, unknown>).caches = savedValue
+    }
   })
 })
