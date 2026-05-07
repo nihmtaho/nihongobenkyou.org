@@ -18,6 +18,7 @@ export function FloatingBackButton({ visible, onBack, label }: FloatingBackButto
       aria-label={label ? `Back to ${label}` : 'Go back'}
       className={cn(
         'fixed top-3 left-3 z-50 lg:hidden',
+        'h-11 w-11',
         'motion-safe:transition-opacity motion-safe:duration-200',
         visible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
       )}
