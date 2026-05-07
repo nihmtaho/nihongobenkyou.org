@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { OfflineAuthNotice } from '../components/auth/OfflineAuthNotice'
 import { ReactivationBanner } from '../components/auth/ReactivationBanner'
 import { BottomDock } from '../components/navigation/BottomDock'
+import { MobileTopNav } from '../components/navigation/MobileTopNav'
 import { Sidebar } from '../components/navigation/Sidebar'
 import { OfflineIndicator } from '../components/offline/OfflineIndicator'
 import { useAuth } from '../hooks/useAuth'
@@ -94,10 +95,11 @@ function RootLayout() {
         <Sidebar />
         <div className="flex-1 flex flex-col min-h-0 lg:overflow-hidden">
           <DesktopTopBar />
-          <main className="flex-1 pb-16 lg:pb-0 lg:overflow-y-auto min-h-0">
+          <main className="flex-1 pt-11 pb-24 lg:pt-0 lg:pb-0 lg:overflow-y-auto min-h-0">
             <Outlet />
           </main>
         </div>
+        <MobileTopNav />
         <BottomDock />
       </div>
     </>
