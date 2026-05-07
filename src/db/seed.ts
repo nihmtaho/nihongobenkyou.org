@@ -33,6 +33,18 @@ async function fetchJson<T>(url: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
+export async function invalidateLessonCache(prefix: string): Promise<void> {
+  if (!('caches' in globalThis))
+    return
+  const cache = await caches.open('lessons-cache')
+  const keys = await cache.keys()
+  await Promise.all(
+    keys
+      .filter(req => req.url.includes(`/data/${prefix}/`))
+      .map(req => cache.delete(req)),
+  )
+}
+
 export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   let manifest: Manifest
   try {
@@ -48,9 +60,15 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   if (!dataset)
     throw new SeedError('manifest.json contains no datasets')
 
-  const storedChecksum = await db.settings.get('manifest_checksum')
-  if (storedChecksum?.value === dataset.checksum)
+  const [storedChecksum, storedVersion] = await Promise.all([
+    db.settings.get('manifest_checksum'),
+    db.settings.get('dataset_version'),
+  ])
+
+  if (storedChecksum?.value === dataset.checksum && storedVersion?.value === dataset.version)
     return 'up-to-date'
+
+  await invalidateLessonCache(dataset.book_code_prefix)
 
   const vocabItems: VocabItem[] = []
   const passages: Passage[] = []
@@ -64,7 +82,6 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
       passages.push(...lessonFile.passages)
     }
 
-    // Derive lesson metadata from vocab items — group by lesson_number
     const lessonMap = new Map<number, LessonMeta>()
     for (const v of vocabItems) {
       if (!lessonMap.has(v.lesson_number)) {
@@ -97,6 +114,7 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
       if (passages.length > 0)
         await db.passages.bulkPut(passages)
       await db.settings.put({ key: 'manifest_checksum', value: dataset.checksum })
+      await db.settings.put({ key: 'dataset_version', value: dataset.version })
     })
   }
   catch (err) {
@@ -118,9 +136,15 @@ export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> 
   if (!manifest.kanji)
     return 'skipped'
 
-  const storedChecksum = await db.settings.get('kanji_n5_checksum')
-  if (storedChecksum?.value === manifest.kanji.n5_checksum)
+  const [storedChecksum, storedVersion] = await Promise.all([
+    db.settings.get('kanji_n5_checksum'),
+    db.settings.get('kanji_n5_version'),
+  ])
+
+  if (storedChecksum?.value === manifest.kanji.n5_checksum && storedVersion?.value === manifest.kanji.version)
     return 'up-to-date'
+
+  await invalidateLessonCache('kanji')
 
   let kanjiItems: KanjiItem[]
   try {
@@ -135,6 +159,7 @@ export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> 
       await db.kanji.clear()
       await db.kanji.bulkPut(kanjiItems)
       await db.settings.put({ key: 'kanji_n5_checksum', value: manifest.kanji!.n5_checksum })
+      await db.settings.put({ key: 'kanji_n5_version', value: manifest.kanji!.version })
     })
   }
   catch (err) {

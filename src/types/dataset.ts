@@ -28,6 +28,7 @@ export interface KanjiManifestSection {
   n5_checksum: string
   n5_count: number
   generated_at: string
+  version: string
 }
 
 export interface Manifest {
