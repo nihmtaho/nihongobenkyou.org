@@ -11606,14 +11606,14 @@ lesson-16:
     edition:
       - 1
       - 2
-    kanji: －番
+    kanji: ー番
     han_viet: ~
-    kana: －ばん
+    kana: ーばん
     romaji: '-ban'
     meaning:
-      en: number －
-      fr: numéro －
-      vi: số －
+      en: number ー
+      fr: numéro ー
+      vi: số ー
   - id:
       - 16
       - 39
@@ -11974,13 +11974,13 @@ lesson-17:
       - 1
       - 2
     kanji: 覚えます
-    han_viet: ~
+    han_viet: GIÁC
     kana: おぼえます
     romaji: oboemasu
     meaning:
       en: memorise
       fr: retenir, apprendre par cœur
-      vi: ghi nhớ
+      vi: nhớ, ghi nhớ
   - id:
       - 17
       - 2
@@ -11988,7 +11988,7 @@ lesson-17:
       - 1
       - 2
     kanji: 忘れます
-    han_viet: ~
+    han_viet: VONG
     kana: わすれます
     romaji: wasuremasu
     meaning:
@@ -12007,7 +12007,7 @@ lesson-17:
     meaning:
       en: lose
       fr: perdre
-      vi: mất đi
+      vi: đánh mất, làm mất
   - id:
       - 17
       - 4
@@ -12015,7 +12015,7 @@ lesson-17:
       - 1
       - 2
     kanji: 払います
-    han_viet: ~
+    han_viet: PHẤT
     kana: はらいます
     romaji: haraimasu
     meaning:
@@ -12029,7 +12029,7 @@ lesson-17:
       - 1
       - 2
     kanji: 返します
-    han_viet: ~
+    han_viet: PHẢN
     kana: かえします
     romaji: kaeshimasu
     meaning:
@@ -12043,7 +12043,7 @@ lesson-17:
       - 1
       - 2
     kanji: 出かけます
-    han_viet: ~
+    han_viet: XUẤT
     kana: でかけます
     romaji: dekakemasu
     meaning:
@@ -12057,13 +12057,13 @@ lesson-17:
       - 1
       - 2
     kanji: 脱ぎます
-    han_viet: ~
+    han_viet: THOÁT
     kana: ぬぎます
     romaji: nugimasu
     meaning:
       en: take off (clothes, shoes, etc.)
       fr: enlever (des chaussures, un vêtement)
-      vi: bỏ qua (quần áo, giày dép, vv)
+      vi: cởi (quần áo, giày dép, vv)
   - id:
       - 17
       - 8
@@ -12071,13 +12071,13 @@ lesson-17:
       - 1
       - 2
     kanji: 持って 行きます
-    han_viet: ~
+    han_viet: TRÌ HÀNH
     kana: もって いきます
     romaji: motte ikimasu
     meaning:
       en: take (something)
       fr: emporter
-      vi: mang đi
+      vi: mang đi, mang theo
   - id:
       - 17
       - 9
@@ -12085,13 +12085,13 @@ lesson-17:
       - 1
       - 2
     kanji: 持って 来ます
-    han_viet: ~
+    han_viet: TRÌ LAI
     kana: もって きます
     romaji: motte kimasu
     meaning:
       en: bring (something)
       fr: apporter (quelque chose)
-      vi: mang lại
+      vi: mang đến
   - id:
       - 17
       - 10
@@ -12099,7 +12099,7 @@ lesson-17:
       - 1
       - 2
     kanji: 心配します
-    han_viet: ~
+    han_viet: TÂM PHỐI
     kana: しんぱいします
     romaji: shinpaishimasu
     meaning:
@@ -12113,7 +12113,7 @@ lesson-17:
       - 1
       - 2
     kanji: 残業します
-    han_viet: ~
+    han_viet: TÀN NGHIỆP
     kana: ざんぎょうします
     romaji: zangyōshimasu
     meaning:
@@ -12127,7 +12127,7 @@ lesson-17:
       - 1
       - 2
     kanji: 出張します
-    han_viet: ~
+    han_viet: XUẤT TRƯƠNG
     kana: しゅっちょうします
     romaji: shutchōshimasu
     meaning:
@@ -12141,7 +12141,7 @@ lesson-17:
       - 1
       - 2
     kanji: 飲みます［薬を～］
-    han_viet: ~
+    han_viet: ẨM
     kana: のみます［くすりを～］
     romaji: nomimasu [kusuriwo~]
     meaning:
@@ -12155,13 +12155,13 @@ lesson-17:
       - 1
       - 2
     kanji: 入ります［おふろに～］
-    han_viet: ~
+    han_viet: NHẬP
     kana: はいります［おふろに～］
     romaji: hairimasu [ofuroni~]
     meaning:
       en: take [a bath]
       fr: prendre [un bain]
-      vi: lấy [nước rửa mặt]
+      vi: tắm bồn
   - id:
       - 17
       - 15
@@ -12169,7 +12169,7 @@ lesson-17:
       - 1
       - 2
     kanji: 大切［な］
-    han_viet: ~
+    han_viet: ĐẠI THIẾT
     kana: たいせつ［な］
     romaji: taisetsu [na]
     meaning:
@@ -12183,13 +12183,13 @@ lesson-17:
       - 1
       - 2
     kanji: 大丈夫［な］
-    han_viet: ~
+    han_viet: ĐẠI TRƯỢNG PHU
     kana: だいじょうぶ［な］
     romaji: daijōbu [na]
     meaning:
       en: all right
       fr: c'est bon, ça va, pas de problème
-      vi: không sao
+      vi: không sao, ổn, không có vấn đề gì
   - id:
       - 17
       - 17
@@ -12197,7 +12197,7 @@ lesson-17:
       - 1
       - 2
     kanji: 危ない
-    han_viet: ~
+    han_viet: NGUY
     kana: あぶない
     romaji: abunai
     meaning:
@@ -12211,13 +12211,13 @@ lesson-17:
       - 1
       - 2
     kanji: 禁煙
-    han_viet: ~
+    han_viet: CẤM YÊN
     kana: きんえん
     romaji: kin'en
     meaning:
       en: no smoking
       fr: défense de fumer
-      vi: không hút thuốc
+      vi: cấm hút thuốc
   - id:
       - 17
       - 19
@@ -12225,13 +12225,13 @@ lesson-17:
       - 1
       - 2
     kanji: ［健康］保険証
-    han_viet: ~
+    han_viet: KIỆN KHANG BẢO HIỂM CHỨNG
     kana: ［けんこう］ほけんしょう
     romaji: '[kenkō] hokenshō'
     meaning:
       en: '[health] insurance card'
       fr: carte de sécurité sociale, carte d'assurance [-maladie]
-      vi: thẻ bảo hiểm [y tế] sức khỏe
+      vi: thẻ bảo hiểm [y tế]
   - id:
       - 17
       - 20
@@ -12239,13 +12239,13 @@ lesson-17:
       - 1
       - 2
     kanji: 熱
-    han_viet: ~
+    han_viet: NHIỆT
     kana: ねつ
     romaji: netsu
     meaning:
       en: temperature, fever
       fr: fièvre
-      vi: nhiệt độ, sốt
+      vi: sốt, nhiệt độ
   - id:
       - 17
       - 21
@@ -12253,13 +12253,13 @@ lesson-17:
       - 1
       - 2
     kanji: 病気
-    han_viet: ~
+    han_viet: BỆNH KHÍ
     kana: びょうき
     romaji: byōki
     meaning:
       en: illness, disease
       fr: maladie
-      vi: bệnh tật
+      vi: ốm, bệnh
   - id:
       - 17
       - 22
@@ -12267,7 +12267,7 @@ lesson-17:
       - 1
       - 2
     kanji: 薬
-    han_viet: ~
+    han_viet: DƯỢC
     kana: くすり
     romaji: kusuri
     meaning:
@@ -12286,7 +12286,7 @@ lesson-17:
     meaning:
       en: bath
       fr: bain
-      vi: '1. Nhà bếp ([o] furo): phòng tắm'
+      vi: bồn tắm
   - id:
       - 17
       - 24
@@ -12294,13 +12294,13 @@ lesson-17:
       - 1
       - 2
     kanji: 上着
-    han_viet: ~
+    han_viet: THƯỢNG TRỨ
     kana: うわぎ
     romaji: uwagi
     meaning:
       en: jacket, outerwear
       fr: veste
-      vi: 'Áo khoác (uwagi): áo vest, đồ mưa ngoài'
+      vi: áo khoác, áo ngoài
   - id:
       - 17
       - 25
@@ -12314,7 +12314,7 @@ lesson-17:
     meaning:
       en: underwear
       fr: sous-vêtement
-      vi: 'Quần lót (shitagi): quần ấm'
+      vi: đồ lót
   - id:
       - 17
       - 26
@@ -12328,7 +12328,7 @@ lesson-17:
     meaning:
       en: two or three days
       fr: deux ou trois jours, quelques jours
-      vi: '２、３日 (2, 3 nichi): hai hoặc ba ngày'
+      vi: 2, 3 ngày, vài ngày
   - id:
       - 17
       - 27
@@ -12341,7 +12341,7 @@ lesson-17:
     meaning:
       en: two or three ～ (where ～ is a counter suffix)
       fr: deux ou trois ～ (～ est un auxiliaire numéral)
-      vi: '２、３～ (2, 3~): hai hoặc ba ～ (trong đó ～ là tiền tố đếm)'
+      vi: 2, 3 ～ (trong đó ～ là một hậu tố đếm)
   - id:
       - 17
       - 28
@@ -12354,7 +12354,7 @@ lesson-17:
     meaning:
       en: before ～, by ～ (indicating time limit)
       fr: avant ～ (indiquant un délai)
-      vi: '～までに (~madeni): trước ～, khi nào ～ (chỉ thời gian hạn chế)'
+      vi: 'trước ～, cho đến trước ～ (chỉ thời gian hạn chế)'
   - id:
       - 17
       - 29
@@ -12367,7 +12367,7 @@ lesson-17:
     meaning:
       en: therefore, so
       fr: donc, par conséquent
-      vi: 'ですから (desukara): do đó, vì thế'
+      vi: 'do đó, vì thế'
   - id:
       - 17
       - 30
@@ -12380,7 +12380,7 @@ lesson-17:
     meaning:
       en: What's the matter?
       fr: Que vous est-il arrivé?
-      vi: 'どう しましたか。 (dō shimashitaka.): Bạn bị sao?'
+      vi: 'Bạn bị sao?, Có vấn đề gì?'
   - id:
       - 17
       - 31
@@ -12393,7 +12393,7 @@ lesson-17:
     meaning:
       en: throat
       fr: gorge
-      vi: 'のど (nodo): cổ họng'
+      vi: 'cổ họng'
   - id:
       - 17
       - 32
@@ -12407,7 +12407,7 @@ lesson-17:
     meaning:
       en: (I) have a pain [in my ～].
       fr: J'ai mal [à ～].
-      vi: '［～が］痛いです。 ([~ga] itaidesu.): [tôi] có đau ở [～].'
+      vi: 'Tôi bị đau [ở ～].'
   - id:
       - 17
       - 33
@@ -12420,7 +12420,7 @@ lesson-17:
     meaning:
       en: cold, flu
       fr: rhume, coup de froid, grippe
-      vi: lạnh, cúm
+      vi: cảm, cúm
   - id:
       - 17
       - 34
@@ -12432,7 +12432,7 @@ lesson-17:
     meaning:
       en: and, furthermore
       fr: puis
-      vi: và, thêm nữa
+      vi: và, sau đó, thêm nữa
   - id:
       - 17
       - 35
@@ -12446,7 +12446,7 @@ lesson-17:
     meaning:
       en: Take care of yourself. (said to people who are ill)
       fr: Soignez-vous bien. (expression adressée aux personnes blessées ou malades)
-      vi: Chăm sóc bản thân.
+      vi: 'Anh/Chị nhớ giữ gìn sức khoẻ. (nói với người bị ốm)'
   - id:
       - 17
       - 36
