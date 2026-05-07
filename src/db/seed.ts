@@ -136,9 +136,15 @@ export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> 
   if (!manifest.kanji)
     return 'skipped'
 
-  const storedChecksum = await db.settings.get('kanji_n5_checksum')
-  if (storedChecksum?.value === manifest.kanji.n5_checksum)
+  const [storedChecksum, storedVersion] = await Promise.all([
+    db.settings.get('kanji_n5_checksum'),
+    db.settings.get('kanji_n5_version'),
+  ])
+
+  if (storedChecksum?.value === manifest.kanji.n5_checksum && storedVersion?.value === manifest.kanji.version)
     return 'up-to-date'
+
+  await invalidateLessonCache('kanji')
 
   let kanjiItems: KanjiItem[]
   try {
@@ -153,6 +159,7 @@ export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> 
       await db.kanji.clear()
       await db.kanji.bulkPut(kanjiItems)
       await db.settings.put({ key: 'kanji_n5_checksum', value: manifest.kanji!.n5_checksum })
+      await db.settings.put({ key: 'kanji_n5_version', value: manifest.kanji!.version })
     })
   }
   catch (err) {
