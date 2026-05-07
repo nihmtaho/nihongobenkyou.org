@@ -9,10 +9,13 @@ export function bumpPatch(version: string): string {
   const parts = version.split('.')
   if (parts.length !== 3)
     return '1.0.0'
-  const patch = Number(parts[2])
+  const [major, minor, patchStr] = parts
+  if (Number.isNaN(Number(major)) || Number.isNaN(Number(minor)))
+    return '1.0.0'
+  const patch = Number(patchStr)
   if (Number.isNaN(patch))
     return '1.0.0'
-  return `${parts[0]}.${parts[1]}.${patch + 1}`
+  return `${major}.${minor}.${patch + 1}`
 }
 
 function buildKanjiSection(outputBase: string): KanjiManifestSection | undefined {

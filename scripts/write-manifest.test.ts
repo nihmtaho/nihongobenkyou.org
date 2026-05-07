@@ -18,5 +18,7 @@ describe('bumpPatch', () => {
     expect(bumpPatch('invalid')).toBe('1.0.0')
     expect(bumpPatch('')).toBe('1.0.0')
     expect(bumpPatch('1.0')).toBe('1.0.0')
+    expect(bumpPatch('x.y.0')).toBe('1.0.0') // malformed major/minor
+    expect(bumpPatch('1.0.abc')).toBe('1.0.0') // NaN patch segment
   })
 })
