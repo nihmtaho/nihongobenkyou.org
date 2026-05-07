@@ -108,6 +108,42 @@ describe('seedDatabase', () => {
     await expect(seedDatabase()).rejects.toBeInstanceOf(SeedError)
   })
 
+  it('stores dataset_version in Dexie settings after seed', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+
+    await seedDatabase()
+
+    const stored = await db.settings.get('dataset_version')
+    expect(stored?.value).toBe('1.0.0')
+  })
+
+  it('re-seeds when version changes even if checksum is same', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatabase()
+
+    const updatedManifest: Manifest = {
+      ...SAMPLE_MANIFEST,
+      datasets: [{ ...SAMPLE_MANIFEST.datasets[0], version: '1.0.1' }],
+    }
+    mockFetch(updatedManifest, SAMPLE_LESSON_FILE)
+
+    const result = await seedDatabase()
+
+    expect(result).toBe('seeded')
+    const stored = await db.settings.get('dataset_version')
+    expect(stored?.value).toBe('1.0.1')
+  })
+
+  it('returns up-to-date when both checksum and version match', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatabase()
+
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    const result = await seedDatabase()
+
+    expect(result).toBe('up-to-date')
+  })
+
   it('does not clear user_cards during re-seed', async () => {
     await db.user_cards.put({
       userId: 'user1',
