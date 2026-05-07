@@ -8,12 +8,12 @@ describe('getNavConfig', () => {
   })
 
   it('matches dynamic segment', () => {
-    const config = getNavConfig('/books/mnn1')
-    expect(config).toMatchObject({ title: 'BÀI HỌC', showBack: true, showInfoIcon: true })
+    const config = getNavConfig('/books/minna_shokyuu_1')
+    expect(config).toMatchObject({ title: 'BÀI HỌC', showBack: true, showInfoIcon: true, hasExpandedHeader: true })
   })
 
   it('matches nested dynamic segment', () => {
-    expect(getNavConfig('/books/mnn1/3')).toMatchObject({ title: 'BÀI HỌC', showBack: true })
+    expect(getNavConfig('/books/minna_shokyuu_1/3')).toMatchObject({ title: 'BÀI HỌC', showBack: true })
   })
 
   it('literal route wins over param route at same depth', () => {
@@ -32,8 +32,8 @@ describe('getNavConfig', () => {
 
 describe('getBackLabel', () => {
   it('returns parent title for routes without backTo', () => {
-    expect(getBackLabel('/books/mnn1')).toBe('BOOKS')
-    expect(getBackLabel('/books/mnn1/3')).toBe('BÀI HỌC')
+    expect(getBackLabel('/books/minna_shokyuu_1')).toBe('BOOKS')
+    expect(getBackLabel('/books/minna_shokyuu_1/3')).toBe('BÀI HỌC')
   })
 
   it('returns target route title when backTo is set', () => {

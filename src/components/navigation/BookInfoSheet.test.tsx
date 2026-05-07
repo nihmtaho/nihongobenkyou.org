@@ -4,17 +4,17 @@ import { BookInfoSheet } from './BookInfoSheet'
 
 describe('bookInfoSheet', () => {
   it('shows book title when open', () => {
-    render(<BookInfoSheet open bookPrefix="mnn1" onOpenChange={() => {}} />)
+    render(<BookInfoSheet open bookPrefix="minna_shokyuu_1" onOpenChange={() => {}} />)
     expect(screen.getByText('MINNA NO NIHONGO SHOKYUU I')).toBeInTheDocument()
   })
 
   it('shows JLPT level badge', () => {
-    render(<BookInfoSheet open bookPrefix="mnn1" onOpenChange={() => {}} />)
+    render(<BookInfoSheet open bookPrefix="minna_shokyuu_1" onOpenChange={() => {}} />)
     expect(screen.getByText('N5')).toBeInTheDocument()
   })
 
   it('shows lesson range badge', () => {
-    render(<BookInfoSheet open bookPrefix="mnn1" onOpenChange={() => {}} />)
+    render(<BookInfoSheet open bookPrefix="minna_shokyuu_1" onOpenChange={() => {}} />)
     expect(screen.getByText('L1–25')).toBeInTheDocument()
   })
 

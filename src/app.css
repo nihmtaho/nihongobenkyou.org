@@ -107,3 +107,10 @@
     }
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes nav-marquee {
+    0%, 15%  { transform: translateX(0); }
+    85%, 100% { transform: translateX(var(--marquee-offset, 0px)); }
+  }
+}

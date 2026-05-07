@@ -8,7 +8,7 @@ interface BookInfoSheetProps {
 }
 
 export function BookInfoSheet({ open, onOpenChange, bookPrefix }: BookInfoSheetProps) {
-  const dataset = datasets.find(d => d.book_code_prefix === bookPrefix)
+  const dataset = datasets.find(d => d.id === bookPrefix)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

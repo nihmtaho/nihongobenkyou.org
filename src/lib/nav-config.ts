@@ -7,12 +7,13 @@ export interface RouteNavConfig {
   hideBottomBar?: boolean
   hideNav?: boolean
   showInfoIcon?: boolean
+  hasExpandedHeader?: boolean
 }
 
 export const ROUTE_NAV_CONFIG: Record<string, RouteNavConfig> = {
   '/': { title: 'HOME' },
   '/books': { title: 'BOOKS' },
-  '/books/$book': { title: 'BÀI HỌC', showBack: true, showInfoIcon: true },
+  '/books/$book': { title: 'BÀI HỌC', showBack: true, showInfoIcon: true, hasExpandedHeader: true },
   '/books/$book/$lesson': { title: 'BÀI HỌC', showBack: true },
   '/kanji': { title: 'KANJI' },
   '/kanji/graph': { title: 'KANJI GRAPH', showBack: true },
