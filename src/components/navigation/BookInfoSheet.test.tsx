@@ -5,7 +5,7 @@ import { BookInfoSheet } from './BookInfoSheet'
 describe('bookInfoSheet', () => {
   it('shows book title when open', () => {
     render(<BookInfoSheet open bookPrefix="mnn1" onOpenChange={() => {}} />)
-    expect(screen.getByText(/MINNA NO NIHONGO SHOKYUU I/i)).toBeInTheDocument()
+    expect(screen.getByText('MINNA NO NIHONGO SHOKYUU I')).toBeInTheDocument()
   })
 
   it('shows JLPT level badge', () => {

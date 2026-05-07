@@ -1,4 +1,4 @@
-import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { datasets } from '@/lib/datasets.config'
 
 interface BookInfoSheetProps {
@@ -13,6 +13,9 @@ export function BookInfoSheet({ open, onOpenChange, bookPrefix }: BookInfoSheetP
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="pb-[env(safe-area-inset-bottom)]">
+        <SheetHeader className="sr-only">
+          <SheetTitle>{dataset ? dataset.title : 'Book Info'}</SheetTitle>
+        </SheetHeader>
         {dataset && (
           <div className="flex flex-col gap-3 pt-2">
             <div>
@@ -26,14 +29,10 @@ export function BookInfoSheet({ open, onOpenChange, bookPrefix }: BookInfoSheetP
 
             <div className="flex gap-2">
               <span className="font-[var(--br-mono-font)] text-[10px] bg-primary text-primary-foreground px-2 py-0.5">
-                N
-                {dataset.jlpt_level}
+                {`N${dataset.jlpt_level}`}
               </span>
               <span className="font-[var(--br-mono-font)] text-[10px] border border-border px-2 py-0.5">
-                L
-                {dataset.lesson_range[0]}
-                –
-                {dataset.lesson_range[1]}
+                {`L${dataset.lesson_range[0]}–${dataset.lesson_range[1]}`}
               </span>
             </div>
 
