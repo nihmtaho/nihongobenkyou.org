@@ -99,3 +99,11 @@
     @apply font-mono;
   }
 }
+
+@layer utilities {
+  @media (max-width: 639px) {
+    [data-slot="button"]:not([data-size="xs"]):not([data-size="icon"]):not([data-size="icon-xs"]):not([data-size="icon-sm"]) {
+      min-height: 44px;
+    }
+  }
+}
