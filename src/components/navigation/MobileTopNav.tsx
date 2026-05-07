@@ -1,6 +1,8 @@
+// src/components/navigation/MobileTopNav.tsx
 import { useRouter, useRouterState } from '@tanstack/react-router'
-import { MoreVertical } from 'lucide-react'
+import { ChevronLeft, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { useScrollDirection } from '@/hooks/useScrollDirection'
 import { getBackLabel, getNavConfig } from '@/lib/nav-config'
 import { cn } from '@/lib/utils'
@@ -41,22 +43,22 @@ export function MobileTopNav() {
           'fixed top-0 inset-x-0 z-40 h-11 lg:hidden',
           'bg-background border-b-2 border-border',
           'flex items-center justify-center',
-          'transition-transform duration-300',
+          'motion-safe:transition-transform motion-safe:duration-300',
           isHidden && '-translate-y-full',
         )}
       >
         {config.showBack && backLabel && (
-          <button
+          <Button
+            variant="ghost"
             onClick={handleBack}
             aria-label={`Back to ${backLabel}`}
-            className="absolute left-3 flex items-center gap-0.5 text-muted-foreground"
+            className="absolute left-1 flex items-center gap-0.5 text-muted-foreground h-11 px-2"
           >
+            <ChevronLeft size={14} aria-hidden />
             <span className="font-[var(--br-mono-font)] text-[10px] uppercase">
-              ←
-              {' '}
               {backLabel}
             </span>
-          </button>
+          </Button>
         )}
 
         <span className="font-[var(--br-mono-font)] text-[11px] font-bold uppercase tracking-widest">
@@ -64,13 +66,15 @@ export function MobileTopNav() {
         </span>
 
         {config.showInfoIcon && (
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setSheetOpen(true)}
             aria-label="Book info"
-            className="absolute right-3 flex items-center"
+            className="absolute right-1 h-11 w-11"
           >
             <MoreVertical size={18} aria-hidden />
-          </button>
+          </Button>
         )}
       </header>
 
