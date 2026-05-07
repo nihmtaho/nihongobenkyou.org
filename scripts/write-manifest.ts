@@ -18,7 +18,18 @@ export function bumpPatch(version: string): string {
   return `${major}.${minor}.${patch + 1}`
 }
 
-function buildKanjiSection(outputBase: string): KanjiManifestSection | undefined {
+function readOldManifest(manifestPath: string): Manifest | undefined {
+  if (!existsSync(manifestPath))
+    return undefined
+  try {
+    return JSON.parse(readFileSync(manifestPath, 'utf-8')) as Manifest
+  }
+  catch {
+    return undefined
+  }
+}
+
+function buildKanjiSection(outputBase: string, version: string): KanjiManifestSection | undefined {
   const kanjiPath = path.join(outputBase, 'kanji', 'n5-kanji.json')
   if (!existsSync(kanjiPath))
     return undefined
@@ -31,6 +42,7 @@ function buildKanjiSection(outputBase: string): KanjiManifestSection | undefined
     n5_checksum: n5Checksum,
     n5_count: items.length,
     generated_at: new Date().toISOString(),
+    version,
   }
 }
 
@@ -43,8 +55,15 @@ function zeroPad(n: number): string {
 }
 
 export async function run(config: DatasetConfig): Promise<void> {
+  const manifestPath = path.join(process.cwd(), 'public', 'data', 'manifest.json')
   const outputBase = path.join(process.cwd(), 'public', 'data', config.book_code_prefix)
   const [rangeStart, rangeEnd] = config.lesson_range
+
+  const oldManifest = readOldManifest(manifestPath)
+  const oldDatasetVersion = oldManifest?.datasets.find(d => d.id === config.id)?.version ?? config.version
+  const newDatasetVersion = bumpPatch(oldDatasetVersion)
+  const oldKanjiVersion = oldManifest?.kanji?.version ?? '1.0.0'
+  const newKanjiVersion = bumpPatch(oldKanjiVersion)
 
   const files: FileEntry[] = []
   const fileContents: Buffer[] = []
@@ -79,7 +98,10 @@ export async function run(config: DatasetConfig): Promise<void> {
 
   const vocabCount = lessonMeta.reduce((sum, m) => sum + m.vocab_count, 0)
 
-  const kanjiSection = buildKanjiSection(path.join(process.cwd(), 'public', 'data'))
+  const kanjiSection = buildKanjiSection(
+    path.join(process.cwd(), 'public', 'data'),
+    newKanjiVersion,
+  )
 
   const manifest: Manifest = {
     schema_version: '1.0',
@@ -89,7 +111,7 @@ export async function run(config: DatasetConfig): Promise<void> {
     datasets: [
       {
         id: config.id,
-        version: config.version,
+        version: newDatasetVersion,
         book_code_prefix: config.book_code_prefix,
         lesson_count: rangeEnd - rangeStart + 1,
         vocab_count: vocabCount,
@@ -100,6 +122,5 @@ export async function run(config: DatasetConfig): Promise<void> {
     ...(kanjiSection && { kanji: kanjiSection }),
   }
 
-  const manifestPath = path.join(process.cwd(), 'public', 'data', 'manifest.json')
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8')
 }
