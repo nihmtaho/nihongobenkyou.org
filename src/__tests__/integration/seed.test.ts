@@ -3,7 +3,7 @@ import type { VocabItem } from '../../types/vocabulary'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import { db } from '../../db/schema'
-import { seedDatabase, SeedError } from '../../db/seed'
+import { invalidateLessonCache, seedDatabase, SeedError } from '../../db/seed'
 
 const SAMPLE_LESSON_FILE = sampleVocabulary.filter(v => v.lesson_number === 1)
 
@@ -128,5 +128,41 @@ describe('seedDatabase', () => {
 
     const cards = await db.user_cards.toArray()
     expect(cards).toHaveLength(1)
+  })
+})
+
+describe('invalidateLessonCache', () => {
+  it('deletes matching cache entries for the given prefix', async () => {
+    const deleted: string[] = []
+    const mockCache = {
+      keys: vi.fn(async () => [
+        { url: 'http://localhost/data/mnn1/lesson-01.json' },
+        { url: 'http://localhost/data/mnn1/lesson-02.json' },
+        { url: 'http://localhost/data/kanji/n5-kanji.json' },
+      ]),
+      delete: vi.fn(async (req: { url: string }) => {
+        deleted.push(req.url)
+        return true
+      }),
+    }
+    vi.stubGlobal('caches', { open: vi.fn(async () => mockCache) })
+
+    await invalidateLessonCache('mnn1')
+
+    expect(deleted).toEqual([
+      'http://localhost/data/mnn1/lesson-01.json',
+      'http://localhost/data/mnn1/lesson-02.json',
+    ])
+    expect(deleted).not.toContain('http://localhost/data/kanji/n5-kanji.json')
+  })
+
+  it('is a no-op when caches is not available', async () => {
+    const saved = (globalThis as Record<string, unknown>).caches
+    delete (globalThis as Record<string, unknown>).caches
+
+    await expect(invalidateLessonCache('mnn1')).resolves.toBeUndefined()
+
+    if (saved !== undefined)
+      vi.stubGlobal('caches', saved)
   })
 })

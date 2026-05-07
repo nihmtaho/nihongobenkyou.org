@@ -33,6 +33,18 @@ async function fetchJson<T>(url: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
+export async function invalidateLessonCache(prefix: string): Promise<void> {
+  if (!('caches' in globalThis))
+    return
+  const cache = await caches.open('lessons-cache')
+  const keys = await cache.keys()
+  await Promise.all(
+    keys
+      .filter(req => req.url.includes(`/data/${prefix}/`))
+      .map(req => cache.delete(req)),
+  )
+}
+
 export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   let manifest: Manifest
   try {
