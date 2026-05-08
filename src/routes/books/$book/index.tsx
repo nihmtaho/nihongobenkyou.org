@@ -10,6 +10,7 @@ import { useUserCards } from '../../../hooks/useUserCards'
 import { useVocabulary } from '../../../hooks/useVocabulary'
 import { datasets } from '../../../lib/datasets.config'
 import { formatNextReview } from '../../../lib/next-review'
+import { cn } from '../../../lib/utils'
 import { useAuthStore } from '../../../stores/authStore'
 
 function AnimatedNumber({ value, delay = 0 }: { value: number, delay?: number }) {
@@ -45,53 +46,63 @@ function BookPage() {
 
   return (
     <div>
-      {/* Sticky header */}
-      <div className="sticky top-0 z-10 bg-background px-4 pt-4 border-b border-border/10">
-        <Link
-          to="/books"
-          className="inline-flex items-center gap-1 text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground hover:text-foreground transition-colors mb-3"
-        >
-          ← BOOKS
-        </Link>
-        <div className="flex items-end justify-between mb-3">
-          <div>
-            <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight leading-none">
-              {dataset.title}
-            </h1>
-            <p className="text-sm text-muted-foreground font-[var(--br-jp-font)] mt-0.5">{dataset.title_vi}</p>
-          </div>
-          <div className="flex items-center gap-2 mb-0.5">
-            {dataset.jlpt_level && (
-              <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-primary text-primary px-1.5 py-0.5">
-                N
-                {dataset.jlpt_level}
+      {/* Spacer for mobile expanded nav (84px expanded content height) */}
+      <div className="lg:hidden h-[84px]" aria-hidden />
+
+      {/* Sticky header — desktop shows title; mobile shows tabs only */}
+      <div className="sticky top-0 z-10 bg-background px-4 border-b border-border/10">
+        {/* Desktop only: back link + title */}
+        <div className="hidden lg:block pt-4">
+          <Link
+            to="/books"
+            className="inline-flex items-center gap-1 text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground hover:text-foreground transition-colors mb-3"
+          >
+            ← BOOKS
+          </Link>
+          <div className="flex items-end justify-between mb-3">
+            <div>
+              <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight leading-none">
+                {dataset.title}
+              </h1>
+              <p className="text-sm text-muted-foreground font-[var(--br-jp-font)] mt-0.5">{dataset.title_vi}</p>
+            </div>
+            <div className="flex items-center gap-2 mb-0.5">
+              {dataset.jlpt_level && (
+                <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-primary text-primary px-1.5 py-0.5">
+                  {`N${dataset.jlpt_level}`}
+                </span>
+              )}
+              <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground uppercase">
+                {`L${dataset.lesson_range[0]}–${dataset.lesson_range[1]}`}
               </span>
-            )}
-            <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground uppercase">
-              L
-              {dataset.lesson_range[0]}
-              –
-              {dataset.lesson_range[1]}
-            </span>
+            </div>
           </div>
         </div>
 
         {/* Tabs — mobile only */}
-        <div className="lg:hidden tabs tabs-border">
-          <button
-            type="button"
-            className={`tab font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest ${activeTab === 'vocab' ? 'tab-active font-bold' : ''}`}
-            onClick={() => setActiveTab('vocab')}
-          >
-            Từ vựng
-          </button>
-          <button
-            type="button"
-            className={`tab font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest ${activeTab === 'kanji' ? 'tab-active font-bold' : ''}`}
-            onClick={() => setActiveTab('kanji')}
-          >
-            漢字 Hán tự
-          </button>
+        <div className="lg:hidden flex border-b-2 border-border" role="tablist">
+          {(['vocab', 'kanji'] as const).map((tab) => {
+            const isActive = activeTab === tab
+            return (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  'flex-1 h-11 flex items-center justify-center gap-1.5',
+                  'font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest',
+                  'border-b-2 -mb-[2px] transition-colors duration-150',
+                  isActive
+                    ? 'border-primary text-foreground font-bold'
+                    : 'border-transparent text-muted-foreground',
+                )}
+              >
+                {tab === 'vocab' ? 'Từ vựng' : '漢字 Hán tự'}
+              </button>
+            )
+          })}
         </div>
       </div>
 
