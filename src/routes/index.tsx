@@ -45,14 +45,13 @@ function HomePage() {
             </div>
             {/* Settings shortcut — mobile only (bottom dock replaces SETTINGS tab) */}
             <Button
-              variant="ghost"
-              size="icon"
               asChild
-              className="lg:hidden mt-1 text-muted-foreground"
+              size="icon-lg"
+              className="lg:hidden mt-1"
               aria-label="Cài đặt"
             >
               <Link to="/settings">
-                <Settings size={20} strokeWidth={1.75} />
+                <Settings size={18} strokeWidth={1.75} aria-hidden />
               </Link>
             </Button>
           </div>

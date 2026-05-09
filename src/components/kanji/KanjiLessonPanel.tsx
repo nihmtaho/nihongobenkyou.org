@@ -111,17 +111,20 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
       )}
 
       {due > 0 && (
-        <Link
-          to="/study/review"
-          search={{ filter: 'kanji' }}
-          className="inline-flex items-center justify-center w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 h-9 px-3 font-[var(--br-mono-font)] uppercase text-[11px]"
+        <Button
+          asChild
+          size="lg"
+          variant="destructive"
+          className="w-full bg-destructive text-destructive-foreground font-[var(--br-mono-font)] uppercase text-[11px]"
         >
-          Ôn tập
-          {' '}
-          {due}
-          {' '}
-          hán tự đến hạn
-        </Link>
+          <Link to="/study/review" search={{ filter: 'kanji' }}>
+            Ôn tập
+            {' '}
+            {due}
+            {' '}
+            hán tự đến hạn
+          </Link>
+        </Button>
       )}
     </>
   )
@@ -239,9 +242,9 @@ function LessonAccordionRow({
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Button
-              size="sm"
+              size="xs"
               aria-label="Học bài này"
-              className="h-6 px-2 text-[10px] font-[var(--br-mono-font)] uppercase"
+              className="text-[10px] font-[var(--br-mono-font)] uppercase"
               onClick={(e) => {
                 e.stopPropagation()
                 onStudy({ total, new: Math.max(0, total - studied), learning, review, mature })

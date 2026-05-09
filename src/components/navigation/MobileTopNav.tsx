@@ -73,6 +73,9 @@ export function MobileTopNav() {
   if (!config || config.hideNav)
     return null
 
+  if (!config.showBack && !config.showInfoIcon && !config.hasExpandedHeader)
+    return null
+
   const backLabel = getBackLabel(pathname)
   const backTo = config.backTo
 
@@ -121,15 +124,13 @@ export function MobileTopNav() {
       >
         {config.showBack && backLabel && (
           <Button
-            variant="ghost"
             onClick={handleBack}
             aria-label={`Back to ${backLabel}`}
-            className="absolute left-1 flex items-center gap-0.5 text-muted-foreground h-11 px-2"
+            className="absolute left-2 px-3 gap-1 [box-shadow:3px_3px_0_var(--btn-shadow)] active:translate-x-[3px] active:translate-y-[3px] active:[box-shadow:none]"
+            size="xs"
           >
             <ChevronLeft size={14} aria-hidden />
-            <span className="font-[var(--br-mono-font)] text-[10px] uppercase">
-              {backLabel}
-            </span>
+            <span className="font-[var(--br-mono-font)] text-[10px] uppercase">{backLabel}</span>
           </Button>
         )}
 
@@ -139,11 +140,10 @@ export function MobileTopNav() {
 
         {config.showInfoIcon && (
           <Button
-            variant="ghost"
-            size="icon"
+            size="icon-lg"
             onClick={() => setSheetOpen(true)}
             aria-label="Book info"
-            className="absolute right-1 h-11 w-11"
+            className="absolute right-1"
           >
             <MoreVertical size={18} aria-hidden />
           </Button>
@@ -216,18 +216,16 @@ function BookDetailNav({
           isHidden && '-translate-y-full',
         )}
       >
-        {/* Compact row — always 44px */}
+        {/* Compact row — always 64px */}
         <div className="h-11 flex items-center justify-center relative">
           <Button
-            variant="ghost"
+            size="xs"
             onClick={onBack}
             aria-label={`Back to ${backLabel}`}
-            className="absolute left-1 flex items-center gap-0.5 text-muted-foreground h-11 px-2"
+            className="absolute left-2 px-3 gap-1"
           >
             <ChevronLeft size={14} aria-hidden />
-            <span className="font-[var(--br-mono-font)] text-[10px] uppercase">
-              {backLabel}
-            </span>
+            <span className="font-[var(--br-mono-font)] text-[10px] uppercase">{backLabel}</span>
           </Button>
 
           {/* Title: hidden when fully expanded, appears when compact */}
@@ -236,11 +234,10 @@ function BookDetailNav({
           </div>
 
           <Button
-            variant="ghost"
-            size="icon"
             onClick={() => onSheetOpen(true)}
             aria-label="Book info"
-            className="absolute right-1 h-11 w-11"
+            className="absolute right-1"
+            size="icon-sm"
           >
             <MoreVertical size={18} aria-hidden />
           </Button>

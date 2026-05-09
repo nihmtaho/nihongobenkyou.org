@@ -18,9 +18,9 @@ export function ReactivationBanner() {
         <Button
           type="button"
           variant="ghost"
-          size="icon"
+          size="icon-xs"
           aria-label="Đóng thông báo"
-          className="font-[var(--br-mono-font)] text-[10px] h-6 w-6"
+          className="font-[var(--br-mono-font)] text-[10px]"
           onClick={() => useAuthStore.setState({ reactivationBannerVisible: false })}
         >
           ✕

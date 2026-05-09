@@ -3,7 +3,10 @@ import type { StudyLaunchOptions, StudyModeItem, StudySection } from './study-mo
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import {
+  ResponsiveDialog as Dialog,
+  ResponsiveDialogContent as DialogContent,
+} from '@/components/ui/responsive-dialog'
 import { SRSProgressBar } from '../common/SRSProgressBar'
 
 interface StudyModalProps {
@@ -94,7 +97,7 @@ export function StudyModal({
         <div className="h-0.5 bg-primary w-full shrink-0" />
 
         {/* Header */}
-        <div className="bg-card px-5 pt-4 pb-0">
+        <div className="bg-card px-5 pt-4 pb-0 shrink-0">
           <div className="flex items-start justify-between mb-2">
             <div>
               <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest mb-1">
@@ -142,7 +145,7 @@ export function StudyModal({
                 type="button"
                 size="xs"
                 variant={order === 'random' ? 'default' : 'outline'}
-                className="font-[var(--br-mono-font)] min-h-0 h-6 px-2"
+                className="font-[var(--br-mono-font)]"
                 onClick={() => setOrder('random')}
               >
                 NGẪU NHIÊN
@@ -151,7 +154,7 @@ export function StudyModal({
                 type="button"
                 size="xs"
                 variant={order === 'sequential' ? 'default' : 'outline'}
-                className="font-[var(--br-mono-font)] min-h-0 h-6 px-2"
+                className="font-[var(--br-mono-font)]"
                 onClick={() => setOrder('sequential')}
               >
                 TUẦN TỰ
@@ -202,48 +205,49 @@ export function StudyModal({
           )}
         </div>
 
-        {/* Mode sections */}
-        {sections.map(section => (
-          <div key={section.id}>
-            {/* Section divider — only shown for sections with label/icon */}
-            {(section.label || section.icon) && (
-              <div className="flex items-center gap-2 px-5 py-2 border-y border-border/10 bg-secondary/50">
-                <div className="w-0.5 h-3.5 bg-primary shrink-0" />
-                {section.icon && (
-                  <span
-                    className="text-[13px] font-bold leading-none"
-                    style={{ fontFamily: 'var(--br-jp-font)' }}
-                  >
-                    {section.icon}
+        {/* Mode sections — scrollable on mobile drawer */}
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          {sections.map(section => (
+            <div key={section.id}>
+              {(section.label || section.icon) && (
+                <div className="flex items-center gap-2 px-5 py-2 border-y border-border/10 bg-secondary/50">
+                  <div className="w-0.5 h-3.5 bg-primary shrink-0" />
+                  {section.icon && (
+                    <span
+                      className="text-[13px] font-bold leading-none"
+                      style={{ fontFamily: 'var(--br-jp-font)' }}
+                    >
+                      {section.icon}
+                    </span>
+                  )}
+                  {section.sublabel && (
+                    <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-muted-foreground ml-1">
+                      {section.sublabel}
+                    </span>
+                  )}
+                  {section.label && !section.icon && (
+                    <span className="font-[var(--br-mono-font)] text-[11px] font-bold uppercase tracking-wide">
+                      {section.label}
+                    </span>
+                  )}
+                  <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 ml-auto">
+                    {section.modes.length}
                   </span>
-                )}
-                {section.sublabel && (
-                  <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-muted-foreground ml-1">
-                    {section.sublabel}
-                  </span>
-                )}
-                {section.label && !section.icon && (
-                  <span className="font-[var(--br-mono-font)] text-[11px] font-bold uppercase tracking-wide">
-                    {section.label}
-                  </span>
-                )}
-                <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 ml-auto">
-                  {section.modes.length}
-                </span>
-              </div>
-            )}
-            {section.modes.map(item => (
-              <ModeRow
-                key={item.id}
-                item={item}
-                onSelect={i => handleSelect(section.id, i)}
-              />
-            ))}
-          </div>
-        ))}
+                </div>
+              )}
+              {section.modes.map(item => (
+                <ModeRow
+                  key={item.id}
+                  item={item}
+                  onSelect={i => handleSelect(section.id, i)}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
 
         {/* Footer */}
-        <div className="px-5 py-2 bg-card border-t border-border/10">
+        <div className="px-5 py-2 bg-card border-t border-border/10 shrink-0">
           <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/20 text-right tracking-widest">
             [ESC] đóng
           </p>

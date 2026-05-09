@@ -252,17 +252,6 @@ function KanjiDetailPage() {
       <div className="p-4 max-w-5xl mx-auto">
         {/* Navigation bar — back + lesson position + prev/next */}
         <div className="flex items-center mb-4 -ml-2">
-          <div title="Danh sách hán tự">
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label="Danh sách hán tự"
-              onClick={() => navigate({ to: '/kanji' })}
-            >
-              {chevronLeft}
-            </Button>
-          </div>
-
           {kanji.lesson_number != null && lessonKanji && lessonKanji.length > 1 && (
             <>
               <span className="flex-1 text-center font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider">
@@ -278,8 +267,7 @@ function KanjiDetailPage() {
               </span>
               <div className="flex gap-1">
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  size="icon-lg"
                   aria-label="Hán tự trước"
                   disabled={!prevChar}
                   className="disabled:opacity-30"
@@ -288,8 +276,7 @@ function KanjiDetailPage() {
                   {chevronLeft}
                 </Button>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  size="icon-lg"
                   aria-label="Hán tự tiếp theo"
                   disabled={!nextChar}
                   className="disabled:opacity-30"

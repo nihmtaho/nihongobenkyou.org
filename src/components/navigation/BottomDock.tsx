@@ -21,10 +21,10 @@ export function BottomDock() {
 
   return (
     <nav
-      className="fixed bottom-4 left-4 right-4 lg:hidden z-50 bg-foreground"
+      className="fixed bottom-2 left-0 right-0 lg:hidden z-50 bg-foreground border-t-2 border-t-[oklch(100%_0_0/0.20)] [box-shadow:0_4px_0_oklch(0%_0_0/0.65),0_8px_0_oklch(0%_0_0/0.30),0_12px_0_oklch(0%_0_0/0.10)]"
       aria-label="Main navigation"
     >
-      <div className="flex h-14 pb-[env(safe-area-inset-bottom)]">
+      <div className="flex h-[56px] pb-[env(safe-area-inset-bottom)]">
         {NAV_ITEMS.map(({ to, label, Icon, ariaLabel }) => {
           const isActive = to === '/' ? pathname === '/' : pathname.startsWith(to)
           return (

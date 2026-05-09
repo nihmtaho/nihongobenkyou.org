@@ -292,8 +292,8 @@ export function StrokeOrderAnimation({ strokes, viewBox = '0 0 109 109', classNa
             <Button
               key={s}
               variant={speed === s ? 'default' : 'outline'}
-              size="sm"
-              className="h-6 px-2 text-[10px] font-[var(--br-mono-font)]"
+              size="xs"
+              className="text-[10px] font-[var(--br-mono-font)]"
               onClick={() => handleSpeedChange(s)}
             >
               {s}

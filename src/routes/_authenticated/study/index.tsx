@@ -84,7 +84,7 @@ function StudyDashboardPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest text-muted-foreground h-7 px-2"
+                className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest text-muted-foreground px-2"
                 onClick={() => setGuideOpen(true)}
               >
                 ? Hướng dẫn
@@ -121,20 +121,16 @@ function StudyDashboardPage() {
           {/* Filter chips */}
           <div className="flex gap-2">
             {(['all', 'vocab', 'kanji', 'decks'] as CardTypeFilter[]).map(f => (
-              <button
+              <Button
                 key={f}
-                type="button"
+                size="xs"
+                variant={filter === f ? 'default' : 'outline'}
+                className="font-[var(--br-mono-font)] uppercase tracking-widest"
                 onClick={() => setFilter(f)}
-                className={[
-                  'px-3 py-1.5 text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest border transition-colors',
-                  filter === f
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'border-border/20 hover:border-border/40 text-muted-foreground',
-                ].join(' ')}
               >
                 {FILTER_LABELS[f]}
                 {f !== 'all' && stats && (
-                  <span className="ml-1 opacity-60">
+                  <span className="opacity-60">
                     {f === 'vocab'
                       ? stats.vocabDue
                       : f === 'kanji'
@@ -142,7 +138,7 @@ function StudyDashboardPage() {
                         : stats.customDecksDueToday}
                   </span>
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -152,8 +148,8 @@ function StudyDashboardPage() {
         {/* Main CTA */}
         {filter !== 'decks' && (
           <Button
-            size="lg"
-            className="w-full h-14 text-base font-[var(--br-heading-font)] uppercase tracking-wide"
+            size="xl"
+            className="w-full font-[var(--br-heading-font)] uppercase tracking-wide"
             onClick={startReview}
             disabled={dueCount === 0}
           >

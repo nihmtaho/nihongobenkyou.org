@@ -1,8 +1,14 @@
 import type { MeaningLanguage, StudyConfig, StudyMode, TypeInputSubMode } from '../../types/study'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import {
+  ResponsiveDialog as Dialog,
+  ResponsiveDialogContent as DialogContent,
+  ResponsiveDialogFooter as DialogFooter,
+  ResponsiveDialogHeader as DialogHeader,
+  ResponsiveDialogTitle as DialogTitle,
+} from '@/components/ui/responsive-dialog'
 import { useSettingsStore } from '../../stores/settingsStore'
 import { STUDY_CONFIG_MODE_OPTIONS } from './config/study-config-modes.config'
 

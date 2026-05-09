@@ -122,7 +122,7 @@ function DeckRow({
         <Button
           size="sm"
           variant={progress.dueToday > 0 ? 'default' : 'outline'}
-          className="w-full h-7 text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest"
+          className="w-full text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest"
           onClick={() => onStudy(deck)}
           disabled={deck.word_count === 0}
         >
