@@ -6,8 +6,8 @@ import { KanjiLessonPanel } from '../../components/kanji/KanjiLessonPanel'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Skeleton } from '../../components/ui/skeleton'
+import { Tabs, TabsList, TabsTrigger } from '../../components/ui/tabs'
 import { useKanjiList } from '../../hooks/useKanjiList'
-import { cn } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 
 export const Route = createFileRoute('/kanji/')({
@@ -35,32 +35,22 @@ function KanjiPage() {
         </h1>
 
         {/* Tabs — mobile only */}
-        <div className="lg:hidden flex border-b border-border">
-          <button
-            type="button"
-            className={cn(
-              'flex-1 px-4 py-2 font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest transition-colors',
-              activeTab === 'lessons'
-                ? 'border-b-2 border-primary text-foreground font-bold -mb-px'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
-            onClick={() => setActiveTab('lessons')}
-          >
-            Theo bài
-          </button>
-          <button
-            type="button"
-            className={cn(
-              'flex-1 px-4 py-2 font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest transition-colors',
-              activeTab === 'browse'
-                ? 'border-b-2 border-primary text-foreground font-bold -mb-px'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
-            onClick={() => setActiveTab('browse')}
-          >
-            Duyệt
-          </button>
-        </div>
+        <Tabs value={activeTab} onValueChange={v => setActiveTab(v as Tab)} className="lg:hidden">
+          <TabsList variant="line" className="w-full h-auto gap-0 p-0 border-b border-border">
+            <TabsTrigger
+              value="lessons"
+              className="flex-1 px-4 py-2 h-auto font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest after:bg-primary data-active:font-bold"
+            >
+              Theo bài
+            </TabsTrigger>
+            <TabsTrigger
+              value="browse"
+              className="flex-1 px-4 py-2 h-auto font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest after:bg-primary data-active:font-bold"
+            >
+              Duyệt
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Mobile: tab content scrolls via main */}
@@ -112,9 +102,9 @@ function BrowsePanel({ userId, stickyFilters = false }: BrowsePanelProps) {
     <div className="flex flex-col gap-3">
       <div className="flex gap-2 flex-wrap">
         <Button
-          size="sm"
+          size="xs"
           variant={jlptFilter === undefined ? 'default' : 'outline'}
-          className="h-6 px-2 text-[10px] font-[var(--br-mono-font)]"
+          className="text-[10px] font-[var(--br-mono-font)]"
           onClick={() => setJlptFilter(undefined)}
         >
           ALL
@@ -122,9 +112,9 @@ function BrowsePanel({ userId, stickyFilters = false }: BrowsePanelProps) {
         {JLPT_LEVELS.map(level => (
           <Button
             key={level}
-            size="sm"
+            size="xs"
             variant={jlptFilter === level ? 'default' : 'outline'}
-            className="h-6 px-2 text-[10px] font-[var(--br-mono-font)]"
+            className="text-[10px] font-[var(--br-mono-font)]"
             onClick={() => setJlptFilter(level)}
           >
             {level}

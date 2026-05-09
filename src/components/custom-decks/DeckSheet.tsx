@@ -20,23 +20,23 @@ export function DeckSheet({ deck, userId, onClose }: Props) {
   const { data: words = [] } = useCustomDeckWords(deck?.id ?? null)
   const mutations = useCustomVocabMutations(deck?.id ?? '', userId)
   const [width, setWidth] = useState(DEFAULT_WIDTH)
-  const dragStartX = useRef<number | null>(null)
-  const dragStartWidth = useRef(DEFAULT_WIDTH)
+  const dragStartXRef = useRef<number | null>(null)
+  const dragStartWidthRef = useRef(DEFAULT_WIDTH)
 
   const handleDragStart = useCallback((e: React.MouseEvent) => {
-    dragStartX.current = e.clientX
-    dragStartWidth.current = width
+    dragStartXRef.current = e.clientX
+    dragStartWidthRef.current = width
 
     function onMove(ev: MouseEvent) {
-      if (dragStartX.current === null)
+      if (dragStartXRef.current === null)
         return
-      const delta = dragStartX.current - ev.clientX
+      const delta = dragStartXRef.current - ev.clientX
       const maxW = window.innerWidth * MAX_WIDTH_RATIO
-      setWidth(Math.min(maxW, Math.max(MIN_WIDTH, dragStartWidth.current + delta)))
+      setWidth(Math.min(maxW, Math.max(MIN_WIDTH, dragStartWidthRef.current + delta)))
     }
 
     function onUp() {
-      dragStartX.current = null
+      dragStartXRef.current = null
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseup', onUp)
     }

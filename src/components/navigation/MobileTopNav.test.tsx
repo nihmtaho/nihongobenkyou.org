@@ -32,10 +32,10 @@ function setPathname(pathname: string) {
 }
 
 describe('mobileTopNav', () => {
-  it('renders title for home route', () => {
-    setPathname('/')
+  it('renders title on route with back button', () => {
+    setPathname('/kanji/graph')
     render(<MobileTopNav />)
-    expect(screen.getByText('HOME')).toBeInTheDocument()
+    expect(screen.getByText('KANJI GRAPH')).toBeInTheDocument()
   })
 
   it('renders back button on /books/mnn1', () => {

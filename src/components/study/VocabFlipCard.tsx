@@ -134,7 +134,7 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
                   type="button"
                   size="xs"
                   variant={hintRevealed ? 'default' : 'ghost'}
-                  className={`font-[var(--br-mono-font)] uppercase text-[9px] min-h-0 h-7${!hintRevealed ? ' border border-border/20' : ''}`}
+                  className={`font-[var(--br-mono-font)] uppercase text-[9px]${!hintRevealed ? ' border border-border/20' : ''}`}
                   onClick={handleHint}
                   aria-label="Toggle reading hint"
                 >

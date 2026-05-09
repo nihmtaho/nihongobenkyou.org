@@ -96,7 +96,7 @@ export function DeckCard({ deck, userId, isSelected, isUnstarted = false, onClic
             <Button
               size="sm"
               variant="outline"
-              className="w-full mt-2 h-7 text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest border-primary text-primary"
+              className="w-full mt-2 text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest border-primary text-primary"
               onClick={(e) => {
                 e.stopPropagation()
                 onStudy()
@@ -111,8 +111,8 @@ export function DeckCard({ deck, userId, isSelected, isUnstarted = false, onClic
             <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
               <Button
                 variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1 h-6 w-6 opacity-60 hover:opacity-100"
+                size="icon-xs"
+                className="absolute top-1 right-1 opacity-60 hover:opacity-100"
               >
                 <MoreVertical className="h-3 w-3" />
               </Button>

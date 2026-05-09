@@ -52,9 +52,9 @@ export function VocabDeckItem({ vocab, dueDate, onRemove }: VocabDeckItemProps) 
         <Button
           type="button"
           variant="ghost"
-          size="icon-sm"
+          size="icon-xs"
           aria-label="Xóa khỏi deck"
-          className="text-muted-foreground hover:text-destructive h-6 w-6"
+          className="text-muted-foreground hover:text-destructive"
           onClick={onRemove}
         >
           ✕
@@ -105,9 +105,9 @@ export function KanjiDeckItem({ kanji, dueDate, onRemove }: KanjiDeckItemProps) 
         <Button
           type="button"
           variant="ghost"
-          size="icon-sm"
+          size="icon-xs"
           aria-label="Xóa khỏi deck"
-          className="text-muted-foreground hover:text-destructive h-6 w-6"
+          className="text-muted-foreground hover:text-destructive"
           onClick={onRemove}
         >
           ✕

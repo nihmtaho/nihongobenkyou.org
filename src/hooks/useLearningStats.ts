@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { db } from '../db/schema'
 import { useLiveQuery } from '../lib/use-live-query'
 
@@ -62,11 +63,13 @@ export function useLearningStats(userId: string) {
   const isLoading = vocabCards === undefined || kanjiCards === undefined
     || totalVocab === undefined || totalKanji === undefined
 
+  const now = useMemo(() => new Date().toISOString(), [])
+
   const data: LearningStats | undefined = isLoading
     ? undefined
     : {
-        vocab: classify(totalVocab, vocabCards, new Date().toISOString()),
-        kanji: classify(totalKanji, kanjiCards, new Date().toISOString()),
+        vocab: classify(totalVocab, vocabCards, now),
+        kanji: classify(totalKanji, kanjiCards, now),
       }
 
   return { data: data ?? null, isLoading }

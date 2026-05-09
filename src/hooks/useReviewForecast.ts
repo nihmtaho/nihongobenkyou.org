@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { db } from '../db/schema'
 import { useLiveQuery } from '../lib/use-live-query'
 
@@ -22,7 +23,7 @@ function buildNext7Dates(today: string): string[] {
 }
 
 export function useReviewForecast(userId: string) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const next7 = buildNext7Dates(today)
   const endDate = next7[6]
 

@@ -99,8 +99,8 @@ export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Pro
                   <td className="p-1.5">
                     <div className="flex gap-1 justify-end">
                       <Button
-                        size="icon"
-                        className="h-6 w-6 bg-primary text-primary-foreground"
+                        size="icon-xs"
+                        className="bg-primary text-primary-foreground"
                         aria-label="✓"
                         onClick={commitEdit}
                         disabled={isPending}
@@ -108,9 +108,9 @@ export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Pro
                         ✓
                       </Button>
                       <Button
-                        size="icon"
+                        size="icon-xs"
                         variant="ghost"
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground hover:text-foreground"
                         aria-label="hủy"
                         onClick={cancelEdit}
                         disabled={isPending}
@@ -137,9 +137,9 @@ export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Pro
                 <td className="p-2">{word.meaning_vi}</td>
                 <td className="p-2">
                   <Button
-                    size="icon"
+                    size="icon-xs"
                     variant="ghost"
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-opacity"
+                    className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-opacity"
                     aria-label="xóa"
                     disabled={isPending}
                     onClick={(e) => {

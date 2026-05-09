@@ -3,7 +3,13 @@ import type { StudyMode, TypeInputSubMode } from '@/types/study'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  ResponsiveDialog as Dialog,
+  ResponsiveDialogContent as DialogContent,
+  ResponsiveDialogFooter as DialogFooter,
+  ResponsiveDialogHeader as DialogHeader,
+  ResponsiveDialogTitle as DialogTitle,
+} from '@/components/ui/responsive-dialog'
 import { getActiveDeckKanjiSRSMap, getActiveDeckVocabSRSMap } from '@/db/active-deck'
 import { db } from '@/db/schema'
 import {
