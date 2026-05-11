@@ -24,5 +24,5 @@ export async function hideVocab(
 }
 
 export async function unhideVocab(userId: string, itemId: string): Promise<void> {
-  await db.hidden_vocab.delete([userId, itemId] as unknown as never)
+  await db.hidden_vocab.where('[userId+item_id]').equals([userId, itemId]).delete()
 }
