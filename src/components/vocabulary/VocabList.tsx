@@ -5,7 +5,6 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { useMemo, useRef, useState } from 'react'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { useActiveDeckVocab } from '../../hooks/useActiveDeck'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
 import { HiddenVocabList } from './HiddenVocabList'
@@ -29,12 +28,6 @@ const SKELETON_COUNT = 5
 export function VocabList({ items, cards, userId, isLoading, hiddenPanelOpen, onHiddenPanelClose }: VocabListProps) {
   const parentRef = useRef<HTMLDivElement>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-
-  const { data: deckItems } = useActiveDeckVocab(userId)
-  const vocabIdSet = useMemo(
-    () => new Set((deckItems ?? []).map(i => i.vocab_id)),
-    [deckItems],
-  )
 
   const virtualizer = useVirtualizer({
     count: items.length,
@@ -166,7 +159,6 @@ export function VocabList({ items, cards, userId, isLoading, hiddenPanelOpen, on
               isSelected={item.vocab_id === effectiveSelectedId}
               today={today}
               onSelect={() => setSelectedId(item.vocab_id)}
-              vocabIdSet={vocabIdSet}
               userId={userId}
             />
           ))}

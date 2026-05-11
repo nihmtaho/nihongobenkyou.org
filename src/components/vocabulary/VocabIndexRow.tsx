@@ -1,12 +1,12 @@
 import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
-import { EyeOffIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { EyeOffIcon, Plus } from 'lucide-react'
+import { useState } from 'react'
 
-import { useToggleVocabInDeck } from '../../hooks/useActiveDeck'
+import { Button } from '@/components/ui/button'
 import { useHideVocab } from '../../hooks/useHiddenVocab'
-import { AddToActiveDeckButton } from '../common/AddToActiveDeckButton'
+import { AddToDeckDialog } from '../common/AddToDeckDialog'
 
 interface VocabIndexRowProps {
   item: VocabItem
@@ -15,35 +15,18 @@ interface VocabIndexRowProps {
   isSelected: boolean
   today: string
   onSelect: () => void
-  vocabIdSet: Set<string>
   userId: string
 }
 
-export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, vocabIdSet, userId }: VocabIndexRowProps) {
+export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, userId }: VocabIndexRowProps) {
   const isKnown = card?.is_known === true
   const isDue = card != null && !isKnown && card.due_date <= today
   const isNew = card == null
-  const inDeck = vocabIdSet.has(item.vocab_id)
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
-  const toggleMutation = useToggleVocabInDeck(userId)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const { mutate: hide, isPending: isHiding } = useHideVocab()
-
-  useEffect(() => {
-    if (!toastMsg)
-      return
-    const id = setTimeout(setToastMsg, 2000, null)
-    return () => clearTimeout(id)
-  }, [toastMsg])
 
   return (
     <div className="group relative">
-      {toastMsg && (
-        <div className="toast toast-top toast-center z-50 pointer-events-none">
-          <div className="bg-success/10 border border-success/50 px-4 py-2">
-            <span className="font-[var(--br-mono-font)] text-[11px] uppercase">{toastMsg}</span>
-          </div>
-        </div>
-      )}
       <button
         type="button"
         onClick={onSelect}
@@ -78,20 +61,24 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
                 {isNew && !isDue && (
                   <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 uppercase">NEW</span>
                 )}
-                <AddToActiveDeckButton
-                  inDeck={inDeck}
-                  isPending={toggleMutation.isPending}
-                  onToggle={() => toggleMutation.mutate(
-                    { vocabId: item.vocab_id, inDeck },
-                    { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC NGẮT QUÃNG' : 'Đã thêm vào HỌC NGẮT QUÃNG') },
-                  )}
-                  className="h-6 w-6"
-                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 flex-shrink-0 text-muted-foreground hover:text-foreground"
+                  aria-label={`Thêm ${item.word ?? item.reading} vào deck`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setDialogOpen(true)
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
         </div>
       </button>
+
       <button
         type="button"
         onClick={(e) => {
@@ -105,6 +92,13 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
         <EyeOffIcon className="h-2.5 w-2.5" />
         ẨN
       </button>
+
+      <AddToDeckDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        vocabItem={item}
+        userId={userId}
+      />
     </div>
   )
 }
