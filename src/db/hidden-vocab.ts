@@ -10,7 +10,8 @@ export async function hideVocab(
   source: 'lesson' | 'custom',
   userId: string,
 ): Promise<void> {
-  await db.transaction('rw', ['hidden_vocab', 'user_cards', 'active_vocab_srs', 'custom_deck_srs'], async () => {
+  // eslint-disable-next-line ts/no-explicit-any
+  await db.transaction('rw', [db.hidden_vocab, db.user_cards, db.active_vocab_srs, db.custom_deck_srs] as any, async () => {
     await db.hidden_vocab.put({ userId, item_id: itemId, source, hidden_at: new Date().toISOString() })
     if (source === 'lesson') {
       await db.user_cards.where('[userId+vocabId]').equals([userId, itemId]).delete()
@@ -23,5 +24,8 @@ export async function hideVocab(
 }
 
 export async function unhideVocab(userId: string, itemId: string): Promise<void> {
-  await db.hidden_vocab.where('[userId+item_id]').equals([userId, itemId]).delete()
+  // eslint-disable-next-line ts/no-explicit-any
+  await db.transaction('rw', [db.hidden_vocab] as any, async () => {
+    await db.hidden_vocab.where('[userId+item_id]').equals([userId, itemId]).delete()
+  })
 }

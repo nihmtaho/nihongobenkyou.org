@@ -77,7 +77,7 @@ describe('hideVocab — lesson', () => {
     expect(rows[0].userId).toBe(USER)
     expect(rows[0].item_id).toBe('vocab-1')
     expect(rows[0].source).toBe('lesson')
-    expect(rows[0].hidden_at).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
+    expect(rows[0].hidden_at).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
   })
 
   it('deletes user_cards record [userId, itemId] in same transaction', async () => {
@@ -120,6 +120,18 @@ describe('unhideVocab', () => {
     await unhideVocab(USER, 'vocab-1')
     const entry = await db.hidden_vocab.get([USER, 'vocab-1'])
     expect(entry).toBeUndefined()
+  })
+
+  it('does not remove another user\'s entry with the same item_id', async () => {
+    await db.hidden_vocab.bulkPut([
+      { userId: USER, item_id: 'vocab-1', source: 'lesson', hidden_at: '2026-01-01T00:00:00.000Z' },
+      { userId: OTHER_USER, item_id: 'vocab-1', source: 'lesson', hidden_at: '2026-01-01T00:00:00.000Z' },
+    ])
+    await unhideVocab(USER, 'vocab-1')
+    const user1Entry = await db.hidden_vocab.get([USER, 'vocab-1'])
+    const user2Entry = await db.hidden_vocab.get([OTHER_USER, 'vocab-1'])
+    expect(user1Entry).toBeUndefined()
+    expect(user2Entry).toBeDefined()
   })
 })
 
