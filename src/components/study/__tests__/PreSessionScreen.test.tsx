@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { PreSessionScreen } from '../PreSessionScreen'
 
 const defaultProps = {
@@ -14,6 +14,13 @@ const defaultProps = {
   onStart: vi.fn(),
   onBack: vi.fn(),
 }
+
+beforeEach(() => {
+  defaultProps.onSetMode.mockReset()
+  defaultProps.onSetTypeInputSubMode.mockReset()
+  defaultProps.onStart.mockReset()
+  defaultProps.onBack.mockReset()
+})
 
 describe('preSessionScreen sub-mode selector', () => {
   it('does not show sub-mode selector when mode is not type-input', () => {
