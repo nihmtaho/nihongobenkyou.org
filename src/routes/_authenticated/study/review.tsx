@@ -1,3 +1,4 @@
+import type { VocabTypeSubMode } from '../../../components/kanji/KanjiVocabTypeInputCard'
 import type { SRSRating } from '../../../types/srs'
 import type { MeaningLanguage } from '../../../types/study'
 import type { CardTypeFilter, UnifiedCard } from '../../../types/unified-card'
@@ -331,7 +332,7 @@ function renderCard(
         key={card.card.vocabId + currentIndex}
         card={vocabShaped}
         hanVietMap={hanVietMap}
-        subMode="word→hira"
+        subMode={session.typeInputSubMode as VocabTypeSubMode}
         onRate={onRate}
       />
     )

@@ -40,10 +40,10 @@ describe('preSessionScreen sub-mode selector', () => {
     expect(screen.getByText(/TỪ VỰNG → NGHĨA VIỆT/i)).toBeInTheDocument()
   })
 
-  it('highlights the active sub-mode', () => {
+  it('marks the active sub-mode with aria-pressed', () => {
     render(<PreSessionScreen {...defaultProps} mode="type-input" typeInputSubMode="vi→hira" />)
     const activeBtn = screen.getByText(/TIẾNG VIỆT → CÁCH ĐỌC/i)
-    expect(activeBtn.className).toMatch(/bg-primary/)
+    expect(activeBtn).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('calls onSetTypeInputSubMode when a sub-mode button is clicked', () => {

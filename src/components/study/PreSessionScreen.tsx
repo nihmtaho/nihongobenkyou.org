@@ -33,7 +33,8 @@ const MODE_LABELS: Record<StudyMode, string> = {
   'pitch-discrimination': 'Thanh điệu',
 }
 
-const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string }[] = [
+// word→han_viet is excluded: it's used only in specialized kanji-vocab flows, not general review
+const TYPE_INPUT_SUB_MODES: { value: Exclude<TypeInputSubMode, 'word→han_viet'>, label: string }[] = [
   { value: 'word→hira', label: 'TỪ VỰNG → CÁCH ĐỌC' },
   { value: 'vi→hira', label: 'TIẾNG VIỆT → CÁCH ĐỌC' },
   { value: 'word→vi', label: 'TỪ VỰNG → NGHĨA VIỆT' },
@@ -127,6 +128,7 @@ export function PreSessionScreen({
                 <button
                   key={value}
                   type="button"
+                  aria-pressed={typeInputSubMode === value}
                   onClick={() => onSetTypeInputSubMode(value)}
                   className={cn(
                     'px-3 py-2 text-[11px] font-[var(--br-mono-font)] uppercase tracking-wide border transition-colors text-left min-h-[44px]',
