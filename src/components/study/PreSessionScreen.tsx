@@ -2,7 +2,6 @@ import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import type { CardTypeFilter } from '../../types/unified-card'
 import { Button } from '@/components/ui/button'
 
-/** typeInputSubMode and onSetTypeInputSubMode are reserved for a future sub-mode selector UI */
 interface PreSessionScreenProps {
   filter: CardTypeFilter
   vocabCount: number
@@ -33,15 +32,21 @@ const MODE_LABELS: Record<StudyMode, string> = {
   'pitch-discrimination': 'Thanh điệu',
 }
 
+const TYPE_INPUT_SUB_MODES: { value: TypeInputSubMode, label: string }[] = [
+  { value: 'word→hira', label: 'TỪ VỰNG → CÁCH ĐỌC' },
+  { value: 'vi→hira', label: 'TIẾNG VIỆT → CÁCH ĐỌC' },
+  { value: 'word→vi', label: 'TỪ VỰNG → NGHĨA VIỆT' },
+]
+
 export function PreSessionScreen({
   filter,
   vocabCount,
   kanjiCount,
   kanjiVocabCount,
   mode,
-  typeInputSubMode: _typeInputSubMode,
+  typeInputSubMode,
   onSetMode,
-  onSetTypeInputSubMode: _onSetTypeInputSubMode,
+  onSetTypeInputSubMode,
   onStart,
   onBack,
 }: PreSessionScreenProps) {
@@ -109,6 +114,32 @@ export function PreSessionScreen({
             </button>
           ))}
         </div>
+
+        {/* Sub-mode selector — visible only when type-input is active */}
+        {mode === 'type-input' && (
+          <div className="flex flex-col gap-2 mt-1">
+            <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
+              TUỲ CHỌN GÕ TỪ
+            </p>
+            <div className="grid grid-cols-1 gap-1">
+              {TYPE_INPUT_SUB_MODES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => onSetTypeInputSubMode(value)}
+                  className={[
+                    'px-3 py-2 text-[11px] font-[var(--br-mono-font)] uppercase tracking-wide border transition-colors text-left',
+                    typeInputSubMode === value
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border/20 hover:border-border/50',
+                  ].join(' ')}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <Button
