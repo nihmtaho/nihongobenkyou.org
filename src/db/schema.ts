@@ -30,6 +30,13 @@ export interface StreakData {
   max_streak: number
 }
 
+export interface HiddenVocabEntry {
+  userId: string
+  item_id: string
+  source: 'lesson' | 'custom'
+  hidden_at: string
+}
+
 export class NihongoDB extends Dexie {
   vocabulary!: EntityTable<VocabItem, 'vocab_id'>
   lessons!: EntityTable<LessonMeta, 'lesson_id'>
@@ -49,6 +56,7 @@ export class NihongoDB extends Dexie {
   active_vocab_srs!: EntityTable<ActiveVocabSRS, never>
   active_kanji_srs!: EntityTable<ActiveKanjiSRS, never>
   custom_deck_srs!: EntityTable<CustomDeckSRS, never>
+  hidden_vocab!: EntityTable<HiddenVocabEntry, never>
 
   constructor() {
     super('NihongoDB')
@@ -181,6 +189,10 @@ export class NihongoDB extends Dexie {
         const orphanKeys = remainingCustomCards.map(c => [c.userId, c.vocabId])
         await tx.table('user_cards').bulkDelete(orphanKeys)
       }
+    })
+    // v13: hidden_vocab — per-user, per-item hide list (lesson and custom vocab)
+    this.version(13).stores({
+      hidden_vocab: '[userId+item_id], [userId+source]',
     })
   }
 }
