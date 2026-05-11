@@ -5,10 +5,15 @@ import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { SRSProgressBar } from '../../../components/common/SRSProgressBar'
 import { VocabStudyModal } from '../../../components/study/VocabStudyModal'
+import { HiddenVocabBadge } from '../../../components/vocabulary/HiddenVocabBadge'
+import { HiddenVocabList } from '../../../components/vocabulary/HiddenVocabList'
 import { VocabList } from '../../../components/vocabulary/VocabList'
+import { useHiddenVocab } from '../../../hooks/useHiddenVocab'
 import { useLaunchVocabSession } from '../../../hooks/useLaunchVocabSession'
+import { useMediaQuery } from '../../../hooks/useMediaQuery'
 import { useUserCards } from '../../../hooks/useUserCards'
 import { useVocabulary } from '../../../hooks/useVocabulary'
 import { formatNextReview } from '../../../lib/next-review'
@@ -35,6 +40,10 @@ function LessonPage() {
   const [retrySubMode] = useState<TypeInputSubMode>('word→hira')
 
   const userId = useAuthStore(s => s.userId) ?? ''
+  const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
+  const hiddenLessonIds = useHiddenVocab(userId, 'lesson')
+  const hiddenCount = hiddenLessonIds.size
   const { data: items = [], isLoading } = useVocabulary(book, lessonNumber, userId)
   const nonDeprecated = items.filter(item => !item.deprecated)
   const vocabIds = nonDeprecated.map(item => item.vocab_id)
@@ -110,6 +119,7 @@ function LessonPage() {
             </h1>
           </div>
           <div className="flex gap-1.5 mb-2">
+            <HiddenVocabBadge count={hiddenCount} onClick={() => setHiddenPanelOpen(true)} />
             {dueCount > 0 && (
               <Button
                 size="sm"
@@ -237,6 +247,8 @@ function LessonPage() {
           cards={cards}
           userId={userId}
           isLoading={isLoading}
+          hiddenPanelOpen={isDesktop && hiddenPanelOpen}
+          onHiddenPanelClose={() => setHiddenPanelOpen(false)}
         />
       </div>
 
@@ -250,6 +262,28 @@ function LessonPage() {
           onLaunch={handleLaunch}
           onClose={() => setShowConfig(false)}
         />
+      )}
+
+      {!isDesktop && (
+        <Sheet open={hiddenPanelOpen} onOpenChange={setHiddenPanelOpen}>
+          <SheetContent side="bottom" className="max-h-[60vh] flex flex-col p-0">
+            <div className="px-4 py-3 border-b border-border/10 shrink-0">
+              <p className="text-[11px] font-[var(--br-mono-font)] uppercase font-bold tracking-wider">
+                Từ Đang Ẩn — Bài
+                {' '}
+                {String(lessonNumber).padStart(2, '0')}
+              </p>
+              <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground mt-0.5">
+                {hiddenCount}
+                {' '}
+                từ · Nhấn HIỆN để bỏ ẩn
+              </p>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <HiddenVocabList source="lesson" userId={userId} />
+            </div>
+          </SheetContent>
+        </Sheet>
       )}
     </div>
   )
