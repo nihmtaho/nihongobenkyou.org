@@ -27,7 +27,7 @@ afterEach(async () => {
 describe('useVocabulary', () => {
   it('returns correct entries for a given book and lesson', async () => {
     const { result } = renderHook(
-      () => useVocabulary('minna_shokyuu_1', 1),
+      () => useVocabulary('minna_shokyuu_1', 1, ''),
       { wrapper: TestWrapper },
     )
 
@@ -40,7 +40,7 @@ describe('useVocabulary', () => {
 
   it('returns empty array when no entries match the lesson', async () => {
     const { result } = renderHook(
-      () => useVocabulary('minna_shokyuu_1', 99),
+      () => useVocabulary('minna_shokyuu_1', 99, ''),
       { wrapper: TestWrapper },
     )
 
@@ -50,7 +50,7 @@ describe('useVocabulary', () => {
 
   it('returns entries with correct vocab_ids computed from the real hash function', async () => {
     const { result } = renderHook(
-      () => useVocabulary('minna_shokyuu_1', 2),
+      () => useVocabulary('minna_shokyuu_1', 2, ''),
       { wrapper: TestWrapper },
     )
 
@@ -67,7 +67,7 @@ describe('useVocabulary', () => {
     vi.stubGlobal('fetch', fetchSpy)
 
     const { result } = renderHook(
-      () => useVocabulary('minna_shokyuu_1', 1),
+      () => useVocabulary('minna_shokyuu_1', 1, ''),
       { wrapper: TestWrapper },
     )
 

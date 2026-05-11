@@ -17,7 +17,7 @@ interface Props {
 }
 
 export function DeckSheet({ deck, userId, onClose }: Props) {
-  const { data: words = [] } = useCustomDeckWords(deck?.id ?? null)
+  const { data: words = [] } = useCustomDeckWords(deck?.id ?? null, userId)
   const mutations = useCustomVocabMutations(deck?.id ?? '', userId)
   const [width, setWidth] = useState(DEFAULT_WIDTH)
   const dragStartXRef = useRef<number | null>(null)

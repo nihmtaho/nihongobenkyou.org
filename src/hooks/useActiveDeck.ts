@@ -1,5 +1,6 @@
 import type { ActiveKanjiItem, ActiveVocabItem } from '../types/active-deck'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import {
   addKanjiToDeck,
   addVocabToDeck,
@@ -12,14 +13,23 @@ import {
   removeKanjiFromDeck,
   removeVocabFromDeck,
 } from '../db/active-deck'
+import { useHiddenVocab } from './useHiddenVocab'
 
 export function useActiveDeckVocab(userId: string) {
-  return useQuery<ActiveVocabItem[]>({
+  const hiddenIds = useHiddenVocab(userId, 'lesson')
+  const query = useQuery<ActiveVocabItem[]>({
     queryKey: ['active-deck-vocab', userId],
     queryFn: () => getActiveDeckVocab(userId),
     enabled: !!userId,
     staleTime: 0,
   })
+  return {
+    ...query,
+    data: useMemo(
+      () => query.data?.filter(item => !hiddenIds.has(item.vocab_id)),
+      [query.data, hiddenIds],
+    ),
+  }
 }
 
 export function useActiveDeckKanji(userId: string) {

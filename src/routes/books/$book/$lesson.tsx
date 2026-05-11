@@ -34,11 +34,10 @@ function LessonPage() {
   const [retryMode, setRetryMode] = useState<StudyMode>('flashcard')
   const [retrySubMode] = useState<TypeInputSubMode>('word→hira')
 
-  const { data: items = [], isLoading } = useVocabulary(book, lessonNumber)
+  const userId = useAuthStore(s => s.userId) ?? ''
+  const { data: items = [], isLoading } = useVocabulary(book, lessonNumber, userId)
   const nonDeprecated = items.filter(item => !item.deprecated)
   const vocabIds = nonDeprecated.map(item => item.vocab_id)
-
-  const userId = useAuthStore(s => s.userId) ?? ''
   const { data: cards = new Map() } = useUserCards(userId, vocabIds)
   const { initSession, stats } = useStudySessionStore()
   const launchVocabSession = useLaunchVocabSession(userId)
