@@ -245,7 +245,7 @@ function LessonGrid({ book, bookSource, lessons, isLoading, userId }: LessonGrid
 }
 
 function LessonCard({ bookId, lesson, userId }: { bookId: string, lesson: Lesson, userId: string }) {
-  const { data: vocabItems } = useVocabulary(lesson.book_source, lesson.lesson_number)
+  const { data: vocabItems } = useVocabulary(lesson.book_source, lesson.lesson_number, userId)
   const total = vocabItems?.length ?? lesson.vocab_count
   const vocabIds = vocabItems?.map(v => v.vocab_id) ?? []
 

@@ -1,9 +1,12 @@
 import type { VocabItem } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { db } from '../db/schema'
+import { useHiddenVocab } from './useHiddenVocab'
 
-export function useVocabulary(bookSource: string, lessonNumber: number) {
-  return useQuery<VocabItem[]>({
+export function useVocabulary(bookSource: string, lessonNumber: number, userId: string) {
+  const hiddenIds = useHiddenVocab(userId, 'lesson')
+  const query = useQuery<VocabItem[]>({
     queryKey: ['vocabulary', bookSource, lessonNumber],
     queryFn: async () => {
       const items = await db.vocabulary
@@ -14,4 +17,17 @@ export function useVocabulary(bookSource: string, lessonNumber: number) {
     },
     staleTime: Infinity,
   })
+  const filteredData = useMemo(
+    () => query.data?.filter(item => !hiddenIds.has(item.vocab_id)),
+    [query.data, hiddenIds],
+  )
+  const hiddenCount = useMemo(
+    () => query.data?.filter(item => hiddenIds.has(item.vocab_id)).length ?? 0,
+    [query.data, hiddenIds],
+  )
+  return {
+    ...query,
+    data: filteredData,
+    hiddenCount,
+  }
 }

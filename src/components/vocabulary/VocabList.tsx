@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useActiveDeckVocab } from '../../hooks/useActiveDeck'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
+import { HiddenVocabList } from './HiddenVocabList'
 import { VocabCard } from './VocabCard'
 import { VocabDetailPanel } from './VocabDetailPanel'
 import { VocabIndexRow } from './VocabIndexRow'
@@ -17,13 +18,15 @@ interface VocabListProps {
   cards: Map<string, CardState>
   userId: string
   isLoading: boolean
+  hiddenPanelOpen?: boolean
+  onHiddenPanelClose?: () => void
 }
 
 const ESTIMATE_SIZE = 180
 const OVERSCAN = 3
 const SKELETON_COUNT = 5
 
-export function VocabList({ items, cards, userId, isLoading }: VocabListProps) {
+export function VocabList({ items, cards, userId, isLoading, hiddenPanelOpen, onHiddenPanelClose }: VocabListProps) {
   const parentRef = useRef<HTMLDivElement>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -125,6 +128,28 @@ export function VocabList({ items, cards, userId, isLoading }: VocabListProps) {
 
       {/* Desktop: newspaper split view */}
       <div className="hidden lg:flex h-full">
+        {/* Hidden vocab panel — slides in from left */}
+        {hiddenPanelOpen && onHiddenPanelClose && (
+          <div className="w-40 shrink-0 border-r-2 border-foreground flex flex-col bg-secondary">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-border/10 shrink-0">
+              <span className="text-[9px] font-[var(--br-mono-font)] uppercase tracking-wider font-bold">
+                Từ Đang Ẩn
+              </span>
+              <button
+                type="button"
+                onClick={onHiddenPanelClose}
+                aria-label="Đóng danh sách ẩn"
+                className="text-muted-foreground hover:text-foreground text-xs leading-none"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <HiddenVocabList source="lesson" userId={userId} />
+            </div>
+          </div>
+        )}
+
         {/* Left — compact numbered index */}
         <div
           className="w-[300px] xl:w-[340px] shrink-0 border-r border-border/10 overflow-auto outline-none"
