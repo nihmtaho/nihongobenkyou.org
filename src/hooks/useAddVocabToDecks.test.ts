@@ -2,9 +2,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import { createElement } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { db } from '../db/schema'
+import * as customDecksLocal from '../db/custom-decks-local'
 
+import { db } from '../db/schema'
 import { useAddVocabToDecks } from './useAddVocabToDecks'
+import { CUSTOM_DECKS_KEY } from './useCustomDecks'
+import { DECK_WORDS_KEY } from './useCustomDeckWords'
 import 'fake-indexeddb/auto'
 
 vi.mock('sonner', () => ({
@@ -13,8 +16,8 @@ vi.mock('sonner', () => ({
 
 const USER_ID = 'u-add-test'
 
-function makeWrapper() {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: 0 } } })
+function makeWrapper(queryClient?: QueryClient) {
+  const qc = queryClient ?? new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: 0 } } })
   return ({ children }: { children: React.ReactNode }) =>
     createElement(QueryClientProvider, { client: qc }, children)
 }
@@ -22,6 +25,7 @@ function makeWrapper() {
 beforeEach(async () => {
   await db.custom_decks.clear()
   await db.custom_vocabulary.clear()
+  vi.clearAllMocks()
 })
 
 describe('useAddVocabToDecks', () => {
@@ -68,5 +72,40 @@ describe('useAddVocabToDecks', () => {
 
     const deck = await db.custom_decks.get('d4')
     expect(deck?.word_count).toBe(6)
+  })
+
+  it('fires error toast when adding to a deck fails', async () => {
+    const { toast } = await import('sonner')
+
+    const addWordsSpy = vi.spyOn(customDecksLocal, 'addWords').mockRejectedValueOnce(new Error('DB error'))
+
+    await db.custom_decks.add({ id: 'd5', user_id: USER_ID, title: 'D', description: null, is_active: false, word_count: 0, created_at: '2024-01-01T00:00:00.000Z', updated_at: '2024-01-01T00:00:00.000Z' })
+
+    const { result } = renderHook(() => useAddVocabToDecks(USER_ID), { wrapper: makeWrapper() })
+    await result.current.mutateAsync({
+      deckIds: ['d5'],
+      parsedItem: { word: null, kana: 'あか', han_viet: null, meaning_vi: 'đỏ' },
+    })
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Không thêm được vào 1 deck'))
+    addWordsSpy.mockRestore()
+  })
+
+  it('invalidates cache for affected decks and custom_decks on success', async () => {
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: 0 } } })
+    const invalidateSpy = vi.spyOn(qc, 'invalidateQueries')
+
+    await db.custom_decks.add({ id: 'd6', user_id: USER_ID, title: 'Deck A', description: null, is_active: false, word_count: 0, created_at: '2024-01-01T00:00:00.000Z', updated_at: '2024-01-01T00:00:00.000Z' })
+
+    const { result } = renderHook(() => useAddVocabToDecks(USER_ID), { wrapper: makeWrapper(qc) })
+    await result.current.mutateAsync({
+      deckIds: ['d6'],
+      parsedItem: { word: '走る', kana: 'はしる', han_viet: null, meaning_vi: 'chạy' },
+    })
+
+    await waitFor(() => {
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: DECK_WORDS_KEY('d6') })
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: CUSTOM_DECKS_KEY(USER_ID) })
+    })
   })
 })
