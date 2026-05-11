@@ -26,11 +26,11 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
   const { mutate: hide, isPending: isHiding } = useHideVocab()
 
   return (
-    <div className="group relative">
+    <div className="group relative flex items-stretch">
       <button
         type="button"
         onClick={onSelect}
-        className={`w-full text-left px-4 py-3 border-b border-border/5 transition-colors duration-[80ms] ${
+        className={`flex-1 text-left px-4 py-3 border-b border-border/5 transition-colors duration-[80ms] ${
           isSelected
             ? 'border-l-4 border-l-primary bg-card'
             : 'border-l-4 border-l-transparent hover:bg-card/50 active:bg-card'
@@ -58,26 +58,25 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
                 {isKnown && (
                   <span className="font-[var(--br-mono-font)] text-[9px] text-success uppercase">✓</span>
                 )}
-                {isNew && !isDue && (
+                {isNew && (
                   <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 uppercase">NEW</span>
                 )}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 flex-shrink-0 text-muted-foreground hover:text-foreground"
-                  aria-label={`Thêm ${item.word ?? item.reading} vào deck`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setDialogOpen(true)
-                  }}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
               </div>
             </div>
           </div>
         </div>
       </button>
+
+      {/* Plus button as sibling — avoids nested <button> invalid HTML */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-auto w-10 shrink-0 self-stretch rounded-none text-muted-foreground hover:text-foreground border-b border-border/5"
+        aria-label={`Thêm ${item.word ?? item.reading} vào deck`}
+        onClick={() => setDialogOpen(true)}
+      >
+        <Plus className="h-4 w-4" />
+      </Button>
 
       <button
         type="button"
