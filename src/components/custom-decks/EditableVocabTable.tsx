@@ -1,4 +1,5 @@
 import type { CustomVocabItem } from '../../types/custom-deck'
+import { EyeOffIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -14,10 +15,11 @@ interface Props {
   words: CustomVocabItem[]
   onUpdate: (wordId: string, updates: Partial<Pick<CustomVocabItem, 'kana' | 'kanji' | 'han_viet' | 'meaning_vi'>>) => void
   onDelete: (wordId: string) => void
+  onHide: (wordId: string) => void
   isPending?: boolean
 }
 
-export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Props) {
+export function EditableVocabTable({ words, onUpdate, onDelete, onHide, isPending }: Props) {
   const [editing, setEditing] = useState<EditState | null>(null)
 
   function startEdit(word: CustomVocabItem) {
@@ -136,19 +138,34 @@ export function EditableVocabTable({ words, onUpdate, onDelete, isPending }: Pro
                 <td className="p-2 text-muted-foreground">{word.han_viet ?? '—'}</td>
                 <td className="p-2">{word.meaning_vi}</td>
                 <td className="p-2">
-                  <Button
-                    size="icon-xs"
-                    variant="ghost"
-                    className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-opacity"
-                    aria-label="xóa"
-                    disabled={isPending}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDelete(word.id)
-                    }}
-                  >
-                    ✕
-                  </Button>
+                  <div className="flex gap-1 justify-end">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onHide(word.id)
+                      }}
+                      disabled={isPending}
+                      title="Ẩn từ này"
+                      aria-label={`Ẩn ${word.kanji ?? word.kana}`}
+                      className="p-1 text-muted-foreground/40 hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <EyeOffIcon className="h-3 w-3" />
+                    </button>
+                    <Button
+                      size="icon-xs"
+                      variant="ghost"
+                      className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-opacity"
+                      aria-label="xóa"
+                      disabled={isPending}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDelete(word.id)
+                      }}
+                    >
+                      ✕
+                    </Button>
+                  </div>
                 </td>
               </tr>
             )

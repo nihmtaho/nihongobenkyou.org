@@ -24,6 +24,7 @@ describe('editableVocabTable', () => {
         words={WORDS}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
+        onHide={vi.fn()}
       />,
     )
     expect(screen.getByText('会議')).toBeTruthy()
@@ -36,6 +37,7 @@ describe('editableVocabTable', () => {
         words={WORDS}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
+        onHide={vi.fn()}
       />,
     )
     fireEvent.click(screen.getByText('会議'))
@@ -49,6 +51,7 @@ describe('editableVocabTable', () => {
         words={WORDS}
         onUpdate={onUpdate}
         onDelete={vi.fn()}
+        onHide={vi.fn()}
       />,
     )
     fireEvent.click(screen.getByText('会議'))
@@ -65,6 +68,7 @@ describe('editableVocabTable', () => {
         words={WORDS}
         onUpdate={vi.fn()}
         onDelete={onDelete}
+        onHide={vi.fn()}
       />,
     )
     fireEvent.click(screen.getByText('会議'))
@@ -82,6 +86,7 @@ describe('editableVocabTable', () => {
         words={WORDS}
         onUpdate={vi.fn()}
         onDelete={onDelete}
+        onHide={vi.fn()}
       />,
     )
     // Delete button is in view mode (aria-label="xóa")
