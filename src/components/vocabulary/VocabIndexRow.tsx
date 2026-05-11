@@ -1,9 +1,11 @@
 import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
+import { EyeOffIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { useToggleVocabInDeck } from '../../hooks/useActiveDeck'
+import { useHideVocab } from '../../hooks/useHiddenVocab'
 import { AddToActiveDeckButton } from '../common/AddToActiveDeckButton'
 
 interface VocabIndexRowProps {
@@ -24,6 +26,7 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
   const inDeck = vocabIdSet.has(item.vocab_id)
   const [toastMsg, setToastMsg] = useState<string | null>(null)
   const toggleMutation = useToggleVocabInDeck(userId)
+  const { mutate: hide, isPending: isHiding } = useHideVocab()
 
   useEffect(() => {
     if (!toastMsg)
@@ -33,7 +36,7 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
   }, [toastMsg])
 
   return (
-    <>
+    <div className="group relative">
       {toastMsg && (
         <div className="toast toast-top toast-center z-50 pointer-events-none">
           <div className="bg-success/10 border border-success/50 px-4 py-2">
@@ -89,6 +92,19 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
           </div>
         </div>
       </button>
-    </>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation()
+          hide({ itemId: item.vocab_id, source: 'lesson', userId })
+        }}
+        disabled={isHiding}
+        aria-label={`Ẩn ${item.word ?? item.reading}`}
+        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-[120ms] flex items-center gap-0.5 text-[9px] font-[var(--br-mono-font)] uppercase text-destructive border border-destructive/40 px-1.5 py-0.5 bg-background hover:bg-destructive hover:text-destructive-foreground"
+      >
+        <EyeOffIcon className="h-2.5 w-2.5" />
+        ẨN
+      </button>
+    </div>
   )
 }
