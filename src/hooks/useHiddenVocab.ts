@@ -45,6 +45,10 @@ export function useUnhideVocab() {
       unhideVocab(userId, itemId),
     onSuccess: (_, { source, userId }) => {
       void qc.invalidateQueries({ queryKey: HIDDEN_VOCAB_KEY(userId, source) })
+      if (source === 'lesson') {
+        void qc.invalidateQueries({ queryKey: ['active-deck-vocab', userId] })
+        void qc.invalidateQueries({ queryKey: ['active-deck-due', userId] })
+      }
     },
   })
 }

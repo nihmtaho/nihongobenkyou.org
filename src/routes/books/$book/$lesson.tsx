@@ -11,7 +11,6 @@ import { VocabStudyModal } from '../../../components/study/VocabStudyModal'
 import { HiddenVocabBadge } from '../../../components/vocabulary/HiddenVocabBadge'
 import { HiddenVocabList } from '../../../components/vocabulary/HiddenVocabList'
 import { VocabList } from '../../../components/vocabulary/VocabList'
-import { useHiddenVocab } from '../../../hooks/useHiddenVocab'
 import { useLaunchVocabSession } from '../../../hooks/useLaunchVocabSession'
 import { useMediaQuery } from '../../../hooks/useMediaQuery'
 import { useUserCards } from '../../../hooks/useUserCards'
@@ -42,9 +41,7 @@ function LessonPage() {
   const userId = useAuthStore(s => s.userId) ?? ''
   const [hiddenPanelOpen, setHiddenPanelOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 1024px)')
-  const hiddenLessonIds = useHiddenVocab(userId, 'lesson')
-  const hiddenCount = hiddenLessonIds.size
-  const { data: items = [], isLoading } = useVocabulary(book, lessonNumber, userId)
+  const { data: items = [], isLoading, hiddenCount } = useVocabulary(book, lessonNumber, userId)
   const nonDeprecated = items.filter(item => !item.deprecated)
   const vocabIds = nonDeprecated.map(item => item.vocab_id)
   const { data: cards = new Map() } = useUserCards(userId, vocabIds)

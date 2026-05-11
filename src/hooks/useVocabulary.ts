@@ -17,11 +17,17 @@ export function useVocabulary(bookSource: string, lessonNumber: number, userId: 
     },
     staleTime: Infinity,
   })
+  const filteredData = useMemo(
+    () => query.data?.filter(item => !hiddenIds.has(item.vocab_id)),
+    [query.data, hiddenIds],
+  )
+  const hiddenCount = useMemo(
+    () => query.data?.filter(item => hiddenIds.has(item.vocab_id)).length ?? 0,
+    [query.data, hiddenIds],
+  )
   return {
     ...query,
-    data: useMemo(
-      () => query.data?.filter(item => !hiddenIds.has(item.vocab_id)),
-      [query.data, hiddenIds],
-    ),
+    data: filteredData,
+    hiddenCount,
   }
 }

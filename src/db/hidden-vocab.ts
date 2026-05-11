@@ -24,8 +24,5 @@ export async function hideVocab(
 }
 
 export async function unhideVocab(userId: string, itemId: string): Promise<void> {
-  // eslint-disable-next-line ts/no-explicit-any
-  await db.transaction('rw', [db.hidden_vocab] as any, async () => {
-    await db.hidden_vocab.where('[userId+item_id]').equals([userId, itemId]).delete()
-  })
+  await db.hidden_vocab.delete([userId, itemId] as unknown as never)
 }
