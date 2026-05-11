@@ -1,15 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 import { Button } from '@/components/ui/button'
-import { db } from '../../db/schema'
-import { useHiddenVocab, useUnhideVocab } from '../../hooks/useHiddenVocab'
-
-interface DisplayItem {
-  itemId: string
-  word: string
-  reading: string
-  meaning: string
-}
+import { useHiddenVocabDetails, useUnhideVocab } from '../../hooks/useHiddenVocab'
 
 interface HiddenVocabListProps {
   source: 'lesson' | 'custom'
@@ -17,37 +7,8 @@ interface HiddenVocabListProps {
 }
 
 export function HiddenVocabList({ source, userId }: HiddenVocabListProps) {
-  const hiddenIds = useHiddenVocab(userId, source)
-  const { mutate: unhide, isPending } = useUnhideVocab()
-  const idArray = useMemo(() => Array.from(hiddenIds), [hiddenIds])
-
-  const { data: items = [] } = useQuery<DisplayItem[]>({
-    queryKey: ['hidden-vocab-details', source, idArray.slice().sort().join(',')],
-    queryFn: async () => {
-      if (source === 'lesson') {
-        const vocabs = await db.vocabulary.bulkGet(idArray)
-        return vocabs
-          .filter((v): v is NonNullable<typeof v> => v != null)
-          .map(v => ({
-            itemId: v.vocab_id,
-            word: v.word ?? v.reading,
-            reading: v.reading,
-            meaning: v.meaning_vi,
-          }))
-      }
-      const customs = await db.custom_vocabulary.bulkGet(idArray)
-      return customs
-        .filter((v): v is NonNullable<typeof v> => v != null)
-        .map(v => ({
-          itemId: v.id,
-          word: v.kanji ?? v.kana,
-          reading: v.kana,
-          meaning: v.meaning_vi,
-        }))
-    },
-    enabled: idArray.length > 0,
-    staleTime: Infinity,
-  })
+  const { hiddenIds, items } = useHiddenVocabDetails(userId, source)
+  const { mutate: unhide, isPending, variables } = useUnhideVocab()
 
   if (hiddenIds.size === 0) {
     return (
@@ -72,7 +33,7 @@ export function HiddenVocabList({ source, userId }: HiddenVocabListProps) {
             type="button"
             size="sm"
             variant="outline"
-            disabled={isPending}
+            disabled={isPending && variables?.itemId === item.itemId}
             onClick={() => unhide({ itemId: item.itemId, source, userId })}
             aria-label={`Bỏ ẩn ${item.word}`}
             className="font-[var(--br-mono-font)] text-[10px] uppercase h-6 px-2 shrink-0 text-primary border-primary/50"
