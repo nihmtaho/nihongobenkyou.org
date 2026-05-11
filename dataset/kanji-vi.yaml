@@ -3900,3 +3900,444 @@ lesson-15:
         example:
           ja: 彼は私の知り合いです。
           vi: Anh ấy là người quen của tôi.
+
+lesson-16:
+  - char: 住
+    meaning_vi: [trú, sống]
+    han_viet: Trú
+    mnemonic_vi: "Sống (住む) là khi một người có một nơi ở cố định và thường xuyên tại đó"
+    components:
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 主, meaning_en: master, meaning_vi: chủ, han_viet: Chủ }
+    related_vocab:
+      - word: 住む
+        kana: すむ
+        han_viet: Trú
+        meaning_vi: sống (động từ)
+        example:
+          ja: 東京に住んでいます。
+          vi: Tôi sống ở Tokyo.
+      - word: 住所
+        kana: じゅうしょ
+        han_viet: Trú Sở
+        meaning_vi: địa chỉ
+        example:
+          ja: 住所を教えてください。
+          vi: Hãy cho tôi biết địa chỉ của bạn.
+      - word: 住民
+        kana: じゅうみん
+        han_viet: Trú Dân
+        meaning_vi: cư dân
+        example:
+          ja: この町の住民は親切です。
+          vi: Cư dân của thị trấn này rất thân thiện.
+  - char: 思
+    meaning_vi: [nghĩ]
+    han_viet: Tư
+    mnemonic_vi: "Nghĩ (思う) là khi một người sử dụng trí tuệ để tạo ra ý tưởng, suy nghĩ hoặc cảm xúc về một sự vật, hiện tượng hoặc tình huống nào đó"
+    components:
+      - { char: 田, meaning_en: rice field, meaning_vi: ruộng lúa, han_viet: Điền }
+      - { char: 心, meaning_en: heart/mind, meaning_vi: trái tim/tâm trí, han_viet: Tâm }
+    related_vocab:
+      - word: 思う
+        kana: おもう
+        han_viet: Tư
+        meaning_vi: nghĩ rằng (động từ)
+        example:
+          ja: どう思いますか？
+          vi: Bạn nghĩ sao?
+      - word: 思い出
+        kana: おもいで
+        han_viet: Tư Xuất
+        meaning_vi: kỷ niệm
+        example:
+          ja: 子供の頃の思い出があります。
+          vi: Tôi có những kỷ niệm thời thơ ấu.
+      - word: 思い出す
+        kana: おもいだす
+        han_viet: Tư Xuất
+        meaning_vi: nhớ lại, hồi tưởng, nhớ ra (động từ)
+        example:
+          ja: 昔のことを思い出します。
+          vi: Tôi nhớ lại những chuyện xưa.
+  - char: 作
+    meaning_vi: [tạo ra, làm]
+    han_viet: Tác
+    mnemonic_vi: "Làm (作る) là hành động tạo ra hoặc chế tạo một vật gì đó từ nguyên liệu hoặc ý tưởng"
+    components:
+      - { char: 亻, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 乍, meaning_en: suddenly, meaning_vi: đột nhiên, han_viet: Sách }
+    related_vocab:
+      - word: 作る
+        kana: つくる
+        han_viet: Tác
+        meaning_vi: làm ra, tạo ra (động từ)
+        example:
+          ja: ケーキを作ります。
+          vi: Tôi làm bánh.
+      - word: 作品
+        kana: さくひん
+        han_viet: Tác Phẩm
+        meaning_vi: tác phẩm (sản phẩm sáng tạo như sách, phim, tranh vẽ)
+        example:
+          ja: 彼の作品は有名です。
+          vi: Tác phẩm của anh ấy rất nổi tiếng.
+      - word: 作者
+        kana: さくしゃ
+        han_viet: Tác Giả
+        meaning_vi: tác giả
+        example:
+          ja: この本の作者は誰ですか？
+          vi: Ai là tác giả của cuốn sách này?
+      - word: 作家
+        kana: さっか
+        han_viet: Tác Gia
+        meaning_vi: nhà văn, tác giả
+        example:
+          ja: 彼は有名な作家です。
+          vi: Anh ấy là một nhà văn nổi tiếng.
+  - char: 品
+    meaning_vi: [sản phẩm]
+    han_viet: Phẩm
+    mnemonic_vi: "Hàng hóa (商品) là những vật phẩm hoặc dịch vụ được sản xuất và bán trên thị trường để đáp ứng nhu cầu của người tiêu dùng"
+    components:
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+      - { char: 生, meaning_en: life, meaning_vi: sinh sống, han_viet: Sinh }
+    related_vocab:
+      - word: 作品
+        kana: さくひん
+        han_viet: Tác Phẩm
+        meaning_vi: tác phẩm (sản phẩm sáng tạo như sách, phim, tranh vẽ)
+        example:
+          ja: 彼の作品は有名です。
+          vi: Tác phẩm của anh ấy rất nổi tiếng.
+      - word: 品物
+        kana: しなもの
+        han_viet: Phẩm Vật
+        meaning_vi: hàng hóa, sản phẩm
+        example:
+          ja: 品物を買います。
+          vi: Tôi mua hàng hóa.
+  - char: 長
+    meaning_vi: [người đứng đầu, dài]
+    han_viet: Trường
+    mnemonic_vi: "Dài (長い) là khi một vật có kích thước lớn hơn bình thường từ đầu đến cuối"
+    components:
+      - { char: 長, meaning_en: long, meaning_vi: dài, han_viet: Trường }
+    related_vocab:
+      - word: 長い
+        kana: ながい
+        han_viet: Trường
+        meaning_vi: dài (tính từ)
+        example:
+          ja: この道は長いです。
+          vi: Con đường này dài.
+      - word: 社長
+        kana: しゃちょう
+        han_viet: Xã Trường
+        meaning_vi: giám đốc công ty
+        example:
+          ja: 彼は会社の社長です。
+          vi: Anh ấy là giám đốc của công ty.
+      - word: 店長
+        kana: てんちょう
+        han_viet: Điếm Trường
+        meaning_vi: quản lý cửa hàng, cửa hàng trưởng
+        example:
+          ja: 店長は親切です。
+          vi: Quản lý cửa hàng rất thân thiện.
+  - char: 明
+    meaning_vi: [sáng]
+    han_viet: Minh
+    mnemonic_vi: "Sáng (明るい) là khi một vật phát ra ánh sáng hoặc có nhiều ánh sáng xung quanh, tạo cảm giác rõ ràng và dễ nhìn"
+    components:
+      - { char: 日, meaning_en: sun/day, meaning_vi: mặt trời/ngày, han_viet: Nhật }
+      - { char: 月, meaning_en: moon/month, meaning_vi: mặt trăng/tháng, han_viet: Nguyệt }
+    related_vocab:
+      - word: 明るい
+        kana: あかるい
+        han_viet: Minh
+        meaning_vi: sáng (tính từ)
+        example:
+          ja: 部屋が明るいです。
+          vi: Căn phòng sáng sủa.
+      - word: 明日
+        kana: あした
+        han_viet: Minh Nhật
+        meaning_vi: ngày mai
+        example:
+          ja: 明日は晴れます。
+          vi: Ngày mai trời sẽ nắng.
+  - char: 肉
+    meaning_vi: [thịt]
+    han_viet: Nhục
+    mnemonic_vi: "Thịt (肉) là phần mềm của động vật được sử dụng làm thực phẩm và chứa nhiều chất dinh dưỡng"
+    components:
+      - { char: 肉, meaning_en: meat, meaning_vi: thịt, han_viet: Nhục }
+    related_vocab:
+      - word: 肉
+        kana: にく
+        han_viet: Nhục
+        meaning_vi: thịt
+        example:
+          ja: 肉を食べます。
+          vi: Tôi ăn thịt.
+      - word: 牛肉
+        kana: ぎゅうにく
+        han_viet: Ngưu Nhục
+        meaning_vi: thịt bò
+        example:
+          ja: 牛肉が好きです。
+          vi: Tôi thích thịt bò.
+      - word: 鳥肉
+        kana: とりにく
+        han_viet: Điểu Nhục
+        meaning_vi: thịt gà
+        example:
+          ja: 鳥肉を食べます。
+          vi: Tôi ăn thịt gà.
+      - word: 肉屋
+        kana: にくや
+        han_viet: Nhục Ốc
+        meaning_vi: cửa hàng thịt
+        example:
+          ja: 肉屋で肉を買います。
+          vi: Tôi mua thịt ở cửa hàng thịt.
+
+lesson-17:
+  - char: 問
+    meaning_vi: [hỏi]
+    han_viet: Vấn
+    mnemonic_vi: "Câu hỏi (質問) là một câu được đặt ra để yêu cầu thông tin hoặc giải thích về một chủ đề nào đó"
+    components:
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+      - { char: 門, meaning_en: gate, meaning_vi: cổng, han_viet: Môn }
+    related_vocab:
+      - word: 問題
+        kana: もんだい
+        han_viet: Vấn Đề
+        meaning_vi: vấn đề, câu hỏi
+        example:
+          ja: この問題は難しいです。
+          vi: Câu hỏi này khó.
+      - word: 質問
+        kana: しつもん
+        han_viet: Chất Vấn
+        meaning_vi: câu hỏi
+        example:
+          ja: 質問がありますか？
+          vi: Bạn có câu hỏi nào không?
+  - char: 答
+    meaning_vi: [trả lời]
+    han_viet: Đáp
+    mnemonic_vi: "Trả lời (答える) là khi một người cung cấp thông tin hoặc phản hồi để giải quyết một câu hỏi hoặc vấn đề nào đó"
+    components:
+      - { char: 竹, meaning_en: bamboo, meaning_vi: tre, han_viet: Trúc }
+      - { char: 合, meaning_en: fit, meaning_vi: hợp, han_viet: Hợp }
+    related_vocab:
+      - word: 答える
+        kana: こたえる
+        han_viet: Đáp
+        meaning_vi: trả lời (động từ)
+        example:
+          ja: 質問に答えます。
+          vi: Tôi sẽ trả lời câu hỏi.
+      - word: 答え
+        kana: こたえ
+        han_viet: Đáp
+        meaning_vi: câu trả lời
+        example:
+          ja: 答えを教えてください。
+          vi: Hãy cho tôi biết câu trả lời.
+      - word: 回答
+        kana: かいとう
+        han_viet: Hồi Đáp
+        meaning_vi: câu trả lời, phản hồi
+        example:
+          ja: アンケートの回答をお願いします。
+          vi: Vui lòng trả lời khảo sát.
+  - char: 心
+    meaning_vi: [trái tim]
+    han_viet: Tâm
+    mnemonic_vi: "Trái tim (心) là cơ quan của cơ thể con người hoặc động vật dùng để bơm máu và cũng được coi là trung tâm của cảm xúc và suy nghĩ"
+    components:
+      - { char: 心, meaning_en: heart/mind, meaning_vi: trái tim/tâm trí, han_viet: Tâm }
+    related_vocab:
+      - word: 心
+        kana: こころ
+        han_viet: Tâm
+        meaning_vi: trái tim, tâm hồn
+        example:
+          ja: 心が温かい人です。
+          vi: Anh ấy là một người có trái tim ấm áp.
+      - word: 心配
+        kana: しんぱい
+        han_viet: Tâm Phối
+        meaning_vi: lo lắng, quan tâm
+        example:
+          ja: 心配しないでください。
+          vi: Đừng lo lắng.
+      - word: 安心
+        kana: あんしん
+        han_viet: An Tâm
+        meaning_vi: yên tâm, an lòng
+        example:
+          ja: 安心してください。
+          vi: Hãy yên tâm.
+      - word: 中心
+        kana: ちゅうしん
+        han_viet: Trung Tâm
+        meaning_vi: trung tâm
+        example:
+          ja: この町の中心は賑やかです。
+          vi: Trung tâm của thị trấn này rất sầm uất.
+  - char: 配
+    meaning_vi: [phân phối]
+    han_viet: Phối
+    mnemonic_vi: "Phân phối (配る) là hành động chia sẻ hoặc phân phát một cách công bằng hoặc hợp lý"
+    components:
+      - { char: 酉, meaning_en: sake, meaning_vi: rượu, han_viet: Dậu }
+    related_vocab:
+      - word: 配る
+        kana: くばる
+        han_viet: Phối
+        meaning_vi: phân phát, phân phối
+        example:
+          ja: 手紙を配ります。
+          vi: Tôi sẽ phân phát thư.
+      - word: 心配
+        kana: しんぱい
+        han_viet: Tâm Phối
+        meaning_vi: lo lắng, quan tâm
+        example:
+          ja: 心配しないでください。
+          vi: Đừng lo lắng.
+      - word: 配達
+        kana: はいたつ
+        han_viet: Phối Đạt
+        meaning_vi: giao hàng, vận chuyển
+        example:
+          ja: 荷物を配達します。
+          vi: Tôi sẽ giao hàng.
+  - char: 子
+    meaning_vi: [con cái]
+    han_viet: Tử
+    mnemonic_vi: "Con (子) là một sinh vật nhỏ hơn và thường là con của một người hoặc động vật nào đó"
+    components:
+      - { char: 子, meaning_en: child, meaning_vi: con, han_viet: Tử }
+    related_vocab:
+      - word: 男の子
+        kana: おとこのこ
+        han_viet: Nam Tử
+        meaning_vi: con trai
+        example:
+          ja: 彼は男の子です。
+          vi: Anh ấy là con trai.
+      - word: 女の子
+        kana: おんなのこ
+        han_viet: Nữ Tử
+        meaning_vi: con gái
+        example:
+          ja: 彼女は女の子です。
+          vi: Cô ấy là con gái.
+      - word: 子供
+        kana: こども
+        han_viet: Tử Cung
+        meaning_vi: trẻ em, con cái
+        example:
+          ja: 子供が好きです。
+          vi: Tôi thích trẻ em.
+      - word: 子犬
+        kana: こいぬ
+        han_viet: Tử Cẩu
+        meaning_vi: chó con
+        example:
+          ja: 子犬がかわいいです。
+          vi: Chó con rất dễ thương.
+  - char: 売
+    meaning_vi: [bán]
+    han_viet: Mại
+    mnemonic_vi: "Bán (売る) là hành động trao đổi một sản phẩm hoặc dịch vụ với người khác để nhận lại tiền hoặc giá trị tương đương"
+    components:
+      - { char: 士, meaning_en: samurai, meaning_vi: samurai, han_viet: Sĩ }
+      - { char: 貝, meaning_en: shell/money, meaning_vi: vỏ sò/tiền, han_viet: Bối }
+    related_vocab:
+      - word: 売る
+        kana: うる
+        han_viet: Mại
+        meaning_vi: bán (động từ)
+        example:
+          ja: 商品を売ります。
+          vi: Tôi bán hàng hóa.
+      - word: 売り場
+        kana: うりば
+        han_viet: Mại Trường
+        meaning_vi: quầy bán hàng, khu vực bán hàng
+        example:
+          ja: スーパーの売り場は広いです。
+          vi: Khu vực bán hàng của siêu thị rất rộng.
+      - word: 売店
+        kana: ばいてん
+        han_viet: Mại Điếm
+        meaning_vi: cửa hàng, quầy bán hàng, ki ốt
+        example:
+          ja: デパートの中に売店があります。
+          vi: Có một cửa hàng trong trung tâm thương mại.
+  - char: 場
+    meaning_vi: [địa điểm]
+    han_viet: Trường
+    mnemonic_vi: "Nơi (場所) là một khu vực hoặc địa điểm cụ thể mà một sự kiện hoặc hoạt động diễn ra"
+    components:
+      - { char: 土, meaning_en: earth/soil, meaning_vi: đất, han_viet: Thổ }
+      - { char: 昜, meaning_en: sun, meaning_vi: mặt trời, han_viet: Dương }
+    related_vocab:
+      - word: 売り場
+        kana: うりば
+        han_viet: Mại Trường
+        meaning_vi: quầy bán hàng, khu vực bán hàng
+        example:
+          ja: スーパーの売り場は広いです。
+          vi: Khu vực bán hàng của siêu thị rất rộng.
+      - word: 市場
+        kana: いちば
+        han_viet: Thị Trường
+        meaning_vi: chợ, thị trường
+        example:
+          ja: 市場で新鮮な野菜を買います。
+          vi: Tôi mua rau tươi ở chợ.
+      - word: 会場
+        kana: かいじょう
+        han_viet: Hội Trường
+        meaning_vi: hội trường, địa điểm tổ chức sự kiện
+        example:
+          ja: コンサートの会場はどこですか？
+          vi: Địa điểm tổ chức buổi hòa nhạc ở đâu?
+      - word: 場所
+        kana: ばしょ
+        han_viet: Trường Sở
+        meaning_vi: địa điểm, nơi chốn
+        example:
+          ja: いい場所を見つけました。
+          vi: Tôi đã tìm thấy một địa điểm tốt.
+  - char: 字
+    meaning_vi: [chữ]
+    han_viet: Tự
+    mnemonic_vi: "Chữ (字) là một ký hiệu hoặc biểu tượng được sử dụng để đại diện cho một âm thanh, ý nghĩa hoặc khái niệm nào đó trong ngôn ngữ viết"
+    components:
+      - { char: 宀, meaning_en: roof, meaning_vi: mái nhà, han_viet: Miên }
+      - { char: 子, meaning_en: child, meaning_vi: con, han_viet: Tử }
+    related_vocab:
+      - word: 漢字
+        kana: かんじ
+        han_viet: Hán Tự
+        meaning_vi: kanji (chữ Hán)
+        example:
+          ja: 漢字を勉強します。
+          vi: Tôi học kanji.
+      - word: ローマ字
+        kana: ローマじ
+        han_viet: Tự
+        meaning_vi: chữ La Mã (chữ Latinh)
+        example:
+          ja: ローマ字を使います。
+          vi: Tôi sử dụng chữ La Mã.
