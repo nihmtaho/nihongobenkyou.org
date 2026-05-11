@@ -1,7 +1,8 @@
+import type * as React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createElement } from 'react'
+import { createElement, useMemo } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { db } from '../../db/schema'
 
@@ -22,7 +23,10 @@ const SAMPLE_VOCAB = {
 }
 
 function Wrapper({ children }: { children: React.ReactNode }) {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: 0 } } })
+  const qc = useMemo(
+    () => new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: 0 } } }),
+    [],
+  )
   return createElement(QueryClientProvider, { client: qc }, children)
 }
 

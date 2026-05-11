@@ -1,5 +1,6 @@
 import type { CustomDeck } from '../types/custom-deck'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { createDeck, deleteDeck, getDeck, updateDeck } from '../db/custom-decks-local'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 
@@ -11,6 +12,7 @@ export function useCustomDeckMutations(userId: string) {
     mutationFn: (input: { title: string, description?: string }) =>
       createDeck(userId, input),
     onSuccess: () => invalidate(),
+    onError: () => toast.error('Không tạo được deck. Vui lòng thử lại.'),
   })
 
   const updateDeckMutation = useMutation({

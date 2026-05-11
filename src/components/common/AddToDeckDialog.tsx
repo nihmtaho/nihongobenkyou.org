@@ -45,10 +45,15 @@ export function AddToDeckDialog({ open, onOpenChange, vocabItem, userId }: AddTo
     e.preventDefault()
     if (!newTitle.trim())
       return
-    const created = await deckMutations.createDeck.mutateAsync({ title: newTitle.trim() })
-    setSelectedIds(prev => new Set([...prev, created.id]))
-    setNewTitle('')
-    setShowCreateForm(false)
+    try {
+      const created = await deckMutations.createDeck.mutateAsync({ title: newTitle.trim() })
+      setSelectedIds(prev => new Set([...prev, created.id]))
+      setNewTitle('')
+      setShowCreateForm(false)
+    }
+    catch {
+      // toast already fired by mutation's onError if configured; form stays visible for retry
+    }
   }
 
   async function handleConfirm() {
@@ -58,9 +63,14 @@ export function AddToDeckDialog({ open, onOpenChange, vocabItem, userId }: AddTo
       han_viet: vocabItem.han_viet ?? null,
       meaning_vi: vocabItem.meaning_vi,
     }
-    await addToDecks.mutateAsync({ deckIds: [...selectedIds], parsedItem })
-    setSelectedIds(new Set())
-    onOpenChange(false)
+    try {
+      await addToDecks.mutateAsync({ deckIds: [...selectedIds], parsedItem })
+      setSelectedIds(new Set())
+      onOpenChange(false)
+    }
+    catch {
+      // onError toast already fired; dialog stays open for retry
+    }
   }
 
   const displayWord = vocabItem.word ?? vocabItem.reading
