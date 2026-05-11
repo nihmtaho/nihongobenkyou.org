@@ -19,21 +19,28 @@ export function useAddVocabToDecks(userId: string) {
       const results = await Promise.allSettled(
         deckIds.map(deckId => addWords(deckId, userId, [parsedItem], 'manual')),
       )
+      const failed = results.filter(r => r.status === 'rejected')
+      if (failed.length === deckIds.length)
+        throw new Error(`Failed to add vocab to all ${deckIds.length} decks`)
       return { results, deckIds }
     },
     onSuccess: ({ results, deckIds }) => {
-      const succeeded = results.filter(r => r.status === 'fulfilled').length
-      const failed = results.filter(r => r.status === 'rejected').length
+      const succeededIds = deckIds.filter((_, i) => results[i].status === 'fulfilled')
+      const failed = deckIds.length - succeededIds.length
 
-      deckIds.forEach((deckId) => {
-        qc.invalidateQueries({ queryKey: DECK_WORDS_KEY(deckId) })
-      })
-      qc.invalidateQueries({ queryKey: CUSTOM_DECKS_KEY(userId) })
+      succeededIds.forEach(deckId =>
+        qc.invalidateQueries({ queryKey: DECK_WORDS_KEY(deckId) }),
+      )
+      if (succeededIds.length > 0)
+        qc.invalidateQueries({ queryKey: CUSTOM_DECKS_KEY(userId) })
 
-      if (succeeded > 0)
-        toast.success(`Đã thêm vào ${succeeded} deck`)
+      if (succeededIds.length > 0)
+        toast.success(`Đã thêm vào ${succeededIds.length} deck`)
       if (failed > 0)
         toast.error(`Không thêm được vào ${failed} deck`)
+    },
+    onError: () => {
+      toast.error(`Không thêm được vào bất kỳ deck nào`)
     },
   })
 }

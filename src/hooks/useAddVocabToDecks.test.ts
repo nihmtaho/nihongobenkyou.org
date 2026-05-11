@@ -74,20 +74,28 @@ describe('useAddVocabToDecks', () => {
     expect(deck?.word_count).toBe(6)
   })
 
-  it('fires error toast when adding to a deck fails', async () => {
+  it('fires error toast when adding to a deck fails (partial failure)', async () => {
     const { toast } = await import('sonner')
 
     const addWordsSpy = vi.spyOn(customDecksLocal, 'addWords').mockRejectedValueOnce(new Error('DB error'))
 
-    await db.custom_decks.add({ id: 'd5', user_id: USER_ID, title: 'D', description: null, is_active: false, word_count: 0, created_at: '2024-01-01T00:00:00.000Z', updated_at: '2024-01-01T00:00:00.000Z' })
+    await db.custom_decks.bulkAdd([
+      { id: 'd5a', user_id: USER_ID, title: 'D', description: null, is_active: false, word_count: 0, created_at: '2024-01-01T00:00:00.000Z', updated_at: '2024-01-01T00:00:00.000Z' },
+      { id: 'd5b', user_id: USER_ID, title: 'D', description: null, is_active: false, word_count: 0, created_at: '2024-01-01T00:00:00.000Z', updated_at: '2024-01-01T00:00:00.000Z' },
+    ])
 
     const { result } = renderHook(() => useAddVocabToDecks(USER_ID), { wrapper: makeWrapper() })
+
+    // First deck fails, second succeeds
     await result.current.mutateAsync({
-      deckIds: ['d5'],
+      deckIds: ['d5a', 'd5b'],
       parsedItem: { word: null, kana: 'あか', han_viet: null, meaning_vi: 'đỏ' },
     })
 
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Không thêm được vào 1 deck'))
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith('Đã thêm vào 1 deck')
+      expect(toast.error).toHaveBeenCalledWith('Không thêm được vào 1 deck')
+    })
     addWordsSpy.mockRestore()
   })
 
@@ -107,5 +115,32 @@ describe('useAddVocabToDecks', () => {
       expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: DECK_WORDS_KEY('d6') })
       expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: CUSTOM_DECKS_KEY(USER_ID) })
     })
+  })
+
+  it('does not invalidate cache when all decks fail', async () => {
+    const { toast } = await import('sonner')
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: 0 } } })
+    const invalidateSpy = vi.spyOn(qc, 'invalidateQueries')
+
+    const addWordsSpy = vi.spyOn(customDecksLocal, 'addWords').mockRejectedValue(new Error('DB error'))
+
+    await db.custom_decks.bulkAdd([
+      { id: 'd7', user_id: USER_ID, title: 'Deck A', description: null, is_active: false, word_count: 0, created_at: '2024-01-01T00:00:00.000Z', updated_at: '2024-01-01T00:00:00.000Z' },
+      { id: 'd8', user_id: USER_ID, title: 'Deck B', description: null, is_active: false, word_count: 0, created_at: '2024-01-01T00:00:00.000Z', updated_at: '2024-01-01T00:00:00.000Z' },
+    ])
+
+    const { result } = renderHook(() => useAddVocabToDecks(USER_ID), { wrapper: makeWrapper(qc) })
+
+    await expect(result.current.mutateAsync({
+      deckIds: ['d7', 'd8'],
+      parsedItem: { word: '学ぶ', kana: 'まなぶ', han_viet: null, meaning_vi: 'học' },
+    })).rejects.toThrow('Failed to add vocab to all 2 decks')
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('Không thêm được vào bất kỳ deck nào')
+      expect(invalidateSpy).not.toHaveBeenCalled()
+    })
+
+    addWordsSpy.mockRestore()
   })
 })
