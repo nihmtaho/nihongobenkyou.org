@@ -345,6 +345,7 @@ interface VocabHit {
   word: string | null
   reading: string
   meaning_vi: string
+  han_viet: string | null
 }
 
 interface RelatedVocabularyProps {
@@ -364,7 +365,7 @@ function RelatedVocabulary({ char, curated, userId }: RelatedVocabularyProps) {
       return items
         .filter(v => v.word?.includes(char) || v.reading?.includes(char))
         .slice(0, 8)
-        .map(v => ({ vocab_id: v.vocab_id, word: v.word ?? null, reading: v.reading, meaning_vi: v.meaning_vi }))
+        .map(v => ({ vocab_id: v.vocab_id, word: v.word ?? null, reading: v.reading, meaning_vi: v.meaning_vi, han_viet: v.han_viet ?? null }))
     },
     staleTime: Infinity,
     enabled: !curated || curated.length === 0,
@@ -500,7 +501,7 @@ function RelatedVocabulary({ char, curated, userId }: RelatedVocabularyProps) {
                   word: v.word ?? null,
                   reading: v.reading,
                   meaning_vi: v.meaning_vi,
-                  han_viet: null,
+                  han_viet: v.han_viet ?? null,
                 }}
                 userId={userId}
               />
