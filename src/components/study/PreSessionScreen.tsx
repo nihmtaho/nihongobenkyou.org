@@ -1,6 +1,7 @@
 import type { StudyMode, TypeInputSubMode } from '../../types/study'
 import type { CardTypeFilter } from '../../types/unified-card'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface PreSessionScreenProps {
   filter: CardTypeFilter
@@ -103,12 +104,12 @@ export function PreSessionScreen({
               key={m}
               type="button"
               onClick={() => onSetMode(m)}
-              className={[
+              className={cn(
                 'px-3 py-2 text-[11px] font-[var(--br-mono-font)] uppercase tracking-wide border transition-colors',
                 mode === m
                   ? 'bg-primary text-primary-foreground border-primary'
                   : 'border-border/20 hover:border-border/50',
-              ].join(' ')}
+              )}
             >
               {MODE_LABELS[m]}
             </button>
@@ -117,22 +118,22 @@ export function PreSessionScreen({
 
         {/* Sub-mode selector — visible only when type-input is active */}
         {mode === 'type-input' && (
-          <div className="flex flex-col gap-2 mt-1">
+          <div className="flex flex-col gap-2">
             <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
               TUỲ CHỌN GÕ TỪ
             </p>
-            <div className="grid grid-cols-1 gap-1">
+            <div className="flex flex-col gap-1">
               {TYPE_INPUT_SUB_MODES.map(({ value, label }) => (
                 <button
                   key={value}
                   type="button"
                   onClick={() => onSetTypeInputSubMode(value)}
-                  className={[
-                    'px-3 py-2 text-[11px] font-[var(--br-mono-font)] uppercase tracking-wide border transition-colors text-left',
+                  className={cn(
+                    'px-3 py-2 text-[11px] font-[var(--br-mono-font)] uppercase tracking-wide border transition-colors text-left min-h-[44px]',
                     typeInputSubMode === value
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border/20 hover:border-border/50',
-                  ].join(' ')}
+                  )}
                 >
                   {label}
                 </button>
