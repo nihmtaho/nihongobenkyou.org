@@ -148,14 +148,14 @@ export function EditableVocabTable({ words, onUpdate, onDelete, onHide, isPendin
                       disabled={isPending}
                       title="Ẩn từ này"
                       aria-label={`Ẩn ${word.kanji ?? word.kana}`}
-                      className="p-1 text-muted-foreground/40 hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                      className="p-1 text-muted-foreground/40 hover:text-destructive transition-colors sm:opacity-0 sm:group-hover:opacity-100"
                     >
                       <EyeOffIcon className="h-3 w-3" />
                     </button>
                     <Button
                       size="icon-xs"
                       variant="ghost"
-                      className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-opacity"
+                      className="sm:opacity-0 sm:group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-opacity"
                       aria-label="xóa"
                       disabled={isPending}
                       onClick={(e) => {

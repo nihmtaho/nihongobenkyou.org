@@ -25,7 +25,7 @@ export function useCustomVocabMutations(deckId: string, userId: string) {
   })
 
   const deleteWordMutation = useMutation({
-    mutationFn: (wordId: string) => deleteWord(wordId, deckId),
+    mutationFn: (wordId: string) => deleteWord(wordId, deckId, userId),
     onSuccess: () => invalidate(),
   })
 

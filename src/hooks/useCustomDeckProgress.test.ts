@@ -61,12 +61,27 @@ describe('useCustomDeckProgress', () => {
     await waitFor(() => expect(result.current.data).toBeDefined())
     const d = result.current.data!
     expect(d.total).toBe(4) // word_count from custom_decks
-    expect(d.started).toBe(3) // 3 have SRS entries (deck was launched)
-    expect(d.learning).toBe(1) // entry a: review_count >= 1, interval_days 1 (< 7)
+    expect(d.started).toBe(3) // 3 entries have review_count >= 1
+    expect(d.learning).toBe(1) // entry a: review_count=2, interval_days 1 (< 7)
     expect(d.learned).toBe(1) // entry b: interval_days 10 (7 to <21)
     expect(d.mature).toBe(1) // entry c: interval_days 30 (>= 21)
     expect(d.dueToday).toBe(2) // entries a and b have due_date '2026-01-01' (past); c has '2099-01-01'
-    expect(d.percentComplete).toBe(75) // started / total * 100 = 3/4 * 100
+    expect(d.percentComplete).toBe(50) // (learned + mature) / total = 2/4 * 100
     expect(d.nextDueDateStr).toBe('2099-01-01') // c is due in future, only future date
+  })
+
+  it('returns 0% when SRS entries exist but none have been reviewed (review_count=0)', async () => {
+    await db.custom_deck_srs.clear()
+    // Simulate addWords() pre-creating SRS entries for an active deck — review_count=0
+    await db.custom_deck_srs.bulkAdd([
+      { userId: 'u1', itemId: 'x', deckId: 'deck1', interval_days: 0, ease_factor: 2.5, due_date: '2026-05-12', review_count: 0, card_stage: 'learning', learning_step: 0, lapse_count: 0, last_rating: null, consecutive_correct: 0, pending_sync: true, updated_at: '' },
+      { userId: 'u1', itemId: 'y', deckId: 'deck1', interval_days: 0, ease_factor: 2.5, due_date: '2026-05-12', review_count: 0, card_stage: 'learning', learning_step: 0, lapse_count: 0, last_rating: null, consecutive_correct: 0, pending_sync: true, updated_at: '' },
+    ])
+    const { result } = renderHook(() => useCustomDeckProgress('u1', 'deck1'), { wrapper })
+    await waitFor(() => expect(result.current.data).toBeDefined())
+    const d = result.current.data!
+    expect(d.started).toBe(0)
+    expect(d.learning).toBe(0)
+    expect(d.percentComplete).toBe(0)
   })
 })
