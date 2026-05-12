@@ -71,15 +71,17 @@ export function DeckCard({ deck, userId, isSelected, isUnstarted = false, onClic
             {/* Progress bar (only show for started decks) */}
             {!isUnstarted && progress && progress.total > 0 && (
               <div className="mt-2">
-                <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary transition-all"
-                    style={{ width: `${progress.percentComplete}%` }}
-                  />
+                <div className="h-1 w-full bg-muted overflow-hidden flex">
+                  <div className="h-full bg-success transition-all" style={{ width: `${(progress.mature / progress.total) * 100}%` }} />
+                  <div className="h-full bg-info transition-all" style={{ width: `${(progress.learned / progress.total) * 100}%` }} />
+                  <div className="h-full bg-warning transition-all" style={{ width: `${(progress.learning / progress.total) * 100}%` }} />
                 </div>
                 <p className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground/60 mt-0.5">
-                  {progress.percentComplete}
-                  % hoàn thành
+                  {progress.started}
+                  /
+                  {progress.total}
+                  {' '}
+                  đã học
                 </p>
               </div>
             )}

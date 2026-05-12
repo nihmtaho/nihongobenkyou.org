@@ -91,23 +91,26 @@ function DeckRow({
         <div>
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
-              {progress.percentComplete}
-              %
-              {' '}
-              ·
-              {' '}
               {progress.started}
               /
               {progress.total}
               {' '}
               đã học
+              {progress.percentComplete > 0 && (
+                <>
+                  {' '}
+                  ·
+                  {' '}
+                  {progress.percentComplete}
+                  % thuộc
+                </>
+              )}
             </span>
           </div>
-          <div className="h-1 w-full bg-muted overflow-hidden">
-            <div
-              className="h-full bg-primary transition-all"
-              style={{ width: `${progress.percentComplete}%` }}
-            />
+          <div className="h-1 w-full bg-muted overflow-hidden flex">
+            <div className="h-full bg-success transition-all" style={{ width: `${(progress.mature / progress.total) * 100}%` }} />
+            <div className="h-full bg-info transition-all" style={{ width: `${(progress.learned / progress.total) * 100}%` }} />
+            <div className="h-full bg-warning transition-all" style={{ width: `${(progress.learning / progress.total) * 100}%` }} />
           </div>
           {progress.dueToday === 0 && progress.nextDueDateStr && (
             <NextDueBadge nextDueDateStr={progress.nextDueDateStr} />

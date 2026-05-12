@@ -26,13 +26,16 @@ export function useCustomDeckProgress(userId: string, deckId: string) {
       const now = new Date().toISOString()
       const today = now.slice(0, 10)
 
-      // started = any SRS entry exists (deck was launched at least once)
-      const started = srsRows.length
-      const learning = srsRows.filter(r => r.review_count >= 1 && r.interval_days < 7).length
-      const learned = srsRows.filter(r => r.interval_days >= 7 && r.interval_days < 21).length
-      const mature = srsRows.filter(r => r.interval_days >= 21).length
+      // started = words reviewed at least once (review_count >= 1)
+      // Excludes SRS entries pre-created with review_count=0 when adding words to an active deck
+      const reviewed = srsRows.filter(r => r.review_count >= 1)
+      const started = reviewed.length
+      const learning = reviewed.filter(r => r.interval_days < 7).length
+      const learned = reviewed.filter(r => r.interval_days >= 7 && r.interval_days < 21).length
+      const mature = reviewed.filter(r => r.interval_days >= 21).length
       const dueToday = srsRows.filter(r => r.due_date <= today).length
-      const percentComplete = total === 0 ? 0 : Math.round((started / total) * 100)
+      // percentComplete = words truly learned (interval >= 7 days)
+      const percentComplete = total === 0 ? 0 : Math.round(((learned + mature) / total) * 100)
 
       // Find earliest future due date (due_date > today)
       const futureDates = srsRows
