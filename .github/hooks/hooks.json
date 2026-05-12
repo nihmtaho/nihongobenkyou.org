@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "pnpm run lint 2>/dev/null || true",
+        "cwd": ".",
+        "timeoutSec": 60,
+        "comment": "Run ESLint when session ends"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": ".github/hooks/scripts/post-tool-use.sh",
+        "cwd": ".",
+        "timeoutSec": 60,
+        "comment": "Type-check TS/TSX files after edits; warn on protected branch"
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": ".github/hooks/scripts/pre-tool-use.sh",
+        "cwd": ".",
+        "timeoutSec": 30,
+        "comment": "Block force-push to protected branches and forbidden-file pushes"
+      }
+    ]
+  }
+}

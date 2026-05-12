@@ -25,6 +25,16 @@
             "statusMessage": "Running lint..."
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm run test:run 2>&1; code=$?; if [ $code -ne 0 ]; then exit 2; fi; exit 0",
+            "asyncRewake": true,
+            "statusMessage": "Running tests..."
+          }
+        ]
       }
     ],
     "PostToolUse": [
