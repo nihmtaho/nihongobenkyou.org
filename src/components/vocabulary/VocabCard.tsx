@@ -93,7 +93,7 @@ export function VocabCard({ item, card, moraPattern, userId }: VocabCardProps) {
       {/* Existing card content — slides left when revealed */}
       <div
         className={cn(
-          'bg-card border border-border/10 transition-transform duration-[80ms]',
+          'relative bg-card border border-border/10 transition-transform duration-[80ms]',
           revealed && '-translate-x-[60px]',
         )}
       >

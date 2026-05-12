@@ -122,28 +122,30 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
           )}
 
           {/* Action buttons pinned to bottom */}
-          <div className="mt-auto pt-6 border-t border-border/10 flex gap-2">
-            <Button
-              size="sm"
-              variant={isKnown ? 'default' : 'outline'}
-              className="font-[var(--br-mono-font)]"
-              onClick={handleToggleKnown}
-              type="button"
-            >
-              {isKnown ? '✓ ĐÃ BIẾT' : 'ĐÃ BIẾT?'}
-            </Button>
-            {firstKanjiChar && (
+          <div className="mt-auto pt-6 border-t border-border/10 flex justify-between">
+            <div className="flex gap-2">
               <Button
                 size="sm"
-                variant="outline"
+                variant={isKnown ? 'default' : 'outline'}
                 className="font-[var(--br-mono-font)]"
+                onClick={handleToggleKnown}
                 type="button"
-                onClick={() => window.location.assign(`/kanji/${firstKanjiChar}`)}
-                aria-label={`View kanji ${firstKanjiChar}`}
               >
-                漢字
+                {isKnown ? '✓ ĐÃ BIẾT' : 'ĐÃ BIẾT?'}
               </Button>
-            )}
+              {firstKanjiChar && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="font-[var(--br-mono-font)]"
+                  type="button"
+                  onClick={() => window.location.assign(`/kanji/${firstKanjiChar}`)}
+                  aria-label={`View kanji ${firstKanjiChar}`}
+                >
+                  漢字
+                </Button>
+              )}
+            </div>
             <Button
               size="sm"
               variant="outline"

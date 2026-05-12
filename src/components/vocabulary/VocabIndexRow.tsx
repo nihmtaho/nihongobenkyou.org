@@ -1,12 +1,10 @@
 import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
-import { EyeOffIcon, Plus } from 'lucide-react'
+import { EyeOffIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import { useHideVocab } from '../../hooks/useHiddenVocab'
-import { AddToDeckDialog } from '../common/AddToDeckDialog'
 
 interface VocabIndexRowProps {
   item: VocabItem
@@ -22,7 +20,6 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
   const isKnown = card?.is_known === true
   const isDue = card != null && !isKnown && card.due_date <= today
   const isNew = card == null
-  const [dialogOpen, setDialogOpen] = useState(false)
   const [hideRevealed, setHideRevealed] = useState(false)
   const touchStartXRef = useRef(0)
   const { mutate: hide, isPending: isHiding } = useHideVocab()
@@ -85,17 +82,6 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
         </div>
       </button>
 
-      {/* Plus button as sibling — avoids nested <button> invalid HTML */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-auto w-10 shrink-0 self-stretch rounded-none text-muted-foreground hover:text-foreground border-b border-border/5"
-        aria-label={`Thêm ${item.word ?? item.reading} vào deck`}
-        onClick={() => setDialogOpen(true)}
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
-
       <button
         type="button"
         onClick={(e) => {
@@ -105,18 +91,12 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
         }}
         disabled={isHiding}
         aria-label={`Ẩn ${item.word ?? item.reading}`}
-        className={`absolute right-12 top-1/2 -translate-y-1/2 transition-opacity duration-[120ms] flex items-center gap-0.5 text-[9px] font-[var(--br-mono-font)] uppercase text-destructive border border-destructive/40 px-1.5 py-0.5 bg-background hover:bg-destructive hover:text-destructive-foreground ${hideRevealed ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto'}`}
+        className={`absolute right-0 top-1/2 -translate-y-1/2 transition-opacity duration-[120ms] flex items-center gap-0.5 text-[9px] font-[var(--br-mono-font)] uppercase text-destructive border border-destructive/40 px-1.5 py-0.5 bg-background hover:bg-destructive hover:text-destructive-foreground ${hideRevealed ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto'}`}
       >
         <EyeOffIcon className="h-2.5 w-2.5" />
         ẨN
       </button>
 
-      <AddToDeckDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        vocabItem={item}
-        userId={userId}
-      />
     </div>
   )
 }
