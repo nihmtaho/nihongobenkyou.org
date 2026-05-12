@@ -10,6 +10,7 @@ export function useCustomVocabMutations(deckId: string, userId: string) {
   function invalidate() {
     qc.invalidateQueries({ queryKey: DECK_WORDS_KEY(deckId) })
     qc.invalidateQueries({ queryKey: CUSTOM_DECKS_KEY(userId) })
+    qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deckId] })
   }
 
   const addWordsMutation = useMutation({
