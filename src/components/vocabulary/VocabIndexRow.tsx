@@ -2,7 +2,7 @@ import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
 import { EyeOffIcon, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useHideVocab } from '../../hooks/useHiddenVocab'
@@ -23,10 +23,28 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
   const isDue = card != null && !isKnown && card.due_date <= today
   const isNew = card == null
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [hideRevealed, setHideRevealed] = useState(false)
+  const touchStartXRef = useRef(0)
   const { mutate: hide, isPending: isHiding } = useHideVocab()
 
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartXRef.current = e.touches[0].clientX
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const dx = touchStartXRef.current - e.changedTouches[0].clientX
+    if (dx > 50)
+      setHideRevealed(true)
+    else if (dx < -30)
+      setHideRevealed(false)
+  }
+
   return (
-    <div className="group relative flex items-stretch">
+    <div
+      className="group relative flex items-stretch"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <button
         type="button"
         onClick={onSelect}
@@ -83,10 +101,11 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
         onClick={(e) => {
           e.stopPropagation()
           hide({ itemId: item.vocab_id, source: 'lesson', userId })
+          setHideRevealed(false)
         }}
         disabled={isHiding}
         aria-label={`Ẩn ${item.word ?? item.reading}`}
-        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-[120ms] flex items-center gap-0.5 text-[9px] font-[var(--br-mono-font)] uppercase text-destructive border border-destructive/40 px-1.5 py-0.5 bg-background hover:bg-destructive hover:text-destructive-foreground"
+        className={`absolute right-12 top-1/2 -translate-y-1/2 transition-opacity duration-[120ms] flex items-center gap-0.5 text-[9px] font-[var(--br-mono-font)] uppercase text-destructive border border-destructive/40 px-1.5 py-0.5 bg-background hover:bg-destructive hover:text-destructive-foreground ${hideRevealed ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto'}`}
       >
         <EyeOffIcon className="h-2.5 w-2.5" />
         ẨN

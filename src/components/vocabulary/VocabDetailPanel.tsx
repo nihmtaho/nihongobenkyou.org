@@ -1,10 +1,13 @@
 import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
+import { Plus } from 'lucide-react'
+import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useKnownCards } from '../../hooks/useKnownCards'
+import { AddToDeckDialog } from '../common/AddToDeckDialog'
 import { AudioButton } from './AudioButton'
 import { PitchAccentBars } from './PitchAccentBars'
 
@@ -24,6 +27,7 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
   const { toggleKnown } = useKnownCards()
   const isKnown = card?.is_known === true
   const firstKanjiChar = item.word ? (item.word.match(KANJI_RE) ?? [])[0] : null
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   function handleToggleKnown() {
     toggleKnown(userId, item.vocab_id, isKnown)
@@ -140,7 +144,23 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
                 漢字
               </Button>
             )}
+            <Button
+              size="sm"
+              variant="outline"
+              className="font-[var(--br-mono-font)]"
+              type="button"
+              aria-label={`Thêm ${item.word ?? item.reading} vào deck`}
+              onClick={() => setDialogOpen(true)}
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </Button>
           </div>
+          <AddToDeckDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            vocabItem={item}
+            userId={userId}
+          />
         </div>
       </div>
     </div>

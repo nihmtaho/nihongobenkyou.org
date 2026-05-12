@@ -356,7 +356,7 @@ interface RelatedVocabularyProps {
 
 function RelatedVocabulary({ char, curated, userId }: RelatedVocabularyProps) {
   const [expandedKey, setExpandedKey] = useState<string | null>(null)
-  const [openVocabId, setOpenVocabId] = useState<string | null>(null)
+  const [openVocabKey, setOpenVocabKey] = useState<string | null>(null)
 
   const { data: dynamic } = useQuery<VocabHit[]>({
     queryKey: ['related-vocab', char],
@@ -371,34 +371,15 @@ function RelatedVocabulary({ char, curated, userId }: RelatedVocabularyProps) {
     enabled: !curated || curated.length === 0,
   })
 
-  // Curated items have no vocab_id — look up by kana from Dexie
-  const { data: curatedVocabIds } = useQuery<Record<string, string>>({
-    queryKey: ['curated-vocab-ids', char],
-    queryFn: async () => {
-      if (!curated || curated.length === 0)
-        return {}
-      const kanas = new Set(curated.map(v => v.kana))
-      const items = await db.vocabulary.toArray()
-      const map: Record<string, string> = {}
-      for (const item of items) {
-        if (kanas.has(item.reading))
-          map[item.reading] = item.vocab_id
-      }
-      return map
-    },
-    staleTime: Infinity,
-    enabled: !!(curated && curated.length > 0),
-  })
-
   if (curated && curated.length > 0) {
     return (
       <div className="flex flex-col gap-3">
         <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Related Vocabulary</p>
         <div className="flex flex-col gap-1">
           {curated.map((v) => {
-            const vocabId = curatedVocabIds?.[v.kana]
+            const itemKey = `${v.word ?? ''}:${v.kana}`
             return (
-              <div key={`${v.word ?? v.kana}`} className="flex flex-col bg-card border border-border/10">
+              <div key={itemKey} className="flex flex-col bg-card border border-border/10">
                 <div className="flex items-center">
                   <button
                     type="button"
@@ -416,31 +397,29 @@ function RelatedVocabulary({ char, curated, userId }: RelatedVocabularyProps) {
                     </div>
                     <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
                   </button>
-                  {vocabId && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                        aria-label={`Thêm ${v.word ?? v.kana} vào deck`}
-                        onClick={() => setOpenVocabId(vocabId)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                      <AddToDeckDialog
-                        open={openVocabId === vocabId}
-                        onOpenChange={open => !open && setOpenVocabId(null)}
-                        vocabItem={{
-                          vocab_id: vocabId,
-                          word: v.word ?? null,
-                          reading: v.kana,
-                          meaning_vi: v.meaning_vi,
-                          han_viet: v.han_viet ?? null,
-                        }}
-                        userId={userId}
-                      />
-                    </>
-                  )}
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      aria-label={`Thêm ${v.word ?? v.kana} vào deck`}
+                      onClick={() => setOpenVocabKey(itemKey)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                    <AddToDeckDialog
+                      open={openVocabKey === itemKey}
+                      onOpenChange={open => !open && setOpenVocabKey(null)}
+                      vocabItem={{
+                        vocab_id: itemKey,
+                        word: v.word ?? null,
+                        reading: v.kana,
+                        meaning_vi: v.meaning_vi,
+                        han_viet: v.han_viet ?? null,
+                      }}
+                      userId={userId}
+                    />
+                  </>
                 </div>
                 {expandedKey === v.kana && v.example && (
                   <div className="border-t border-border/10 border-l-4 border-l-primary pl-3 pr-2 py-2">
@@ -489,13 +468,13 @@ function RelatedVocabulary({ char, curated, userId }: RelatedVocabularyProps) {
                 size="icon"
                 className="h-8 w-8 text-muted-foreground hover:text-foreground"
                 aria-label={`Thêm ${v.word ?? v.reading} vào deck`}
-                onClick={() => setOpenVocabId(v.vocab_id)}
+                onClick={() => setOpenVocabKey(v.vocab_id)}
               >
                 <Plus className="h-4 w-4" />
               </Button>
               <AddToDeckDialog
-                open={openVocabId === v.vocab_id}
-                onOpenChange={open => !open && setOpenVocabId(null)}
+                open={openVocabKey === v.vocab_id}
+                onOpenChange={open => !open && setOpenVocabKey(null)}
                 vocabItem={{
                   vocab_id: v.vocab_id,
                   word: v.word ?? null,
