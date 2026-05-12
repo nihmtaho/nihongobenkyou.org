@@ -1,8 +1,9 @@
 import type { RelatedVocabItem } from '../../types/kanji'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
-import { AddToActiveDeckButton } from '../../components/common/AddToActiveDeckButton'
+import { Plus } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { AddToDeckDialog } from '../../components/common/AddToDeckDialog'
 import { StrokeOrderAnimation } from '../../components/kanji/StrokeOrderAnimation'
 import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
@@ -10,7 +11,6 @@ import { Separator } from '../../components/ui/separator'
 import { Skeleton } from '../../components/ui/skeleton'
 import { getAllKanji, upsertKanjiCard } from '../../db/kanji'
 import { db } from '../../db/schema'
-import { useActiveDeckKanji, useActiveDeckVocab, useToggleKanjiInDeck, useToggleVocabInDeck } from '../../hooks/useActiveDeck'
 import { useKanji } from '../../hooks/useKanji'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -28,22 +28,6 @@ function KanjiDetailPage() {
   const userId = useAuthStore(s => s.userId)
   const { data: kanji, isLoading, isError } = useKanji(char)
   const queryClient = useQueryClient()
-
-  const { data: deckKanji } = useActiveDeckKanji(userId ?? '')
-  const { data: deckVocab } = useActiveDeckVocab(userId ?? '')
-  const toggleKanji = useToggleKanjiInDeck(userId ?? '')
-  const toggleVocab = useToggleVocabInDeck(userId ?? '')
-
-  const kanjiSet = useMemo(() => new Set((deckKanji ?? []).map(k => k.char)), [deckKanji])
-  const vocabSet = useMemo(() => new Set((deckVocab ?? []).map(v => v.vocab_id)), [deckVocab])
-
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
-  useEffect(() => {
-    if (!toastMsg)
-      return
-    const id = setTimeout(setToastMsg, 2000, null)
-    return () => clearTimeout(id)
-  }, [toastMsg])
 
   const { data: lessonKanji } = useQuery({
     queryKey: ['kanji-lesson-neighbors', kanji?.lesson_number],
@@ -224,31 +208,8 @@ function KanjiDetailPage() {
     </svg>
   )
 
-  const handleToggleKanji = () => {
-    const inDeck = kanjiSet.has(kanji.char)
-    toggleKanji.mutate(
-      { char: kanji.char, inDeck },
-      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC NGẮT QUÃNG' : 'Đã thêm vào HỌC NGẮT QUÃNG') },
-    )
-  }
-
-  const handleToggleVocab = (vocabId: string) => {
-    const inDeck = vocabSet.has(vocabId)
-    toggleVocab.mutate(
-      { vocabId, inDeck },
-      { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC NGẮT QUÃNG' : 'Đã thêm vào HỌC NGẮT QUÃNG') },
-    )
-  }
-
   return (
     <>
-      {toastMsg && (
-        <div className="toast toast-top toast-center z-50 pointer-events-none">
-          <div className="bg-success/10 border border-success/50 px-4 py-2">
-            <span className="font-[var(--br-mono-font)] text-[11px] uppercase">{toastMsg}</span>
-          </div>
-        </div>
-      )}
       <div className="p-4 max-w-5xl mx-auto">
         {/* Navigation bar — back + lesson position + prev/next */}
         <div className="flex items-center mb-4 -ml-2">
@@ -293,21 +254,12 @@ function KanjiDetailPage() {
         <div className="flex flex-col gap-6 lg:hidden">
           <div className="flex items-start gap-4">
             <div className="flex flex-col gap-2 flex-1">
-              <div className="flex items-center gap-2">
-                <p
-                  className="text-7xl font-bold leading-none"
-                  style={{ fontFamily: 'var(--br-jp-font)' }}
-                >
-                  {kanji.char}
-                </p>
-                {userId && (
-                  <AddToActiveDeckButton
-                    inDeck={kanjiSet.has(kanji.char)}
-                    onToggle={handleToggleKanji}
-                    isPending={toggleKanji.isPending}
-                  />
-                )}
-              </div>
+              <p
+                className="text-7xl font-bold leading-none"
+                style={{ fontFamily: 'var(--br-jp-font)' }}
+              >
+                {kanji.char}
+              </p>
               {badgeRow}
             </div>
           </div>
@@ -321,9 +273,7 @@ function KanjiDetailPage() {
           <RelatedVocabulary
             char={kanji.char}
             curated={kanji.related_vocab}
-            vocabSet={vocabSet}
-            onToggleVocab={handleToggleVocab}
-            isTogglePending={toggleVocab.isPending}
+            userId={userId ?? ''}
           />
         </div>
 
@@ -333,22 +283,12 @@ function KanjiDetailPage() {
           <div className="sticky top-6 flex flex-col gap-6">
             {/* Large character card */}
             <div className="bg-card border border-border/10 flex flex-col items-center gap-3 p-6">
-              <div className="flex items-start gap-2">
-                <p
-                  className="text-[120px] font-bold leading-none"
-                  style={{ fontFamily: 'var(--br-jp-font)' }}
-                >
-                  {kanji.char}
-                </p>
-                {userId && (
-                  <AddToActiveDeckButton
-                    inDeck={kanjiSet.has(kanji.char)}
-                    onToggle={handleToggleKanji}
-                    isPending={toggleKanji.isPending}
-                    className="mt-3"
-                  />
-                )}
-              </div>
+              <p
+                className="text-[120px] font-bold leading-none"
+                style={{ fontFamily: 'var(--br-jp-font)' }}
+              >
+                {kanji.char}
+              </p>
               {kanji.han_viet && (
                 <p className="text-3xl font-bold font-[var(--br-heading-font)] uppercase tracking-wider text-center">
                   {kanji.han_viet}
@@ -391,9 +331,7 @@ function KanjiDetailPage() {
             <RelatedVocabulary
               char={kanji.char}
               curated={kanji.related_vocab}
-              vocabSet={vocabSet}
-              onToggleVocab={handleToggleVocab}
-              isTogglePending={toggleVocab.isPending}
+              userId={userId ?? ''}
             />
           </div>
         </div>
@@ -407,18 +345,18 @@ interface VocabHit {
   word: string | null
   reading: string
   meaning_vi: string
+  han_viet: string | null
 }
 
 interface RelatedVocabularyProps {
   char: string
   curated: RelatedVocabItem[] | null
-  vocabSet: Set<string>
-  onToggleVocab: (vocabId: string) => void
-  isTogglePending: boolean
+  userId: string
 }
 
-function RelatedVocabulary({ char, curated, vocabSet, onToggleVocab, isTogglePending }: RelatedVocabularyProps) {
+function RelatedVocabulary({ char, curated, userId }: RelatedVocabularyProps) {
   const [expandedKey, setExpandedKey] = useState<string | null>(null)
+  const [openVocabKey, setOpenVocabKey] = useState<string | null>(null)
 
   const { data: dynamic } = useQuery<VocabHit[]>({
     queryKey: ['related-vocab', char],
@@ -427,29 +365,10 @@ function RelatedVocabulary({ char, curated, vocabSet, onToggleVocab, isTogglePen
       return items
         .filter(v => v.word?.includes(char) || v.reading?.includes(char))
         .slice(0, 8)
-        .map(v => ({ vocab_id: v.vocab_id, word: v.word ?? null, reading: v.reading, meaning_vi: v.meaning_vi }))
+        .map(v => ({ vocab_id: v.vocab_id, word: v.word ?? null, reading: v.reading, meaning_vi: v.meaning_vi, han_viet: v.han_viet ?? null }))
     },
     staleTime: Infinity,
     enabled: !curated || curated.length === 0,
-  })
-
-  // Curated items have no vocab_id — look up by kana from Dexie
-  const { data: curatedVocabIds } = useQuery<Record<string, string>>({
-    queryKey: ['curated-vocab-ids', char],
-    queryFn: async () => {
-      if (!curated || curated.length === 0)
-        return {}
-      const kanas = new Set(curated.map(v => v.kana))
-      const items = await db.vocabulary.toArray()
-      const map: Record<string, string> = {}
-      for (const item of items) {
-        if (kanas.has(item.reading))
-          map[item.reading] = item.vocab_id
-      }
-      return map
-    },
-    staleTime: Infinity,
-    enabled: !!(curated && curated.length > 0),
   })
 
   if (curated && curated.length > 0) {
@@ -458,9 +377,9 @@ function RelatedVocabulary({ char, curated, vocabSet, onToggleVocab, isTogglePen
         <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Related Vocabulary</p>
         <div className="flex flex-col gap-1">
           {curated.map((v) => {
-            const vocabId = curatedVocabIds?.[v.kana]
+            const itemKey = `${v.word ?? ''}:${v.kana}`
             return (
-              <div key={`${v.word ?? v.kana}`} className="flex flex-col bg-card border border-border/10">
+              <div key={itemKey} className="flex flex-col bg-card border border-border/10">
                 <div className="flex items-center">
                   <button
                     type="button"
@@ -478,13 +397,29 @@ function RelatedVocabulary({ char, curated, vocabSet, onToggleVocab, isTogglePen
                     </div>
                     <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
                   </button>
-                  {vocabId && (
-                    <AddToActiveDeckButton
-                      inDeck={vocabSet.has(vocabId)}
-                      onToggle={() => onToggleVocab(vocabId)}
-                      isPending={isTogglePending}
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      aria-label={`Thêm ${v.word ?? v.kana} vào deck`}
+                      onClick={() => setOpenVocabKey(itemKey)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                    <AddToDeckDialog
+                      open={openVocabKey === itemKey}
+                      onOpenChange={open => !open && setOpenVocabKey(null)}
+                      vocabItem={{
+                        vocab_id: itemKey,
+                        word: v.word ?? null,
+                        reading: v.kana,
+                        meaning_vi: v.meaning_vi,
+                        han_viet: v.han_viet ?? null,
+                      }}
+                      userId={userId}
                     />
-                  )}
+                  </>
                 </div>
                 {expandedKey === v.kana && v.example && (
                   <div className="border-t border-border/10 border-l-4 border-l-primary pl-3 pr-2 py-2">
@@ -527,11 +462,29 @@ function RelatedVocabulary({ char, curated, vocabSet, onToggleVocab, isTogglePen
               </div>
               <span className="text-sm font-[var(--br-jp-font)] text-muted-foreground/80">{v.meaning_vi}</span>
             </div>
-            <AddToActiveDeckButton
-              inDeck={vocabSet.has(v.vocab_id)}
-              onToggle={() => onToggleVocab(v.vocab_id)}
-              isPending={isTogglePending}
-            />
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                aria-label={`Thêm ${v.word ?? v.reading} vào deck`}
+                onClick={() => setOpenVocabKey(v.vocab_id)}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+              <AddToDeckDialog
+                open={openVocabKey === v.vocab_id}
+                onOpenChange={open => !open && setOpenVocabKey(null)}
+                vocabItem={{
+                  vocab_id: v.vocab_id,
+                  word: v.word ?? null,
+                  reading: v.reading,
+                  meaning_vi: v.meaning_vi,
+                  han_viet: v.han_viet ?? null,
+                }}
+                userId={userId}
+              />
+            </>
           </div>
         ))}
       </div>

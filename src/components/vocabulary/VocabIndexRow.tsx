@@ -2,11 +2,9 @@ import type { CardState } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
 import { EyeOffIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useRef, useState } from 'react'
 
-import { useToggleVocabInDeck } from '../../hooks/useActiveDeck'
 import { useHideVocab } from '../../hooks/useHiddenVocab'
-import { AddToActiveDeckButton } from '../common/AddToActiveDeckButton'
 
 interface VocabIndexRowProps {
   item: VocabItem
@@ -15,39 +13,39 @@ interface VocabIndexRowProps {
   isSelected: boolean
   today: string
   onSelect: () => void
-  vocabIdSet: Set<string>
   userId: string
 }
 
-export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, vocabIdSet, userId }: VocabIndexRowProps) {
+export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, userId }: VocabIndexRowProps) {
   const isKnown = card?.is_known === true
   const isDue = card != null && !isKnown && card.due_date <= today
   const isNew = card == null
-  const inDeck = vocabIdSet.has(item.vocab_id)
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
-  const toggleMutation = useToggleVocabInDeck(userId)
+  const [hideRevealed, setHideRevealed] = useState(false)
+  const touchStartXRef = useRef(0)
   const { mutate: hide, isPending: isHiding } = useHideVocab()
 
-  useEffect(() => {
-    if (!toastMsg)
-      return
-    const id = setTimeout(setToastMsg, 2000, null)
-    return () => clearTimeout(id)
-  }, [toastMsg])
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartXRef.current = e.touches[0].clientX
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const dx = touchStartXRef.current - e.changedTouches[0].clientX
+    if (dx > 50)
+      setHideRevealed(true)
+    else if (dx < -30)
+      setHideRevealed(false)
+  }
 
   return (
-    <div className="group relative">
-      {toastMsg && (
-        <div className="toast toast-top toast-center z-50 pointer-events-none">
-          <div className="bg-success/10 border border-success/50 px-4 py-2">
-            <span className="font-[var(--br-mono-font)] text-[11px] uppercase">{toastMsg}</span>
-          </div>
-        </div>
-      )}
+    <div
+      className="group relative flex items-stretch"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <button
         type="button"
         onClick={onSelect}
-        className={`w-full text-left px-4 py-3 border-b border-border/5 transition-colors duration-[80ms] ${
+        className={`flex-1 text-left px-4 py-3 border-b border-border/5 transition-colors duration-[80ms] ${
           isSelected
             ? 'border-l-4 border-l-primary bg-card'
             : 'border-l-4 border-l-transparent hover:bg-card/50 active:bg-card'
@@ -75,36 +73,30 @@ export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, 
                 {isKnown && (
                   <span className="font-[var(--br-mono-font)] text-[9px] text-success uppercase">✓</span>
                 )}
-                {isNew && !isDue && (
+                {isNew && (
                   <span className="font-[var(--br-mono-font)] text-[9px] text-foreground/25 uppercase">NEW</span>
                 )}
-                <AddToActiveDeckButton
-                  inDeck={inDeck}
-                  isPending={toggleMutation.isPending}
-                  onToggle={() => toggleMutation.mutate(
-                    { vocabId: item.vocab_id, inDeck },
-                    { onSuccess: () => setToastMsg(inDeck ? 'Đã xóa khỏi HỌC NGẮT QUÃNG' : 'Đã thêm vào HỌC NGẮT QUÃNG') },
-                  )}
-                  className="h-6 w-6"
-                />
               </div>
             </div>
           </div>
         </div>
       </button>
+
       <button
         type="button"
         onClick={(e) => {
           e.stopPropagation()
           hide({ itemId: item.vocab_id, source: 'lesson', userId })
+          setHideRevealed(false)
         }}
         disabled={isHiding}
         aria-label={`Ẩn ${item.word ?? item.reading}`}
-        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-[120ms] flex items-center gap-0.5 text-[9px] font-[var(--br-mono-font)] uppercase text-destructive border border-destructive/40 px-1.5 py-0.5 bg-background hover:bg-destructive hover:text-destructive-foreground"
+        className={`absolute right-0 top-1/2 -translate-y-1/2 transition-opacity duration-[120ms] flex items-center gap-0.5 text-[9px] font-[var(--br-mono-font)] uppercase text-destructive border border-destructive/40 px-1.5 py-0.5 bg-background hover:bg-destructive hover:text-destructive-foreground ${hideRevealed ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto'}`}
       >
         <EyeOffIcon className="h-2.5 w-2.5" />
         ẨN
       </button>
+
     </div>
   )
 }
