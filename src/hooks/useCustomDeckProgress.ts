@@ -32,7 +32,7 @@ export function useCustomDeckProgress(userId: string, deckId: string) {
       const learned = srsRows.filter(r => r.interval_days >= 7 && r.interval_days < 21).length
       const mature = srsRows.filter(r => r.interval_days >= 21).length
       const dueToday = srsRows.filter(r => r.due_date <= today).length
-      const percentComplete = total === 0 ? 0 : Math.round(((learned + mature) / total) * 100)
+      const percentComplete = total === 0 ? 0 : Math.round((started / total) * 100)
 
       // Find earliest future due date (due_date > today)
       const futureDates = srsRows

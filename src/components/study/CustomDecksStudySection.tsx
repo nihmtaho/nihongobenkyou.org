@@ -1,18 +1,13 @@
 import type { DeckProgress } from '../../hooks/useCustomDeckProgress'
 import type { CustomDeck } from '../../types/custom-deck'
 import type { StudyMode, TypeInputSubMode } from '../../types/study'
-import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { db } from '../../db/schema'
 import { useCustomDeckProgress } from '../../hooks/useCustomDeckProgress'
 import { useCustomDecks } from '../../hooks/useCustomDecks'
 import { useLaunchCustomDeckSession } from '../../hooks/useLaunchCustomDeckSession'
 import { VocabStudyModal } from './VocabStudyModal'
-
-const DASHED_LINK_CLASS
-  = 'flex items-center justify-between px-3 py-2.5 border border-dashed border-border/20 hover:border-border/40 text-muted-foreground/60 hover:text-muted-foreground transition-colors text-[11px] font-[var(--br-mono-font)]'
 
 function NextDueBadge({ nextDueDateStr }: { nextDueDateStr: string }) {
   const label = useMemo(() => {
@@ -52,7 +47,7 @@ function DeckRow({
 }) {
   const { data: progress } = useCustomDeckProgress(userId, deck.id)
 
-  if (!progress || progress.started === 0)
+  if (!progress)
     return null
 
   return (
@@ -142,24 +137,8 @@ export function CustomDecksStudySection({ userId }: Props) {
   const { launch } = useLaunchCustomDeckSession(userId)
   const [studyDeck, setStudyDeck] = useState<CustomDeck | null>(null)
 
-  // Fetch the set of deckIds that have at least one started card,
-  // so we can compute unstarted count without waiting for each DeckRow hook.
-  const { data: startedDeckIds = new Set<string>() } = useQuery({
-    queryKey: ['all-custom-deck-srs-summary', userId],
-    queryFn: () =>
-      db.custom_deck_srs
-        .filter(r => r.userId === userId)
-        .toArray()
-        .then(rows => new Set(rows.map(r => r.deckId))),
-    staleTime: 0,
-    enabled: !!userId,
-  })
-
   if (isLoading)
     return null
-
-  const unstartedDecks = decks.filter(d => !startedDeckIds.has(d.id))
-  const hasAnyStarted = decks.length > unstartedDecks.length
 
   return (
     <div className="flex flex-col gap-2">
@@ -184,43 +163,18 @@ export function CustomDecksStudySection({ userId }: Props) {
               + Tạo deck đầu tiên
             </Link>
           )
-        : !hasAnyStarted
-            ? (
-                <Link to="/custom" className={DASHED_LINK_CLASS}>
-                  <span>
-                    Bắt đầu học
-                    {' '}
-                    {decks.length}
-                    {' '}
-                    deck →
-                  </span>
-                </Link>
-              )
-            : (
-                <div className="flex flex-col gap-2">
-                  {decks.map(deck => (
-                    <DeckRow
-                      key={deck.id}
-                      deck={deck}
-                      userId={userId}
-                      onStudy={setStudyDeck}
-                    />
-                  ))}
-
-                  {unstartedDecks.length > 0 && (
-                    <Link to="/custom" className={DASHED_LINK_CLASS}>
-                      <span>
-                        ＋
-                        {' '}
-                        {unstartedDecks.length}
-                        {' '}
-                        deck chưa học
-                      </span>
-                      <span>→</span>
-                    </Link>
-                  )}
-                </div>
-              )}
+        : (
+            <div className="flex flex-col gap-2">
+              {decks.map(deck => (
+                <DeckRow
+                  key={deck.id}
+                  deck={deck}
+                  userId={userId}
+                  onStudy={setStudyDeck}
+                />
+              ))}
+            </div>
+          )}
 
       {studyDeck && (
         <VocabStudyModal
