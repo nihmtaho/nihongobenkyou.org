@@ -101,7 +101,7 @@ describe('deleteWord', () => {
       { word: null, kana: 'てすと', han_viet: null, meaning_vi: 'test' },
     ])
     const [word] = await getDeckWords(deck.id)
-    await deleteWord(word.id, deck.id)
+    await deleteWord(word.id, deck.id, USER_ID)
     expect(await getDeckWords(deck.id)).toHaveLength(0)
     const d = await db.custom_decks.get(deck.id)
     expect(d?.word_count).toBe(0)

@@ -112,9 +112,10 @@ export async function addWords(
   }
 }
 
-export async function deleteWord(wordId: string, deckId: string): Promise<void> {
-  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary], async () => {
+export async function deleteWord(wordId: string, deckId: string, userId: string): Promise<void> {
+  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary, 'custom_deck_srs'], async () => {
     await db.custom_vocabulary.delete(wordId)
+    await db.custom_deck_srs.where('[userId+itemId]').equals([userId, wordId]).delete()
     const deck = await db.custom_decks.get(deckId)
     if (deck) {
       await db.custom_decks.update(deckId, {

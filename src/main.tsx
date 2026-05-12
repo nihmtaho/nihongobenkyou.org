@@ -87,7 +87,7 @@ async function bootstrap() {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <Toaster position="bottom-right" />
+        <Toaster position="top-right" />
       </QueryClientProvider>
     </StrictMode>,
   )
