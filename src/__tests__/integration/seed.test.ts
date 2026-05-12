@@ -165,6 +165,41 @@ describe('seedDatabase', () => {
     const cards = await db.user_cards.toArray()
     expect(cards).toHaveLength(1)
   })
+
+  it('calls onProgress for each lesson file when seeding', async () => {
+    const manifest: Manifest = {
+      ...SAMPLE_MANIFEST,
+      datasets: [{
+        ...SAMPLE_MANIFEST.datasets[0],
+        checksum: 'new-checksum',
+        files: [
+          { filename: 'lesson-01.json', size_bytes: 100, checksum: 'a' },
+          { filename: 'lesson-02.json', size_bytes: 100, checksum: 'b' },
+          { filename: 'lesson-03.json', size_bytes: 100, checksum: 'c' },
+        ],
+      }],
+    }
+    mockFetch(manifest, SAMPLE_LESSON_FILE)
+
+    const calls: Array<[string, number, number]> = []
+    await seedDatabase((file, index, total) => calls.push([file, index, total]))
+
+    expect(calls).toHaveLength(3)
+    expect(calls[0]).toEqual(['lesson-01.json', 1, 3])
+    expect(calls[1]).toEqual(['lesson-02.json', 2, 3])
+    expect(calls[2]).toEqual(['lesson-03.json', 3, 3])
+  })
+
+  it('does not call onProgress when already up-to-date', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
+    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+
+    const onProgress = vi.fn()
+    await seedDatabase(onProgress)
+
+    expect(onProgress).not.toHaveBeenCalled()
+  })
 })
 
 describe('invalidateLessonCache', () => {

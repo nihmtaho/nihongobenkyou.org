@@ -45,7 +45,9 @@ export async function invalidateLessonCache(prefix: string): Promise<void> {
   )
 }
 
-export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
+export async function seedDatabase(
+  onProgress?: (file: string, index: number, total: number) => void,
+): Promise<'up-to-date' | 'seeded'> {
   let manifest: Manifest
   try {
     manifest = await fetchJson<Manifest>('/data/manifest.json')
@@ -75,7 +77,9 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   const lessonMetas: LessonMeta[] = []
 
   try {
-    for (const file of dataset.files) {
+    for (let i = 0; i < dataset.files.length; i++) {
+      const file = dataset.files[i]
+      onProgress?.(file.filename, i + 1, dataset.files.length)
       const raw = await fetchJson<unknown>(`/data/${dataset.book_code_prefix}/${file.filename}`)
       const lessonFile = parseLessonFile(raw)
       vocabItems.push(...lessonFile.vocabulary)
