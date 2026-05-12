@@ -7,6 +7,7 @@ import { BottomDock } from '../components/navigation/BottomDock'
 import { MobileTopNav } from '../components/navigation/MobileTopNav'
 import { Sidebar } from '../components/navigation/Sidebar'
 import { OfflineIndicator } from '../components/offline/OfflineIndicator'
+import { UpdateProgressModal } from '../components/update/UpdateProgressModal'
 import { useAuth } from '../hooks/useAuth'
 import { useSettingsStore } from '../stores/settingsStore'
 
@@ -88,6 +89,7 @@ function RootLayout() {
 
   return (
     <>
+      <UpdateProgressModal />
       <OfflineAuthNotice />
       <ReactivationBanner />
       <OfflineIndicator />
