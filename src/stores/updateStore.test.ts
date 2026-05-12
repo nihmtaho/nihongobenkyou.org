@@ -71,4 +71,20 @@ describe('updateStore', () => {
     expect(updateStore.getState().steps).toEqual([])
     expect(updateStore.getState().error).toBeNull()
   })
+
+  it('setError sets the error field', () => {
+    updateStore.getState().setError('Network timeout')
+    expect(updateStore.getState().error).toBe('Network timeout')
+  })
+
+  it('setNeedsReload sets the needsReload flag', () => {
+    updateStore.getState().setNeedsReload(true)
+    expect(updateStore.getState().needsReload).toBe(true)
+  })
+
+  it('startUpdate skips kanji step when kanjiOutdated is false', () => {
+    updateStore.getState().startUpdate(false, true, false)
+    const kanji = updateStore.getState().steps.find(s => s.id === 'kanji')
+    expect(kanji?.status).toBe('skipped')
+  })
 })

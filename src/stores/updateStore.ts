@@ -10,7 +10,7 @@ export interface UpdateStep {
   status: StepStatus
 }
 
-interface UpdateState {
+export interface UpdateState {
   phase: 'idle' | 'updating' | 'done'
   steps: UpdateStep[]
   currentFile: string | null
