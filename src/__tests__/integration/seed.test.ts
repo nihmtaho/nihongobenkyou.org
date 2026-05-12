@@ -3,7 +3,8 @@ import type { VocabItem } from '../../types/vocabulary'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import { db } from '../../db/schema'
-import { invalidateLessonCache, seedDatabase, SeedError, seedKanji } from '../../db/seed'
+import { checkForUpdates, invalidateLessonCache, seedDatabase, SeedError, seedKanji } from '../../db/seed'
+import { updateStore } from '../../stores/updateStore'
 
 const SAMPLE_LESSON_FILE = sampleVocabulary.filter(v => v.lesson_number === 1)
 
@@ -309,5 +310,67 @@ describe('seedKanji', () => {
     const result = await seedKanji()
 
     expect(result).toBe('skipped')
+  })
+})
+
+describe('checkForUpdates', () => {
+  beforeEach(async () => {
+    await db.delete()
+    await db.open()
+    updateStore.getState().reset()
+    vi.stubGlobal('navigator', {
+      serviceWorker: {
+        getRegistration: vi.fn().mockResolvedValue(undefined),
+      },
+    })
+  })
+
+  afterEach(() => {
+    updateStore.getState().reset()
+  })
+
+  it('does not call startUpdate when everything is up-to-date', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
+    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('idle')
+  })
+
+  it('calls startUpdate with datasetOutdated=true when checksum differs', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    // No stored checksum — dataset is outdated
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('updating')
+    const dataset = updateStore.getState().steps.find(s => s.id === 'dataset')
+    expect(dataset?.status).not.toBe('skipped')
+  })
+
+  it('calls startUpdate with swWaiting=true when SW is waiting', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
+    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+    vi.stubGlobal('navigator', {
+      serviceWorker: {
+        getRegistration: vi.fn().mockResolvedValue({ waiting: {} }),
+      },
+    })
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('updating')
+    const sw = updateStore.getState().steps.find(s => s.id === 'sw')
+    expect(sw?.status).not.toBe('skipped')
+  })
+
+  it('does not throw when manifest fetch fails', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')))
+
+    await expect(checkForUpdates()).resolves.not.toThrow()
+    expect(updateStore.getState().phase).toBe('idle')
   })
 })

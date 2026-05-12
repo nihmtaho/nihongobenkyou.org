@@ -2,6 +2,7 @@ import type { LessonMeta, Manifest } from '../types/dataset'
 import type { KanjiItem } from '../types/kanji'
 import type { Passage } from '../types/passages'
 import type { VocabItem } from '../types/vocabulary'
+import { updateStore } from '../stores/updateStore'
 import { db } from './schema'
 
 interface LessonFile {
@@ -171,4 +172,30 @@ export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> 
   }
 
   return 'seeded'
+}
+
+export async function checkForUpdates(): Promise<void> {
+  let manifest: Manifest
+  try {
+    manifest = await fetchJson<Manifest>('/data/manifest.json')
+  }
+  catch {
+    return
+  }
+
+  const reg = await navigator.serviceWorker?.getRegistration().catch(() => undefined)
+  const swWaiting = !!reg?.waiting
+
+  const dataset = manifest.datasets[0]
+  const [storedChecksum, storedKanjiChecksum] = await Promise.all([
+    db.settings.get('manifest_checksum'),
+    db.settings.get('kanji_n5_checksum'),
+  ])
+
+  const datasetOutdated = !!dataset && storedChecksum?.value !== dataset.checksum
+  const kanjiOutdated = !!manifest.kanji && storedKanjiChecksum?.value !== manifest.kanji.n5_checksum
+
+  if (swWaiting || datasetOutdated || kanjiOutdated) {
+    updateStore.getState().startUpdate(swWaiting, datasetOutdated, kanjiOutdated)
+  }
 }
