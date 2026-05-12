@@ -66,7 +66,7 @@ describe('useCustomDeckProgress', () => {
     expect(d.learned).toBe(1) // entry b: interval_days 10 (7 to <21)
     expect(d.mature).toBe(1) // entry c: interval_days 30 (>= 21)
     expect(d.dueToday).toBe(2) // entries a and b have due_date '2026-01-01' (past); c has '2099-01-01'
-    expect(d.percentComplete).toBe(50) // (learned + mature) / total * 100 = 2/4 * 100
+    expect(d.percentComplete).toBe(75) // started / total * 100 = 3/4 * 100
     expect(d.nextDueDateStr).toBe('2099-01-01') // c is due in future, only future date
   })
 })
