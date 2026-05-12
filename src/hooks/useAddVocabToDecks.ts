@@ -31,6 +31,9 @@ export function useAddVocabToDecks(userId: string) {
       succeededIds.forEach(deckId =>
         qc.invalidateQueries({ queryKey: DECK_WORDS_KEY(deckId) }),
       )
+      succeededIds.forEach(deckId =>
+        qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deckId] }),
+      )
       if (succeededIds.length > 0)
         qc.invalidateQueries({ queryKey: CUSTOM_DECKS_KEY(userId) })
 

@@ -1,5 +1,5 @@
 import type { CustomDeck, CustomVocabItem, ParsedVocabItem } from '../types/custom-deck'
-import { migrateCustomDeckSRSUserId } from './custom-deck-srs'
+import { bulkUpsertCustomDeckSRS, getCustomDeckSRS, migrateCustomDeckSRSUserId } from './custom-deck-srs'
 import { db } from './schema'
 
 export async function createDeck(
@@ -87,6 +87,29 @@ export async function addWords(
       })
     }
   })
+
+  // If the deck has already been started, create SRS entries immediately so
+  // useCustomDeckProgress.started stays in sync with word_count.
+  const existingSRS = await getCustomDeckSRS(userId, deckId)
+  if (existingSRS.length > 0) {
+    const today = now.slice(0, 10)
+    await bulkUpsertCustomDeckSRS(words.map(w => ({
+      userId,
+      itemId: w.id,
+      deckId,
+      interval_days: 0,
+      ease_factor: 2.5,
+      due_date: today,
+      review_count: 0,
+      card_stage: 'learning' as const,
+      learning_step: 0,
+      lapse_count: 0,
+      last_rating: null,
+      consecutive_correct: 0,
+      pending_sync: true,
+      updated_at: now,
+    })))
+  }
 }
 
 export async function deleteWord(wordId: string, deckId: string): Promise<void> {
