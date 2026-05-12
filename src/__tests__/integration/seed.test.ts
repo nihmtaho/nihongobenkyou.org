@@ -350,6 +350,22 @@ describe('checkForUpdates', () => {
     expect(dataset?.status).not.toBe('skipped')
   })
 
+  it('calls startUpdate with datasetOutdated=true when version changes even if checksum is same', async () => {
+    const newVersionManifest: Manifest = {
+      ...SAMPLE_MANIFEST,
+      datasets: [{ ...SAMPLE_MANIFEST.datasets[0], version: '1.1.0' }],
+    }
+    mockFetch(newVersionManifest, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
+    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('updating')
+    const dataset = updateStore.getState().steps.find(s => s.id === 'dataset')
+    expect(dataset?.status).not.toBe('skipped')
+  })
+
   it('calls startUpdate with swWaiting=true when SW is waiting', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
     await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })

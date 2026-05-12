@@ -187,12 +187,16 @@ export async function checkForUpdates(): Promise<void> {
   const swWaiting = !!reg?.waiting
 
   const dataset = manifest.datasets[0]
-  const [storedChecksum, storedKanjiChecksum] = await Promise.all([
+  const [storedChecksum, storedVersion, storedKanjiChecksum] = await Promise.all([
     db.settings.get('manifest_checksum'),
+    db.settings.get('dataset_version'),
     db.settings.get('kanji_n5_checksum'),
   ])
 
-  const datasetOutdated = !!dataset && storedChecksum?.value !== dataset.checksum
+  const datasetOutdated = !!dataset && (
+    storedChecksum?.value !== dataset.checksum
+    || storedVersion?.value !== dataset.version
+  )
   const kanjiOutdated = !!manifest.kanji && storedKanjiChecksum?.value !== manifest.kanji.n5_checksum
 
   if (swWaiting || datasetOutdated || kanjiOutdated) {
