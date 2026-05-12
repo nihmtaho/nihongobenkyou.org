@@ -2,6 +2,7 @@ import type { LessonMeta, Manifest } from '../types/dataset'
 import type { KanjiItem } from '../types/kanji'
 import type { Passage } from '../types/passages'
 import type { VocabItem } from '../types/vocabulary'
+import { updateStore } from '../stores/updateStore'
 import { db } from './schema'
 
 interface LessonFile {
@@ -45,7 +46,9 @@ export async function invalidateLessonCache(prefix: string): Promise<void> {
   )
 }
 
-export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
+export async function seedDatabase(
+  onProgress?: (file: string, index: number, total: number) => void,
+): Promise<'up-to-date' | 'seeded'> {
   let manifest: Manifest
   try {
     manifest = await fetchJson<Manifest>('/data/manifest.json')
@@ -75,7 +78,9 @@ export async function seedDatabase(): Promise<'up-to-date' | 'seeded'> {
   const lessonMetas: LessonMeta[] = []
 
   try {
-    for (const file of dataset.files) {
+    for (let i = 0; i < dataset.files.length; i++) {
+      const file = dataset.files[i]
+      onProgress?.(file.filename, i + 1, dataset.files.length)
       const raw = await fetchJson<unknown>(`/data/${dataset.book_code_prefix}/${file.filename}`)
       const lessonFile = parseLessonFile(raw)
       vocabItems.push(...lessonFile.vocabulary)
@@ -167,4 +172,34 @@ export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> 
   }
 
   return 'seeded'
+}
+
+export async function checkForUpdates(): Promise<void> {
+  let manifest: Manifest
+  try {
+    manifest = await fetchJson<Manifest>('/data/manifest.json')
+  }
+  catch {
+    return
+  }
+
+  const reg = await navigator.serviceWorker?.getRegistration().catch(() => undefined)
+  const swWaiting = !!reg?.waiting
+
+  const dataset = manifest.datasets[0]
+  const [storedChecksum, storedVersion, storedKanjiChecksum] = await Promise.all([
+    db.settings.get('manifest_checksum'),
+    db.settings.get('dataset_version'),
+    db.settings.get('kanji_n5_checksum'),
+  ])
+
+  const datasetOutdated = !!dataset && (
+    storedChecksum?.value !== dataset.checksum
+    || storedVersion?.value !== dataset.version
+  )
+  const kanjiOutdated = !!manifest.kanji && storedKanjiChecksum?.value !== manifest.kanji.n5_checksum
+
+  if (swWaiting || datasetOutdated || kanjiOutdated) {
+    updateStore.getState().startUpdate(swWaiting, datasetOutdated, kanjiOutdated)
+  }
 }
