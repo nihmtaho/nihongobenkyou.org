@@ -1,29 +1,45 @@
-export type SRSRating = 0 | 1 | 2 | 3
-export type CardStage = 'learning' | 'review' | 'relearning'
+export type SRSRating = 1 | 2 | 3 | 4  // 1=Again 2=Hard 3=Good 4=Easy
 
-export interface CardState {
-  userId: string
-  vocabId: string
-  interval_days: number
-  ease_factor: number
-  due_date: string
-  review_count: number
+export type CardState = 'new' | 'learning' | 'review' | 'relearning'
+
+export interface SRSCard {
+  // Identity
+  userId:   string
+  cardId:   string          // vocab_id | kanji char | custom_vocabulary.id
+  cardType: 'vocab' | 'kanji' | 'custom_vocab'
+  deckId:   string | null   // null = textbook; UUID = custom deck
+
+  // FSRS-4.5 State
+  state:          CardState
+  stability:      number    // days until P(recall) = 90%
+  difficulty:     number    // 1–10
+  elapsed_days:   number
+  scheduled_days: number
+  reps:           number
+  lapses:         number
+  last_review:    string    // YYYY-MM-DD
+  due:            string    // YYYY-MM-DD
+
+  // Rating
   last_rating: SRSRating | null
-  pending_sync: boolean
-  updated_at: string
-  is_known: boolean
+
+  // Carry-over
+  is_known:            boolean
   consecutive_correct: number
-  card_stage?: CardStage
-  learning_step?: number
-  lapse_count?: number
+
+  // Sync
+  pending_sync: boolean
+  updated_at:   string      // ISO 8601
 }
 
-export interface ReviewResult {
-  vocab_id: string
-  new_interval: number
-  new_ease: number
-  due_date: string
-  new_card_stage: CardStage
-  new_learning_step: number
-  new_lapse_count: number
+export interface FSRSResult {
+  due:            string
+  state:          CardState
+  stability:      number
+  difficulty:     number
+  elapsed_days:   number
+  scheduled_days: number
+  reps:           number
+  lapses:         number
+  last_review:    string
 }
