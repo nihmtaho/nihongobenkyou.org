@@ -27,5 +27,11 @@ export function useKnownCards() {
     return card?.is_known === true
   }
 
-  return { toggleKnown, isKnown }
+  async function knownCount(userId: string): Promise<number> {
+    return db.srs_cards
+      .filter(c => c.userId === userId && c.cardType === 'vocab' && c.is_known === true)
+      .count()
+  }
+
+  return { toggleKnown, isKnown, knownCount }
 }

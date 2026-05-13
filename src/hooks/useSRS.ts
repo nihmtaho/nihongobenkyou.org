@@ -145,3 +145,6 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
   return { dueCards, rate, answer, answerTypeInput, isPending: mutation.isPending } as unknown as SRSReturn<T>
 }
 
+export const useVocabSRS = (userId: string) => useSRS('vocab', userId)
+export const useKanjiSRS = (userId: string) => useSRS('kanji', userId)
+

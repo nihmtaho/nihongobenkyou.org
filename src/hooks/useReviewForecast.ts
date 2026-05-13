@@ -1,6 +1,5 @@
-import { useMemo } from 'react'
-import { db } from '../db/schema'
-import { useLiveQuery } from '../lib/use-live-query'
+import { useQuery } from '@tanstack/react-query'
+import { getDueCards } from '../db/srs-cards'
 
 export interface ForecastDay {
   date: string
@@ -22,36 +21,36 @@ function buildNext7Dates(today: string): string[] {
   return dates
 }
 
-export function useReviewForecast(userId: string) {
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+export async function getForecast(userId: string): Promise<ForecastDay[]> {
+  const today = new Date().toISOString().slice(0, 10)
   const next7 = buildNext7Dates(today)
   const endDate = next7[6]
 
-  const allCards = useLiveQuery(
-    () => db.srs_cards
-      .where('[userId+due]')
-      .between([userId, today], [userId, endDate], true, true)
-      .toArray(),
-    [userId, today],
-  )
-
-  if (allCards === undefined)
-    return { data: undefined, isLoading: true }
+  // getDueCards returns cards where due <= endDate (includes overdue); filter to today+ for forecast
+  const allCards = await getDueCards(userId, endDate)
+  const futureCards = allCards.filter(c => c.due >= today)
 
   const countPerDay: Record<string, number> = {}
-  for (const card of allCards) {
+  for (const card of futureCards) {
     countPerDay[card.due] = (countPerDay[card.due] ?? 0) + 1
   }
 
-  const data: ForecastDay[] = next7.map((date) => {
+  return next7.map((date) => {
     const jsDay = new Date(date).getDay()
     return {
       date,
-      label: WEEKDAY_LABELS[jsDay],
-      count: countPerDay[date] ?? 0,
+      label:   WEEKDAY_LABELS[jsDay],
+      count:   countPerDay[date] ?? 0,
       isToday: date === today,
     }
   })
+}
 
-  return { data, isLoading: false }
+export function useReviewForecast(userId: string) {
+  return useQuery({
+    queryKey: ['review-forecast', userId],
+    queryFn:  () => getForecast(userId),
+    enabled:  !!userId,
+    staleTime: 0,
+  })
 }
