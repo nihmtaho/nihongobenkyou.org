@@ -39,6 +39,7 @@ export function scheduleFSRS(card: SRSCard, rating: SRSRating): FSRSResult {
 
   return {
     due: next.due.toISOString().slice(0, 10),
+    due_datetime: next.due.toISOString(),
     state: STATE_REVERSE[next.state],
     stability: next.stability,
     difficulty: next.difficulty,

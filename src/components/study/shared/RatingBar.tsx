@@ -23,7 +23,7 @@ function getIntervalPreview(card: SRSCard | VocabWithSRS, rating: SRSRating): st
     return '6–10 min'
   const result = scheduleFSRS(card as SRSCard, rating)
   if (result.state === 'learning' || result.state === 'relearning') {
-    const ms = new Date(result.due).getTime() - Date.now()
+    const ms = new Date(result.due_datetime).getTime() - Date.now()
     if (ms < 60 * 60 * 1000)
       return `${Math.round(ms / 60000)} min`
     if (ms < 24 * 60 * 60 * 1000)

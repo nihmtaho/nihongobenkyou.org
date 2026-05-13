@@ -33,7 +33,8 @@ export interface SRSCard {
 }
 
 export interface FSRSResult {
-  due: string
+  due: string // YYYY-MM-DD (for storage)
+  due_datetime: string // full ISO (for interval preview calculation)
   state: CardState
   stability: number
   difficulty: number
