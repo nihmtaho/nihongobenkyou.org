@@ -64,17 +64,17 @@ describe('kanjiCard', () => {
     expect(screen.getByText('New')).toBeTruthy()
   })
 
-  it('shows "Learning" badge for interval_days < 7', () => {
+  it('shows "Learning" badge for scheduled_days < 7', () => {
     render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, scheduled_days: 3 }} />)
     expect(screen.getByText('Learning')).toBeTruthy()
   })
 
-  it('shows "Review" badge for interval_days 7–20', () => {
+  it('shows "Review" badge for scheduled_days 7–20', () => {
     render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, scheduled_days: 14 }} />)
     expect(screen.getByText('Review')).toBeTruthy()
   })
 
-  it('shows "Mature" badge for interval_days >= 21', () => {
+  it('shows "Mature" badge for scheduled_days >= 21', () => {
     render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, scheduled_days: 21 }} />)
     expect(screen.getByText('Mature')).toBeTruthy()
   })

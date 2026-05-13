@@ -55,8 +55,7 @@ export function DangerZoneSection() {
           markProgressReset(userId!),
           supabase.from('user_card_snapshots').delete().eq('user_id', userId),
           supabase.from('user_sync_packages').delete().eq('user_id', userId),
-          supabase.from('user_cards').delete().eq('user_id', userId),
-          supabase.from('kanji_cards').delete().eq('user_id', userId),
+          supabase.from('srs_cards').delete().eq('user_id', userId),
         ])
 
         try {

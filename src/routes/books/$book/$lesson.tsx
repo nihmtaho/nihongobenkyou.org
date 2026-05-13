@@ -51,11 +51,11 @@ function LessonPage() {
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const total = nonDeprecated.length
   const cardList = useMemo(() => [...cards.values()], [cards])
-  const learningCount = cardList.filter(c => c.interval_days < 8).length
-  const reviewCount = cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21).length
-  const matureCount = cardList.filter(c => c.interval_days >= 21).length
+  const learningCount = cardList.filter(c => c.scheduled_days < 8).length
+  const reviewCount = cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
+  const matureCount = cardList.filter(c => c.scheduled_days >= 21).length
   const newCount = Math.max(0, total - cardList.length)
-  const dueCount = cardList.filter(c => !c.is_known && c.due_date <= today).length
+  const dueCount = cardList.filter(c => !c.is_known && c.due <= today).length
 
   const srsStats: SRSStats = {
     total,
@@ -66,7 +66,7 @@ function LessonPage() {
   }
 
   const nextReview = useMemo(
-    () => formatNextReview(cardList.map(c => c.due_date), today),
+    () => formatNextReview(cardList.map(c => c.due), today),
     [cardList, today],
   )
 

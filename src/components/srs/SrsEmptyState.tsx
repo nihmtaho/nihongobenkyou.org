@@ -3,13 +3,13 @@ import { Button } from '@/components/ui/button'
 
 interface Props {
   totalCardCount: number | undefined
-  futureCards: { due_date: string }[] | undefined
+  futureCards: { due: string }[] | undefined
 }
 
-function nextDueLabel(cards: { due_date: string }[]): string {
+function nextDueLabel(cards: { due: string }[]): string {
   if (cards.length === 0)
     return ''
-  const next = cards.reduce((min, c) => (c.due_date < min ? c.due_date : min), cards[0].due_date)
+  const next = cards.reduce((min, c) => (c.due < min ? c.due : min), cards[0].due)
   const diff = Math.max(0, Math.ceil((new Date(next).getTime() - Date.now()) / 60000))
   if (diff === 0)
     return 'ngay bây giờ'

@@ -54,12 +54,12 @@ function KanjiDetailPage() {
   }, [prevChar, nextChar, navigate])
 
   useEffect(() => {
-    if (!userId || !char)
+    if (!userId || !kanji)
       return
-    upsertKanjiSRSCard(userId, char)
+    upsertKanjiSRSCard(userId, kanji.char)
       .then(() => queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] }))
       .catch(console.error)
-  }, [userId, char, queryClient])
+  }, [userId, kanji, queryClient])
 
   if (isLoading) {
     return (

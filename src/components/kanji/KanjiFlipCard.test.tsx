@@ -73,7 +73,7 @@ describe('kanjiFlipCard', () => {
     render(<KanjiFlipCard kanji={baseKanji} card={baseCard} onRate={onRate} />)
     await user.click(screen.getAllByText('明')[0])
     await user.click(screen.getByText('Good'))
-    expect(onRate).toHaveBeenCalledWith(2)
+    expect(onRate).toHaveBeenCalledWith(3)
   })
 
   it('renders mnemonic when mnemonic_vi is present', async () => {
