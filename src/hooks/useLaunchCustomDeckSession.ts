@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { getDeckWords, updateDeck } from '../db/custom-decks-local'
+import { getHiddenIds } from '../db/hidden-vocab'
 import { getSRSCardsForDeck, initSRSCard } from '../db/srs-cards'
 import { useStudySessionStore } from '../stores/studySessionStore'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
@@ -38,6 +39,8 @@ export function useLaunchCustomDeckSession(userId: string) {
       if (words.length === 0)
         return
 
+      const hiddenIds = new Set(await getHiddenIds(userId, 'custom'))
+
       // Load existing SRS state from srs_cards
       const existingCards = await getSRSCardsForDeck(userId, deck.id)
       const srsMap = new Map(existingCards.map(c => [c.cardId, c]))
@@ -56,7 +59,7 @@ export function useLaunchCustomDeckSession(userId: string) {
 
       let queue: VocabWithSRS[] = words.flatMap((w) => {
         const s = srsMap.get(w.id)
-        if (s?.is_known)
+        if (s?.is_known || hiddenIds.has(w.id))
           return []
         return [{
           vocab_id: w.id,

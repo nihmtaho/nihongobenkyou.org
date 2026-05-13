@@ -4,6 +4,7 @@ import type { UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { getHiddenIds } from '../db/hidden-vocab'
 import { db } from '../db/schema'
 import { useStudySessionStore } from '../stores/studySessionStore'
 
@@ -37,6 +38,7 @@ export function useLaunchVocabSession(userId: string) {
       if (allVocab.length === 0)
         return
 
+      const hiddenIds = new Set(await getHiddenIds(userId, 'lesson'))
       const vocabIds = allVocab.map(v => v.vocab_id)
       const cards = await db.srs_cards
         .where('[userId+cardId]')
@@ -46,6 +48,8 @@ export function useLaunchVocabSession(userId: string) {
       const cardMap = new Map(cards.map(c => [c.cardId, c]))
 
       const queue: VocabWithSRS[] = allVocab.flatMap((v): VocabWithSRS[] => {
+        if (hiddenIds.has(v.vocab_id))
+          return []
         const c = cardMap.get(v.vocab_id)
 
         if (dueOnly) {
