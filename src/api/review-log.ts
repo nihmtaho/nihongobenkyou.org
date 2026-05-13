@@ -39,7 +39,7 @@ export async function fetchReviewEventsSince(
   while (true) {
     const { data, error } = await supabase
       .from('review_log')
-      .select('id,user_id,vocab_id,book_source,card_type,rating,interval_days,ease_factor,due_date,review_count,is_known,reviewed_at')
+      .select('id,user_id,vocab_id,book_source,card_type,rating,scheduled_days,stability,difficulty,interval_days,ease_factor,due_date,review_count,is_known,reviewed_at')
       .eq('user_id', userId)
       .gt('id', currentCursor)
       .order('id', { ascending: true })

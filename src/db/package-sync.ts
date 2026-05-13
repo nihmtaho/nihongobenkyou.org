@@ -1,7 +1,6 @@
 import type { SyncPackagePayload } from '../types/sync-package'
 
-import { AuthError, NetworkError } from '../api/auth'
-import { supabase } from '../api/supabase'
+import { AuthError, getCurrentUserId, NetworkError } from '../api/auth'
 import { fetchRemotePackage, uploadSyncPackage } from '../api/sync-package'
 import { db } from './schema'
 
@@ -28,23 +27,14 @@ async function setLocalVersion(version: number): Promise<void> {
 }
 
 export async function buildPackage(userId: string): Promise<SyncPackagePayload> {
-  const [userCards, kanjiCards, customDecks, customVocab, reviewLog, streaks] = await Promise.all([
-    db.user_cards.toCollection().filter(c => c.userId === userId).toArray(),
-    db.kanji_cards.toCollection().filter(c => c.userId === userId).toArray(),
+  const [srsCards, customDecks, customVocab, reviewLog, streaks] = await Promise.all([
+    db.srs_cards.filter(c => c.userId === userId).toArray(),
     db.custom_decks.where('user_id').equals(userId).toArray(),
     db.custom_vocabulary.where('user_id').equals(userId).toArray(),
     db.review_log.filter(e => e.userId === userId).toArray(),
     db.streaks.where('userId').equals(userId).toArray(),
   ])
-
-  return {
-    user_cards: userCards,
-    kanji_cards: kanjiCards,
-    custom_decks: customDecks,
-    custom_vocabulary: customVocab,
-    review_log: reviewLog,
-    streaks,
-  }
+  return { srs_cards: srsCards, custom_decks: customDecks, custom_vocabulary: customVocab, review_log: reviewLog, streaks }
 }
 
 export async function mergePackageIntoDexie(
@@ -52,8 +42,7 @@ export async function mergePackageIntoDexie(
   payload: SyncPackagePayload,
 ): Promise<number> {
   return db.transaction('rw', [
-    'user_cards',
-    'kanji_cards',
+    'srs_cards',
     'custom_decks',
     'custom_vocabulary',
     'review_log',
@@ -61,22 +50,12 @@ export async function mergePackageIntoDexie(
   ], async () => {
     let imported = 0
 
-    for (const remote of payload.user_cards ?? []) {
+    for (const remote of payload.srs_cards ?? []) {
       if (remote.userId !== userId)
         continue
-      const local = await db.user_cards.get([userId, remote.vocabId])
+      const local = await db.srs_cards.get([userId, remote.cardId])
       if (!local || remote.updated_at > local.updated_at) {
-        await db.user_cards.put({ ...remote, pending_sync: false })
-        imported++
-      }
-    }
-
-    for (const remote of payload.kanji_cards ?? []) {
-      if (remote.userId !== userId)
-        continue
-      const local = await db.kanji_cards.get([userId, remote.char])
-      if (!local || (remote.updated_at ?? '') > (local.updated_at ?? '')) {
-        await db.kanji_cards.put({ ...remote, pending_sync: false })
+        await db.srs_cards.put({ ...remote, pending_sync: false })
         imported++
       }
     }
@@ -91,7 +70,6 @@ export async function mergePackageIntoDexie(
       }
     }
 
-    // custom_vocabulary: append-only — add items that don't exist locally
     for (const remote of payload.custom_vocabulary ?? []) {
       if (remote.user_id !== userId)
         continue
@@ -102,8 +80,6 @@ export async function mergePackageIntoDexie(
       }
     }
 
-    // review_log: append-only — dedup by (vocabId, cardType, reviewedAt).
-    // Build a Set of existing natural keys to avoid a per-entry async lookup.
     const existingKeys = new Set(
       (await db.review_log.filter(e => e.userId === userId).toArray())
         .map(e => `${e.vocabId}:${e.cardType}:${e.reviewedAt}`),
@@ -120,7 +96,6 @@ export async function mergePackageIntoDexie(
       }
     }
 
-    // streaks: upsert by date — keep whichever has the higher current_streak.
     for (const remote of payload.streaks ?? []) {
       if (remote.userId !== userId)
         continue
@@ -147,8 +122,8 @@ export async function syncPackage(userId: string): Promise<void> {
   isSyncing = true
 
   try {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session)
+    const authedUserId = await getCurrentUserId()
+    if (!authedUserId)
       return
 
     const [deviceId, localVersion] = await Promise.all([

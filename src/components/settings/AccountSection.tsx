@@ -52,8 +52,7 @@ export function AccountSection() {
     setDeleteError(null)
     try {
       await db.vocabulary.clear()
-      await db.user_cards.clear()
-      await db.kanji_cards.clear()
+      await db.srs_cards.clear()
       await db.sessions.clear()
       await db.streaks.clear()
       await db.review_log.clear()

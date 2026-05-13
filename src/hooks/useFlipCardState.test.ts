@@ -26,20 +26,20 @@ describe('useFlipCardState', () => {
   })
 
   describe('handleDragEnd', () => {
-    it('calls onRate(2) when drag offset.x > 100', () => {
+    it('calls onRate(3) when drag offset.x > 100', () => {
       const mockOnRate = vi.fn()
       const { result } = renderHook(() => useFlipCardState(mockOnRate))
       act(() => result.current.setIsFlipped(true))
       act(() => result.current.handleDragEnd({}, { offset: { x: 150 } }))
-      expect(mockOnRate).toHaveBeenCalledWith(2)
+      expect(mockOnRate).toHaveBeenCalledWith(3)
     })
 
-    it('calls onRate(0) when drag offset.x < -100', () => {
+    it('calls onRate(1) when drag offset.x < -100', () => {
       const mockOnRate = vi.fn()
       const { result } = renderHook(() => useFlipCardState(mockOnRate))
       act(() => result.current.setIsFlipped(true))
       act(() => result.current.handleDragEnd({}, { offset: { x: -150 } }))
-      expect(mockOnRate).toHaveBeenCalledWith(0)
+      expect(mockOnRate).toHaveBeenCalledWith(1)
     })
 
     it('does not call onRate when card is not flipped', () => {
@@ -82,7 +82,7 @@ describe('useFlipCardState', () => {
       act(() => result.current.setIsFlipped(true))
 
       const keys = ['1', '2', '3', '4'] as const
-      const expectedRatings = [0, 1, 2, 3] as const
+      const expectedRatings = [1, 2, 3, 4] as const
 
       keys.forEach((key, i) => {
         mockOnRate.mockClear()

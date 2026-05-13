@@ -4,6 +4,7 @@ import type { UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { getHiddenIds } from '../db/hidden-vocab'
 import { db } from '../db/schema'
 import { useStudySessionStore } from '../stores/studySessionStore'
 
@@ -27,7 +28,7 @@ export function useLaunchVocabSession(userId: string) {
 
     try {
       const today = new Date().toISOString().slice(0, 10)
-      const timestamp = new Date().toISOString()
+      const now = new Date().toISOString()
 
       const allVocab = await db.vocabulary
         .where('[book_source+lesson_number]')
@@ -37,37 +38,51 @@ export function useLaunchVocabSession(userId: string) {
       if (allVocab.length === 0)
         return
 
+      const hiddenIds = new Set(await getHiddenIds(userId, 'lesson'))
       const vocabIds = allVocab.map(v => v.vocab_id)
-      const cards = await db.user_cards
-        .where('[userId+vocabId]')
+      const cards = await db.srs_cards
+        .where('[userId+cardId]')
         .anyOf(vocabIds.map(id => [userId, id]))
         .toArray()
 
-      const cardMap = new Map(cards.map(c => [c.vocabId, c]))
+      const cardMap = new Map(cards.map(c => [c.cardId, c]))
 
-      const queue: VocabWithSRS[] = allVocab.flatMap((v) => {
+      const queue: VocabWithSRS[] = allVocab.flatMap((v): VocabWithSRS[] => {
+        if (hiddenIds.has(v.vocab_id))
+          return []
         const c = cardMap.get(v.vocab_id)
 
         if (dueOnly) {
-          if (!c || c.due_date > today || c.is_known)
+          if (!c || c.due > today || c.is_known)
             return []
           return [{ ...v, ...c }]
         }
 
-        if (c)
+        if (c) {
+          if (c.is_known)
+            return []
           return [{ ...v, ...c }]
+        }
 
+        // New card with FSRS defaults
         return [{
           ...v,
           userId,
-          vocabId: v.vocab_id,
-          interval_days: 0,
-          ease_factor: 2.5,
-          due_date: today,
-          review_count: 0,
+          cardId: v.vocab_id,
+          cardType: 'vocab' as const,
+          deckId: null,
+          state: 'new' as const,
+          stability: 0,
+          difficulty: 0,
+          elapsed_days: 0,
+          scheduled_days: 0,
+          reps: 0,
+          lapses: 0,
+          last_review: today,
+          due: today,
           last_rating: null,
           pending_sync: false,
-          updated_at: timestamp,
+          updated_at: now,
           is_known: false,
           consecutive_correct: 0,
         }]

@@ -252,9 +252,9 @@ function LessonCard({ bookId, lesson, userId }: { bookId: string, lesson: Lesson
   const { data: cards } = useUserCards(userId, vocabIds)
   const cardList = cards ? [...cards.values()] : []
 
-  const learningCount = cardList.filter(c => c.interval_days < 8).length
-  const reviewCount = cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21).length
-  const matureCount = cardList.filter(c => c.interval_days >= 21).length
+  const learningCount = cardList.filter(c => c.scheduled_days < 8).length
+  const reviewCount = cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
+  const matureCount = cardList.filter(c => c.scheduled_days >= 21).length
 
   const srsStats: SRSStats = {
     total,
@@ -267,7 +267,7 @@ function LessonCard({ bookId, lesson, userId }: { bookId: string, lesson: Lesson
   const hasProgress = cardList.length > 0
   const now = useMemo(() => new Date().toISOString(), [])
   const nextReview = hasProgress
-    ? formatNextReview(cardList.map(c => c.due_date), now)
+    ? formatNextReview(cardList.map(c => c.due), now)
     : null
 
   return (

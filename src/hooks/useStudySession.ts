@@ -38,6 +38,21 @@ function shuffle<T>(arr: T[]): T[] {
 const NOW_ISO = () => new Date().toISOString()
 const TODAY = () => NOW_ISO().slice(0, 10)
 
+const DEFAULT_SRS_FIELDS = {
+  state: 'new' as const,
+  stability: 0,
+  difficulty: 0,
+  elapsed_days: 0,
+  scheduled_days: 0,
+  reps: 0,
+  lapses: 0,
+  is_known: false,
+  consecutive_correct: 0,
+  pending_sync: false,
+  last_rating: null,
+  deckId: null,
+}
+
 export function useStudySession(userId: string, config: StudyConfig) {
   return useQuery<VocabWithSRS[]>({
     queryKey: ['study-session', userId, config],
@@ -51,40 +66,26 @@ export function useStudySession(userId: string, config: StudyConfig) {
 
         const vocabItems = customWords.map(customVocabToVocabItem)
         const vocabIds = vocabItems.map(v => v.vocab_id)
-        const cards = await db.user_cards
-          .where('[userId+vocabId]')
+        const cards = await db.srs_cards
+          .where('[userId+cardId]')
           .anyOf(vocabIds.map(id => [userId, id]))
           .toArray()
-        const cardMap = new Map(cards.map(c => [c.vocabId, c]))
+        const cardMap = new Map(cards.map(c => [c.cardId, c]))
 
         let merged: VocabWithSRS[] = vocabItems.map((v) => {
           const c = cardMap.get(v.vocab_id)
           if (c) {
-            return {
-              ...v,
-              ...c,
-              consecutive_correct: c.consecutive_correct ?? 0,
-              card_stage: c.card_stage ?? 'review',
-              learning_step: c.learning_step ?? 0,
-              lapse_count: c.lapse_count ?? 0,
-            }
+            return { ...v, ...c }
           }
           return {
             ...v,
             userId,
-            vocabId: v.vocab_id,
-            interval_days: 1,
-            ease_factor: 2.5,
-            due_date: TODAY(),
-            review_count: 0,
-            last_rating: null,
-            pending_sync: false,
+            cardId: v.vocab_id,
+            cardType: 'vocab' as const,
+            last_review: TODAY(),
+            due: TODAY(),
             updated_at: NOW_ISO(),
-            is_known: false,
-            consecutive_correct: 0,
-            card_stage: 'learning' as const,
-            learning_step: 0,
-            lapse_count: 0,
+            ...DEFAULT_SRS_FIELDS,
           }
         })
 
@@ -109,40 +110,26 @@ export function useStudySession(userId: string, config: StudyConfig) {
           : await db.vocabulary.toArray()
 
       const vocabIds = vocab.map(v => v.vocab_id)
-      const cards = await db.user_cards
-        .where('[userId+vocabId]')
+      const cards = await db.srs_cards
+        .where('[userId+cardId]')
         .anyOf(vocabIds.map(id => [userId, id]))
         .toArray()
-      const cardMap = new Map(cards.map(c => [c.vocabId, c]))
+      const cardMap = new Map(cards.map(c => [c.cardId, c]))
 
       let merged: VocabWithSRS[] = vocab.map((v) => {
         const c = cardMap.get(v.vocab_id)
         if (c) {
-          return {
-            ...v,
-            ...c,
-            consecutive_correct: c.consecutive_correct ?? 0,
-            card_stage: c.card_stage ?? 'review',
-            learning_step: c.learning_step ?? 0,
-            lapse_count: c.lapse_count ?? 0,
-          }
+          return { ...v, ...c }
         }
         return {
           ...v,
           userId,
-          vocabId: v.vocab_id,
-          interval_days: 1,
-          ease_factor: 2.5,
-          due_date: TODAY(),
-          review_count: 0,
-          last_rating: null,
-          pending_sync: false,
+          cardId: v.vocab_id,
+          cardType: 'vocab' as const,
+          last_review: TODAY(),
+          due: TODAY(),
           updated_at: NOW_ISO(),
-          is_known: false,
-          consecutive_correct: 0,
-          card_stage: 'learning' as const,
-          learning_step: 0,
-          lapse_count: 0,
+          ...DEFAULT_SRS_FIELDS,
         }
       })
 

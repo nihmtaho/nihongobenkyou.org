@@ -1,4 +1,4 @@
-import type { CardStage } from './srs'
+import type { CardState, SRSRating } from './srs'
 
 export interface Example {
   ja: string
@@ -33,16 +33,23 @@ export interface VocabItem {
 }
 
 export interface VocabWithSRS extends VocabItem {
-  interval_days: number
-  ease_factor: number
-  due_date: string
-  review_count: number
-  last_rating: 0 | 1 | 2 | 3 | null
+  // SRSCard identity fields — present on real cards, optional on ephemeral new-card objects
+  userId?: string
+  cardId?: string
+  cardType?: 'vocab' | 'kanji' | 'custom_vocab'
+  deckId?: string | null
+  state: CardState
+  stability: number
+  difficulty: number
+  elapsed_days: number
+  scheduled_days: number
+  reps: number
+  lapses: number
+  last_review: string
+  due: string
+  last_rating: SRSRating | null
   pending_sync: boolean
   updated_at: string
   is_known: boolean
   consecutive_correct: number
-  card_stage?: CardStage
-  learning_step?: number
-  lapse_count?: number
 }

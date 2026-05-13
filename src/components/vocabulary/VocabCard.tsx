@@ -1,4 +1,4 @@
-import type { CardState } from '../../types/srs'
+import type { SRSCard } from '../../types/srs'
 import type { FontSize } from '../../types/study'
 import type { VocabItem } from '../../types/vocabulary'
 
@@ -27,7 +27,7 @@ const JP_SIZE: Record<FontSize, string> = {
 
 interface VocabCardProps {
   item: VocabItem
-  card: CardState | null
+  card: SRSCard | null
   moraPattern: ('H' | 'L')[] | null
   userId: string
 }

@@ -1,4 +1,4 @@
-import type { CustomDeckSRS } from '../types/custom-deck'
+import type { SRSCard } from '../types/srs'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
@@ -14,8 +14,38 @@ function wrapper({ children }: { children: React.ReactNode }) {
   return createElement(QueryClientProvider, { client: qc }, children)
 }
 
+const TODAY = new Date().toISOString().slice(0, 10)
+
+function makeSRSCard(
+  cardId: string,
+  scheduled_days: number,
+  reps: number,
+  due: string,
+): SRSCard {
+  return {
+    userId: 'u1',
+    cardId,
+    cardType: 'custom_vocab',
+    deckId: 'deck1',
+    state: reps > 0 ? 'review' : 'new',
+    stability: 1.5,
+    difficulty: 5.0,
+    elapsed_days: 2,
+    scheduled_days,
+    reps,
+    lapses: 0,
+    last_review: TODAY,
+    due,
+    last_rating: reps > 0 ? 3 : null,
+    is_known: false,
+    consecutive_correct: reps,
+    pending_sync: false,
+    updated_at: new Date().toISOString(),
+  }
+}
+
 beforeEach(async () => {
-  await db.custom_deck_srs.clear()
+  await db.srs_cards.clear()
   await db.custom_decks.clear()
   // seed a custom deck with word_count=4
   await db.custom_decks.add({
@@ -28,29 +58,13 @@ beforeEach(async () => {
     created_at: '',
     updated_at: '',
   })
-  const makeEntry = (itemId: string, interval_days: number, review_count: number, due_date: string): CustomDeckSRS => ({
-    userId: 'u1',
-    itemId,
-    deckId: 'deck1',
-    interval_days,
-    ease_factor: 2.5,
-    due_date,
-    review_count,
-    card_stage: 'review',
-    learning_step: 0,
-    lapse_count: 0,
-    last_rating: 2,
-    consecutive_correct: review_count,
-    pending_sync: false,
-    updated_at: '',
-  })
-  await db.custom_deck_srs.bulkAdd([
-    // learning: review_count >= 1, interval_days < 7
-    makeEntry('a', 1, 2, '2026-01-01'),
-    // learned: interval_days >= 7, < 21
-    makeEntry('b', 10, 5, '2026-01-01'),
-    // mature: interval_days >= 21
-    makeEntry('c', 30, 8, '2099-01-01'),
+  await db.srs_cards.bulkAdd([
+    // learning: reps >= 1, scheduled_days < 7
+    makeSRSCard('a', 1, 2, '2026-01-01'),
+    // learned: scheduled_days >= 7, < 21
+    makeSRSCard('b', 10, 5, '2026-01-01'),
+    // mature: scheduled_days >= 21
+    makeSRSCard('c', 30, 8, '2099-01-01'),
     // 4th word has no SRS entry (not started)
   ])
 })
@@ -61,21 +75,21 @@ describe('useCustomDeckProgress', () => {
     await waitFor(() => expect(result.current.data).toBeDefined())
     const d = result.current.data!
     expect(d.total).toBe(4) // word_count from custom_decks
-    expect(d.started).toBe(3) // 3 entries have review_count >= 1
-    expect(d.learning).toBe(1) // entry a: review_count=2, interval_days 1 (< 7)
-    expect(d.learned).toBe(1) // entry b: interval_days 10 (7 to <21)
-    expect(d.mature).toBe(1) // entry c: interval_days 30 (>= 21)
-    expect(d.dueToday).toBe(2) // entries a and b have due_date '2026-01-01' (past); c has '2099-01-01'
+    expect(d.started).toBe(3) // 3 entries have reps >= 1
+    expect(d.learning).toBe(1) // entry a: reps=2, scheduled_days 1 (< 7)
+    expect(d.learned).toBe(1) // entry b: scheduled_days 10 (7 to <21)
+    expect(d.mature).toBe(1) // entry c: scheduled_days 30 (>= 21)
+    expect(d.dueToday).toBe(2) // entries a and b have due '2026-01-01' (past); c has '2099-01-01'
     expect(d.percentComplete).toBe(50) // (learned + mature) / total = 2/4 * 100
     expect(d.nextDueDateStr).toBe('2099-01-01') // c is due in future, only future date
   })
 
-  it('returns 0% when SRS entries exist but none have been reviewed (review_count=0)', async () => {
-    await db.custom_deck_srs.clear()
-    // Simulate addWords() pre-creating SRS entries for an active deck — review_count=0
-    await db.custom_deck_srs.bulkAdd([
-      { userId: 'u1', itemId: 'x', deckId: 'deck1', interval_days: 0, ease_factor: 2.5, due_date: '2026-05-12', review_count: 0, card_stage: 'learning', learning_step: 0, lapse_count: 0, last_rating: null, consecutive_correct: 0, pending_sync: true, updated_at: '' },
-      { userId: 'u1', itemId: 'y', deckId: 'deck1', interval_days: 0, ease_factor: 2.5, due_date: '2026-05-12', review_count: 0, card_stage: 'learning', learning_step: 0, lapse_count: 0, last_rating: null, consecutive_correct: 0, pending_sync: true, updated_at: '' },
+  it('returns 0% when SRS entries exist but none have been reviewed (reps=0)', async () => {
+    await db.srs_cards.clear()
+    // Simulate pre-created SRS entries that haven't been rated yet
+    await db.srs_cards.bulkAdd([
+      makeSRSCard('x', 0, 0, TODAY),
+      makeSRSCard('y', 0, 0, TODAY),
     ])
     const { result } = renderHook(() => useCustomDeckProgress('u1', 'deck1'), { wrapper })
     await waitFor(() => expect(result.current.data).toBeDefined())

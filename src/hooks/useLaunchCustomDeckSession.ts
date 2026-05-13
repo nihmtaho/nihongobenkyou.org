@@ -1,13 +1,13 @@
 import type { CustomDeck } from '../types/custom-deck'
-import type { SRSRating } from '../types/srs'
 import type { StudyMode, TypeInputSubMode } from '../types/study'
 import type { UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { bulkUpsertCustomDeckSRS, getCustomDeckSRS } from '../db/custom-deck-srs'
 import { getDeckWords, updateDeck } from '../db/custom-decks-local'
+import { getHiddenIds } from '../db/hidden-vocab'
+import { getSRSCardsForDeck, initSRSCard } from '../db/srs-cards'
 import { useStudySessionStore } from '../stores/studySessionStore'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 
@@ -39,43 +39,29 @@ export function useLaunchCustomDeckSession(userId: string) {
       if (words.length === 0)
         return
 
-      // Load existing SRS state from custom_deck_srs
-      const existingSRS = await getCustomDeckSRS(userId, deck.id)
-      const srsMap = new Map(existingSRS.map(s => [s.itemId, s]))
+      const hiddenIds = new Set(await getHiddenIds(userId, 'custom'))
+
+      // Load existing SRS state from srs_cards
+      const existingCards = await getSRSCardsForDeck(userId, deck.id)
+      const srsMap = new Map(existingCards.map(c => [c.cardId, c]))
 
       // Initialise SRS entries for words that have never been rated
-      const newEntries = words
-        .filter(w => !srsMap.has(w.id))
-        .map(w => ({
-          userId,
-          itemId: w.id,
-          deckId: deck.id,
-          interval_days: 0,
-          ease_factor: 2.5,
-          due_date: today,
-          review_count: 0,
-          card_stage: 'learning' as const,
-          learning_step: 0,
-          lapse_count: 0,
-          last_rating: null as SRSRating | null,
-          consecutive_correct: 0,
-          pending_sync: true,
-          updated_at: now,
-        }))
-
-      if (newEntries.length > 0) {
-        await bulkUpsertCustomDeckSRS(newEntries)
-        for (const entry of newEntries)
-          srsMap.set(entry.itemId, entry)
-        // Invalidate immediately so Study/custom reflect the deck as "started"
+      const newWords = words.filter(w => !srsMap.has(w.id))
+      if (newWords.length > 0) {
+        await Promise.all(newWords.map(w => initSRSCard(userId, w.id, 'custom_vocab', deck.id)))
+        // Re-fetch to populate srsMap with newly created cards
+        const refreshed = await getSRSCardsForDeck(userId, deck.id)
+        for (const card of refreshed) srsMap.set(card.cardId, card)
         qc.invalidateQueries({ queryKey: ['all-custom-deck-srs-summary', userId] })
         qc.invalidateQueries({ queryKey: ['started-deck-ids', userId] })
         qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deck.id] })
       }
 
-      let queue: VocabWithSRS[] = words.map((w) => {
+      let queue: VocabWithSRS[] = words.flatMap((w) => {
         const s = srsMap.get(w.id)
-        return {
+        if (s?.is_known || hiddenIds.has(w.id))
+          return []
+        return [{
           vocab_id: w.id,
           word: w.kanji ?? null,
           reading: w.kana,
@@ -94,20 +80,24 @@ export function useLaunchCustomDeckSession(userId: string) {
           tags: [],
           deprecated: false,
           userId,
-          vocabId: w.id,
-          interval_days: s?.interval_days ?? 0,
-          ease_factor: s?.ease_factor ?? 2.5,
-          due_date: s?.due_date ?? today,
-          review_count: s?.review_count ?? 0,
-          last_rating: (s?.last_rating ?? null) as SRSRating | null,
+          cardId: w.id,
+          cardType: 'custom_vocab' as const,
+          deckId: deck.id,
+          state: s?.state ?? 'new',
+          stability: s?.stability ?? 0,
+          difficulty: s?.difficulty ?? 0,
+          elapsed_days: s?.elapsed_days ?? 0,
+          scheduled_days: s?.scheduled_days ?? 0,
+          reps: s?.reps ?? 0,
+          lapses: s?.lapses ?? 0,
+          last_review: s?.last_review ?? today,
+          due: s?.due ?? today,
+          last_rating: s?.last_rating ?? null,
+          is_known: s?.is_known ?? false,
+          consecutive_correct: s?.consecutive_correct ?? 0,
           pending_sync: false,
           updated_at: s?.updated_at ?? now,
-          is_known: false,
-          consecutive_correct: s?.consecutive_correct ?? 0,
-          card_stage: s?.card_stage ?? 'learning',
-          learning_step: s?.learning_step ?? 0,
-          lapse_count: s?.lapse_count ?? 0,
-        }
+        }]
       })
 
       queue = [...queue].sort(() => Math.random() - 0.5)

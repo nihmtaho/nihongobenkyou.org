@@ -60,14 +60,21 @@ function makeVocabItem(vocab_id: string) {
   }
 }
 
-function makeCardState(userId: string, vocabId: string, due_date: string) {
+function makeCardState(userId: string, cardId: string, due: string) {
   return {
     userId,
-    vocabId,
-    interval_days: 1,
-    ease_factor: 2.5,
-    due_date,
-    review_count: 1,
+    cardId,
+    cardType: 'vocab' as const,
+    deckId: null,
+    state: 'review' as const,
+    stability: 4.0,
+    difficulty: 5.0,
+    elapsed_days: 2,
+    scheduled_days: 1,
+    reps: 1,
+    lapses: 0,
+    last_review: due,
+    due,
     last_rating: null,
     pending_sync: false,
     updated_at: new Date().toISOString(),
@@ -88,7 +95,7 @@ function tomorrow(): string {
 
 beforeEach(async () => {
   await db.vocabulary.clear()
-  await db.user_cards.clear()
+  await db.srs_cards.clear()
   mockNavigate.mockReset()
   mockInitSession.mockReset()
 })
@@ -108,7 +115,7 @@ describe('useLaunchVocabSession', () => {
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
-  it('launches session with all vocab when dueOnly=false and no user_cards exist', async () => {
+  it('launches session with all vocab when dueOnly=false and no srs_cards exist', async () => {
     await db.vocabulary.bulkAdd([
       makeVocabItem(VOCAB_ID_1),
       makeVocabItem(VOCAB_ID_2),
@@ -125,13 +132,12 @@ describe('useLaunchVocabSession', () => {
     expect(mockInitSession).toHaveBeenCalledOnce()
     const [queue] = mockInitSession.mock.calls[0]
     expect(queue).toHaveLength(2)
-    // New card objects must have the correct defaults.
+    // New card objects must have the correct FSRS defaults.
     for (const card of queue) {
       expect(card.kind).toBe('vocab')
       expect(card.card.userId).toBe(TEST_USER)
-      expect(card.card.interval_days).toBe(0)
-      expect(card.card.ease_factor).toBe(2.5)
-      expect(card.card.review_count).toBe(0)
+      expect(card.card.reps).toBe(0)
+      expect(card.card.scheduled_days).toBe(0)
       expect(card.card.pending_sync).toBe(false)
       expect(card.card.is_known).toBe(false)
     }
@@ -146,7 +152,7 @@ describe('useLaunchVocabSession', () => {
       makeVocabItem(dueVocabId),
       makeVocabItem(notDueVocabId),
     ])
-    await db.user_cards.bulkAdd([
+    await db.srs_cards.bulkAdd([
       makeCardState(TEST_USER, dueVocabId, today()),
       makeCardState(TEST_USER, notDueVocabId, tomorrow()),
     ])
@@ -162,7 +168,7 @@ describe('useLaunchVocabSession', () => {
     expect(mockInitSession).toHaveBeenCalledOnce()
     const [queue] = mockInitSession.mock.calls[0]
     expect(queue).toHaveLength(1)
-    expect(queue[0].card.vocabId).toBe(dueVocabId)
+    expect(queue[0].card.cardId).toBe(dueVocabId)
     expect(mockNavigate).toHaveBeenCalledOnce()
   })
 
@@ -171,7 +177,7 @@ describe('useLaunchVocabSession', () => {
 
     await db.vocabulary.add(makeVocabItem(vocabId))
     // Card is due tomorrow — not due today.
-    await db.user_cards.add(makeCardState(TEST_USER, vocabId, tomorrow()))
+    await db.srs_cards.add(makeCardState(TEST_USER, vocabId, tomorrow()))
 
     const { result } = renderHook(() => useLaunchVocabSession(TEST_USER), {
       wrapper: makeWrapper(),

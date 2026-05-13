@@ -1,4 +1,5 @@
-import type { KanjiCardState, KanjiItem } from '../../types/kanji'
+import type { KanjiItem } from '../../types/kanji'
+import type { SRSCard } from '../../types/srs'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
@@ -22,17 +23,25 @@ const baseKanji: KanjiItem = {
   related_vocab: null,
 }
 
-const baseCard: KanjiCardState = {
+const baseCard: SRSCard = {
+  cardId: '明',
+  cardType: 'kanji',
+  deckId: null,
   userId: 'u1',
-  char: '明',
-  interval_days: 1,
-  ease_factor: 2.5,
-  due_date: '2026-04-26',
-  review_count: 0,
+  state: 'new',
+  stability: 0,
+  difficulty: 5,
+  elapsed_days: 0,
+  scheduled_days: 1,
+  reps: 0,
+  lapses: 0,
+  last_review: '2026-04-26T00:00:00Z',
+  due: '2026-04-27',
   last_rating: null,
   pending_sync: false,
   updated_at: '2026-04-26T00:00:00Z',
   consecutive_correct: 0,
+  is_known: false,
 }
 
 describe('kanjiFlipCard', () => {
@@ -64,7 +73,7 @@ describe('kanjiFlipCard', () => {
     render(<KanjiFlipCard kanji={baseKanji} card={baseCard} onRate={onRate} />)
     await user.click(screen.getAllByText('明')[0])
     await user.click(screen.getByText('Good'))
-    expect(onRate).toHaveBeenCalledWith(2)
+    expect(onRate).toHaveBeenCalledWith(3)
   })
 
   it('renders mnemonic when mnemonic_vi is present', async () => {

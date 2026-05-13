@@ -44,11 +44,18 @@ function makeWrapper() {
 
 const SEED_CARD = {
   userId: 'u1',
-  vocabId: 'mnn1_abc123',
-  interval_days: 1,
-  ease_factor: 2.5,
-  due_date: '2026-01-01T00:00:00.000Z',
-  review_count: 1,
+  cardId: 'mnn1_abc123',
+  cardType: 'vocab' as const,
+  deckId: null,
+  state: 'review' as const,
+  stability: 3.0,
+  difficulty: 5.0,
+  elapsed_days: 1,
+  scheduled_days: 1,
+  reps: 1,
+  lapses: 0,
+  last_review: '2026-01-01',
+  due: '2026-01-02',
   last_rating: null as null,
   pending_sync: false,
   updated_at: '2026-01-01T00:00:00.000Z',
@@ -56,40 +63,8 @@ const SEED_CARD = {
   consecutive_correct: 0,
 }
 
-const SEED_ACTIVE_VOCAB_SRS = {
-  userId: 'u1',
-  vocabId: 'mnn1_abc123',
-  interval_days: 1,
-  ease_factor: 2.5,
-  due_date: '2026-01-01',
-  review_count: 0,
-  last_rating: null as null,
-  updated_at: '2026-01-01T00:00:00.000Z',
-}
-
-const SEED_CUSTOM_DECK_SRS = {
-  userId: 'u1',
-  itemId: 'item-001',
-  deckId: 'deck-001',
-  interval_days: 3,
-  ease_factor: 2.5,
-  due_date: '2026-01-01',
-  review_count: 2,
-  card_stage: 'review' as const,
-  learning_step: 0,
-  lapse_count: 0,
-  last_rating: 2 as const,
-  consecutive_correct: 2,
-  pending_sync: false,
-  updated_at: '2026-01-01T00:00:00.000Z',
-}
-
 beforeEach(async () => {
-  await db.user_cards.clear()
-  await db.kanji_cards.clear()
-  await db.active_vocab_srs.clear()
-  await db.active_kanji_srs.clear()
-  await db.custom_deck_srs.clear()
+  await db.srs_cards.clear()
   await db.streaks.clear()
   await db.review_log.clear()
   await db.sync_queue.clear()
@@ -98,11 +73,7 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  await db.user_cards.clear()
-  await db.kanji_cards.clear()
-  await db.active_vocab_srs.clear()
-  await db.active_kanji_srs.clear()
-  await db.custom_deck_srs.clear()
+  await db.srs_cards.clear()
   await db.streaks.clear()
   await db.review_log.clear()
   await db.sync_queue.clear()
@@ -145,9 +116,7 @@ describe('dangerZoneSection — guest user (userId: null)', () => {
   })
 
   it('clears Dexie tables and skips markProgressReset', async () => {
-    await db.user_cards.put(SEED_CARD)
-    await db.active_vocab_srs.put(SEED_ACTIVE_VOCAB_SRS)
-    await db.custom_deck_srs.put({ ...SEED_CUSTOM_DECK_SRS, userId: 'u1' })
+    await db.srs_cards.put(SEED_CARD)
     const user = userEvent.setup()
     render(<DangerZoneSection />, { wrapper: makeWrapper() })
     await user.click(screen.getByRole('button', { name: /đặt lại tiến trình/i }))
@@ -156,9 +125,7 @@ describe('dangerZoneSection — guest user (userId: null)', () => {
     await waitFor(() =>
       expect(screen.queryByText('ĐẶT LẠI TIẾN TRÌNH')).not.toBeInTheDocument(),
     )
-    expect(await db.user_cards.count()).toBe(0)
-    expect(await db.active_vocab_srs.count()).toBe(0)
-    expect(await db.custom_deck_srs.count()).toBe(0)
+    expect(await db.srs_cards.count()).toBe(0)
     expect(mockMarkProgressReset).not.toHaveBeenCalled()
   })
 })
@@ -178,8 +145,7 @@ describe('dangerZoneSection — authenticated user', () => {
   })
 
   it('clears Dexie by userId and calls markProgressReset', async () => {
-    await db.user_cards.put({ ...SEED_CARD, userId })
-    await db.custom_deck_srs.put({ ...SEED_CUSTOM_DECK_SRS, userId })
+    await db.srs_cards.put({ ...SEED_CARD, userId })
     const user = userEvent.setup()
     render(<DangerZoneSection />, { wrapper: makeWrapper() })
     await user.click(screen.getByRole('button', { name: /đặt lại tiến trình/i }))
@@ -188,8 +154,7 @@ describe('dangerZoneSection — authenticated user', () => {
     await waitFor(() =>
       expect(screen.queryByText('ĐẶT LẠI TIẾN TRÌNH')).not.toBeInTheDocument(),
     )
-    expect(await db.user_cards.count()).toBe(0)
-    expect(await db.custom_deck_srs.count()).toBe(0)
+    expect(await db.srs_cards.count()).toBe(0)
     expect(mockMarkProgressReset).toHaveBeenCalledWith(userId)
   })
 })

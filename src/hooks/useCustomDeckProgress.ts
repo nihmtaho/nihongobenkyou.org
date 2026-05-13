@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCustomDeckSRS } from '../db/custom-deck-srs'
 import { db } from '../db/schema'
+import { getSRSCardsForDeck } from '../db/srs-cards'
 
 export interface DeckProgress {
   total: number
@@ -19,31 +19,25 @@ export function useCustomDeckProgress(userId: string, deckId: string) {
     queryFn: async () => {
       const [deck, srsRows] = await Promise.all([
         db.custom_decks.get(deckId),
-        getCustomDeckSRS(userId, deckId),
+        getSRSCardsForDeck(userId, deckId),
       ])
 
       const total = deck?.word_count ?? 0
-      const now = new Date().toISOString()
-      const today = now.slice(0, 10)
+      const today = new Date().toISOString().slice(0, 10)
 
-      // started = words reviewed at least once (review_count >= 1)
-      // Excludes SRS entries pre-created with review_count=0 when adding words to an active deck
-      const reviewed = srsRows.filter(r => r.review_count >= 1)
+      // Custom decks can contain kanji entries; progress tracks vocab cards only
+      const vocabRows = srsRows.filter(r => r.cardType !== 'kanji')
+
+      const reviewed = vocabRows.filter(r => r.reps >= 1)
       const started = reviewed.length
-      const learning = reviewed.filter(r => r.interval_days < 7).length
-      const learned = reviewed.filter(r => r.interval_days >= 7 && r.interval_days < 21).length
-      const mature = reviewed.filter(r => r.interval_days >= 21).length
-      const dueToday = srsRows.filter(r => r.due_date <= today).length
-      // percentComplete = words truly learned (interval >= 7 days)
+      const learning = reviewed.filter(r => r.scheduled_days < 7).length
+      const learned = reviewed.filter(r => r.scheduled_days >= 7 && r.scheduled_days < 21).length
+      const mature = reviewed.filter(r => r.scheduled_days >= 21).length
+      const dueToday = vocabRows.filter(r => r.due <= today).length
       const percentComplete = total === 0 ? 0 : Math.round(((learned + mature) / total) * 100)
 
-      // Find earliest future due date (due_date > today)
-      const futureDates = srsRows
-        .filter(r => r.due_date > today)
-        .map(r => r.due_date)
-      const nextDueDateStr = futureDates.length > 0
-        ? futureDates.sort()[0]
-        : null
+      const futureDates = vocabRows.filter(r => r.due > today).map(r => r.due)
+      const nextDueDateStr = futureDates.length > 0 ? futureDates.sort()[0] : null
 
       return { total, started, learning, learned, mature, dueToday, percentComplete, nextDueDateStr }
     },

@@ -1,4 +1,5 @@
-import type { KanjiCardState, KanjiItem } from '../../types/kanji'
+import type { KanjiItem } from '../../types/kanji'
+import type { SRSCard } from '../../types/srs'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { KanjiCard } from './KanjiCard'
@@ -21,17 +22,25 @@ const baseKanji: KanjiItem = {
   related_vocab: null,
 }
 
-const baseCard: KanjiCardState = {
+const baseCard: SRSCard = {
+  cardId: '日',
+  cardType: 'kanji',
+  deckId: null,
   userId: 'u1',
-  char: '日',
-  interval_days: 1,
-  ease_factor: 2.5,
-  due_date: '2026-04-26',
-  review_count: 1,
-  last_rating: 2,
+  state: 'learning',
+  stability: 1,
+  difficulty: 5,
+  elapsed_days: 0,
+  scheduled_days: 1,
+  reps: 1,
+  lapses: 0,
+  last_review: '2026-04-26T00:00:00Z',
+  due: '2026-04-27',
+  last_rating: 3,
   pending_sync: false,
   updated_at: '2026-04-26T00:00:00Z',
   consecutive_correct: 0,
+  is_known: false,
 }
 
 describe('kanjiCard', () => {
@@ -55,18 +64,18 @@ describe('kanjiCard', () => {
     expect(screen.getByText('New')).toBeTruthy()
   })
 
-  it('shows "Learning" badge for interval_days < 7', () => {
-    render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, interval_days: 3 }} />)
+  it('shows "Learning" badge for scheduled_days < 7', () => {
+    render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, scheduled_days: 3 }} />)
     expect(screen.getByText('Learning')).toBeTruthy()
   })
 
-  it('shows "Review" badge for interval_days 7–20', () => {
-    render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, interval_days: 14 }} />)
+  it('shows "Review" badge for scheduled_days 7–20', () => {
+    render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, scheduled_days: 14 }} />)
     expect(screen.getByText('Review')).toBeTruthy()
   })
 
-  it('shows "Mature" badge for interval_days >= 21', () => {
-    render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, interval_days: 21 }} />)
+  it('shows "Mature" badge for scheduled_days >= 21', () => {
+    render(<KanjiCard kanji={baseKanji} card={{ ...baseCard, scheduled_days: 21 }} />)
     expect(screen.getByText('Mature')).toBeTruthy()
   })
 

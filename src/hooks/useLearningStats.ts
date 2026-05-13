@@ -18,7 +18,7 @@ export interface LearningStats {
 
 function classify(
   total: number,
-  cards: Array<{ interval_days: number, due_date: string }>,
+  cards: Array<{ scheduled_days: number, due: string }>,
   now: string,
 ): SubjectStats {
   let learning = 0
@@ -27,14 +27,15 @@ function classify(
   let nextDueDate: string | null = null
 
   for (const card of cards) {
-    if (card.interval_days >= 21)
+    if (card.scheduled_days >= 21)
       mature++
-    else if (card.interval_days >= 8)
+    else if (card.scheduled_days >= 8)
       review++
-    else learning++
+    else
+      learning++
 
-    if (card.due_date > now && (nextDueDate === null || card.due_date < nextDueDate)) {
-      nextDueDate = card.due_date
+    if (card.due > now && (nextDueDate === null || card.due < nextDueDate)) {
+      nextDueDate = card.due
     }
   }
 
@@ -50,11 +51,11 @@ function classify(
 
 export function useLearningStats(userId: string) {
   const vocabCards = useLiveQuery(
-    () => db.user_cards.toArray().then(all => all.filter(c => c.userId === userId)),
+    () => db.srs_cards.filter(c => c.userId === userId && c.cardType === 'vocab').toArray(),
     [userId],
   )
   const kanjiCards = useLiveQuery(
-    () => db.kanji_cards.toArray().then(all => all.filter(c => c.userId === userId)),
+    () => db.srs_cards.filter(c => c.userId === userId && c.cardType === 'kanji').toArray(),
     [userId],
   )
   const totalVocab = useLiveQuery(() => db.vocabulary.count(), [])
@@ -63,7 +64,7 @@ export function useLearningStats(userId: string) {
   const isLoading = vocabCards === undefined || kanjiCards === undefined
     || totalVocab === undefined || totalKanji === undefined
 
-  const now = useMemo(() => new Date().toISOString(), [])
+  const now = useMemo(() => new Date().toISOString().slice(0, 10), [])
 
   const data: LearningStats | undefined = isLoading
     ? undefined

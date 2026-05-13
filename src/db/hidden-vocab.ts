@@ -10,16 +10,10 @@ export async function hideVocab(
   source: 'lesson' | 'custom',
   userId: string,
 ): Promise<void> {
-  // eslint-disable-next-line ts/no-explicit-any
-  await db.transaction('rw', [db.hidden_vocab, db.user_cards, db.active_vocab_srs, db.custom_deck_srs] as any, async () => {
+  await db.transaction('rw', ['hidden_vocab', 'srs_cards'], async () => {
     await db.hidden_vocab.put({ userId, item_id: itemId, source, hidden_at: new Date().toISOString() })
-    if (source === 'lesson') {
-      await db.user_cards.where('[userId+vocabId]').equals([userId, itemId]).delete()
-      await db.active_vocab_srs.where('[userId+vocabId]').equals([userId, itemId]).delete()
-    }
-    else {
-      await db.custom_deck_srs.where('[userId+itemId]').equals([userId, itemId]).delete()
-    }
+    // Remove associated SRS card (vocab or custom_vocab cardType)
+    await db.srs_cards.where('[userId+cardId]').equals([userId, itemId]).delete()
   })
 }
 

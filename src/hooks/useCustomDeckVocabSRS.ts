@@ -1,43 +1,37 @@
 import type { SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { upsertCustomDeckSRS } from '../db/custom-deck-srs'
-import { calculateNextReview } from '../lib/srs'
-import { toCardState } from '../lib/srs-utils'
+import { db } from '../db/schema'
+import { initSRSCard, upsertSRSCard } from '../db/srs-cards'
+import { scheduleFSRS } from '../lib/srs'
 
 export function useCustomDeckVocabSRS(userId: string, deckId: string) {
   const qc = useQueryClient()
 
   const mutation = useMutation({
     mutationFn: async ({ card, rating }: { card: VocabWithSRS, rating: SRSRating }) => {
-      const state = toCardState(card, userId)
-      const result = calculateNextReview(state, rating)
-      const newReviewCount = (card.review_count ?? 0) + 1
-      const newConsecutiveCorrect = rating === 0 ? 0 : (card.consecutive_correct ?? 0) + 1
+      // Ensure the card exists in srs_cards before updating
+      await initSRSCard(userId, card.vocab_id, 'custom_vocab', deckId || null)
+      const existing = await db.srs_cards.get([userId, card.vocab_id])
+      if (!existing)
+        return
 
-      await upsertCustomDeckSRS({
-        userId,
-        itemId: card.vocab_id,
-        deckId,
-        interval_days: result.new_interval,
-        ease_factor: result.new_ease,
-        due_date: result.due_date.slice(0, 10),
-        review_count: newReviewCount,
-        card_stage: result.new_card_stage,
-        learning_step: result.new_learning_step,
-        lapse_count: result.new_lapse_count,
+      const result = scheduleFSRS(existing, rating)
+      const newConsecutiveCorrect = rating === 1 ? 0 : (existing.consecutive_correct ?? 0) + 1
+      const now = new Date().toISOString()
+
+      await upsertSRSCard({
+        ...existing,
+        ...result,
         last_rating: rating,
         consecutive_correct: newConsecutiveCorrect,
         pending_sync: true,
-        updated_at: new Date().toISOString(),
+        updated_at: now,
       })
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deckId] })
-      qc.invalidateQueries({ queryKey: ['all-custom-deck-srs-summary', userId] })
-      qc.invalidateQueries({ queryKey: ['started-deck-ids', userId] })
       qc.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
-      // TODO: trigger Supabase sync flush for custom_deck_srs when sync layer is implemented
     },
     retry: 0,
   })

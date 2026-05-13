@@ -1,5 +1,5 @@
-import type { KanjiCardState, KanjiItem } from '../../types/kanji'
-import type { SRSRating } from '../../types/srs'
+import type { KanjiItem } from '../../types/kanji'
+import type { SRSCard, SRSRating } from '../../types/srs'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -7,7 +7,7 @@ import { ButtonGroup } from '@/components/ui/button-group'
 
 interface KanjiFlipCardProps {
   kanji: KanjiItem
-  card: KanjiCardState
+  card: SRSCard
   onRate: (rating: SRSRating) => void
 }
 
@@ -28,9 +28,9 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
     if (!isFlipped)
       return
     if (info.offset.x > 100)
-      onRate(2)
+      onRate(3)
     else if (info.offset.x < -100)
-      onRate(0)
+      onRate(1)
     else x.set(0)
   }
 
@@ -115,10 +115,10 @@ export function KanjiFlipCard({ kanji, card: _card, onRate }: KanjiFlipCardProps
       {/* Rating buttons */}
       {showButtons && (
         <ButtonGroup className="w-full">
-          <Button variant="destructive" className="flex-1 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(0)}>Again</Button>
-          <Button className="flex-1 bg-warning text-foreground hover:bg-warning/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(1)}>Hard</Button>
-          <Button className="flex-1 bg-success text-foreground hover:bg-success/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(2)}>Good</Button>
-          <Button className="flex-1 bg-info text-foreground hover:bg-info/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(3)}>Easy</Button>
+          <Button variant="destructive" className="flex-1 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(1)}>Again</Button>
+          <Button className="flex-1 bg-warning text-foreground hover:bg-warning/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(2)}>Hard</Button>
+          <Button className="flex-1 bg-success text-foreground hover:bg-success/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(3)}>Good</Button>
+          <Button className="flex-1 bg-info text-foreground hover:bg-info/90 font-[var(--br-mono-font)] text-[11px]" onClick={() => onRate(4)}>Easy</Button>
         </ButtonGroup>
       )}
 

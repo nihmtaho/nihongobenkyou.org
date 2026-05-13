@@ -1,4 +1,4 @@
-import type { CardState } from '../../types/srs'
+import type { SRSCard } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
 import { EyeOffIcon } from 'lucide-react'
@@ -8,7 +8,7 @@ import { useHideVocab } from '../../hooks/useHiddenVocab'
 
 interface VocabIndexRowProps {
   item: VocabItem
-  card: CardState | null
+  card: SRSCard | null
   index: number
   isSelected: boolean
   today: string
@@ -18,7 +18,7 @@ interface VocabIndexRowProps {
 
 export function VocabIndexRow({ item, card, index, isSelected, today, onSelect, userId }: VocabIndexRowProps) {
   const isKnown = card?.is_known === true
-  const isDue = card != null && !isKnown && card.due_date <= today
+  const isDue = card != null && !isKnown && card.due <= today
   const isNew = card == null
   const [hideRevealed, setHideRevealed] = useState(false)
   const touchStartXRef = useRef(0)

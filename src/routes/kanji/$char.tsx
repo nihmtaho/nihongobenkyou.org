@@ -9,7 +9,7 @@ import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
 import { Separator } from '../../components/ui/separator'
 import { Skeleton } from '../../components/ui/skeleton'
-import { getAllKanji, upsertKanjiCard } from '../../db/kanji'
+import { getAllKanji, upsertKanjiSRSCard } from '../../db/kanji'
 import { db } from '../../db/schema'
 import { useKanji } from '../../hooks/useKanji'
 import { useAuthStore } from '../../stores/authStore'
@@ -54,12 +54,12 @@ function KanjiDetailPage() {
   }, [prevChar, nextChar, navigate])
 
   useEffect(() => {
-    if (!userId || !char)
+    if (!userId || !kanji)
       return
-    upsertKanjiCard(userId, char)
+    upsertKanjiSRSCard(userId, kanji.char)
       .then(() => queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] }))
       .catch(console.error)
-  }, [userId, char, queryClient])
+  }, [userId, kanji, queryClient])
 
   if (isLoading) {
     return (

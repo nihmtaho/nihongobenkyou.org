@@ -23,10 +23,15 @@ function makeCard(overrides: Partial<VocabWithSRS> = {}): VocabWithSRS {
     examples: [],
     tags: [],
     deprecated: false,
-    interval_days: 1,
-    ease_factor: 2.5,
-    due_date: '2026-04-27',
-    review_count: 0,
+    state: 'new' as const,
+    stability: 0,
+    difficulty: 5,
+    elapsed_days: 0,
+    scheduled_days: 1,
+    reps: 0,
+    lapses: 0,
+    last_review: '2026-04-26T00:00:00Z',
+    due: '2026-04-27',
     last_rating: null,
     pending_sync: false,
     updated_at: '2026-04-26T00:00:00Z',
@@ -71,6 +76,6 @@ describe('pitchDiscriminationCard', () => {
     render(<PitchDiscriminationCard card={makeCard()} onRate={onRate} />)
     await user.click(screen.getByRole('button', { name: /^A$/ }))
     await user.click(screen.getByRole('button', { name: /good/i }))
-    expect(onRate).toHaveBeenCalledWith(2)
+    expect(onRate).toHaveBeenCalledWith(3)
   })
 })

@@ -90,7 +90,8 @@ function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
       countPerDay[date] = (countPerDay[date] ?? 0) + 1
 
       // Rating distribution is scoped to the last 7 days only.
-      const r = entry.rating as 0 | 1 | 2 | 3
+      // FSRS ratings are 1-4; map to index 0-3.
+      const r = entry.rating - 1
       if (r >= 0 && r <= 3)
         ratingCounts[r]++
     }

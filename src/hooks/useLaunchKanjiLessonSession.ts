@@ -1,10 +1,34 @@
 import type { RelatedVocabItem } from '../types/kanji'
+import type { SRSCard } from '../types/srs'
 import type { StudyMode } from '../types/study'
 import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { db } from '../db/schema'
 import { useStudySessionStore } from '../stores/studySessionStore'
+
+function makeDefaultSRSCard(userId: string, cardId: string, cardType: SRSCard['cardType'], today: string, now: string): SRSCard {
+  return {
+    userId,
+    cardId,
+    cardType,
+    deckId: null,
+    state: 'new',
+    stability: 0,
+    difficulty: 0,
+    elapsed_days: 0,
+    scheduled_days: 0,
+    reps: 0,
+    lapses: 0,
+    last_review: today,
+    due: today,
+    last_rating: null,
+    is_known: false,
+    consecutive_correct: 0,
+    pending_sync: false,
+    updated_at: now,
+  }
+}
 
 export function useLaunchKanjiLessonSession(userId: string) {
   const navigate = useNavigate()
@@ -32,30 +56,20 @@ export function useLaunchKanjiLessonSession(userId: string) {
 
       if (type === 'kanji') {
         const chars = allKanji.map(k => k.char)
-        const cards = await db.kanji_cards
-          .where('[userId+char]')
-          .anyOf(chars.map(c => [userId, c]))
+        const cards = await db.srs_cards
+          .where('[userId+cardType]')
+          .equals([userId, 'kanji'])
+          .filter(c => chars.includes(c.cardId))
           .toArray()
-        const cardMap = new Map(cards.map(c => [c.char, c]))
+        const cardMap = new Map(cards.map(c => [c.cardId, c]))
 
         for (const kanji of allKanji) {
           const card = cardMap.get(kanji.char)
-          if (dueOnly && (!card || card.due_date > now))
+          if (dueOnly && (!card || card.due > today))
             continue
           queue.push({
             kind: 'kanji',
-            card: card ?? {
-              userId,
-              char: kanji.char,
-              interval_days: 0,
-              ease_factor: 2.5,
-              due_date: today,
-              review_count: 0,
-              last_rating: null,
-              pending_sync: false,
-              updated_at: now,
-              consecutive_correct: 0,
-            },
+            card: card ?? makeDefaultSRSCard(userId, kanji.char, 'kanji', today, now),
             kanji,
           })
         }
@@ -69,31 +83,19 @@ export function useLaunchKanjiLessonSession(userId: string) {
             rvEntries.push({ id, rv, lessonNumber })
           }
         }
-        const cards = await db.user_cards
-          .where('[userId+vocabId]')
+        const cards = await db.srs_cards
+          .where('[userId+cardId]')
           .anyOf(rvEntries.map(r => [userId, r.id]))
           .toArray()
-        const cardMap = new Map(cards.map(c => [c.vocabId, c]))
+        const cardMap = new Map(cards.map(c => [c.cardId, c]))
 
         for (const { id, rv, lessonNumber: ln } of rvEntries) {
           const card = cardMap.get(id)
-          if (dueOnly && (!card || card.due_date > now))
+          if (dueOnly && (!card || card.due > today))
             continue
           queue.push({
             kind: 'kanji-vocab',
-            card: card ?? {
-              userId,
-              vocabId: id,
-              interval_days: 0,
-              ease_factor: 2.5,
-              due_date: today,
-              review_count: 0,
-              last_rating: null,
-              pending_sync: false,
-              updated_at: now,
-              is_known: false,
-              consecutive_correct: 0,
-            },
+            card: card ?? makeDefaultSRSCard(userId, id, 'vocab', today, now),
             rv,
             lessonNumber: ln,
           })

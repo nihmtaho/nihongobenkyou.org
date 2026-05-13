@@ -22,7 +22,7 @@ export function PitchDiscriminationCard({ card, onRate }: PitchDiscriminationCar
   const pitchPattern = parsePitchPattern(card.pitch_pattern, morae)
 
   const [selected, setSelected] = useState<'A' | 'B' | null>(null)
-  const [preselectedRating, setPreselectedRating] = useState<SRSRating>(2)
+  const [preselectedRating, setPreselectedRating] = useState<SRSRating>(3)
 
   // Randomly assign which button (A or B) plays the canonical audio
   const canonicalButton = useMemo<'A' | 'B'>(() => (Math.random() < 0.5 ? 'A' : 'B'), [])
@@ -36,9 +36,9 @@ export function PitchDiscriminationCard({ card, onRate }: PitchDiscriminationCar
           </AlertDescription>
         </Alert>
         <ButtonGroup className="w-full">
-          {([0, 1, 2, 3] as SRSRating[]).map(r => (
-            <Button key={r} variant={RATING_VARIANTS[r]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r].toLowerCase()}>
-              {RATING_LABELS[r]}
+          {([1, 2, 3, 4] as SRSRating[]).map(r => (
+            <Button key={r} variant={RATING_VARIANTS[r - 1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r - 1].toLowerCase()}>
+              {RATING_LABELS[r - 1]}
             </Button>
           ))}
         </ButtonGroup>
@@ -53,7 +53,7 @@ export function PitchDiscriminationCard({ card, onRate }: PitchDiscriminationCar
     if (isAnswered)
       return
     setSelected(btn)
-    setPreselectedRating(btn === canonicalButton ? 2 : 0)
+    setPreselectedRating(btn === canonicalButton ? 3 : 1)
   }
 
   return (
@@ -130,16 +130,16 @@ export function PitchDiscriminationCard({ card, onRate }: PitchDiscriminationCar
 
       {isAnswered && (
         <ButtonGroup className="w-full">
-          {([0, 1, 2, 3] as SRSRating[]).map((r) => {
+          {([1, 2, 3, 4] as SRSRating[]).map((r) => {
             return (
               <Button
                 key={r}
-                variant={RATING_VARIANTS[r]}
+                variant={RATING_VARIANTS[r - 1]}
                 className={`flex-1 ${preselectedRating === r ? 'ring-2 ring-offset-1 ring-foreground' : ''}`}
-                aria-label={RATING_LABELS[r].toLowerCase()}
+                aria-label={RATING_LABELS[r - 1].toLowerCase()}
                 onClick={() => onRate(r)}
               >
-                {RATING_LABELS[r]}
+                {RATING_LABELS[r - 1]}
               </Button>
             )
           })}

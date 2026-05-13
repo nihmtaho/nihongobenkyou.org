@@ -1,7 +1,8 @@
-import type { KanjiCardState, KanjiItem } from '../types/kanji'
+import type { KanjiItem } from '../types/kanji'
+import type { SRSCard } from '../types/srs'
 import type { VocabItem } from '../types/vocabulary'
-import Dexie from 'dexie'
 import { db } from './schema'
+import { initSRSCard, upsertSRSCard } from './srs-cards'
 
 interface KanjiFilters {
   jlpt_level?: KanjiItem['jlpt_level']
@@ -41,43 +42,15 @@ export async function getKanjiLessons(): Promise<number[]> {
   return nums.sort((a, b) => a - b)
 }
 
-export async function upsertKanjiCard(userId: string, char: string): Promise<void> {
-  const existing = await db.kanji_cards.get([userId, char])
-  if (existing)
+export async function upsertKanjiSRSCard(userId: string, char: string): Promise<void> {
+  await initSRSCard(userId, char, 'kanji', null)
+}
+
+export async function updateKanjiSRSCard(userId: string, char: string, updates: Partial<SRSCard>): Promise<void> {
+  const existing = await db.srs_cards.get([userId, char])
+  if (!existing)
     return
-
-  await db.kanji_cards.put({
-    userId,
-    char,
-    interval_days: 0,
-    ease_factor: 2.5,
-    due_date: new Date().toISOString(),
-    review_count: 0,
-    last_rating: null,
-    pending_sync: true,
-    updated_at: new Date().toISOString(),
-    consecutive_correct: 0,
-  })
-}
-
-export async function updateKanjiCard(card: KanjiCardState): Promise<void> {
-  await db.kanji_cards.put(card)
-}
-
-export async function getDueKanjiCards(userId: string, today: string): Promise<KanjiCardState[]> {
-  return db.kanji_cards
-    .where('[userId+due_date]')
-    .between([userId, Dexie.minKey], [userId, today], true, true)
-    .toArray()
-}
-
-export async function getKanjiCardsForChars(userId: string, chars: string[]): Promise<KanjiCardState[]> {
-  const charSet = new Set(chars)
-  const all = await db.kanji_cards
-    .where('[userId+char]')
-    .between([userId, Dexie.minKey], [userId, Dexie.maxKey], true, true)
-    .toArray()
-  return all.filter(c => charSet.has(c.char))
+  await upsertSRSCard({ ...existing, ...updates })
 }
 
 export async function getKanjiByChars(chars: string[]): Promise<KanjiItem[]> {

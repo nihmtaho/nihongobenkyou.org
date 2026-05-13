@@ -1,5 +1,4 @@
-import type { KanjiCardState } from '../../types/kanji'
-import type { SRSRating } from '../../types/srs'
+import type { SRSCard, SRSRating } from '../../types/srs'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -12,7 +11,7 @@ interface KanjiTypeInputCardProps {
   prompt: string
   answer: string
   hint?: string
-  card?: KanjiCardState
+  card?: SRSCard
   onRate: (rating: SRSRating) => void
 }
 

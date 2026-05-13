@@ -1,5 +1,4 @@
-import type { KanjiCardState } from '../types/kanji'
-import type { CardState } from '../types/srs'
+import type { SRSCard } from '../types/srs'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import { createElement } from 'react'
@@ -28,30 +27,25 @@ const IN_8_DAYS = makeDate(8)
 const USER_A = 'user-a'
 const USER_B = 'user-b'
 
-const baseCard: Omit<CardState, 'userId' | 'vocabId' | 'due_date'> = {
-  interval_days: 1,
-  ease_factor: 2.5,
-  review_count: 0,
+const baseSRSCard: Omit<SRSCard, 'userId' | 'cardId' | 'cardType' | 'due'> = {
+  deckId: null,
+  state: 'review',
+  stability: 4.0,
+  difficulty: 5.0,
+  elapsed_days: 3,
+  scheduled_days: 4,
+  reps: 2,
+  lapses: 0,
+  last_review: TODAY,
   last_rating: null,
   pending_sync: false,
-  updated_at: TODAY,
+  updated_at: new Date().toISOString(),
   is_known: false,
   consecutive_correct: 0,
 }
 
-const baseKanjiCard: Omit<KanjiCardState, 'userId' | 'char' | 'due_date'> = {
-  interval_days: 1,
-  ease_factor: 2.5,
-  review_count: 0,
-  last_rating: null,
-  pending_sync: false,
-  updated_at: TODAY,
-  consecutive_correct: 0,
-}
-
 beforeEach(async () => {
-  await db.user_cards.clear()
-  await db.kanji_cards.clear()
+  await db.srs_cards.clear()
 })
 
 describe('useReviewForecast', () => {
@@ -64,9 +58,9 @@ describe('useReviewForecast', () => {
   })
 
   it('counts vocab cards due today', async () => {
-    await db.user_cards.bulkAdd([
-      { ...baseCard, userId: USER_A, vocabId: 'v1', due_date: TODAY },
-      { ...baseCard, userId: USER_A, vocabId: 'v2', due_date: TODAY },
+    await db.srs_cards.bulkAdd([
+      { ...baseSRSCard, userId: USER_A, cardId: 'v1', cardType: 'vocab', due: TODAY },
+      { ...baseSRSCard, userId: USER_A, cardId: 'v2', cardType: 'vocab', due: TODAY },
     ])
     const { result } = renderHook(() => useReviewForecast(USER_A), { wrapper: makeWrapper() })
     await waitFor(() => expect(result.current.data).toBeDefined())
@@ -75,29 +69,31 @@ describe('useReviewForecast', () => {
   })
 
   it('counts kanji cards due in future days', async () => {
-    await db.kanji_cards.add({ ...baseKanjiCard, userId: USER_A, char: '日', due_date: IN_3_DAYS })
+    await db.srs_cards.add({ ...baseSRSCard, userId: USER_A, cardId: '日', cardType: 'kanji', due: IN_3_DAYS })
     const { result } = renderHook(() => useReviewForecast(USER_A), { wrapper: makeWrapper() })
     await waitFor(() => expect(result.current.data).toBeDefined())
     expect(result.current.data![3].count).toBe(1)
   })
 
   it('excludes cards beyond 6 days out', async () => {
-    await db.user_cards.add({ ...baseCard, userId: USER_A, vocabId: 'v1', due_date: IN_8_DAYS })
+    await db.srs_cards.add({ ...baseSRSCard, userId: USER_A, cardId: 'v1', cardType: 'vocab', due: IN_8_DAYS })
     const { result } = renderHook(() => useReviewForecast(USER_A), { wrapper: makeWrapper() })
     await waitFor(() => expect(result.current.data).toBeDefined())
     expect(result.current.data!.every((d: { count: number }) => d.count === 0)).toBe(true)
   })
 
   it('excludes cards belonging to another user', async () => {
-    await db.user_cards.add({ ...baseCard, userId: USER_B, vocabId: 'v1', due_date: TOMORROW })
+    await db.srs_cards.add({ ...baseSRSCard, userId: USER_B, cardId: 'v1', cardType: 'vocab', due: TOMORROW })
     const { result } = renderHook(() => useReviewForecast(USER_A), { wrapper: makeWrapper() })
     await waitFor(() => expect(result.current.data).toBeDefined())
     expect(result.current.data!.every((d: { count: number }) => d.count === 0)).toBe(true)
   })
 
   it('sums vocab + kanji cards on the same day', async () => {
-    await db.user_cards.add({ ...baseCard, userId: USER_A, vocabId: 'v1', due_date: TOMORROW })
-    await db.kanji_cards.add({ ...baseKanjiCard, userId: USER_A, char: '日', due_date: TOMORROW })
+    await db.srs_cards.bulkAdd([
+      { ...baseSRSCard, userId: USER_A, cardId: 'v1', cardType: 'vocab', due: TOMORROW },
+      { ...baseSRSCard, userId: USER_A, cardId: '日', cardType: 'kanji', due: TOMORROW },
+    ])
     const { result } = renderHook(() => useReviewForecast(USER_A), { wrapper: makeWrapper() })
     await waitFor(() => expect(result.current.data).toBeDefined())
     expect(result.current.data![1].count).toBe(2)

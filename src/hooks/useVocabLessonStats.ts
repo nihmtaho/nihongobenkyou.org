@@ -29,14 +29,15 @@ export async function fetchVocabLessonStats(userId: string, bookSource: string):
 
   const allIds = allVocab.map(v => v.vocab_id)
   const cards = allIds.length > 0
-    ? await db.user_cards
-        .where('[userId+vocabId]')
-        .anyOf(allIds.map(id => [userId, id]))
+    ? await db.srs_cards
+        .where('[userId+cardId]')
+        .between([userId, ''], [userId, '￿'], true, true)
+        .filter(c => c.cardType === 'vocab' && allIds.includes(c.cardId))
         .toArray()
     : []
 
-  const cardMap = new Map(cards.map(c => [c.vocabId, c]))
-  const now = new Date().toISOString()
+  const cardMap = new Map(cards.map(c => [c.cardId, c]))
+  const now = new Date().toISOString().slice(0, 10)
 
   return lessons.map((lesson) => {
     const vocabIds = vocabIdsByLesson.get(lesson.lesson_number) ?? []
@@ -48,13 +49,13 @@ export async function fetchVocabLessonStats(userId: string, bookSource: string):
     return {
       ...lesson,
       new: Math.max(0, vocabIds.length - lessonCards.length),
-      learning: lessonCards.filter(c => c.interval_days < 8 && !c.is_known).length,
-      review: lessonCards.filter(c => c.interval_days >= 8 && c.interval_days < 21 && !c.is_known).length,
-      mature: lessonCards.filter(c => c.interval_days >= 21 || c.is_known).length,
-      due: lessonCards.filter(c => !c.is_known && c.due_date <= now).length,
+      learning: lessonCards.filter(c => c.scheduled_days < 8 && !c.is_known).length,
+      review: lessonCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21 && !c.is_known).length,
+      mature: lessonCards.filter(c => c.scheduled_days >= 21 || c.is_known).length,
+      due: lessonCards.filter(c => !c.is_known && c.due <= now).length,
       next_due_date: lessonCards
-        .filter(c => !c.is_known && c.due_date > now)
-        .map(c => c.due_date)
+        .filter(c => !c.is_known && c.due > now)
+        .map(c => c.due)
         .sort()[0] ?? null,
     }
   })

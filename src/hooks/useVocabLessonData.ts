@@ -106,39 +106,31 @@ export function useVocabLessonData(userId: string, lesson: number) {
         han_viet: rv.han_viet,
       }
       if (c) {
-        return {
-          ...base,
-          interval_days: c.interval_days,
-          ease_factor: c.ease_factor,
-          due_date: c.due_date,
-          review_count: c.review_count,
-          last_rating: c.last_rating,
-          pending_sync: c.pending_sync,
-          updated_at: c.updated_at,
-          is_known: c.is_known ?? false,
-          consecutive_correct: c.consecutive_correct ?? 0,
-          card_stage: c.card_stage ?? 'review',
-          learning_step: c.learning_step ?? 0,
-          lapse_count: c.lapse_count ?? 0,
-        }
+        return { ...base, ...c }
       }
       return {
         ...base,
-        interval_days: 1,
-        ease_factor: 2.5,
-        due_date: sessionToday,
-        review_count: 0,
+        userId,
+        cardId: vocabId,
+        cardType: 'vocab' as const,
+        deckId: null,
+        state: 'new' as const,
+        stability: 0,
+        difficulty: 0,
+        elapsed_days: 0,
+        scheduled_days: 0,
+        reps: 0,
+        lapses: 0,
+        last_review: sessionToday,
+        due: sessionToday,
         last_rating: null,
-        pending_sync: false,
-        updated_at: sessionTimestamp,
         is_known: false,
         consecutive_correct: 0,
-        card_stage: 'review' as const,
-        learning_step: 0,
-        lapse_count: 0,
+        pending_sync: false,
+        updated_at: sessionTimestamp,
       }
     }),
-    [relatedVocabItems, cards, lesson, sessionToday, sessionTimestamp],
+    [relatedVocabItems, cards, lesson, sessionToday, sessionTimestamp, userId],
   )
 
   return {

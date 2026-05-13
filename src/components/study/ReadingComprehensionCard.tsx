@@ -130,17 +130,17 @@ export function ReadingComprehensionCard({ passage, card, onRate }: ReadingCompr
             </div>
           </div>
           <ButtonGroup className="w-full">
-            {([0, 1, 2, 3] as SRSRating[]).map((r) => {
+            {([1, 2, 3, 4] as SRSRating[]).map((r) => {
               const preselected = allCorrect ? 2 : 0
               return (
                 <Button
                   key={r}
-                  variant={RATING_VARIANTS[r]}
+                  variant={RATING_VARIANTS[r - 1]}
                   className={`flex-1 ${preselected === r ? 'ring-2 ring-offset-1 ring-foreground' : ''}`}
-                  aria-label={RATING_LABELS[r].toLowerCase()}
+                  aria-label={RATING_LABELS[r - 1].toLowerCase()}
                   onClick={() => onRate(r)}
                 >
-                  {RATING_LABELS[r]}
+                  {RATING_LABELS[r - 1]}
                 </Button>
               )
             })}

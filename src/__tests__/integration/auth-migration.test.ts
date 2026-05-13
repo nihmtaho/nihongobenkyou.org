@@ -1,4 +1,4 @@
-import type { CardState } from '../../types/srs'
+import type { SRSCard } from '../../types/srs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { db } from '../../db/schema'
 import { migrateAnonymousData } from '../../lib/auth-migration'
@@ -11,24 +11,31 @@ vi.mock('../../db/sync', () => ({
 const ANON_ID = 'anon-user-uuid-1234'
 const AUTH_ID = 'auth-user-uuid-5678'
 
-function makeCard(vocabId: string): CardState {
+function makeCard(cardId: string): SRSCard {
   return {
     userId: ANON_ID,
-    vocabId,
-    interval_days: 1,
-    ease_factor: 2.5,
-    due_date: '2026-04-26',
-    review_count: 3,
-    last_rating: 2,
-    pending_sync: false,
-    updated_at: new Date().toISOString(),
+    cardId,
+    cardType: 'vocab',
+    deckId: null,
+    state: 'review',
+    stability: 4,
+    difficulty: 5,
+    elapsed_days: 0,
+    scheduled_days: 4,
+    reps: 3,
+    lapses: 0,
+    last_review: '2026-04-26',
+    due: '2026-04-26',
+    last_rating: 3,
     is_known: false,
     consecutive_correct: 0,
+    pending_sync: false,
+    updated_at: new Date().toISOString(),
   }
 }
 
 beforeEach(async () => {
-  await db.user_cards.clear()
+  await db.srs_cards.clear()
   await db.review_log.clear()
   await db.settings.clear()
 })
@@ -38,22 +45,22 @@ afterEach(() => {
 })
 
 describe('migrateAnonymousData', () => {
-  it('re-keys all user_cards from anonymousUserId to authenticatedUserId', async () => {
+  it('re-keys all srs_cards from anonymousUserId to authenticatedUserId', async () => {
     const cards = ['vocab-001', 'vocab-002', 'vocab-003'].map(makeCard)
-    await db.user_cards.bulkPut(cards)
+    await db.srs_cards.bulkPut(cards)
     await db.settings.put({ key: 'anonymous_user_id', value: ANON_ID })
 
     await migrateAnonymousData(ANON_ID, AUTH_ID)
 
-    const remaining = await db.user_cards.where('userId').equals(ANON_ID).toArray()
+    const remaining = await db.srs_cards.where('[userId+cardType]').equals([ANON_ID, 'vocab']).toArray()
     expect(remaining).toHaveLength(0)
 
-    const migrated = await db.user_cards.where('userId').equals(AUTH_ID).toArray()
+    const migrated = await db.srs_cards.where('[userId+cardType]').equals([AUTH_ID, 'vocab']).toArray()
     expect(migrated).toHaveLength(3)
   })
 
   it('creates review_log entries for migrated cards with pendingSync=true', async () => {
-    await db.user_cards.bulkPut(['vocab-001', 'vocab-002'].map(makeCard))
+    await db.srs_cards.bulkPut(['vocab-001', 'vocab-002'].map(makeCard))
     await db.settings.put({ key: 'anonymous_user_id', value: ANON_ID })
 
     await migrateAnonymousData(ANON_ID, AUTH_ID)
@@ -65,13 +72,13 @@ describe('migrateAnonymousData', () => {
     expect(logEntries).toHaveLength(2)
     expect(logEntries.every(e => e.remoteId === null)).toBe(true)
 
-    // user_cards should have pending_sync=false (review_log drives sync now)
-    const migrated = await db.user_cards.where('userId').equals(AUTH_ID).toArray()
+    // srs_cards should have pending_sync=false (review_log drives sync now)
+    const migrated = await db.srs_cards.where('[userId+cardType]').equals([AUTH_ID, 'vocab']).toArray()
     expect(migrated.every(c => c.pending_sync === false)).toBe(true)
   })
 
   it('deletes settings[anonymous_user_id] after migration', async () => {
-    await db.user_cards.bulkPut(['vocab-001'].map(makeCard))
+    await db.srs_cards.bulkPut(['vocab-001'].map(makeCard))
     await db.settings.put({ key: 'anonymous_user_id', value: ANON_ID })
 
     await migrateAnonymousData(ANON_ID, AUTH_ID)
@@ -82,7 +89,7 @@ describe('migrateAnonymousData', () => {
 
   it('returns the count of migrated cards', async () => {
     const cards = ['vocab-001', 'vocab-002', 'vocab-003', 'vocab-004', 'vocab-005'].map(makeCard)
-    await db.user_cards.bulkPut(cards)
+    await db.srs_cards.bulkPut(cards)
     await db.settings.put({ key: 'anonymous_user_id', value: ANON_ID })
 
     const count = await migrateAnonymousData(ANON_ID, AUTH_ID)
@@ -100,21 +107,21 @@ describe('migrateAnonymousData', () => {
     expect(setting).toBeUndefined()
   })
 
-  it('preserves original card data (vocabId, interval_days, due_date)', async () => {
+  it('preserves original card data (cardId, scheduled_days, due)', async () => {
     const original = makeCard('vocab-001')
-    original.interval_days = 7
-    original.ease_factor = 2.3
-    original.due_date = '2026-05-01'
-    await db.user_cards.put(original)
+    original.scheduled_days = 7
+    original.difficulty = 6
+    original.due = '2026-05-01'
+    await db.srs_cards.put(original)
     await db.settings.put({ key: 'anonymous_user_id', value: ANON_ID })
 
     await migrateAnonymousData(ANON_ID, AUTH_ID)
 
-    const [migrated] = await db.user_cards.where('userId').equals(AUTH_ID).toArray()
-    expect(migrated.vocabId).toBe('vocab-001')
-    expect(migrated.interval_days).toBe(7)
-    expect(migrated.ease_factor).toBe(2.3)
-    expect(migrated.due_date).toBe('2026-05-01')
+    const [migrated] = await db.srs_cards.where('[userId+cardType]').equals([AUTH_ID, 'vocab']).toArray()
+    expect(migrated.cardId).toBe('vocab-001')
+    expect(migrated.scheduled_days).toBe(7)
+    expect(migrated.difficulty).toBe(6)
+    expect(migrated.due).toBe('2026-05-01')
     expect(migrated.userId).toBe(AUTH_ID)
   })
 })

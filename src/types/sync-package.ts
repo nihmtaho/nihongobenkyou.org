@@ -1,12 +1,10 @@
 import type { StreakData } from '../db/schema'
 import type { CustomDeck, CustomVocabItem } from './custom-deck'
-import type { KanjiCardState } from './kanji'
 import type { ReviewLogEntry } from './review-log'
-import type { CardState } from './srs'
+import type { SRSCard } from './srs'
 
 export interface SyncPackagePayload {
-  user_cards: CardState[]
-  kanji_cards: KanjiCardState[]
+  srs_cards: SRSCard[]
   custom_decks: CustomDeck[]
   custom_vocabulary: CustomVocabItem[]
   review_log: ReviewLogEntry[]

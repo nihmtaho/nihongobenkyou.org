@@ -1,148 +1,124 @@
 import type { UseQueryResult } from '@tanstack/react-query'
-import type { KanjiCardState } from '../types/kanji'
-import type { CardState, SRSRating } from '../types/srs'
+import type { SRSCard, SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getDueKanjiCards, updateKanjiCard } from '../db/kanji'
 import { db } from '../db/schema'
+import { getDueCards, upsertSRSCard } from '../db/srs-cards'
 import { uploadPendingReviews } from '../db/sync'
-import { calculateNextReview } from '../lib/srs'
-import { computeTypeInputRatingForDisplay, toCardState } from '../lib/srs-utils'
+import { scheduleFSRS } from '../lib/srs'
+import { computeTypeInputRatingForDisplay } from '../lib/srs-utils'
 
-const KNOWN_MIN_INTERVAL = 21
-const KNOWN_MIN_REVIEWS = 5
+const KNOWN_MIN_SCHEDULED = 21
+const KNOWN_MIN_REPS = 5
 
 export interface TypeInputResult {
   rating: SRSRating
-  // True when the user answered incorrectly (rating === 0 / Again).
-  // Caller should requeue the card without writing to Dexie.
   shouldRequeue: boolean
 }
 
 type SRSSubject = 'vocab' | 'kanji'
-type AnyCard = VocabWithSRS | KanjiCardState
 
 interface VocabSRSReturn {
-  dueCards: UseQueryResult<CardState[]>
-  rate: (card: VocabWithSRS, rating: SRSRating) => void
-  answer: (card: VocabWithSRS, isCorrect: boolean) => void
-  answerTypeInput: (card: VocabWithSRS, isCorrect: boolean) => TypeInputResult
+  dueCards: UseQueryResult<SRSCard[]>
+  rate: (card: SRSCard | VocabWithSRS, rating: SRSRating) => void
+  answer: (card: SRSCard | VocabWithSRS, isCorrect: boolean) => void
+  answerTypeInput: (card: SRSCard | VocabWithSRS, isCorrect: boolean) => TypeInputResult
   isPending: boolean
 }
 
 interface KanjiSRSReturn {
-  dueCards: UseQueryResult<KanjiCardState[]>
-  rate: (card: KanjiCardState, rating: SRSRating) => void
-  answer: (card: KanjiCardState, isCorrect: boolean) => void
-  answerTypeInput: (card: KanjiCardState, isCorrect: boolean) => TypeInputResult
+  dueCards: UseQueryResult<SRSCard[]>
+  rate: (card: SRSCard, rating: SRSRating) => void
+  answer: (card: SRSCard, isCorrect: boolean) => void
+  answerTypeInput: (card: SRSCard, isCorrect: boolean) => TypeInputResult
   isPending: boolean
 }
 
 type SRSReturn<T extends SRSSubject> = T extends 'vocab' ? VocabSRSReturn : KanjiSRSReturn
 
+function toSRSCard(card: SRSCard | VocabWithSRS, userId: string): SRSCard {
+  if ('vocab_id' in card) {
+    return {
+      userId,
+      cardId: card.vocab_id,
+      cardType: (card as Partial<SRSCard>).cardType ?? 'vocab',
+      deckId: (card as Partial<SRSCard>).deckId ?? null,
+      state: card.state,
+      stability: card.stability,
+      difficulty: card.difficulty,
+      elapsed_days: card.elapsed_days,
+      scheduled_days: card.scheduled_days,
+      reps: card.reps,
+      lapses: card.lapses,
+      last_review: card.last_review,
+      due: card.due,
+      last_rating: card.last_rating,
+      is_known: card.is_known ?? false,
+      consecutive_correct: card.consecutive_correct ?? 0,
+      pending_sync: card.pending_sync,
+      updated_at: card.updated_at,
+    }
+  }
+  return card as SRSCard
+}
+
 export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSReturn<T> {
   const queryClient = useQueryClient()
+  const cardType: SRSCard['cardType'] = subject === 'vocab' ? 'vocab' : 'kanji'
 
   const dueCards = useQuery({
     queryKey: subject === 'vocab' ? ['due-cards', userId] : ['kanji-srs-due', userId],
-    queryFn: async () => {
-      const now = new Date().toISOString()
-      if (subject === 'vocab') {
-        return db.user_cards
-          .where('due_date')
-          .belowOrEqual(now)
-          .filter(c => c.userId === userId && !c.is_known)
-          .toArray()
-      }
-      return getDueKanjiCards(userId, now)
-    },
+    queryFn: () => getDueCards(userId, new Date().toISOString(), cardType),
     enabled: !!userId,
     staleTime: 0,
   })
 
-  const mutation = useMutation<void, Error, { card: AnyCard, rating: SRSRating }>({
+  const mutation = useMutation<void, Error, { card: SRSCard | VocabWithSRS, rating: SRSRating }>({
     mutationFn: async ({ card, rating }) => {
       if (!userId)
         return
-      const cardState = toCardState(card, userId)
-      const result = calculateNextReview(cardState, rating)
-      const newReviewCount = cardState.review_count + 1
-      const is_known = result.new_interval >= KNOWN_MIN_INTERVAL && newReviewCount >= KNOWN_MIN_REVIEWS
-      const newConsecutiveCorrect = rating === 0
-        ? 0
-        : (cardState.consecutive_correct ?? 0) + 1
-
+      const srsCard = toSRSCard(card, userId)
+      const result = scheduleFSRS(srsCard, rating)
+      const newReps = result.reps
+      const is_known = result.scheduled_days >= KNOWN_MIN_SCHEDULED && newReps >= KNOWN_MIN_REPS
+      const newConsecutiveCorrect = rating === 1 ? 0 : (srsCard.consecutive_correct ?? 0) + 1
       const now = new Date().toISOString()
 
-      if ('vocab_id' in card) {
-        await db.review_log.add({
-          userId,
-          vocabId: card.vocab_id,
-          bookSource: card.book_source ?? 'minna_shokyuu_1',
-          cardType: 'vocab',
-          rating,
-          intervalDays: result.new_interval,
-          easeFactor: result.new_ease,
-          dueDate: result.due_date,
-          reviewCount: newReviewCount,
-          isKnown: is_known,
-          reviewedAt: now,
-          pendingSync: true,
-          remoteId: null,
-        })
-        await db.user_cards.put({
-          userId,
-          vocabId: card.vocab_id,
-          interval_days: result.new_interval,
-          ease_factor: result.new_ease,
-          due_date: result.due_date,
-          review_count: newReviewCount,
-          last_rating: rating,
-          pending_sync: false,
-          updated_at: now,
-          is_known,
-          consecutive_correct: newConsecutiveCorrect,
-          card_stage: result.new_card_stage,
-          learning_step: result.new_learning_step,
-          lapse_count: result.new_lapse_count,
-        })
-        uploadPendingReviews().catch(() => {})
-      }
-      else {
-        await db.review_log.add({
-          userId,
-          vocabId: card.char,
-          bookSource: 'kanji',
-          cardType: 'kanji',
-          rating,
-          intervalDays: result.new_interval,
-          easeFactor: result.new_ease,
-          dueDate: result.due_date,
-          reviewCount: newReviewCount,
-          isKnown: false,
-          reviewedAt: now,
-          pendingSync: true,
-          remoteId: null,
-        })
-        await updateKanjiCard({
-          ...card,
-          interval_days: result.new_interval,
-          ease_factor: result.new_ease,
-          due_date: result.due_date,
-          review_count: newReviewCount,
-          last_rating: rating,
-          pending_sync: false,
-          updated_at: now,
-          consecutive_correct: newConsecutiveCorrect,
-          card_stage: result.new_card_stage,
-          learning_step: result.new_learning_step,
-          lapse_count: result.new_lapse_count,
-        })
-        uploadPendingReviews().catch(() => {})
-      }
+      await db.review_log.add({
+        userId,
+        vocabId: srsCard.cardId,
+        bookSource: srsCard.cardType === 'kanji' ? 'kanji' : 'minna_shokyuu_1',
+        cardType: srsCard.cardType === 'kanji' ? 'kanji' : 'vocab',
+        rating,
+        scheduledDays: result.scheduled_days,
+        stability: result.stability,
+        difficulty: result.difficulty,
+        dueDate: result.due,
+        reviewCount: newReps,
+        isKnown: is_known,
+        reviewedAt: now,
+        pendingSync: true,
+        remoteId: null,
+      })
+
+      await upsertSRSCard({
+        ...srsCard,
+        ...result,
+        last_rating: rating,
+        is_known,
+        consecutive_correct: newConsecutiveCorrect,
+        pending_sync: false,
+        updated_at: now,
+      })
+
+      uploadPendingReviews().catch(() => {})
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
+      queryClient.invalidateQueries({ queryKey: ['due-cards', userId] })
+      queryClient.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
+      queryClient.invalidateQueries({ queryKey: ['review-forecast', userId] })
+      queryClient.invalidateQueries({ queryKey: ['next-vocab-due', userId] })
       if (subject === 'kanji') {
         queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
         queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] })
@@ -151,32 +127,30 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
     retry: 0,
   })
 
-  function rate(card: AnyCard, rating: SRSRating): void {
+  function rate(card: SRSCard | VocabWithSRS, rating: SRSRating): void {
     if (!userId)
       return
     mutation.mutate({ card, rating })
   }
 
-  function answer(card: AnyCard, isCorrect: boolean): void {
-    rate(card, isCorrect ? 2 : 0)
+  function answer(card: SRSCard | VocabWithSRS, isCorrect: boolean): void {
+    rate(card, isCorrect ? 3 : 1) // Good=3, Again=1
   }
 
-  function answerTypeInput(card: AnyCard, isCorrect: boolean): TypeInputResult {
+  function answerTypeInput(card: SRSCard | VocabWithSRS, isCorrect: boolean): TypeInputResult {
     if (!isCorrect) {
-      // Write SRS (rating 0 → 6-10min delay) immediately — no re-queue.
-      mutation.mutate({ card, rating: 0 })
-      return { rating: 0, shouldRequeue: true }
+      const srsCard = toSRSCard(card, userId)
+      mutation.mutate({ card: srsCard, rating: 1 })
+      return { rating: 1, shouldRequeue: true }
     }
-    const cardState = toCardState(card, userId)
-    const rating = computeTypeInputRatingForDisplay(cardState, true)
+    const srsCard = toSRSCard(card, userId)
+    const rating = computeTypeInputRatingForDisplay(srsCard, true)
+    mutation.mutate({ card: srsCard, rating })
     return { rating, shouldRequeue: false }
   }
 
-  return {
-    dueCards,
-    rate,
-    answer,
-    answerTypeInput,
-    isPending: mutation.isPending,
-  } as unknown as SRSReturn<T>
+  return { dueCards, rate, answer, answerTypeInput, isPending: mutation.isPending } as unknown as SRSReturn<T>
 }
+
+export const useVocabSRS = (userId: string) => useSRS('vocab', userId)
+export const useKanjiSRS = (userId: string) => useSRS('kanji', userId)

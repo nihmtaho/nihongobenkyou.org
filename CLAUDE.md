@@ -80,14 +80,13 @@ const vocabId = `${bookCodePrefix}_${sha256(input).slice(0, 16)}`
 |---|---|---|
 | `vocabulary` | `vocab_id` | `book_source`, `lesson_number`, `[book_source+lesson_number]` |
 | `lessons` | `lesson_id` | `book_source`, `lesson_number` |
-| `user_cards` | `[userId+vocabId]` | `due_date`, `pending_sync`, `[userId+dueDate]` |
-| `kanji_cards` | `[userId+char]` | `due_date`, `pending_sync` |
+| `srs_cards` | `[userId+cardId]` | `[userId+due]`, `[userId+cardType]`, `[userId+deckId+due]`, `pending_sync` |
 | `kanji` | `char` | `jlpt_level`, `radical`, `stroke_count` |
 | `sync_queue` | `id` | `created_at`, `status` |
 | `streaks` | `date` | `userId` |
 | `settings` | `key` | — |
 
-No JOINs in IndexedDB — merge in hooks: `vocabulary` + `user_cards` → `VocabWithSRS`.
+No JOINs in IndexedDB — merge in hooks: `vocabulary` + `srs_cards` → `VocabWithSRS`.
 
 ### Zustand Stores
 
@@ -99,7 +98,7 @@ No JOINs in IndexedDB — merge in hooks: `vocabulary` + `user_cards` → `Vocab
 
 ## Key Constraints
 
-- **SRS (SM-2)** — `src/lib/srs.ts`: ratings 0=Again/1=Hard/2=Good/3=Easy; ease min 1.3, default 2.5; interval max 180d
+- **SRS (FSRS-4.5)** — `src/lib/srs.ts` via ts-fsrs@5.3.3: ratings 1=Again/2=Hard/3=Good/4=Easy; unified `srs_cards` table; see `.claude/rules/srs.md`
 - **UI** — all styling in `src/app.css`; theme `data-theme="brutalist-{dataset}"`; use `--br-jp-font` for Japanese, never `--br-heading-font`
 - **Auth guard** — protected routes under `src/routes/_authenticated.tsx`
 - **Errors** — classify in `src/api/` only; see `.claude/rules/offline-first.md`

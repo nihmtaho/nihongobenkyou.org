@@ -48,8 +48,7 @@ export function BackupSection() {
       // Remap all stored userIds to the current userId so backup files
       // created under a different session/device still import correctly.
       const payload = {
-        user_cards: (raw.user_cards ?? []).map(c => ({ ...c, userId })),
-        kanji_cards: (raw.kanji_cards ?? []).map(c => ({ ...c, userId })),
+        srs_cards: (raw.srs_cards ?? []).map(c => ({ ...c, userId })),
         custom_decks: (raw.custom_decks ?? []).map(d => ({ ...d, user_id: userId })),
         custom_vocabulary: (raw.custom_vocabulary ?? []).map(v => ({ ...v, user_id: userId })),
         review_log: (raw.review_log ?? []).map(e => ({ ...e, userId })),

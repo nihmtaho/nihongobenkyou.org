@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import Dexie from 'dexie'
 import { db } from '../db/schema'
 
 export interface KanjiLessonSRSStats {
@@ -27,14 +26,14 @@ export function useKanjiLessonStats(userId: string) {
 
       const [allKanji, allKanjiCards] = await Promise.all([
         db.kanji.toArray(),
-        db.kanji_cards
-          .where('[userId+char]')
-          .between([userId, Dexie.minKey], [userId, Dexie.maxKey], true, true)
+        db.srs_cards
+          .where('[userId+cardType]')
+          .equals([userId, 'kanji'])
           .toArray(),
       ])
 
-      const now = new Date().toISOString()
-      const kanjiCardMap = new Map(allKanjiCards.map(c => [c.char, c]))
+      const now = new Date().toISOString().slice(0, 10)
+      const kanjiCardMap = new Map(allKanjiCards.map(c => [c.cardId, c]))
 
       const kanjiByLesson = new Map<number, typeof allKanji>()
       for (const k of allKanji) {
@@ -63,12 +62,11 @@ export function useKanjiLessonStats(userId: string) {
 
       const allRvIds = [...new Set([...rvIdsByLesson.values()].flat())]
       const rvCards = allRvIds.length > 0
-        ? await db.user_cards
-            .where('[userId+vocabId]')
-            .anyOf(allRvIds.map(id => [userId, id]))
+        ? await db.srs_cards
+            .filter(c => c.userId === userId && c.cardType === 'vocab' && allRvIds.includes(c.cardId))
             .toArray()
         : []
-      const rvCardMap = new Map(rvCards.map(c => [c.vocabId, c]))
+      const rvCardMap = new Map(rvCards.map(c => [c.cardId, c]))
 
       const lessonNumbers = [...kanjiByLesson.keys()].sort((a, b) => a - b)
 
@@ -80,14 +78,11 @@ export function useKanjiLessonStats(userId: string) {
         return {
           total: chars.length,
           new: chars.length - cardList.length,
-          learning: cardList.filter(c => c.interval_days < 8).length,
-          review: cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21).length,
-          mature: cardList.filter(c => c.interval_days >= 21).length,
-          due: cardList.filter(c => c.due_date <= now).length,
-          next_due_date: cardList
-            .filter(c => c.due_date > now)
-            .map(c => c.due_date)
-            .sort()[0] ?? null,
+          learning: cardList.filter(c => c.scheduled_days < 8).length,
+          review: cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length,
+          mature: cardList.filter(c => c.scheduled_days >= 21).length,
+          due: cardList.filter(c => c.due <= now).length,
+          next_due_date: cardList.filter(c => c.due > now).map(c => c.due).sort()[0] ?? null,
         }
       }
 
@@ -99,14 +94,11 @@ export function useKanjiLessonStats(userId: string) {
         return {
           total: rvIds.length,
           new: rvIds.length - cardList.length,
-          learning: cardList.filter(c => c.interval_days < 8 && !c.is_known).length,
-          review: cardList.filter(c => c.interval_days >= 8 && c.interval_days < 21 && !c.is_known).length,
-          mature: cardList.filter(c => c.interval_days >= 21 || c.is_known).length,
-          due: cardList.filter(c => !c.is_known && c.due_date <= now).length,
-          next_due_date: cardList
-            .filter(c => !c.is_known && c.due_date > now)
-            .map(c => c.due_date)
-            .sort()[0] ?? null,
+          learning: cardList.filter(c => c.scheduled_days < 8 && !c.is_known).length,
+          review: cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21 && !c.is_known).length,
+          mature: cardList.filter(c => c.scheduled_days >= 21 || c.is_known).length,
+          due: cardList.filter(c => !c.is_known && c.due <= now).length,
+          next_due_date: cardList.filter(c => !c.is_known && c.due > now).map(c => c.due).sort()[0] ?? null,
         }
       }
 

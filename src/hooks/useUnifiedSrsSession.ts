@@ -4,9 +4,8 @@ import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { getDueKanjiCards } from '../db/kanji'
 import { db } from '../db/schema'
-import { randomAgainDelay } from '../lib/srs'
+import { getDueCards } from '../db/srs-cards'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useCustomDeckVocabSRS } from './useCustomDeckVocabSRS'
 import { useSRS } from './useSRS'
@@ -24,11 +23,14 @@ export interface UnifiedSrsSessionOptions {
   prebuiltQueue?: UnifiedCard[]
   initialMode?: StudyMode
   initialSubMode?: TypeInputSubMode
-  customDeckId?: string // when set, vocab ratings go to custom_deck_srs
+  customDeckId?: string // when set, vocab ratings go to custom deck SRS
 }
 
+// Fixed requeue delay for Again cards (replaces deleted randomAgainDelay)
+const AGAIN_REQUEUE_DELAY_MS = 6 * 60 * 1000
+
 function makeStats(): UnifiedSessionStats {
-  return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 0: 0, 1: 0, 2: 0, 3: 0 } }
+  return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0 } }
 }
 
 function buildRvIdSet(
@@ -80,20 +82,20 @@ export function useUnifiedSrsSession(
   const { data: dueVocab, isLoading: vocabLoading } = useQuery({
     queryKey: ['due-vocab-unified', userId],
     queryFn: async () => {
-      const now = new Date().toISOString()
+      const todayDate = new Date().toISOString().slice(0, 10)
       const allKanji = await db.kanji.toArray()
       const rvIdSet = buildRvIdSet(allKanji)
 
-      const allDue = await db.user_cards
-        .where('due_date')
-        .belowOrEqual(now)
-        .filter(c => c.userId === userId && !c.is_known)
+      const allDue = await db.srs_cards
+        .where('[userId+due]')
+        .belowOrEqual([userId, todayDate])
+        .filter(c => c.userId === userId && !c.is_known && c.cardType !== 'kanji')
         .toArray()
 
       // Bulk-load vocab to avoid N+1
       const regularVocabIds = allDue
-        .filter(c => !rvIdSet.has(c.vocabId))
-        .map(c => c.vocabId)
+        .filter(c => !rvIdSet.has(c.cardId))
+        .map(c => c.cardId)
       const vocabItems = await db.vocabulary.where('vocab_id').anyOf(regularVocabIds).toArray()
       const vocabMap = new Map(vocabItems.map(v => [v.vocab_id, v]))
 
@@ -128,8 +130,8 @@ export function useUnifiedSrsSession(
       const kanjiVocab: UnifiedCard[] = []
 
       for (const card of allDue) {
-        if (rvIdSet.has(card.vocabId)) {
-          const [, lessonStr, ...rest] = card.vocabId.split('_')
+        if (rvIdSet.has(card.cardId)) {
+          const [, lessonStr, ...rest] = card.cardId.split('_')
           const lessonNumber = Number(lessonStr)
           const kana = rest[rest.length - 1]
           const kanjiItem = allKanji.find(
@@ -142,7 +144,7 @@ export function useUnifiedSrsSession(
           }
         }
         else {
-          const vocabItem = vocabMap.get(card.vocabId)
+          const vocabItem = vocabMap.get(card.cardId)
           if (vocabItem) {
             vocab.push({
               kind: 'vocab',
@@ -161,12 +163,12 @@ export function useUnifiedSrsSession(
   const { data: dueKanji, isLoading: kanjiLoading } = useQuery({
     queryKey: ['due-kanji-unified', userId],
     queryFn: async () => {
-      const now = new Date().toISOString()
-      const cards = await getDueKanjiCards(userId, now)
-      const kanjiItems = await db.kanji.where('char').anyOf(cards.map(c => c.char)).toArray()
+      const todayDate = new Date().toISOString().slice(0, 10)
+      const cards = await getDueCards(userId, todayDate, 'kanji')
+      const kanjiItems = await db.kanji.where('char').anyOf(cards.map(c => c.cardId)).toArray()
       const kanjiMap = new Map(kanjiItems.map(k => [k.char, k]))
       return cards.flatMap((card): UnifiedCard[] => {
-        const kanji = kanjiMap.get(card.char)
+        const kanji = kanjiMap.get(card.cardId)
         return kanji ? [{ kind: 'kanji', card, kanji }] : []
       })
     },
@@ -233,12 +235,12 @@ export function useUnifiedSrsSession(
       }
     }
     else {
-      // kanji-vocab: card.card is CardState (has vocabId, not vocab_id) — coerce for useSRS
-      vocabSRS.rate({ ...card.card, vocab_id: card.card.vocabId } as never, rating)
+      // kanji-vocab: card.card is SRSCard
+      vocabSRS.rate(card.card, rating)
     }
 
-    if (rating === 0) {
-      const showAfter = Date.now() + randomAgainDelay()
+    if (rating === 1) {
+      const showAfter = Date.now() + AGAIN_REQUEUE_DELAY_MS
       setDeferred(d => [...d, { card, showAfter }])
     }
 

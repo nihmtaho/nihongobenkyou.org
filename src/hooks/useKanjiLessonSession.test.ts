@@ -117,7 +117,7 @@ describe('useKanjiLessonSession', () => {
       act(() => result.current.handleStart())
       expect(result.current.stats.correct).toBe(0)
       expect(result.current.stats.total).toBe(0)
-      expect(result.current.stats.ratingCounts).toEqual({ 0: 0, 1: 0, 2: 0, 3: 0 })
+      expect(result.current.stats.ratingCounts).toEqual({ 1: 0, 2: 0, 3: 0, 4: 0 })
     })
   })
 
