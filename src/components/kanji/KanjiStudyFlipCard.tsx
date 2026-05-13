@@ -1,4 +1,5 @@
-import type { KanjiCardState, KanjiItem } from '../../types/kanji'
+import type { KanjiItem } from '../../types/kanji'
+import type { SRSCard } from '../../types/srs'
 import type { SRSRating } from '../../types/srs'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -7,7 +8,7 @@ import { RatingBar } from '../study/shared/RatingBar'
 
 interface KanjiStudyFlipCardProps {
   kanji: KanjiItem
-  srsState?: KanjiCardState
+  srsState?: SRSCard
   onRate: (rating: SRSRating) => void
 }
 

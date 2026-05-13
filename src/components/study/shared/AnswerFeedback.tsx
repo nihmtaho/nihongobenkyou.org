@@ -3,17 +3,17 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { formatIntervalPreview } from '../../../lib/srs-utils'
 
 const RATING_LABELS: Record<SRSRating, string> = {
-  0: '✗ AGAIN',
-  1: 'HARD',
-  2: '✓ GOOD',
-  3: '✓ EASY',
+  1: '✗ AGAIN',
+  2: 'HARD',
+  3: '✓ GOOD',
+  4: '✓ EASY',
 }
 
 const RATING_BADGE_CLASS: Record<SRSRating, string> = {
-  0: 'badge-error',
-  1: 'badge-warning',
-  2: 'badge-success',
+  1: 'badge-error',
+  2: 'badge-warning',
   3: 'badge-success',
+  4: 'badge-success',
 }
 
 interface AnswerFeedbackProps {
@@ -23,7 +23,7 @@ interface AnswerFeedbackProps {
 }
 
 export function AnswerFeedback({ rating, intervalDays, visible }: AnswerFeedbackProps) {
-  const intervalLabel = rating === 0 ? '6-10min' : formatIntervalPreview(intervalDays)
+  const intervalLabel = rating === 1 ? '6-10min' : formatIntervalPreview(intervalDays)
   return (
     <AnimatePresence>
       {visible && (

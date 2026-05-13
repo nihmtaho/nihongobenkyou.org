@@ -1,4 +1,4 @@
-import type { CardStage, SRSRating } from './srs'
+import type { SRSRating } from './srs'
 
 export interface CustomDeck {
   id: string
@@ -48,7 +48,7 @@ export interface CustomDeckSRS {
   ease_factor: number
   due_date: string // YYYY-MM-DD date string
   review_count: number
-  card_stage: CardStage
+  card_stage: string
   learning_step: number
   lapse_count: number
   last_rating: SRSRating | null

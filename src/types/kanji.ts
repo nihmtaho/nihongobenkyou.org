@@ -1,4 +1,3 @@
-import type { CardStage } from './srs'
 
 export interface StrokeData {
   stroke_index: number
@@ -51,7 +50,7 @@ export interface KanjiCardState {
   pending_sync: boolean
   updated_at: string
   consecutive_correct: number
-  card_stage?: CardStage
+  card_stage?: string
   learning_step?: number
   lapse_count?: number
 }

@@ -235,7 +235,7 @@ function renderCard(
     if (mode === 'quiz') {
       return (
         <KanjiQuizCard
-          key={card.card.char + currentIndex}
+          key={card.card.cardId + currentIndex}
           kanji={card.kanji}
           srsState={card.card}
           pool={kanjiPool.length >= 4 ? kanjiPool : [card.kanji]}
@@ -246,7 +246,7 @@ function renderCard(
     if (mode === 'type-input') {
       return (
         <KanjiTypeInputCard
-          key={card.card.char + currentIndex}
+          key={card.card.cardId + currentIndex}
           prompt={card.kanji.char}
           answer={card.kanji.han_viet ?? ''}
           hint={card.kanji.onyomi[0]}
@@ -257,7 +257,7 @@ function renderCard(
     }
     return (
       <KanjiStudyFlipCard
-        key={card.card.char + currentIndex}
+        key={card.card.cardId + currentIndex}
         kanji={card.kanji}
         srsState={card.card}
         onRate={onRate}
@@ -284,7 +284,7 @@ function renderCard(
   // card.rv provides kana/word/han_viet/meaning_vi; card.card provides SRS state.
   // Fields unavailable for kanji-vocab (romaji, meaning_en, audio, etc.) default to empty/null.
   const vocabShaped: VocabWithSRS = {
-    vocab_id: card.card.vocabId,
+    vocab_id: card.card.cardId,
     word: card.rv.word ?? null,
     reading: card.rv.kana,
     romaji: '',
@@ -301,24 +301,26 @@ function renderCard(
     tags: [],
     deprecated: false,
     han_viet: card.rv.han_viet ?? null,
-    interval_days: card.card.interval_days,
-    ease_factor: card.card.ease_factor,
-    due_date: card.card.due_date,
-    review_count: card.card.review_count,
+    state: card.card.state,
+    stability: card.card.stability,
+    difficulty: card.card.difficulty,
+    elapsed_days: card.card.elapsed_days,
+    scheduled_days: card.card.scheduled_days,
+    reps: card.card.reps,
+    lapses: card.card.lapses,
+    last_review: card.card.last_review,
+    due: card.card.due,
     last_rating: card.card.last_rating,
     pending_sync: card.card.pending_sync,
     updated_at: card.card.updated_at,
     is_known: card.card.is_known,
     consecutive_correct: card.card.consecutive_correct,
-    card_stage: card.card.card_stage,
-    learning_step: card.card.learning_step,
-    lapse_count: card.card.lapse_count,
   }
 
   if (mode === 'quiz') {
     return (
       <KanjiVocabQuizCard
-        key={card.card.vocabId + currentIndex}
+        key={card.card.cardId + currentIndex}
         rv={card.rv}
         card={card.card}
         pool={kvPool}
@@ -329,7 +331,7 @@ function renderCard(
   if (mode === 'type-input') {
     return (
       <KanjiVocabTypeInputCard
-        key={card.card.vocabId + currentIndex}
+        key={card.card.cardId + currentIndex}
         card={vocabShaped}
         hanVietMap={hanVietMap}
         subMode={session.typeInputSubMode as VocabTypeSubMode}
@@ -339,7 +341,7 @@ function renderCard(
   }
   return (
     <KanjiVocabFlipCard
-      key={card.card.vocabId + currentIndex}
+      key={card.card.cardId + currentIndex}
       card={vocabShaped}
       hanVietMap={hanVietMap}
       meaningLanguage={meaningLanguage as MeaningLanguage}

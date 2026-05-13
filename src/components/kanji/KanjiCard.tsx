@@ -1,28 +1,29 @@
-import type { KanjiCardState, KanjiItem } from '../../types/kanji'
+import type { SRSCard } from '../../types/srs'
+import type { KanjiItem } from '../../types/kanji'
 import { Badge } from '@/components/ui/badge'
 
 interface KanjiCardProps {
   kanji: KanjiItem
-  card?: KanjiCardState
+  card?: SRSCard
   onClick?: () => void
 }
 
-function srsLabel(card?: KanjiCardState): string {
+function srsLabel(card?: SRSCard): string {
   if (!card)
     return 'New'
-  if (card.interval_days < 7)
+  if (card.scheduled_days < 7)
     return 'Learning'
-  if (card.interval_days < 21)
+  if (card.scheduled_days < 21)
     return 'Review'
   return 'Mature'
 }
 
-function srsBadgeClass(card?: KanjiCardState): string {
+function srsBadgeClass(card?: SRSCard): string {
   if (!card)
     return 'bg-info text-foreground'
-  if (card.interval_days < 7)
+  if (card.scheduled_days < 7)
     return 'bg-warning text-foreground'
-  if (card.interval_days < 21)
+  if (card.scheduled_days < 21)
     return ''
   return 'bg-success text-foreground'
 }
@@ -43,7 +44,7 @@ export function KanjiCard({ kanji, card, onClick }: KanjiCardProps) {
             {kanji.char}
           </p>
           <Badge
-            variant={card && card.interval_days >= 7 && card.interval_days < 21 ? 'default' : 'secondary'}
+            variant={card && card.scheduled_days >= 7 && card.scheduled_days < 21 ? 'default' : 'secondary'}
             className={`font-[var(--br-mono-font)] text-[9px] shrink-0 ${srsBadgeClass(card)}`}
           >
             {srsLabel(card)}

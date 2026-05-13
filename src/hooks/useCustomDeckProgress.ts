@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getSRSCardsForDeck } from '../db/srs-cards'
 import { db } from '../db/schema'
 
-interface DeckProgress {
+export interface DeckProgress {
   total: number
   started: number
   learning: number

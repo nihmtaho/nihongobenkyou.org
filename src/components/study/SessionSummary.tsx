@@ -119,19 +119,19 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
       {ratingCounts && (
         <div className="grid grid-cols-4 w-full border border-border/10 divide-x divide-border/10">
           <div className="p-3">
-            <div className="text-base font-[var(--br-mono-font)] text-destructive">{ratingCounts[0]}</div>
+            <div className="text-base font-[var(--br-mono-font)] text-destructive">{ratingCounts[1]}</div>
             <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">AGAIN</div>
           </div>
           <div className="p-3">
-            <div className="text-base font-[var(--br-mono-font)] text-warning">{ratingCounts[1]}</div>
+            <div className="text-base font-[var(--br-mono-font)] text-warning">{ratingCounts[2]}</div>
             <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">HARD</div>
           </div>
           <div className="p-3">
-            <div className="text-base font-[var(--br-mono-font)] text-success">{ratingCounts[2]}</div>
+            <div className="text-base font-[var(--br-mono-font)] text-success">{ratingCounts[3]}</div>
             <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">GOOD</div>
           </div>
           <div className="p-3">
-            <div className="text-base font-[var(--br-mono-font)] text-info">{ratingCounts[3]}</div>
+            <div className="text-base font-[var(--br-mono-font)] text-info">{ratingCounts[4]}</div>
             <div className="text-[9px] font-[var(--br-mono-font)] uppercase text-muted-foreground">EASY</div>
           </div>
         </div>

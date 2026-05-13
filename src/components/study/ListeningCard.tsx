@@ -28,7 +28,7 @@ export function ListeningCard({ card, distractors, playbackRate, onRateChange, o
 
   const isAnswered = selected !== null
   const isCorrect = selected === card.vocab_id
-  const preselectedRating: SRSRating = isCorrect ? 2 : 0
+  const preselectedRating: SRSRating = isCorrect ? 3 : 1
 
   if (!card.audio_filename) {
     return (
@@ -39,9 +39,9 @@ export function ListeningCard({ card, distractors, playbackRate, onRateChange, o
           </AlertDescription>
         </Alert>
         <ButtonGroup className="w-full">
-          {([0, 1, 2, 3] as SRSRating[]).map(r => (
-            <Button key={r} variant={RATING_VARIANTS[r]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r].toLowerCase()}>
-              {RATING_LABELS[r]}
+          {([1, 2, 3, 4] as SRSRating[]).map(r => (
+            <Button key={r} variant={RATING_VARIANTS[r-1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r-1].toLowerCase()}>
+              {RATING_LABELS[r-1]}
             </Button>
           ))}
         </ButtonGroup>
@@ -112,16 +112,16 @@ export function ListeningCard({ card, distractors, playbackRate, onRateChange, o
       {/* Rating bar */}
       {isAnswered && (
         <ButtonGroup className="w-full">
-          {([0, 1, 2, 3] as SRSRating[]).map((r) => {
+          {([1, 2, 3, 4] as SRSRating[]).map((r) => {
             return (
               <Button
                 key={r}
-                variant={RATING_VARIANTS[r]}
+                variant={RATING_VARIANTS[r-1]}
                 className={`flex-1 ${preselectedRating === r ? 'ring-2 ring-offset-1 ring-foreground' : ''}`}
-                aria-label={RATING_LABELS[r].toLowerCase()}
+                aria-label={RATING_LABELS[r-1].toLowerCase()}
                 onClick={() => onRate(r)}
               >
-                {RATING_LABELS[r]}
+                {RATING_LABELS[r-1]}
               </Button>
             )
           })}

@@ -15,7 +15,7 @@ interface KanjiEntry {
   char: string
   han_viet: string | null
   lesson_number: number | null
-  card?: { interval_days: number, due_date: string }
+  card?: { scheduled_days: number, due: string }
 }
 
 interface KanjiLessonPanelProps {
@@ -37,20 +37,20 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
 
   const total = allKanji?.length ?? 0
   const studied = allKanji?.filter(k => k.card !== undefined).length ?? 0
-  const mature = allKanji?.filter(k => (k.card?.interval_days ?? 0) >= 21).length ?? 0
+  const mature = allKanji?.filter(k => (k.card?.scheduled_days ?? 0) >= 21).length ?? 0
   const due = dueCards.data?.length ?? 0
 
   const panelSrsStats: SRSStats = {
     total,
     new: Math.max(0, total - studied),
-    learning: allKanji?.filter(k => k.card !== undefined && (k.card.interval_days ?? 0) < 8).length ?? 0,
-    review: allKanji?.filter(k => k.card !== undefined && (k.card.interval_days ?? 0) >= 8 && (k.card.interval_days ?? 0) < 21).length ?? 0,
+    learning: allKanji?.filter(k => k.card !== undefined && (k.card.scheduled_days ?? 0) < 8).length ?? 0,
+    review: allKanji?.filter(k => k.card !== undefined && (k.card.scheduled_days ?? 0) >= 8 && (k.card.scheduled_days ?? 0) < 21).length ?? 0,
     mature,
   }
 
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const panelNextReview = formatNextReview(
-    (allKanji ?? []).map(k => k.card?.due_date).filter((d): d is string => !!d),
+    (allKanji ?? []).map(k => k.card?.due).filter((d): d is string => !!d),
     today,
   )
 
@@ -192,9 +192,9 @@ function LessonAccordionRow({
 
   const total = kanjiInLesson.length
   const studied = kanjiInLesson.filter(k => k.card !== undefined).length
-  const mature = kanjiInLesson.filter(k => (k.card?.interval_days ?? 0) >= 21).length
-  const learning = kanjiInLesson.filter(k => k.card !== undefined && (k.card.interval_days ?? 0) < 8).length
-  const review = kanjiInLesson.filter(k => k.card !== undefined && (k.card.interval_days ?? 0) >= 8 && (k.card.interval_days ?? 0) < 21).length
+  const mature = kanjiInLesson.filter(k => (k.card?.scheduled_days ?? 0) >= 21).length
+  const learning = kanjiInLesson.filter(k => k.card !== undefined && (k.card.scheduled_days ?? 0) < 8).length
+  const review = kanjiInLesson.filter(k => k.card !== undefined && (k.card.scheduled_days ?? 0) >= 8 && (k.card.scheduled_days ?? 0) < 21).length
 
   const srsStats: SRSStats = {
     total,
@@ -207,7 +207,7 @@ function LessonAccordionRow({
   const animDelay = Math.min(rowIndex * 0.03, 0.3)
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const nextReview = formatNextReview(
-    kanjiInLesson.map(k => k.card?.due_date).filter((d): d is string => !!d),
+    kanjiInLesson.map(k => k.card?.due).filter((d): d is string => !!d),
     today,
   )
 
@@ -277,7 +277,7 @@ function LessonAccordionRow({
                   {item.han_viet ?? '—'}
                 </span>
                 {item.card !== undefined && (
-                  <span className={`w-1.5 h-1.5 ${tileStatusColor(item.card.interval_days ?? 0)}`} />
+                  <span className={`w-1.5 h-1.5 ${tileStatusColor(item.card.scheduled_days ?? 0)}`} />
                 )}
               </div>
             ))}

@@ -1,4 +1,4 @@
-import type { CardState } from '../../types/srs'
+import type { SRSCard } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
 import { Plus } from 'lucide-react'
@@ -16,7 +16,7 @@ const KANJI_RE = /[一-龯]/
 
 interface VocabDetailPanelProps {
   item: VocabItem
-  card: CardState | null
+  card: SRSCard | null
   moraPattern: ('H' | 'L')[] | null
   userId: string
   index: number

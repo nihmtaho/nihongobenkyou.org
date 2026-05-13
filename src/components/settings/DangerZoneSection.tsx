@@ -35,20 +35,12 @@ export function DangerZoneSection() {
       const now = new Date().toISOString()
 
       if (userId) {
-        await db.user_cards.where('userId').equals(userId).delete()
-        await db.kanji_cards.where('userId').equals(userId).delete()
-        await db.active_vocab_srs.toCollection().filter(c => c.userId === userId).delete()
-        await db.active_kanji_srs.toCollection().filter(c => c.userId === userId).delete()
-        await db.custom_deck_srs.filter(c => c.userId === userId).delete()
+        await db.srs_cards.where('userId').equals(userId).delete()
         await db.streaks.where('userId').equals(userId).delete()
         await db.review_log.toCollection().filter(r => r.userId === userId).delete()
       }
       else {
-        await db.user_cards.clear()
-        await db.kanji_cards.clear()
-        await db.active_vocab_srs.clear()
-        await db.active_kanji_srs.clear()
-        await db.custom_deck_srs.clear()
+        await db.srs_cards.clear()
         await db.streaks.clear()
         await db.review_log.clear()
       }

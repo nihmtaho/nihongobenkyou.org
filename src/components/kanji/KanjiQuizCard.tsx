@@ -1,4 +1,5 @@
-import type { KanjiCardState, KanjiItem } from '../../types/kanji'
+import type { KanjiItem } from '../../types/kanji'
+import type { SRSCard } from '../../types/srs'
 import type { SRSRating } from '../../types/srs'
 import { useEffect, useState } from 'react'
 import { selectKanjiDistractors, shuffle } from '../../lib/quiz'
@@ -7,7 +8,7 @@ import { RatingBar } from '../study/shared/RatingBar'
 
 interface KanjiQuizCardProps {
   kanji: KanjiItem
-  srsState?: KanjiCardState
+  srsState?: SRSCard
   pool: KanjiItem[]
   onRate: (rating: SRSRating) => void
 }

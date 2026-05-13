@@ -1,4 +1,4 @@
-import type { CardState } from '../../types/srs'
+import type { SRSCard } from '../../types/srs'
 import type { VocabItem } from '../../types/vocabulary'
 
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -14,7 +14,7 @@ import { VocabIndexRow } from './VocabIndexRow'
 
 interface VocabListProps {
   items: VocabItem[]
-  cards: Map<string, CardState>
+  cards: Map<string, SRSCard>
   userId: string
   isLoading: boolean
   hiddenPanelOpen?: boolean
