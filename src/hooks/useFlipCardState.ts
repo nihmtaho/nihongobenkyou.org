@@ -19,7 +19,7 @@ export function useFlipCardState(onRate: (rating: SRSRating) => void) {
       if (!isFlipped)
         return
       if (e.key >= '1' && e.key <= '4') {
-        const ratings: SRSRating[] = [0, 1, 2, 3]
+        const ratings: SRSRating[] = [1, 2, 3, 4]
         onRate(ratings[Number(e.key) - 1])
       }
     }
@@ -31,9 +31,9 @@ export function useFlipCardState(onRate: (rating: SRSRating) => void) {
     if (!isFlipped)
       return
     if (info.offset.x > 100)
-      onRate(2)
+      onRate(3)
     else if (info.offset.x < -100)
-      onRate(0)
+      onRate(1)
     else
       x.set(0)
   }

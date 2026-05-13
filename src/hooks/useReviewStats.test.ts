@@ -42,7 +42,7 @@ afterEach(async () => {
 function makeEntry(overrides: Partial<{
   userId: string
   vocabId: string
-  rating: 0 | 1 | 2 | 3
+  rating: 1 | 2 | 3 | 4
   reviewedAt: string
 }> = {}) {
   return {
@@ -50,9 +50,10 @@ function makeEntry(overrides: Partial<{
     vocabId: 'mnn1_aaaa00000000',
     bookSource: 'minna_shokyuu_1',
     cardType: 'vocab' as const,
-    rating: 2 as const,
-    intervalDays: 1,
-    easeFactor: 2.5,
+    rating: 3 as const,
+    scheduledDays: 1,
+    stability: 1.5,
+    difficulty: 5.0,
     dueDate: dateStringDaysAgo(0),
     reviewCount: 1,
     isKnown: false,
@@ -287,11 +288,11 @@ describe('useReviewStats', () => {
     })
 
     it('counts and percentages are correct for known ratings', async () => {
-      // 2×Again(0), 1×Good(2) all within last 7 days
+      // 2×Again(1), 1×Good(3) all within last 7 days
       await db.review_log.bulkAdd([
-        makeEntry({ rating: 0, reviewedAt: daysAgo(0) }),
-        makeEntry({ rating: 0, reviewedAt: daysAgo(1) }),
-        makeEntry({ rating: 2, reviewedAt: daysAgo(2) }),
+        makeEntry({ rating: 1, reviewedAt: daysAgo(0) }),
+        makeEntry({ rating: 1, reviewedAt: daysAgo(1) }),
+        makeEntry({ rating: 3, reviewedAt: daysAgo(2) }),
       ])
 
       const { result } = renderHook(() => useReviewStats(TEST_USER), {
@@ -311,8 +312,8 @@ describe('useReviewStats', () => {
 
     it('excludes entries older than 7 days from distribution', async () => {
       await db.review_log.bulkAdd([
-        makeEntry({ rating: 0, reviewedAt: daysAgo(8) }), // outside window
-        makeEntry({ rating: 2, reviewedAt: daysAgo(0) }), // inside window
+        makeEntry({ rating: 1, reviewedAt: daysAgo(8) }), // outside window
+        makeEntry({ rating: 3, reviewedAt: daysAgo(0) }), // inside window
       ])
 
       const { result } = renderHook(() => useReviewStats(TEST_USER), {

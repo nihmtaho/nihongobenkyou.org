@@ -147,7 +147,7 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
           </p>
           <div className="flex flex-wrap gap-2">
             {stats.wrongCards.slice(0, 8).map((c) => {
-              const key = c.kind === 'vocab' ? c.card.vocab_id : c.kind === 'kanji' ? c.card.char : c.card.vocabId
+              const key = c.kind === 'vocab' ? c.card.vocab_id : c.card.cardId
               const label = c.kind === 'vocab' ? (c.card.word ?? c.card.reading) : c.kind === 'kanji' ? c.kanji.char : (c.rv.word ?? c.rv.kana)
               return (
                 <span

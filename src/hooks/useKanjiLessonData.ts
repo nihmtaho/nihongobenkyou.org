@@ -1,11 +1,23 @@
-import type { KanjiCardState, KanjiItem } from '../types/kanji'
+import type { KanjiItem } from '../types/kanji'
+import type { SRSCard } from '../types/srs'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { getAllKanji, getKanjiCardsForChars } from '../db/kanji'
+import { getAllKanji } from '../db/kanji'
+import { db } from '../db/schema'
 
 export interface KanjiQueueItem {
   kanji: KanjiItem
-  card: KanjiCardState | null
+  card: SRSCard | null
+}
+
+async function getKanjiSRSCards(userId: string, chars: string[]): Promise<SRSCard[]> {
+  if (chars.length === 0)
+    return []
+  return db.srs_cards
+    .where('[userId+cardType]')
+    .equals([userId, 'kanji'])
+    .filter(c => chars.includes(c.cardId))
+    .toArray()
 }
 
 export function useKanjiLessonData(userId: string, lesson: number) {
@@ -19,7 +31,7 @@ export function useKanjiLessonData(userId: string, lesson: number) {
 
   const cardsQuery = useQuery({
     queryKey: ['kanji-lesson-cards', userId, lesson],
-    queryFn: () => getKanjiCardsForChars(userId, chars),
+    queryFn: () => getKanjiSRSCards(userId, chars),
     enabled: chars.length > 0,
     staleTime: 0,
   })
@@ -27,7 +39,7 @@ export function useKanjiLessonData(userId: string, lesson: number) {
   const items = useMemo<KanjiQueueItem[]>(
     () => (kanjiQuery.data ?? []).map(k => ({
       kanji: k,
-      card: cardsQuery.data?.find(c => c.char === k.char) ?? null,
+      card: cardsQuery.data?.find(c => c.cardId === k.char) ?? null,
     })),
     [kanjiQuery.data, cardsQuery.data],
   )

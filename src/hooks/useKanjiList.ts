@@ -1,10 +1,11 @@
-import type { KanjiCardState, KanjiItem } from '../types/kanji'
+import type { KanjiItem } from '../types/kanji'
+import type { SRSCard } from '../types/srs'
 import { useQuery } from '@tanstack/react-query'
-import { getAllKanji, getDueKanjiCards } from '../db/kanji'
+import { getAllKanji } from '../db/kanji'
 import { db } from '../db/schema'
 
 export interface KanjiWithSRS extends KanjiItem {
-  card?: KanjiCardState
+  card?: SRSCard
 }
 
 interface KanjiFilters {
@@ -18,23 +19,19 @@ export function useKanjiList(userId: string, filters?: KanjiFilters) {
   return useQuery<KanjiWithSRS[]>({
     queryKey: ['kanji-list', userId, filters],
     queryFn: async () => {
-      const today = new Date().toISOString().slice(0, 10)
-      const [items, cards] = await Promise.all([
-        getAllKanji(filters),
-        getDueKanjiCards(userId, today),
-      ])
+      const items = await getAllKanji(filters)
+      const chars = items.map(k => k.char)
 
-      const cardMap = new Map(cards.map(c => [c.char, c]))
-
-      const allCards = await db.kanji_cards
-        .where('userId')
-        .equals(userId)
+      const allCards = await db.srs_cards
+        .where('[userId+cardType]')
+        .equals([userId, 'kanji'])
+        .filter(c => chars.includes(c.cardId))
         .toArray()
-      const allCardMap = new Map(allCards.map(c => [c.char, c]))
+      const allCardMap = new Map(allCards.map(c => [c.cardId, c]))
 
       return items.map(k => ({
         ...k,
-        card: allCardMap.get(k.char) ?? cardMap.get(k.char),
+        card: allCardMap.get(k.char),
       }))
     },
     staleTime: Infinity,

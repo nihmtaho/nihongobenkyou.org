@@ -27,29 +27,20 @@ export function useReviewForecast(userId: string) {
   const next7 = buildNext7Dates(today)
   const endDate = next7[6]
 
-  const vocabCards = useLiveQuery(
-    () => db.user_cards
-      .where('due_date')
-      .between(today, endDate, true, true)
-      .filter(c => c.userId === userId)
-      .toArray(),
-    [userId, today],
-  )
-  const kanjiCards = useLiveQuery(
-    () => db.kanji_cards
-      .where('due_date')
-      .between(today, endDate, true, true)
-      .filter(c => c.userId === userId)
+  const allCards = useLiveQuery(
+    () => db.srs_cards
+      .where('[userId+due]')
+      .between([userId, today], [userId, endDate], true, true)
       .toArray(),
     [userId, today],
   )
 
-  if (vocabCards === undefined || kanjiCards === undefined)
+  if (allCards === undefined)
     return { data: undefined, isLoading: true }
 
   const countPerDay: Record<string, number> = {}
-  for (const card of [...vocabCards, ...kanjiCards]) {
-    countPerDay[card.due_date] = (countPerDay[card.due_date] ?? 0) + 1
+  for (const card of allCards) {
+    countPerDay[card.due] = (countPerDay[card.due] ?? 0) + 1
   }
 
   const data: ForecastDay[] = next7.map((date) => {

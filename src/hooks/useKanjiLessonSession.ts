@@ -1,5 +1,4 @@
-import type { KanjiCardState } from '../types/kanji'
-import type { SRSRating } from '../types/srs'
+import type { SRSCard, SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import type { KanjiQueueItem } from './useKanjiLessonData'
 import { useEffect, useState } from 'react'
@@ -56,7 +55,7 @@ export function useKanjiLessonSession(
     correct: 0,
     total: 0,
     startTime: new Date(),
-    ratingCounts: { 0: 0, 1: 0, 2: 0, 3: 0 },
+    ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0 },
   }))
 
   useEffect(() => {
@@ -74,13 +73,13 @@ export function useKanjiLessonSession(
     const today = new Date().toISOString().slice(0, 10)
     if (type === 'kanji') {
       const source = dueOnly
-        ? kanjiData.items.filter(item => item.card !== null && item.card.due_date <= today)
+        ? kanjiData.items.filter(item => item.card !== null && item.card.due <= today)
         : kanjiData.items
       setKanjiQueue([...source].sort(() => Math.random() - 0.5))
     }
     else {
       const source = dueOnly
-        ? vocabData.vocab.filter(v => v.review_count > 0 && v.due_date <= today && !v.is_known)
+        ? vocabData.vocab.filter(v => v.reps > 0 && v.due <= today && !v.is_known)
         : vocabData.vocab
       setVocabQueue([...source].sort(() => Math.random() - 0.5))
     }
@@ -89,7 +88,7 @@ export function useKanjiLessonSession(
       correct: 0,
       total: 0,
       startTime: new Date(),
-      ratingCounts: { 0: 0, 1: 0, 2: 0, 3: 0 },
+      ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0 },
     })
     setPhase('active')
   }
@@ -110,19 +109,28 @@ export function useKanjiLessonSession(
     }
   }
 
-  function buildStubCard(char: string): KanjiCardState {
-    const now = new Date()
+  function buildStubCard(char: string): SRSCard {
+    const today = new Date().toISOString().slice(0, 10)
+    const now = new Date().toISOString()
     return {
       userId,
-      char,
-      interval_days: 0,
-      ease_factor: 2.5,
-      due_date: now.toISOString().slice(0, 10),
-      review_count: 0,
-      last_rating: null,
-      pending_sync: false,
-      updated_at: now.toISOString(),
+      cardId:              char,
+      cardType:            'kanji',
+      deckId:              null,
+      state:               'new',
+      stability:           0,
+      difficulty:          0,
+      elapsed_days:        0,
+      scheduled_days:      0,
+      reps:                0,
+      lapses:              0,
+      last_review:         today,
+      due:                 today,
+      last_rating:         null,
+      is_known:            false,
       consecutive_correct: 0,
+      pending_sync:        false,
+      updated_at:          now,
     }
   }
 
@@ -135,7 +143,7 @@ export function useKanjiLessonSession(
   }
 
   function handleKanjiAnswer(correct: boolean) {
-    handleKanjiRate(correct ? 2 : 0)
+    handleKanjiRate(correct ? 3 : 1)
   }
 
   function handleVocabRate(rating: SRSRating) {
@@ -147,7 +155,7 @@ export function useKanjiLessonSession(
   }
 
   function handleVocabAnswer(correct: boolean) {
-    handleVocabRate(correct ? 2 : 0)
+    handleVocabRate(correct ? 3 : 1)
   }
 
   return {

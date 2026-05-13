@@ -1,4 +1,4 @@
-import type { CardState } from '../types/srs'
+import type { SRSCard } from '../types/srs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { AuthError } from '../api/auth'
@@ -37,14 +37,14 @@ export function useUserCards(userId: string, vocabIds: string[]) {
     }
   }, [syncQuery.dataUpdatedAt, queryClient, userId])
 
-  return useQuery<Map<string, CardState>>({
+  return useQuery<Map<string, SRSCard>>({
     queryKey: ['user-cards', userId, vocabIds],
     queryFn: async () => {
-      const cards = await db.user_cards
-        .where('[userId+vocabId]')
+      const cards = await db.srs_cards
+        .where('[userId+cardId]')
         .anyOf(vocabIds.map(id => [userId, id]))
         .toArray()
-      return new Map(cards.map(c => [c.vocabId, c]))
+      return new Map(cards.map(c => [c.cardId, c]))
     },
     staleTime: 0,
     enabled: vocabIds.length > 0,
