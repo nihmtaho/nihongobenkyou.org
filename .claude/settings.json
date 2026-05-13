@@ -61,7 +61,7 @@
           {
             "type": "command",
             "if": "Bash(git push *)",
-            "command": "cmd=$(jq -r '.tool_input.command' 2>/dev/null); if echo \"$cmd\" | grep -qE '(--force|-f)'; then branch=$(echo \"$cmd\" | grep -oE '(main|develop)' | head -1); if [ -n \"$branch\" ]; then echo '{\"decision\":\"block\",\"reason\":\"Force push to protected branch not allowed (git-workflow.md)\"}'; exit 0; fi; fi; base=$(git merge-base HEAD origin/HEAD 2>/dev/null || echo HEAD); if git diff --name-only \"${base}..HEAD\" 2>/dev/null | grep -qE '^(docs|specs|datasets|public/data)/'; then echo '{\"decision\":\"block\",\"reason\":\"Forbidden files in push (docs/specs/datasets/public/data). Remove before pushing.\"}'; exit 0; fi; exit 0"
+            "command": "cmd=$(jq -r '.tool_input.command' 2>/dev/null); if echo \"$cmd\" | grep -qE '(--force|-f)'; then branch=$(echo \"$cmd\" | grep -oE '(main|develop)' | head -1); if [ -n \"$branch\" ]; then echo '{\"decision\":\"block\",\"reason\":\"Force push to protected branch not allowed (git-workflow.md)\"}'; exit 0; fi; fi; base=$(git merge-base HEAD origin/HEAD 2>/dev/null || echo HEAD); if git diff --name-only \"${base}..HEAD\" 2>/dev/null | grep -qE '^(docs|specs|datasets|public/data|\\.docs)/'; then echo '{\"decision\":\"block\",\"reason\":\"Forbidden files in push (docs/specs/datasets/public/data/.docs). Remove before pushing.\"}'; exit 0; fi; exit 0"
           }
         ]
       }

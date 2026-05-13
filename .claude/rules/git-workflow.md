@@ -27,11 +27,11 @@ alwaysApply: true
 1. `pnpm run lint` — zero errors
 2. `pnpm run test:run` — all tests green, no `test.only`/`it.only`
 3. `pnpm exec tsc --noEmit` — no type errors
-4. No forbidden files staged: `specs/**`, `docs/**`, `datasets/**`, `public/data/**`, `*.local.*`, `.env*`
+4. No forbidden files staged: `specs/**`, `docs/**`, `.docs/**`, `datasets/**`, `public/data/**`, `*.local.*`, `.env*`
 5. Feature tasks verified complete (or user explicitly acknowledges incomplete tasks)
 
 ## Best Practices
 
-- **Never** upload the `specs/**`, `docs/**` into remote.
+- **Never** upload the `specs/**`, `docs/**`, `.docs/**` into remote.
 - **Never** upload any config or local file only use for local into remote.
 - **Never** add `Co-Authored-By` trailers for any AI model (Claude, GitHub Copilot, ChatGPT, etc.) to commits pushed to remote. AI assistance is an implementation detail, not a co-author.

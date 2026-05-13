@@ -1,9 +1,10 @@
 # git worktrees
 .worktrees/
 
-# documentation
+# documentation (never push — git-workflow rule)
 docs/**
 specs/**
+.docs/**
 
 # datasets (never push to remote — git-workflow rule)
 # NOTE: dataset/ committed for Vercel CI (including kanjivg/ for stroke data)
