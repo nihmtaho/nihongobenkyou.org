@@ -54,9 +54,11 @@ export function useLaunchCustomDeckSession(userId: string) {
         qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deck.id] })
       }
 
-      let queue: VocabWithSRS[] = words.map((w) => {
+      let queue: VocabWithSRS[] = words.flatMap((w) => {
         const s = srsMap.get(w.id)
-        return {
+        if (s?.is_known)
+          return []
+        return [{
           vocab_id: w.id,
           word: w.kanji ?? null,
           reading: w.kana,
@@ -88,11 +90,11 @@ export function useLaunchCustomDeckSession(userId: string) {
           last_review: s?.last_review ?? today,
           due: s?.due ?? today,
           last_rating: s?.last_rating ?? null,
-          is_known: false,
+          is_known: s?.is_known ?? false,
           consecutive_correct: s?.consecutive_correct ?? 0,
           pending_sync: false,
           updated_at: s?.updated_at ?? now,
-        }
+        }]
       })
 
       queue = [...queue].sort(() => Math.random() - 0.5)

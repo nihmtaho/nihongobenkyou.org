@@ -54,8 +54,11 @@ export function useLaunchVocabSession(userId: string) {
           return [{ ...v, ...c }]
         }
 
-        if (c)
+        if (c) {
+          if (c.is_known)
+            return []
           return [{ ...v, ...c }]
+        }
 
         // New card with FSRS defaults
         return [{
