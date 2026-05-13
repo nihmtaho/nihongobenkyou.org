@@ -132,6 +132,11 @@ export async function reactivateAccount(): Promise<void> {
   }
 }
 
+export async function getCurrentUserId(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.user.id ?? null
+}
+
 export async function deleteAccount(): Promise<void> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session?.user)

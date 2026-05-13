@@ -27,8 +27,13 @@ export interface RemoteReviewEvent {
   book_source: string
   card_type: CardType
   rating: number
-  interval_days: number
-  ease_factor: number
+  // FSRS fields (sent on insert; present on newer rows)
+  scheduled_days?: number
+  stability?: number
+  difficulty?: number
+  // SM-2 legacy fields (present on older rows from Supabase download)
+  interval_days?: number
+  ease_factor?: number
   due_date: string
   review_count: number
   is_known: boolean

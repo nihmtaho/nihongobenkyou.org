@@ -1,35 +1,30 @@
-import type { KanjiCardState } from '../types/kanji'
 import type { ReviewLogEntry } from '../types/review-log'
-import type { CardState, SRSRating } from '../types/srs'
-import { AuthError } from '../api/auth'
+import type { SRSCard } from '../types/srs'
+import { AuthError, getCurrentUserId } from '../api/auth'
 import {
   fetchReviewEventsSince,
   insertReviewEvents,
   upsertUserCardSnapshots,
 } from '../api/review-log'
-import { supabase } from '../api/supabase'
 import { db } from './schema'
 
 export { SyncError } from '../api/user-cards'
 
 const UPLOAD_CHUNK_SIZE = 200
+const DEFAULT_FSRS_DIFFICULTY = 5
+const DEFAULT_STABILITY_DAYS  = 1
 
 let isSyncing = false
 
-// ----------------------------------------------------------------
-// Upload: pending review_log entries → Supabase review_log INSERT
-// ----------------------------------------------------------------
 export async function uploadPendingReviews(): Promise<void> {
   if (isSyncing)
     return
   isSyncing = true
 
   try {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session)
+    const userId = await getCurrentUserId()
+    if (!userId)
       return
-
-    const userId = session.user.id
 
     const pending = await db.review_log
       .toCollection()
@@ -51,17 +46,18 @@ export async function uploadPendingReviews(): Promise<void> {
       const chunk = pending.slice(i, i + UPLOAD_CHUNK_SIZE)
 
       const remoteRows = chunk.map(e => ({
-        user_id: e.userId,
-        vocab_id: e.vocabId,
-        book_source: e.bookSource,
-        card_type: e.cardType,
-        rating: e.rating,
-        interval_days: e.intervalDays,
-        ease_factor: e.easeFactor,
-        due_date: e.dueDate.slice(0, 10),
-        review_count: e.reviewCount,
-        is_known: e.isKnown,
-        reviewed_at: e.reviewedAt,
+        user_id:       e.userId,
+        vocab_id:      e.vocabId,
+        book_source:   e.bookSource,
+        card_type:     e.cardType,
+        rating:        e.rating,
+        scheduled_days: e.scheduledDays,
+        stability:     e.stability,
+        difficulty:    e.difficulty,
+        due_date:      e.dueDate.slice(0, 10),
+        review_count:  e.reviewCount,
+        is_known:      e.isKnown,
+        reviewed_at:   e.reviewedAt,
       }))
 
       try {
@@ -97,9 +93,6 @@ export async function uploadPendingReviews(): Promise<void> {
   }
 }
 
-// ----------------------------------------------------------------
-// Download: Supabase review_log events since cursor → Dexie state
-// ----------------------------------------------------------------
 export async function downloadNewReviews(userId: string): Promise<void> {
   const cursorSetting = await db.settings.get('review_log_cursor')
   const cursor = (cursorSetting?.value as number | undefined) ?? 0
@@ -131,45 +124,33 @@ export async function downloadNewReviews(userId: string): Promise<void> {
   for (const event of events) {
     if (localEventRemoteIds.has(event.id))
       continue
-
-    // Skip events from before the last progress reset
     if (progressResetAt && event.reviewed_at <= progressResetAt)
       continue
 
-    if (event.card_type === 'vocab') {
-      const existing = await db.user_cards.get([userId, event.vocab_id])
-      if (!existing || event.reviewed_at > (existing.updated_at ?? '')) {
-        await db.user_cards.put({
-          userId,
-          vocabId: event.vocab_id,
-          interval_days: event.interval_days,
-          ease_factor: event.ease_factor,
-          due_date: event.due_date,
-          review_count: event.review_count,
-          last_rating: event.rating as SRSRating,
-          pending_sync: false,
-          updated_at: event.reviewed_at,
-          is_known: event.is_known,
-          consecutive_correct: 0, // intentional: client-side only, not stored on server
-        } satisfies CardState)
-      }
-    }
-    else if (event.card_type === 'kanji') {
-      const existing = await db.kanji_cards.get([userId, event.vocab_id])
-      if (!existing || event.reviewed_at > (existing.updated_at ?? '')) {
-        await db.kanji_cards.put({
-          userId,
-          char: event.vocab_id,
-          interval_days: event.interval_days,
-          ease_factor: event.ease_factor,
-          due_date: event.due_date,
-          review_count: event.review_count,
-          last_rating: event.rating as SRSRating,
-          pending_sync: false,
-          updated_at: event.reviewed_at,
-          consecutive_correct: 0, // intentional: client-side only, not stored on server
-        } satisfies KanjiCardState)
-      }
+    const cardType = event.card_type === 'vocab' ? 'vocab' : 'kanji'
+    const existing = await db.srs_cards.get([userId, event.vocab_id])
+
+    if (!existing || event.reviewed_at > (existing.updated_at ?? '')) {
+      await db.srs_cards.put({
+        userId,
+        cardId:              event.vocab_id,
+        cardType,
+        deckId:              null,
+        state:               'review',
+        stability:           event.stability      ?? event.interval_days ?? DEFAULT_STABILITY_DAYS,
+        difficulty:          event.difficulty     ?? DEFAULT_FSRS_DIFFICULTY,
+        elapsed_days:        0,
+        scheduled_days:      event.scheduled_days ?? event.interval_days ?? DEFAULT_STABILITY_DAYS,
+        reps:                event.review_count,
+        lapses:              0,
+        last_review:         event.reviewed_at.slice(0, 10),
+        due:                 event.due_date.slice(0, 10),
+        last_rating:         event.rating as SRSCard['last_rating'],
+        is_known:            event.is_known ?? false,
+        consecutive_correct: 0,
+        pending_sync:        false,
+        updated_at:          event.reviewed_at,
+      } satisfies SRSCard)
     }
   }
 
@@ -177,10 +158,6 @@ export async function downloadNewReviews(userId: string): Promise<void> {
   await db.settings.put({ key: 'review_log_cursor', value: maxId })
 }
 
-// ----------------------------------------------------------------
-// Snapshot: write current Dexie state back as server-side snapshot
-// Called after a successful upload so new devices bootstrap faster.
-// ----------------------------------------------------------------
 async function exportCurrentStateAsSnapshot(
   userId: string,
   uploadedEntries: ReviewLogEntry[],
@@ -193,67 +170,28 @@ async function exportCurrentStateAsSnapshot(
     cursor,
   )
 
-  const affectedVocabIds = [...new Set(
-    uploadedEntries
-      .filter((e): e is ReviewLogEntry & { cardType: 'vocab' } => e.cardType === 'vocab')
-      .map(e => e.vocabId),
-  )]
-  const affectedKanjiIds = [...new Set(
-    uploadedEntries
-      .filter((e): e is ReviewLogEntry & { cardType: 'kanji' } => e.cardType === 'kanji')
-      .map(e => e.vocabId),
-  )]
+  const affectedIds = [...new Set(uploadedEntries.map(e => e.vocabId))]
+  const cards = await db.srs_cards
+    .filter(c => c.userId === userId && affectedIds.includes(c.cardId))
+    .toArray()
 
-  const snapshots = []
+  if (cards.length === 0)
+    return
 
-  if (affectedVocabIds.length > 0) {
-    const cards = await db.user_cards
-      .toCollection()
-      .filter(c => c.userId === userId && affectedVocabIds.includes(c.vocabId))
-      .toArray()
+  const snapshots = cards.map(card => ({
+    user_id:       userId,
+    vocab_id:      card.cardId,
+    card_type:     card.cardType === 'kanji' ? 'kanji' as const : 'vocab' as const,
+    interval_days: card.scheduled_days,
+    ease_factor:   Math.max(1.3, 3.18 - (card.difficulty - 1) * 0.188),
+    due_date:      card.due,
+    review_count:  card.reps,
+    last_rating:   card.last_rating,
+    is_known:      card.is_known,
+    snapshot_at:   card.updated_at,
+    cursor_id:     maxRemoteId,
+  }))
 
-    for (const card of cards) {
-      snapshots.push({
-        user_id: userId,
-        vocab_id: card.vocabId,
-        card_type: 'vocab' as const,
-        interval_days: card.interval_days,
-        ease_factor: card.ease_factor,
-        due_date: card.due_date.slice(0, 10),
-        review_count: card.review_count,
-        last_rating: card.last_rating,
-        is_known: card.is_known,
-        snapshot_at: card.updated_at,
-        cursor_id: maxRemoteId,
-      })
-    }
-  }
-
-  if (affectedKanjiIds.length > 0) {
-    const cards = await db.kanji_cards
-      .toCollection()
-      .filter(c => c.userId === userId && affectedKanjiIds.includes(c.char))
-      .toArray()
-
-    for (const card of cards) {
-      snapshots.push({
-        user_id: userId,
-        vocab_id: card.char,
-        card_type: 'kanji' as const,
-        interval_days: card.interval_days,
-        ease_factor: card.ease_factor,
-        due_date: card.due_date.slice(0, 10),
-        review_count: card.review_count,
-        last_rating: card.last_rating ?? null,
-        is_known: false,
-        snapshot_at: card.updated_at,
-        cursor_id: maxRemoteId,
-      })
-    }
-  }
-
-  if (snapshots.length > 0) {
-    await upsertUserCardSnapshots(snapshots)
-    await db.settings.put({ key: 'review_log_cursor', value: maxRemoteId })
-  }
+  await upsertUserCardSnapshots(snapshots)
+  await db.settings.put({ key: 'review_log_cursor', value: maxRemoteId })
 }

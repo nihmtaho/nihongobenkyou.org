@@ -1,4 +1,4 @@
-import type { KanjiCardState } from '../types/kanji'
+import type { SRSCard } from '../types/srs'
 import { db } from '../db/schema'
 import { supabase } from './supabase'
 
@@ -10,10 +10,10 @@ export class KanjiSyncError extends Error {
 }
 
 export async function flushKanjiCards(userId: string): Promise<void> {
-  const pending = await db.kanji_cards
-    .where('pending_sync')
-    .equals(1)
-    .filter(c => c.userId === userId)
+  const pending = await db.srs_cards
+    .where('[userId+cardType]')
+    .equals([userId, 'kanji'])
+    .filter(c => c.pending_sync === true)
     .toArray()
 
   if (pending.length === 0)
@@ -21,11 +21,11 @@ export async function flushKanjiCards(userId: string): Promise<void> {
 
   const rows = pending.map(card => ({
     user_id: card.userId,
-    char: card.char,
-    interval_days: card.interval_days,
-    ease_factor: card.ease_factor,
-    due_date: card.due_date,
-    review_count: card.review_count,
+    char: card.cardId,
+    interval_days: card.scheduled_days,
+    ease_factor: 2.5,
+    due_date: card.due,
+    review_count: card.reps,
     last_rating: card.last_rating,
     updated_at: card.updated_at,
   }))
@@ -37,8 +37,9 @@ export async function flushKanjiCards(userId: string): Promise<void> {
   if (error)
     throw new KanjiSyncError(error.message)
 
-  await db.kanji_cards
-    .where('[userId+char]')
-    .anyOf(pending.map(c => [c.userId, c.char]))
-    .modify({ pending_sync: false } as Partial<KanjiCardState>)
+  const uploadedKeys = pending.map(c => [c.userId, c.cardId] as [string, string])
+  await db.srs_cards
+    .where('[userId+cardId]')
+    .anyOf(uploadedKeys as never[])
+    .modify({ pending_sync: false } as Partial<SRSCard>)
 }
