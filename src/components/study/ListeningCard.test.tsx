@@ -106,7 +106,7 @@ describe('listeningCard', () => {
     )
     await user.click(screen.getAllByText('???')[0])
     await user.click(screen.getByRole('button', { name: /good/i }))
-    expect(onRate).toHaveBeenCalledWith(2)
+    expect(onRate).toHaveBeenCalledWith(3)
   })
 
   it('shows unavailability notice when audio_filename is null', () => {

@@ -135,12 +135,12 @@ export function ReadingComprehensionCard({ passage, card, onRate }: ReadingCompr
               return (
                 <Button
                   key={r}
-                  variant={RATING_VARIANTS[r-1]}
+                  variant={RATING_VARIANTS[r - 1]}
                   className={`flex-1 ${preselected === r ? 'ring-2 ring-offset-1 ring-foreground' : ''}`}
-                  aria-label={RATING_LABELS[r-1].toLowerCase()}
+                  aria-label={RATING_LABELS[r - 1].toLowerCase()}
                   onClick={() => onRate(r)}
                 >
-                  {RATING_LABELS[r-1]}
+                  {RATING_LABELS[r - 1]}
                 </Button>
               )
             })}

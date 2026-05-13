@@ -38,7 +38,8 @@ function CustomDecksPage() {
     queryKey: ['started-deck-ids', effectiveUserId],
     queryFn: async () => {
       const rows = await db.srs_cards
-        .where('userId').equals(effectiveUserId)
+        .where('userId')
+        .equals(effectiveUserId)
         .filter(r => r.deckId !== null)
         .toArray()
       return new Set(rows.map(r => r.deckId))

@@ -1,5 +1,5 @@
-import type { SRSCard } from '../../types/srs'
 import type { KanjiItem } from '../../types/kanji'
+import type { SRSCard } from '../../types/srs'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { KanjiCard } from './KanjiCard'

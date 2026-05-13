@@ -1,8 +1,8 @@
 import type { SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { initSRSCard, upsertSRSCard } from '../db/srs-cards'
 import { db } from '../db/schema'
+import { initSRSCard, upsertSRSCard } from '../db/srs-cards'
 import { scheduleFSRS } from '../lib/srs'
 
 export function useCustomDeckVocabSRS(userId: string, deckId: string) {
@@ -23,10 +23,10 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
       await upsertSRSCard({
         ...existing,
         ...result,
-        last_rating:         rating,
+        last_rating: rating,
         consecutive_correct: newConsecutiveCorrect,
-        pending_sync:        true,
-        updated_at:          now,
+        pending_sync: true,
+        updated_at: now,
       })
     },
     onSuccess: () => {

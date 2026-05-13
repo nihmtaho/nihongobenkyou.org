@@ -27,11 +27,11 @@ export async function initSRSCard(
     cardType,
     deckId,
     ...initFSRSCard(),
-    last_rating:         null,
-    is_known:            false,
+    last_rating: null,
+    is_known: false,
     consecutive_correct: 0,
-    pending_sync:        false,
-    updated_at:          new Date().toISOString(),
+    pending_sync: false,
+    updated_at: new Date().toISOString(),
   })
 }
 
@@ -71,7 +71,7 @@ export async function deleteSRSCardsForDeck(userId: string, deckId: string): Pro
 }
 
 export async function migrateSRSCardsUserId(oldUserId: string, newUserId: string): Promise<void> {
-  await db.transaction('rw', db.srs_cards, async () => {
+  await db.transaction('rw', ['srs_cards'], async () => {
     const rows = await db.srs_cards.filter(r => r.userId === oldUserId).toArray()
     if (rows.length === 0)
       return

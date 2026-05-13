@@ -28,19 +28,19 @@ const USER_A = 'user-a'
 const USER_B = 'user-b'
 
 const baseSRSCard: Omit<SRSCard, 'userId' | 'cardId' | 'cardType' | 'due'> = {
-  deckId:              null,
-  state:               'review',
-  stability:           4.0,
-  difficulty:          5.0,
-  elapsed_days:        3,
-  scheduled_days:      4,
-  reps:                2,
-  lapses:              0,
-  last_review:         TODAY,
-  last_rating:         null,
-  pending_sync:        false,
-  updated_at:          new Date().toISOString(),
-  is_known:            false,
+  deckId: null,
+  state: 'review',
+  stability: 4.0,
+  difficulty: 5.0,
+  elapsed_days: 3,
+  scheduled_days: 4,
+  reps: 2,
+  lapses: 0,
+  last_review: TODAY,
+  last_rating: null,
+  pending_sync: false,
+  updated_at: new Date().toISOString(),
+  is_known: false,
   consecutive_correct: 0,
 }
 

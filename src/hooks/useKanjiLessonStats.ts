@@ -71,27 +71,33 @@ export function useKanjiLessonStats(userId: string) {
       const lessonNumbers = [...kanjiByLesson.keys()].sort((a, b) => a - b)
 
       function computeKanjiStats(chars: string[]): KanjiLessonSRSStats {
-        const cardList = chars.flatMap(c => { const card = kanjiCardMap.get(c); return card ? [card] : [] })
+        const cardList = chars.flatMap((c) => {
+          const card = kanjiCardMap.get(c)
+          return card ? [card] : []
+        })
         return {
           total: chars.length,
-          new:      chars.length - cardList.length,
+          new: chars.length - cardList.length,
           learning: cardList.filter(c => c.scheduled_days < 8).length,
-          review:   cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length,
-          mature:   cardList.filter(c => c.scheduled_days >= 21).length,
-          due:      cardList.filter(c => c.due <= now).length,
+          review: cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length,
+          mature: cardList.filter(c => c.scheduled_days >= 21).length,
+          due: cardList.filter(c => c.due <= now).length,
           next_due_date: cardList.filter(c => c.due > now).map(c => c.due).sort()[0] ?? null,
         }
       }
 
       function computeRvVocabStats(rvIds: string[]): KanjiLessonSRSStats {
-        const cardList = rvIds.flatMap(id => { const card = rvCardMap.get(id); return card ? [card] : [] })
+        const cardList = rvIds.flatMap((id) => {
+          const card = rvCardMap.get(id)
+          return card ? [card] : []
+        })
         return {
-          total:    rvIds.length,
-          new:      rvIds.length - cardList.length,
+          total: rvIds.length,
+          new: rvIds.length - cardList.length,
           learning: cardList.filter(c => c.scheduled_days < 8 && !c.is_known).length,
-          review:   cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21 && !c.is_known).length,
-          mature:   cardList.filter(c => c.scheduled_days >= 21 || c.is_known).length,
-          due:      cardList.filter(c => !c.is_known && c.due <= now).length,
+          review: cardList.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21 && !c.is_known).length,
+          mature: cardList.filter(c => c.scheduled_days >= 21 || c.is_known).length,
+          due: cardList.filter(c => !c.is_known && c.due <= now).length,
           next_due_date: cardList.filter(c => !c.is_known && c.due > now).map(c => c.due).sort()[0] ?? null,
         }
       }

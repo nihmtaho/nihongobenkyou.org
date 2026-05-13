@@ -40,8 +40,8 @@ export function ListeningCard({ card, distractors, playbackRate, onRateChange, o
         </Alert>
         <ButtonGroup className="w-full">
           {([1, 2, 3, 4] as SRSRating[]).map(r => (
-            <Button key={r} variant={RATING_VARIANTS[r-1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r-1].toLowerCase()}>
-              {RATING_LABELS[r-1]}
+            <Button key={r} variant={RATING_VARIANTS[r - 1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r - 1].toLowerCase()}>
+              {RATING_LABELS[r - 1]}
             </Button>
           ))}
         </ButtonGroup>
@@ -116,12 +116,12 @@ export function ListeningCard({ card, distractors, playbackRate, onRateChange, o
             return (
               <Button
                 key={r}
-                variant={RATING_VARIANTS[r-1]}
+                variant={RATING_VARIANTS[r - 1]}
                 className={`flex-1 ${preselectedRating === r ? 'ring-2 ring-offset-1 ring-foreground' : ''}`}
-                aria-label={RATING_LABELS[r-1].toLowerCase()}
+                aria-label={RATING_LABELS[r - 1].toLowerCase()}
                 onClick={() => onRate(r)}
               >
-                {RATING_LABELS[r-1]}
+                {RATING_LABELS[r - 1]}
               </Button>
             )
           })}

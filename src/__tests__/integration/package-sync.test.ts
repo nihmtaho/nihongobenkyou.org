@@ -25,9 +25,10 @@ function makeLogEntry(vocabId: string, reviewedAt: string): Omit<ReviewLogEntry,
     vocabId,
     bookSource: 'minna_shokyuu_1',
     cardType: 'vocab',
-    rating: 2,
-    intervalDays: 1,
-    easeFactor: 2.5,
+    rating: 3,
+    scheduledDays: 4,
+    stability: 4,
+    difficulty: 5,
     dueDate: '2026-05-01',
     reviewCount: 1,
     isKnown: false,
@@ -43,8 +44,7 @@ function makeStreak(date: string, current: number): StreakData {
 
 function makeEmptyPkg(overrides: Partial<SyncPackagePayload> = {}): SyncPackagePayload {
   return {
-    user_cards: [],
-    kanji_cards: [],
+    srs_cards: [],
     custom_decks: [],
     custom_vocabulary: [],
     review_log: [],
@@ -56,8 +56,7 @@ function makeEmptyPkg(overrides: Partial<SyncPackagePayload> = {}): SyncPackageP
 beforeEach(async () => {
   await db.review_log.clear()
   await db.streaks.clear()
-  await db.user_cards.clear()
-  await db.kanji_cards.clear()
+  await db.srs_cards.clear()
   await db.custom_decks.clear()
   await db.custom_vocabulary.clear()
 })
@@ -65,8 +64,7 @@ beforeEach(async () => {
 afterEach(async () => {
   await db.review_log.clear()
   await db.streaks.clear()
-  await db.user_cards.clear()
-  await db.kanji_cards.clear()
+  await db.srs_cards.clear()
   await db.custom_decks.clear()
   await db.custom_vocabulary.clear()
 })

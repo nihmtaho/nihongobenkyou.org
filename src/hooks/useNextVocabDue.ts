@@ -5,7 +5,8 @@ export function useNextVocabDue(userId: string) {
   return useQuery<string | null>({
     queryKey: ['next-vocab-due', userId],
     queryFn: async () => {
-      if (!userId) return null
+      if (!userId)
+        return null
       const today = new Date().toISOString().slice(0, 10)
       const cards = await db.srs_cards
         .where('[userId+due]')

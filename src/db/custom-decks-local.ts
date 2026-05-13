@@ -1,6 +1,6 @@
 import type { CustomDeck, CustomVocabItem, ParsedVocabItem } from '../types/custom-deck'
-import { bulkUpsertCustomDeckSRS, getCustomDeckSRS, migrateCustomDeckSRSUserId } from './custom-deck-srs'
 import { db } from './schema'
+import { getSRSCardsForDeck, initSRSCard, migrateSRSCardsUserId } from './srs-cards'
 
 export async function createDeck(
   userId: string,
@@ -44,11 +44,12 @@ export async function updateDeck(
 }
 
 export async function deleteDeck(deckId: string): Promise<void> {
-  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary, 'custom_deck_srs'], async () => {
+  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary], async () => {
     await db.custom_vocabulary.where('deck_id').equals(deckId).delete()
-    await db.custom_deck_srs.where('deckId').equals(deckId).delete()
     await db.custom_decks.delete(deckId)
   })
+  // Delete associated SRS cards by deckId (indexed separately from userId+cardId)
+  await db.srs_cards.where('deckId').equals(deckId).delete()
 }
 
 export async function getDeckWords(deckId: string): Promise<CustomVocabItem[]> {
@@ -90,32 +91,15 @@ export async function addWords(
 
   // If the deck has already been started, create SRS entries immediately so
   // useCustomDeckProgress.started stays in sync with word_count.
-  const existingSRS = await getCustomDeckSRS(userId, deckId)
+  const existingSRS = await getSRSCardsForDeck(userId, deckId)
   if (existingSRS.length > 0) {
-    const today = now.slice(0, 10)
-    await bulkUpsertCustomDeckSRS(words.map(w => ({
-      userId,
-      itemId: w.id,
-      deckId,
-      interval_days: 0,
-      ease_factor: 2.5,
-      due_date: today,
-      review_count: 0,
-      card_stage: 'learning' as const,
-      learning_step: 0,
-      lapse_count: 0,
-      last_rating: null,
-      consecutive_correct: 0,
-      pending_sync: true,
-      updated_at: now,
-    })))
+    await Promise.all(words.map(w => initSRSCard(userId, w.id, 'custom_vocab', deckId)))
   }
 }
 
 export async function deleteWord(wordId: string, deckId: string, userId: string): Promise<void> {
-  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary, 'custom_deck_srs'], async () => {
+  await db.transaction('rw', [db.custom_decks, db.custom_vocabulary], async () => {
     await db.custom_vocabulary.delete(wordId)
-    await db.custom_deck_srs.where('[userId+itemId]').equals([userId, wordId]).delete()
     const deck = await db.custom_decks.get(deckId)
     if (deck) {
       await db.custom_decks.update(deckId, {
@@ -124,6 +108,8 @@ export async function deleteWord(wordId: string, deckId: string, userId: string)
       })
     }
   })
+  // Delete associated SRS card outside transaction (different table family)
+  await db.srs_cards.where('[userId+cardId]').equals([userId, wordId]).delete()
 }
 
 export async function updateWord(
@@ -148,5 +134,5 @@ export async function migrateGuestDecks(realUserId: string): Promise<void> {
       .modify({ user_id: realUserId })
   })
 
-  await migrateCustomDeckSRSUserId('guest', realUserId)
+  await migrateSRSCardsUserId('guest', realUserId)
 }

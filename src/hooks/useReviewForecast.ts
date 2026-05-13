@@ -39,8 +39,8 @@ export async function getForecast(userId: string): Promise<ForecastDay[]> {
     const jsDay = new Date(date).getDay()
     return {
       date,
-      label:   WEEKDAY_LABELS[jsDay],
-      count:   countPerDay[date] ?? 0,
+      label: WEEKDAY_LABELS[jsDay],
+      count: countPerDay[date] ?? 0,
       isToday: date === today,
     }
   })
@@ -49,8 +49,8 @@ export async function getForecast(userId: string): Promise<ForecastDay[]> {
 export function useReviewForecast(userId: string) {
   return useQuery({
     queryKey: ['review-forecast', userId],
-    queryFn:  () => getForecast(userId),
-    enabled:  !!userId,
+    queryFn: () => getForecast(userId),
+    enabled: !!userId,
     staleTime: 0,
   })
 }

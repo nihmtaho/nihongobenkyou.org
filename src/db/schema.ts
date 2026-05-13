@@ -1,4 +1,5 @@
 import type { EntityTable } from 'dexie'
+import type { CustomDeck, CustomVocabItem } from '../types/custom-deck'
 import type { LessonMeta } from '../types/dataset'
 import type { KanjiItem } from '../types/kanji'
 import type { Passage } from '../types/passages'
@@ -6,7 +7,6 @@ import type { ReviewLogEntry } from '../types/review-log'
 import type { SRSCard } from '../types/srs'
 import type { StudySession } from '../types/study'
 import type { VocabItem } from '../types/vocabulary'
-import type { CustomDeck, CustomVocabItem } from '../types/custom-deck'
 import Dexie from 'dexie'
 
 interface SyncQueueItem {
@@ -76,20 +76,24 @@ export class NihongoDB extends Dexie {
       active_vocab_srs: '[userId+vocabId], due_date, [userId+due_date]',
       active_kanji_srs: '[userId+char], due_date, [userId+due_date]',
     })
-    this.version(9).upgrade((tx) => Promise.all([
+    this.version(9).upgrade(tx => Promise.all([
       tx.table('user_cards').toCollection().modify((c) => { c.consecutive_correct ??= 0 }),
       tx.table('kanji_cards').toCollection().modify((c) => { c.consecutive_correct ??= 0 }),
     ]))
-    this.version(10).upgrade((tx) => Promise.all([
+    this.version(10).upgrade(tx => Promise.all([
       tx.table('custom_decks').toCollection().modify((d) => { d.is_active ??= false }),
       tx.table('custom_vocabulary').toCollection().modify((w) => { w.han_viet ??= null }),
     ]))
-    this.version(11).upgrade((tx) => Promise.all([
+    this.version(11).upgrade(tx => Promise.all([
       tx.table('user_cards').toCollection().modify((c) => {
-        c.card_stage ??= 'review'; c.learning_step ??= 0; c.lapse_count ??= 0
+        c.card_stage ??= 'review'
+        c.learning_step ??= 0
+        c.lapse_count ??= 0
       }),
       tx.table('kanji_cards').toCollection().modify((c) => {
-        c.card_stage ??= 'review'; c.learning_step ??= 0; c.lapse_count ??= 0
+        c.card_stage ??= 'review'
+        c.learning_step ??= 0
+        c.lapse_count ??= 0
       }),
     ]))
     this.version(12).stores({
@@ -99,40 +103,42 @@ export class NihongoDB extends Dexie {
     // v14: Unify all SRS into srs_cards (FSRS-4.5). Remove active deck + old SRS tables.
     this.version(14).stores({
       srs_cards: '[userId+cardId], due, [userId+due], pending_sync, cardType, deckId, [userId+cardType], [userId+deckId+due]',
-      user_cards:         null,
-      kanji_cards:        null,
-      custom_deck_srs:    null,
+      user_cards: null,
+      kanji_cards: null,
+      custom_deck_srs: null,
       active_vocab_items: null,
       active_kanji_items: null,
-      active_vocab_srs:   null,
-      active_kanji_srs:   null,
+      active_vocab_srs: null,
+      active_kanji_srs: null,
     }).upgrade(async (tx) => {
       const now = new Date().toISOString()
       const today = now.slice(0, 10)
 
-      function clamp(v: number, min: number, max: number) { return Math.min(max, Math.max(min, v)) }
+      function clamp(v: number, min: number, max: number) {
+        return Math.min(max, Math.max(min, v))
+      }
 
       function migrateCard(card: Record<string, unknown>, cardType: 'vocab' | 'kanji' | 'custom_vocab', deckId: string | null): SRSCard {
         const ef = (card.ease_factor as number | undefined) ?? 2.5
         return {
-          userId:             card.userId as string,
-          cardId:             (card.vocabId ?? card.char ?? card.itemId) as string,
+          userId: card.userId as string,
+          cardId: (card.vocabId ?? card.char ?? card.itemId) as string,
           cardType,
           deckId,
-          state:              (card.card_stage as SRSCard['state'] | undefined) ?? 'review',
-          stability:          (card.interval_days as number | undefined) || 1,
-          difficulty:         clamp(10 - (ef - 1.3) * 3.86, 1, 10),
-          elapsed_days:       0,
-          scheduled_days:     (card.interval_days as number | undefined) || 1,
-          reps:               (card.review_count as number | undefined) ?? 0,
-          lapses:             (card.lapse_count as number | undefined) ?? 0,
-          last_review:        ((card.updated_at as string | undefined) ?? now).slice(0, 10),
-          due:                ((card.due_date as string | undefined) ?? today).slice(0, 10),
-          last_rating:        card.last_rating != null ? (card.last_rating as number) + 1 as SRSCard['last_rating'] : null,
-          is_known:           (card.is_known as boolean | undefined) ?? false,
+          state: (card.card_stage as SRSCard['state'] | undefined) ?? 'review',
+          stability: (card.interval_days as number | undefined) || 1,
+          difficulty: clamp(10 - (ef - 1.3) * 3.86, 1, 10),
+          elapsed_days: 0,
+          scheduled_days: (card.interval_days as number | undefined) || 1,
+          reps: (card.review_count as number | undefined) ?? 0,
+          lapses: (card.lapse_count as number | undefined) ?? 0,
+          last_review: ((card.updated_at as string | undefined) ?? now).slice(0, 10),
+          due: ((card.due_date as string | undefined) ?? today).slice(0, 10),
+          last_rating: card.last_rating != null ? (card.last_rating as number) + 1 as SRSCard['last_rating'] : null,
+          is_known: (card.is_known as boolean | undefined) ?? false,
           consecutive_correct: (card.consecutive_correct as number | undefined) ?? 0,
-          pending_sync:       (card.pending_sync as boolean | undefined) ?? false,
-          updated_at:         (card.updated_at as string | undefined) ?? now,
+          pending_sync: (card.pending_sync as boolean | undefined) ?? false,
+          updated_at: (card.updated_at as string | undefined) ?? now,
         }
       }
 
@@ -140,7 +146,7 @@ export class NihongoDB extends Dexie {
       const userCards: Record<string, unknown>[] = await tx.table('user_cards').toArray()
       if (userCards.length > 0) {
         await tx.table('srs_cards').bulkPut(
-          userCards.map(c => migrateCard(c, 'vocab', null))
+          userCards.map(c => migrateCard(c, 'vocab', null)),
         )
       }
 
@@ -148,7 +154,7 @@ export class NihongoDB extends Dexie {
       const kanjiCards: Record<string, unknown>[] = await tx.table('kanji_cards').toArray()
       if (kanjiCards.length > 0) {
         await tx.table('srs_cards').bulkPut(
-          kanjiCards.map(c => migrateCard(c, 'kanji', null))
+          kanjiCards.map(c => migrateCard(c, 'kanji', null)),
         )
       }
 
@@ -156,7 +162,7 @@ export class NihongoDB extends Dexie {
       const customSRS: Record<string, unknown>[] = await tx.table('custom_deck_srs').toArray()
       if (customSRS.length > 0) {
         await tx.table('srs_cards').bulkPut(
-          customSRS.map(c => migrateCard(c, 'custom_vocab', c.deckId as string))
+          customSRS.map(c => migrateCard(c, 'custom_vocab', c.deckId as string)),
         )
       }
 

@@ -1,6 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query'
 import type { RemoteUserCard } from '../api/user-cards'
 import type { RemoteSnapshot } from '../types/review-log'
+import type { SRSCard } from '../types/srs'
 import { NetworkError } from '../api/auth'
 import { fetchProfile } from '../api/profiles'
 import { fetchUserCardSnapshots } from '../api/review-log'
@@ -10,6 +11,9 @@ import { bookCodePrefixToSource } from '../lib/datasets.config'
 import { db } from './schema'
 import { seedDatabase } from './seed'
 import { downloadNewReviews } from './sync'
+
+const DEFAULT_DIFFICULTY = 5
+const DEFAULT_STABILITY = 1
 
 // ----------------------------------------------------------------
 // Merge remote user_cards state into Dexie (legacy: used by
@@ -23,22 +27,30 @@ export async function mergeRemoteCardsIntoDexie(
     return
 
   for (const remote of remoteCards) {
-    const local = await db.user_cards.get([userId, remote.vocab_id])
+    const local = await db.srs_cards.get([userId, remote.vocab_id])
 
     if (!local || remote.updated_at > local.updated_at) {
-      await db.user_cards.put({
+      const card: SRSCard = {
         userId,
-        vocabId: remote.vocab_id,
-        interval_days: remote.interval_days,
-        ease_factor: remote.ease_factor,
-        due_date: remote.due_date,
-        review_count: remote.review_count,
-        last_rating: remote.last_rating as (0 | 1 | 2 | 3 | null),
-        pending_sync: false,
-        updated_at: remote.updated_at,
+        cardId: remote.vocab_id,
+        cardType: 'vocab',
+        deckId: null,
+        state: 'review',
+        stability: remote.interval_days || DEFAULT_STABILITY,
+        difficulty: DEFAULT_DIFFICULTY,
+        elapsed_days: 0,
+        scheduled_days: remote.interval_days || DEFAULT_STABILITY,
+        reps: remote.review_count,
+        lapses: 0,
+        last_review: remote.updated_at.slice(0, 10),
+        due: remote.due_date.slice(0, 10),
+        last_rating: remote.last_rating != null ? Math.max(1, Math.min(4, remote.last_rating + 1)) as SRSCard['last_rating'] : null,
         is_known: remote.is_known,
         consecutive_correct: 0, // intentional: client-side only, not stored on server
-      })
+        pending_sync: false,
+        updated_at: remote.updated_at,
+      }
+      await db.srs_cards.put(card)
     }
   }
 }
@@ -48,40 +60,30 @@ export async function mergeRemoteCardsIntoDexie(
 // ----------------------------------------------------------------
 async function seedFromSnapshots(userId: string, snapshots: RemoteSnapshot[]): Promise<void> {
   for (const s of snapshots) {
-    if (s.card_type === 'vocab') {
-      const local = await db.user_cards.get([userId, s.vocab_id])
-      if (!local || s.snapshot_at > local.updated_at) {
-        await db.user_cards.put({
-          userId,
-          vocabId: s.vocab_id,
-          interval_days: s.interval_days,
-          ease_factor: s.ease_factor,
-          due_date: s.due_date,
-          review_count: s.review_count,
-          last_rating: s.last_rating as (0 | 1 | 2 | 3 | null),
-          pending_sync: false,
-          updated_at: s.snapshot_at,
-          is_known: s.is_known,
-          consecutive_correct: 0, // intentional: client-side only, not stored on server
-        })
+    const cardType = s.card_type === 'kanji' ? 'kanji' : 'vocab'
+    const existing = await db.srs_cards.get([userId, s.vocab_id])
+    if (!existing || s.snapshot_at > existing.updated_at) {
+      const card: SRSCard = {
+        userId,
+        cardId: s.vocab_id,
+        cardType,
+        deckId: null,
+        state: 'review',
+        stability: s.interval_days || DEFAULT_STABILITY,
+        difficulty: DEFAULT_DIFFICULTY,
+        elapsed_days: 0,
+        scheduled_days: s.interval_days || DEFAULT_STABILITY,
+        reps: s.review_count,
+        lapses: 0,
+        last_review: s.snapshot_at.slice(0, 10),
+        due: s.due_date.slice(0, 10),
+        last_rating: s.last_rating != null ? Math.max(1, Math.min(4, s.last_rating + 1)) as SRSCard['last_rating'] : null,
+        is_known: s.is_known,
+        consecutive_correct: 0, // intentional: client-side only, not stored on server
+        pending_sync: false,
+        updated_at: s.snapshot_at,
       }
-    }
-    else if (s.card_type === 'kanji') {
-      const local = await db.kanji_cards.get([userId, s.vocab_id])
-      if (!local || s.snapshot_at > (local.updated_at ?? '')) {
-        await db.kanji_cards.put({
-          userId,
-          char: s.vocab_id,
-          interval_days: s.interval_days,
-          ease_factor: s.ease_factor,
-          due_date: s.due_date,
-          review_count: s.review_count,
-          last_rating: s.last_rating as (0 | 1 | 2 | 3 | null),
-          pending_sync: false,
-          updated_at: s.snapshot_at,
-          consecutive_correct: 0, // intentional: client-side only, not stored on server
-        })
-      }
+      await db.srs_cards.put(card)
     }
   }
 }
@@ -167,8 +169,8 @@ export async function onboardNewDevice(
   }
 
   // Identify which datasets are needed and seed any that are missing
-  const allCards = await db.user_cards.where({ userId }).toArray()
-  const neededPrefixes = new Set(allCards.map(c => c.vocabId.split('_')[0]))
+  const allCards = await db.srs_cards.where('[userId+cardType]').equals([userId, 'vocab']).toArray()
+  const neededPrefixes = new Set(allCards.map(c => c.cardId.split('_')[0]))
   const neededSources = [...neededPrefixes]
     .map(prefix => bookCodePrefixToSource[prefix])
     .filter(Boolean)

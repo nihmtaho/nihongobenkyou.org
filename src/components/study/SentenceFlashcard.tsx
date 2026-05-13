@@ -98,8 +98,8 @@ function RatingBar({ onRate }: { onRate: (r: SRSRating) => void }) {
   return (
     <ButtonGroup className="w-full">
       {([1, 2, 3, 4] as SRSRating[]).map(r => (
-        <Button key={r} variant={RATING_VARIANTS[r-1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r-1].toLowerCase()}>
-          {RATING_LABELS[r-1]}
+        <Button key={r} variant={RATING_VARIANTS[r - 1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r - 1].toLowerCase()}>
+          {RATING_LABELS[r - 1]}
         </Button>
       ))}
     </ButtonGroup>

@@ -1,5 +1,4 @@
-import type { SRSCard } from '../../types/srs'
-import type { SRSRating } from '../../types/srs'
+import type { SRSCard, SRSRating } from '../../types/srs'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'

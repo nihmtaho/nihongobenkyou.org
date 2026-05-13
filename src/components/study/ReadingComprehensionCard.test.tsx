@@ -90,6 +90,6 @@ describe('readingComprehensionCard', () => {
     await user.click(screen.getByRole('button', { name: 'まいにち' }))
     await user.click(screen.getByRole('button', { name: /xem kết quả/i }))
     await user.click(screen.getByRole('button', { name: /good/i }))
-    expect(onRate).toHaveBeenCalledWith(2)
+    expect(onRate).toHaveBeenCalledWith(3)
   })
 })

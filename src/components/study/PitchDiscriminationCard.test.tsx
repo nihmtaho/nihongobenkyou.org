@@ -76,6 +76,6 @@ describe('pitchDiscriminationCard', () => {
     render(<PitchDiscriminationCard card={makeCard()} onRate={onRate} />)
     await user.click(screen.getByRole('button', { name: /^A$/ }))
     await user.click(screen.getByRole('button', { name: /good/i }))
-    expect(onRate).toHaveBeenCalledWith(2)
+    expect(onRate).toHaveBeenCalledWith(3)
   })
 })

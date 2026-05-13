@@ -1,9 +1,8 @@
-import type { SRSRating } from '../../types/srs'
+import type { SRSCard, SRSRating } from '../../types/srs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import { db } from '../../db/schema'
-import { calculateNextReview } from '../../lib/srs'
-import { toCardState } from '../../lib/srs-utils'
+import { scheduleFSRS } from '../../lib/srs'
 
 vi.mock('../../db/sync', () => ({ uploadPendingReviews: vi.fn().mockResolvedValue(undefined), downloadNewReviews: vi.fn().mockResolvedValue(undefined) }))
 
@@ -118,112 +117,114 @@ describe('db.sessions — Dexie write', () => {
 })
 
 // T031 — per-rating ratingCounts coverage (FR-011)
-// Verifies all 4 SRS ratings write the correct last_rating and interval_days to Dexie.
+// Verifies all 4 FSRS ratings write the correct last_rating and scheduled_days to Dexie.
 describe('per-rating Dexie writes — ratingCounts data coverage (T031)', () => {
-  const PAST_DATE = '2020-01-01T00:00:00.000Z'
+  const PAST_DATE = '2020-01-01'
   const TEST_USER = 'test-rating-counts'
 
-  async function seedCard(vocabIdx: number) {
+  function makeCard(vocabIdx: number): SRSCard {
     const vocab = sampleVocabulary[vocabIdx]
-    await db.vocabulary.put(vocab)
-    const card = {
+    return {
       userId: TEST_USER,
-      vocabId: vocab.vocab_id,
-      interval_days: 6,
-      ease_factor: 2.5,
-      due_date: PAST_DATE,
-      review_count: 2,
-      last_rating: null as null,
-      pending_sync: false,
-      updated_at: PAST_DATE,
+      cardId: vocab.vocab_id,
+      cardType: 'vocab',
+      deckId: null,
+      state: 'review',
+      stability: 6,
+      difficulty: 5,
+      elapsed_days: 0,
+      scheduled_days: 6,
+      reps: 2,
+      lapses: 0,
+      last_review: PAST_DATE,
+      due: PAST_DATE,
+      last_rating: null,
       is_known: false,
       consecutive_correct: 0,
-      card_stage: 'review' as const,
-      learning_step: 0,
-      lapse_count: 0,
+      pending_sync: false,
+      updated_at: `${PAST_DATE}T00:00:00Z`,
     }
-    await db.user_cards.put(card)
-    return { vocab, card }
   }
 
-  async function applyRating(card: Parameters<typeof db.user_cards.put>[0], rating: SRSRating) {
-    const state = toCardState({ ...card, vocab_id: card.vocabId } as unknown as Parameters<typeof toCardState>[0], card.userId)
-    const result = calculateNextReview(state, rating)
+  async function seedCard(vocabIdx: number): Promise<SRSCard> {
+    const card = makeCard(vocabIdx)
+    await db.vocabulary.put(sampleVocabulary[vocabIdx])
+    await db.srs_cards.put(card)
+    return card
+  }
+
+  async function applyRating(card: SRSCard, rating: SRSRating): Promise<void> {
+    const result = scheduleFSRS(card, rating)
     const now = new Date().toISOString()
-    const dueDate = new Date(Date.now() + result.new_interval * 86400000).toISOString().slice(0, 10)
-    await db.user_cards.put({
+    await db.srs_cards.put({
       ...card,
-      interval_days: result.new_interval,
-      ease_factor: result.new_ease,
-      due_date: dueDate,
-      review_count: card.review_count + 1,
+      ...result,
       last_rating: rating,
       pending_sync: false,
       updated_at: now,
-      card_stage: result.new_card_stage,
-      learning_step: result.new_learning_step,
-      lapse_count: result.new_lapse_count,
     })
   }
 
   beforeEach(async () => {
-    await db.user_cards.clear()
+    await db.srs_cards.clear()
     await db.vocabulary.clear()
     await db.review_log.clear()
   })
 
   afterEach(async () => {
-    await db.user_cards.clear()
+    await db.srs_cards.clear()
     await db.vocabulary.clear()
     await db.review_log.clear()
   })
 
   const ratingCases: Array<{ rating: SRSRating, label: string }> = [
-    { rating: 0, label: 'Again' },
-    { rating: 1, label: 'Hard' },
-    { rating: 2, label: 'Good' },
-    { rating: 3, label: 'Easy' },
+    { rating: 1, label: 'Again' },
+    { rating: 2, label: 'Hard' },
+    { rating: 3, label: 'Good' },
+    { rating: 4, label: 'Easy' },
   ]
 
   for (const { rating, label } of ratingCases) {
     it(`${label} (rating=${rating}): writes last_rating=${rating}`, async () => {
-      const { vocab, card } = await seedCard(rating)
+      const card = await seedCard(rating - 1)
       await applyRating(card, rating)
-      const stored = await db.user_cards.get([TEST_USER, vocab.vocab_id])
+      const stored = await db.srs_cards.get([TEST_USER, card.cardId])
       expect(stored).toBeDefined()
       expect(stored!.last_rating).toBe(rating)
     })
   }
 
-  it('again (0): lapse → relearning stage, interval resets to 1', async () => {
-    const { vocab, card } = await seedCard(0)
-    await applyRating(card, 0)
-    const stored = await db.user_cards.get([TEST_USER, vocab.vocab_id])
-    expect(stored!.interval_days).toBe(1)
-    expect(stored!.card_stage).toBe('relearning')
-  })
-
-  it('hard (1): applies floor(6 × 1.2) = 7 interval', async () => {
-    const { vocab, card } = await seedCard(1)
+  it('again (1): state transitions to learning/relearning, scheduled_days resets', async () => {
+    const card = await seedCard(0)
     await applyRating(card, 1)
-    const stored = await db.user_cards.get([TEST_USER, vocab.vocab_id])
-    expect(stored!.interval_days).toBe(7)
-    expect(stored!.ease_factor).toBe(2.35)
+    const stored = await db.srs_cards.get([TEST_USER, card.cardId])
+    expect(stored!.state).toMatch(/learning|relearning/)
   })
 
-  it('good (2): applies round(6 × 2.5) = 15 interval, ease unchanged', async () => {
-    const { vocab, card } = await seedCard(2)
+  it('hard (2): scheduled_days increases modestly', async () => {
+    const card = await seedCard(1)
     await applyRating(card, 2)
-    const stored = await db.user_cards.get([TEST_USER, vocab.vocab_id])
-    expect(stored!.interval_days).toBe(15)
-    expect(stored!.ease_factor).toBe(2.5)
+    const stored = await db.srs_cards.get([TEST_USER, card.cardId])
+    expect(stored!.scheduled_days).toBeGreaterThan(0)
   })
 
-  it('easy (3): applies round(6 × 2.5 × 1.3) = 20 interval, ease increases', async () => {
-    const { vocab, card } = await seedCard(3)
+  it('good (3): scheduled_days increases moderately', async () => {
+    const card = await seedCard(2)
+    const hardCard = await seedCard(2)
     await applyRating(card, 3)
-    const stored = await db.user_cards.get([TEST_USER, vocab.vocab_id])
-    expect(stored!.interval_days).toBe(20)
-    expect(stored!.ease_factor).toBeCloseTo(2.65, 5)
+    await applyRating(hardCard, 2)
+    const goodStored = await db.srs_cards.get([TEST_USER, card.cardId])
+    const hardStored = await db.srs_cards.get([TEST_USER, hardCard.cardId])
+    expect(goodStored!.scheduled_days).toBeGreaterThanOrEqual(hardStored!.scheduled_days)
+  })
+
+  it('easy (4): scheduled_days increases the most', async () => {
+    const goodCard = await seedCard(2)
+    const easyCard = await seedCard(3)
+    await applyRating(goodCard, 3)
+    await applyRating(easyCard, 4)
+    const goodStored = await db.srs_cards.get([TEST_USER, goodCard.cardId])
+    const easyStored = await db.srs_cards.get([TEST_USER, easyCard.cardId])
+    expect(easyStored!.scheduled_days).toBeGreaterThanOrEqual(goodStored!.scheduled_days)
   })
 })

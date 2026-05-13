@@ -3,38 +3,38 @@ import { describe, expect, it } from 'vitest'
 import { formatIntervalPreview, initFSRSCard, scheduleFSRS } from './srs'
 
 const baseCard: SRSCard = {
-  userId:             'u1',
-  cardId:             'test_abc',
-  cardType:           'vocab',
-  deckId:             null,
-  state:              'review',
-  stability:          4,
-  difficulty:         5,
-  elapsed_days:       4,
-  scheduled_days:     4,
-  reps:               3,
-  lapses:             0,
-  last_review:        '2026-01-01',
-  due:                '2026-01-05',
-  last_rating:        null,
-  is_known:           false,
+  userId: 'u1',
+  cardId: 'test_abc',
+  cardType: 'vocab',
+  deckId: null,
+  state: 'review',
+  stability: 4,
+  difficulty: 5,
+  elapsed_days: 4,
+  scheduled_days: 4,
+  reps: 3,
+  lapses: 0,
+  last_review: '2026-01-01',
+  due: '2026-01-05',
+  last_rating: null,
+  is_known: false,
   consecutive_correct: 0,
-  pending_sync:       false,
-  updated_at:         '2026-01-01T00:00:00Z',
+  pending_sync: false,
+  updated_at: '2026-01-01T00:00:00Z',
 }
 
 const newCard: SRSCard = {
   ...baseCard,
-  state:          'new',
-  stability:      0,
-  difficulty:     0,
-  elapsed_days:   0,
+  state: 'new',
+  stability: 0,
+  difficulty: 0,
+  elapsed_days: 0,
   scheduled_days: 0,
-  reps:           0,
+  reps: 0,
 }
 
 describe('scheduleFSRS — new card', () => {
-  it('Again (1) sets state to learning', () => {
+  it('again (1) sets state to learning', () => {
     const result = scheduleFSRS(newCard, 1)
     expect(result.state).toBe('learning')
     expect(result.reps).toBe(1)
@@ -42,14 +42,14 @@ describe('scheduleFSRS — new card', () => {
     expect(result.lapses).toBe(0)
   })
 
-  it('Good (3) on new card moves to learning', () => {
+  it('good (3) on new card moves to learning', () => {
     const result = scheduleFSRS(newCard, 3)
     expect(result.state).toBe('learning')
     expect(result.reps).toBe(1)
     expect(result.stability).toBeGreaterThan(0)
   })
 
-  it('Easy (4) on new card can graduate directly to review', () => {
+  it('easy (4) on new card can graduate directly to review', () => {
     const result = scheduleFSRS(newCard, 4)
     expect(['review', 'learning']).toContain(result.state)
     expect(result.reps).toBe(1)
@@ -58,25 +58,25 @@ describe('scheduleFSRS — new card', () => {
 })
 
 describe('scheduleFSRS — review card', () => {
-  it('Again (1) sends card to relearning', () => {
+  it('again (1) sends card to relearning', () => {
     const result = scheduleFSRS(baseCard, 1)
     expect(result.state).toBe('relearning')
     expect(result.lapses).toBe(1)
   })
 
-  it('Hard (2) increases interval less than Good', () => {
+  it('hard (2) increases interval less than Good', () => {
     const hard = scheduleFSRS(baseCard, 2)
     const good = scheduleFSRS(baseCard, 3)
     expect(hard.scheduled_days).toBeLessThan(good.scheduled_days)
   })
 
-  it('Easy (4) produces larger interval than Good', () => {
+  it('easy (4) produces larger interval than Good', () => {
     const good = scheduleFSRS(baseCard, 3)
     const easy = scheduleFSRS(baseCard, 4)
     expect(easy.scheduled_days).toBeGreaterThan(good.scheduled_days)
   })
 
-  it('Good (3) increases stability', () => {
+  it('good (3) increases stability', () => {
     const result = scheduleFSRS(baseCard, 3)
     expect(result.stability).toBeGreaterThan(baseCard.stability)
   })

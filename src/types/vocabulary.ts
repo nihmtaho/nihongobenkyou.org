@@ -33,18 +33,23 @@ export interface VocabItem {
 }
 
 export interface VocabWithSRS extends VocabItem {
-  state:          CardState
-  stability:      number
-  difficulty:     number
-  elapsed_days:   number
+  // SRSCard identity fields — present on real cards, optional on ephemeral new-card objects
+  userId?: string
+  cardId?: string
+  cardType?: 'vocab' | 'kanji' | 'custom_vocab'
+  deckId?: string | null
+  state: CardState
+  stability: number
+  difficulty: number
+  elapsed_days: number
   scheduled_days: number
-  reps:           number
-  lapses:         number
-  last_review:    string
-  due:            string
-  last_rating:    SRSRating | null
-  pending_sync:   boolean
-  updated_at:     string
-  is_known:       boolean
+  reps: number
+  lapses: number
+  last_review: string
+  due: string
+  last_rating: SRSRating | null
+  pending_sync: boolean
+  updated_at: string
+  is_known: boolean
   consecutive_correct: number
 }

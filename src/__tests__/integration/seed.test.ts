@@ -145,25 +145,32 @@ describe('seedDatabase', () => {
     expect(result).toBe('up-to-date')
   })
 
-  it('does not clear user_cards during re-seed', async () => {
-    await db.user_cards.put({
+  it('does not clear srs_cards during re-seed', async () => {
+    await db.srs_cards.put({
       userId: 'user1',
-      vocabId: 'mnn1_abc',
-      interval_days: 1,
-      ease_factor: 2.5,
-      due_date: '2026-04-20',
-      review_count: 1,
-      last_rating: 2,
-      pending_sync: false,
-      updated_at: new Date().toISOString(),
+      cardId: 'mnn1_abc',
+      cardType: 'vocab',
+      deckId: null,
+      state: 'review',
+      stability: 1,
+      difficulty: 5,
+      elapsed_days: 0,
+      scheduled_days: 1,
+      reps: 1,
+      lapses: 0,
+      last_review: '2026-04-20',
+      due: '2026-04-21',
+      last_rating: 3,
       is_known: false,
       consecutive_correct: 0,
+      pending_sync: false,
+      updated_at: new Date().toISOString(),
     })
 
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
     await seedDatabase()
 
-    const cards = await db.user_cards.toArray()
+    const cards = await db.srs_cards.toArray()
     expect(cards).toHaveLength(1)
   })
 

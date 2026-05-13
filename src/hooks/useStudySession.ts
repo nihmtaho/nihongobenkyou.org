@@ -39,18 +39,18 @@ const NOW_ISO = () => new Date().toISOString()
 const TODAY = () => NOW_ISO().slice(0, 10)
 
 const DEFAULT_SRS_FIELDS = {
-  state:               'new' as const,
-  stability:           0,
-  difficulty:          0,
-  elapsed_days:        0,
-  scheduled_days:      0,
-  reps:                0,
-  lapses:              0,
-  is_known:            false,
+  state: 'new' as const,
+  stability: 0,
+  difficulty: 0,
+  elapsed_days: 0,
+  scheduled_days: 0,
+  reps: 0,
+  lapses: 0,
+  is_known: false,
   consecutive_correct: 0,
-  pending_sync:        false,
-  last_rating:         null,
-  deckId:              null,
+  pending_sync: false,
+  last_rating: null,
+  deckId: null,
 }
 
 export function useStudySession(userId: string, config: StudyConfig) {
@@ -80,11 +80,11 @@ export function useStudySession(userId: string, config: StudyConfig) {
           return {
             ...v,
             userId,
-            cardId:      v.vocab_id,
-            cardType:    'vocab' as const,
+            cardId: v.vocab_id,
+            cardType: 'vocab' as const,
             last_review: TODAY(),
-            due:         TODAY(),
-            updated_at:  NOW_ISO(),
+            due: TODAY(),
+            updated_at: NOW_ISO(),
             ...DEFAULT_SRS_FIELDS,
           }
         })
@@ -124,11 +124,11 @@ export function useStudySession(userId: string, config: StudyConfig) {
         return {
           ...v,
           userId,
-          cardId:      v.vocab_id,
-          cardType:    'vocab' as const,
+          cardId: v.vocab_id,
+          cardType: 'vocab' as const,
           last_review: TODAY(),
-          due:         TODAY(),
-          updated_at:  NOW_ISO(),
+          due: TODAY(),
+          updated_at: NOW_ISO(),
           ...DEFAULT_SRS_FIELDS,
         }
       })

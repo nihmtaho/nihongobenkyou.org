@@ -1,6 +1,5 @@
 import type { KanjiItem } from '../../types/kanji'
-import type { SRSCard } from '../../types/srs'
-import type { SRSRating } from '../../types/srs'
+import type { SRSCard, SRSRating } from '../../types/srs'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useFlipCardState } from '../../hooks/useFlipCardState'

@@ -1,5 +1,5 @@
-import type { SRSCard } from '../../types/srs'
 import type { KanjiItem } from '../../types/kanji'
+import type { SRSCard } from '../../types/srs'
 import { Badge } from '@/components/ui/badge'
 
 interface KanjiCardProps {

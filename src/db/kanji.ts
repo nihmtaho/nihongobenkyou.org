@@ -1,8 +1,8 @@
 import type { KanjiItem } from '../types/kanji'
 import type { SRSCard } from '../types/srs'
 import type { VocabItem } from '../types/vocabulary'
-import { initSRSCard, upsertSRSCard } from './srs-cards'
 import { db } from './schema'
+import { initSRSCard, upsertSRSCard } from './srs-cards'
 
 interface KanjiFilters {
   jlpt_level?: KanjiItem['jlpt_level']

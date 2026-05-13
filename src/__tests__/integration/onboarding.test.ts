@@ -62,21 +62,20 @@ const mockQueryClient = {
 } as unknown as QueryClient
 
 beforeEach(async () => {
-  await db.user_cards.clear()
+  await db.srs_cards.clear()
   await db.review_log.clear()
   await db.settings.clear()
   vi.clearAllMocks()
 })
 
 afterEach(async () => {
-  await db.user_cards.clear()
+  await db.srs_cards.clear()
   await db.review_log.clear()
   await db.settings.clear()
 })
 
 describe('mergeRemoteCardsIntoDexie (legacy fallback)', () => {
   it('writes remote cards into empty Dexie with pending_sync=false', async () => {
-    const { fetchRemoteUserCards } = await import('../../api/user-cards')
     const remoteCards = Array.from({ length: 5 }, (_, i) => ({
       user_id: TEST_USER_ID,
       vocab_id: `mnn1_${String(i).padStart(16, '0')}`,
@@ -89,29 +88,35 @@ describe('mergeRemoteCardsIntoDexie (legacy fallback)', () => {
       updated_at: '2026-04-30T10:00:00Z',
       is_known: false,
     }))
-    vi.mocked(fetchRemoteUserCards).mockResolvedValue(remoteCards)
 
     await mergeRemoteCardsIntoDexie(TEST_USER_ID, remoteCards)
 
-    const cards = await db.user_cards.toCollection().filter(c => c.userId === TEST_USER_ID).toArray()
+    const cards = await db.srs_cards.where('[userId+cardType]').equals([TEST_USER_ID, 'vocab']).toArray()
     expect(cards).toHaveLength(5)
     expect(cards.every(c => c.pending_sync === false)).toBe(true)
   })
 
   it('does not overwrite a local card with a newer updated_at', async () => {
     const vocabId = 'mnn1_abcdef0000000000'
-    await db.user_cards.put({
+    await db.srs_cards.put({
       userId: TEST_USER_ID,
-      vocabId,
-      interval_days: 30,
-      ease_factor: 2.8,
-      due_date: '2026-06-01',
-      review_count: 10,
+      cardId: vocabId,
+      cardType: 'vocab',
+      deckId: null,
+      state: 'review',
+      stability: 30,
+      difficulty: 4,
+      elapsed_days: 0,
+      scheduled_days: 30,
+      reps: 10,
+      lapses: 0,
+      last_review: '2026-04-30',
+      due: '2026-06-01',
       last_rating: 3,
-      pending_sync: false,
-      updated_at: '2026-04-30T12:00:00Z',
       is_known: true,
       consecutive_correct: 0,
+      pending_sync: false,
+      updated_at: '2026-04-30T12:00:00Z',
     })
 
     await mergeRemoteCardsIntoDexie(TEST_USER_ID, [{
@@ -127,8 +132,8 @@ describe('mergeRemoteCardsIntoDexie (legacy fallback)', () => {
       is_known: false,
     }])
 
-    const card = await db.user_cards.get([TEST_USER_ID, vocabId])
-    expect(card?.interval_days).toBe(30)
+    const card = await db.srs_cards.get([TEST_USER_ID, vocabId])
+    expect(card?.scheduled_days).toBe(30)
   })
 })
 
@@ -141,7 +146,7 @@ describe('onboardNewDevice — snapshot-based flow', () => {
 
     await onboardNewDevice(TEST_USER_ID, mockQueryClient)
 
-    const cards = await db.user_cards.toCollection().filter(c => c.userId === TEST_USER_ID).toArray()
+    const cards = await db.srs_cards.where('[userId+cardType]').equals([TEST_USER_ID, 'vocab']).toArray()
     expect(cards).toHaveLength(10)
     expect(cards.every(c => c.pending_sync === false)).toBe(true)
 
@@ -167,18 +172,25 @@ describe('onboardNewDevice — snapshot-based flow', () => {
     const vocabId = 'mnn1_abcdef0000000000'
     const { fetchUserCardSnapshots } = await import('../../api/review-log')
 
-    await db.user_cards.put({
+    await db.srs_cards.put({
       userId: TEST_USER_ID,
-      vocabId,
-      interval_days: 60,
-      ease_factor: 3.0,
-      due_date: '2026-07-01',
-      review_count: 20,
+      cardId: vocabId,
+      cardType: 'vocab',
+      deckId: null,
+      state: 'review',
+      stability: 60,
+      difficulty: 3,
+      elapsed_days: 0,
+      scheduled_days: 60,
+      reps: 20,
+      lapses: 0,
+      last_review: '2026-04-30',
+      due: '2026-07-01',
       last_rating: 3,
-      pending_sync: false,
-      updated_at: '2026-04-30T20:00:00Z',
       is_known: true,
       consecutive_correct: 0,
+      pending_sync: false,
+      updated_at: '2026-04-30T20:00:00Z',
     })
 
     vi.mocked(fetchUserCardSnapshots).mockResolvedValue([
@@ -187,8 +199,8 @@ describe('onboardNewDevice — snapshot-based flow', () => {
 
     await onboardNewDevice(TEST_USER_ID, mockQueryClient)
 
-    const card = await db.user_cards.get([TEST_USER_ID, vocabId])
-    expect(card?.interval_days).toBe(60)
+    const card = await db.srs_cards.get([TEST_USER_ID, vocabId])
+    expect(card?.scheduled_days).toBe(60)
     expect(card?.is_known).toBe(true)
   })
 })

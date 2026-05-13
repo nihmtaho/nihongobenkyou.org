@@ -32,9 +32,10 @@ function makePendingEntry(vocabId: string): Omit<ReviewLogEntry, 'id'> {
     vocabId,
     bookSource: 'minna_shokyuu_1',
     cardType: 'vocab',
-    rating: 2,
-    intervalDays: 1,
-    easeFactor: 2.5,
+    rating: 3,
+    scheduledDays: 1,
+    stability: 1,
+    difficulty: 5,
     dueDate: new Date().toISOString().slice(0, 10),
     reviewCount: 1,
     isKnown: false,
@@ -52,7 +53,7 @@ async function seedPendingEntries(count: number): Promise<void> {
 
 beforeEach(async () => {
   await db.review_log.clear()
-  await db.user_cards.clear()
+  await db.srs_cards.clear()
   await db.sync_queue.clear()
   await db.settings.clear()
   vi.resetAllMocks()
@@ -68,7 +69,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await db.review_log.clear()
-  await db.user_cards.clear()
+  await db.srs_cards.clear()
   await db.sync_queue.clear()
   await db.settings.clear()
 })
@@ -183,7 +184,7 @@ describe('uploadPendingReviews — resilience', () => {
 })
 
 describe('downloadNewReviews', () => {
-  it('applies downloaded events to Dexie user_cards', async () => {
+  it('applies downloaded events to Dexie srs_cards', async () => {
     const { fetchReviewEventsSince } = await import('../../api/review-log')
     vi.mocked(fetchReviewEventsSince).mockResolvedValue([
       {
@@ -192,9 +193,10 @@ describe('downloadNewReviews', () => {
         vocab_id: 'mnn1_abcdef0000000001',
         book_source: 'minna_shokyuu_1',
         card_type: 'vocab',
-        rating: 2,
-        interval_days: 7,
-        ease_factor: 2.5,
+        rating: 3,
+        scheduled_days: 7,
+        stability: 7,
+        difficulty: 5,
         due_date: '2026-06-01',
         review_count: 3,
         is_known: false,
@@ -204,8 +206,8 @@ describe('downloadNewReviews', () => {
 
     await downloadNewReviews(TEST_USER_ID)
 
-    const card = await db.user_cards.get([TEST_USER_ID, 'mnn1_abcdef0000000001'])
-    expect(card?.interval_days).toBe(7)
+    const card = await db.srs_cards.get([TEST_USER_ID, 'mnn1_abcdef0000000001'])
+    expect(card?.scheduled_days).toBe(7)
     expect(card?.pending_sync).toBe(false)
 
     const cursor = await db.settings.get('review_log_cursor')
@@ -223,8 +225,9 @@ describe('downloadNewReviews', () => {
       bookSource: 'minna_shokyuu_1',
       cardType: 'vocab',
       rating: 3,
-      intervalDays: 21,
-      easeFactor: 2.8,
+      scheduledDays: 21,
+      stability: 21,
+      difficulty: 4,
       dueDate: '2026-08-01',
       reviewCount: 8,
       isKnown: true,
@@ -239,9 +242,10 @@ describe('downloadNewReviews', () => {
       vocab_id: vocabId,
       book_source: 'minna_shokyuu_1',
       card_type: 'vocab',
-      rating: 0,
-      interval_days: 1,
-      ease_factor: 1.3,
+      rating: 1,
+      scheduled_days: 1,
+      stability: 1,
+      difficulty: 5,
       due_date: '2026-05-01',
       review_count: 1,
       is_known: false,
@@ -250,8 +254,8 @@ describe('downloadNewReviews', () => {
 
     await downloadNewReviews(TEST_USER_ID)
 
-    // user_cards should NOT exist (event was skipped)
-    const card = await db.user_cards.get([TEST_USER_ID, vocabId])
+    // srs_cards should NOT exist (event was skipped)
+    const card = await db.srs_cards.get([TEST_USER_ID, vocabId])
     expect(card).toBeUndefined()
   })
 })

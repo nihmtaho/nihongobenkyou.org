@@ -1,6 +1,6 @@
 import type { RelatedVocabItem } from '../types/kanji'
-import type { StudyMode } from '../types/study'
 import type { SRSCard } from '../types/srs'
+import type { StudyMode } from '../types/study'
 import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -12,21 +12,21 @@ function makeDefaultSRSCard(userId: string, cardId: string, cardType: SRSCard['c
     userId,
     cardId,
     cardType,
-    deckId:              null,
-    state:               'new',
-    stability:           0,
-    difficulty:          0,
-    elapsed_days:        0,
-    scheduled_days:      0,
-    reps:                0,
-    lapses:              0,
-    last_review:         today,
-    due:                 today,
-    last_rating:         null,
-    is_known:            false,
+    deckId: null,
+    state: 'new',
+    stability: 0,
+    difficulty: 0,
+    elapsed_days: 0,
+    scheduled_days: 0,
+    reps: 0,
+    lapses: 0,
+    last_review: today,
+    due: today,
+    last_rating: null,
+    is_known: false,
     consecutive_correct: 0,
-    pending_sync:        false,
-    updated_at:          now,
+    pending_sync: false,
+    updated_at: now,
   }
 }
 

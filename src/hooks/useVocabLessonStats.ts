@@ -48,11 +48,11 @@ export async function fetchVocabLessonStats(userId: string, bookSource: string):
 
     return {
       ...lesson,
-      new:      Math.max(0, vocabIds.length - lessonCards.length),
+      new: Math.max(0, vocabIds.length - lessonCards.length),
       learning: lessonCards.filter(c => c.scheduled_days < 8 && !c.is_known).length,
-      review:   lessonCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21 && !c.is_known).length,
-      mature:   lessonCards.filter(c => c.scheduled_days >= 21 || c.is_known).length,
-      due:      lessonCards.filter(c => !c.is_known && c.due <= now).length,
+      review: lessonCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21 && !c.is_known).length,
+      mature: lessonCards.filter(c => c.scheduled_days >= 21 || c.is_known).length,
+      due: lessonCards.filter(c => !c.is_known && c.due <= now).length,
       next_due_date: lessonCards
         .filter(c => !c.is_known && c.due > now)
         .map(c => c.due)

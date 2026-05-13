@@ -1,4 +1,3 @@
-
 export interface StrokeData {
   stroke_index: number
   path: string

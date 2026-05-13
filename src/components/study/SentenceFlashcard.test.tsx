@@ -89,6 +89,6 @@ describe('sentenceFlashcard', () => {
     render(<SentenceFlashcard card={card} meaningLanguage="vi" onRate={onRate} />)
     await user.click(screen.getByRole('button', { name: /flip/i }))
     await user.click(screen.getByRole('button', { name: /good/i }))
-    expect(onRate).toHaveBeenCalledWith(2)
+    expect(onRate).toHaveBeenCalledWith(3)
   })
 })

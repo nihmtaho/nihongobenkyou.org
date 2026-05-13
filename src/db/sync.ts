@@ -12,7 +12,7 @@ export { SyncError } from '../api/user-cards'
 
 const UPLOAD_CHUNK_SIZE = 200
 const DEFAULT_FSRS_DIFFICULTY = 5
-const DEFAULT_STABILITY_DAYS  = 1
+const DEFAULT_STABILITY_DAYS = 1
 
 let isSyncing = false
 
@@ -46,18 +46,18 @@ export async function uploadPendingReviews(): Promise<void> {
       const chunk = pending.slice(i, i + UPLOAD_CHUNK_SIZE)
 
       const remoteRows = chunk.map(e => ({
-        user_id:       e.userId,
-        vocab_id:      e.vocabId,
-        book_source:   e.bookSource,
-        card_type:     e.cardType,
-        rating:        e.rating,
+        user_id: e.userId,
+        vocab_id: e.vocabId,
+        book_source: e.bookSource,
+        card_type: e.cardType,
+        rating: e.rating,
         scheduled_days: e.scheduledDays,
-        stability:     e.stability,
-        difficulty:    e.difficulty,
-        due_date:      e.dueDate.slice(0, 10),
-        review_count:  e.reviewCount,
-        is_known:      e.isKnown,
-        reviewed_at:   e.reviewedAt,
+        stability: e.stability,
+        difficulty: e.difficulty,
+        due_date: e.dueDate.slice(0, 10),
+        review_count: e.reviewCount,
+        is_known: e.isKnown,
+        reviewed_at: e.reviewedAt,
       }))
 
       try {
@@ -133,23 +133,23 @@ export async function downloadNewReviews(userId: string): Promise<void> {
     if (!existing || event.reviewed_at > (existing.updated_at ?? '')) {
       await db.srs_cards.put({
         userId,
-        cardId:              event.vocab_id,
+        cardId: event.vocab_id,
         cardType,
-        deckId:              null,
-        state:               'review',
-        stability:           event.stability      ?? event.interval_days ?? DEFAULT_STABILITY_DAYS,
-        difficulty:          event.difficulty     ?? DEFAULT_FSRS_DIFFICULTY,
-        elapsed_days:        0,
-        scheduled_days:      event.scheduled_days ?? event.interval_days ?? DEFAULT_STABILITY_DAYS,
-        reps:                event.review_count,
-        lapses:              0,
-        last_review:         event.reviewed_at.slice(0, 10),
-        due:                 event.due_date.slice(0, 10),
-        last_rating:         event.rating as SRSCard['last_rating'],
-        is_known:            event.is_known ?? false,
+        deckId: null,
+        state: 'review',
+        stability: event.stability ?? event.interval_days ?? DEFAULT_STABILITY_DAYS,
+        difficulty: event.difficulty ?? DEFAULT_FSRS_DIFFICULTY,
+        elapsed_days: 0,
+        scheduled_days: event.scheduled_days ?? event.interval_days ?? DEFAULT_STABILITY_DAYS,
+        reps: event.review_count,
+        lapses: 0,
+        last_review: event.reviewed_at.slice(0, 10),
+        due: event.due_date.slice(0, 10),
+        last_rating: event.rating as SRSCard['last_rating'],
+        is_known: event.is_known ?? false,
         consecutive_correct: 0,
-        pending_sync:        false,
-        updated_at:          event.reviewed_at,
+        pending_sync: false,
+        updated_at: event.reviewed_at,
       } satisfies SRSCard)
     }
   }
@@ -179,17 +179,17 @@ async function exportCurrentStateAsSnapshot(
     return
 
   const snapshots = cards.map(card => ({
-    user_id:       userId,
-    vocab_id:      card.cardId,
-    card_type:     card.cardType === 'kanji' ? 'kanji' as const : 'vocab' as const,
+    user_id: userId,
+    vocab_id: card.cardId,
+    card_type: card.cardType === 'kanji' ? 'kanji' as const : 'vocab' as const,
     interval_days: card.scheduled_days,
-    ease_factor:   Math.max(1.3, 3.18 - (card.difficulty - 1) * 0.188),
-    due_date:      card.due,
-    review_count:  card.reps,
-    last_rating:   card.last_rating,
-    is_known:      card.is_known,
-    snapshot_at:   card.updated_at,
-    cursor_id:     maxRemoteId,
+    ease_factor: Math.max(1.3, 3.18 - (card.difficulty - 1) * 0.188),
+    due_date: card.due,
+    review_count: card.reps,
+    last_rating: card.last_rating,
+    is_known: card.is_known,
+    snapshot_at: card.updated_at,
+    cursor_id: maxRemoteId,
   }))
 
   await upsertUserCardSnapshots(snapshots)

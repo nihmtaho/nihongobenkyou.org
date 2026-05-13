@@ -42,12 +42,17 @@ export async function mergePackageIntoDexie(
   payload: SyncPackagePayload,
 ): Promise<number> {
   return db.transaction('rw', [
-    'srs_cards', 'custom_decks', 'custom_vocabulary', 'review_log', 'streaks',
+    'srs_cards',
+    'custom_decks',
+    'custom_vocabulary',
+    'review_log',
+    'streaks',
   ], async () => {
     let imported = 0
 
     for (const remote of payload.srs_cards ?? []) {
-      if (remote.userId !== userId) continue
+      if (remote.userId !== userId)
+        continue
       const local = await db.srs_cards.get([userId, remote.cardId])
       if (!local || remote.updated_at > local.updated_at) {
         await db.srs_cards.put({ ...remote, pending_sync: false })
@@ -56,17 +61,23 @@ export async function mergePackageIntoDexie(
     }
 
     for (const remote of payload.custom_decks ?? []) {
-      if (remote.user_id !== userId) continue
+      if (remote.user_id !== userId)
+        continue
       const local = await db.custom_decks.get(remote.id)
       if (!local || remote.updated_at > local.updated_at) {
-        await db.custom_decks.put(remote); imported++
+        await db.custom_decks.put(remote)
+        imported++
       }
     }
 
     for (const remote of payload.custom_vocabulary ?? []) {
-      if (remote.user_id !== userId) continue
+      if (remote.user_id !== userId)
+        continue
       const local = await db.custom_vocabulary.get(remote.id)
-      if (!local) { await db.custom_vocabulary.put(remote); imported++ }
+      if (!local) {
+        await db.custom_vocabulary.put(remote)
+        imported++
+      }
     }
 
     const existingKeys = new Set(
@@ -74,23 +85,28 @@ export async function mergePackageIntoDexie(
         .map(e => `${e.vocabId}:${e.cardType}:${e.reviewedAt}`),
     )
     for (const remote of payload.review_log ?? []) {
-      if (remote.userId !== userId) continue
+      if (remote.userId !== userId)
+        continue
       const key = `${remote.vocabId}:${remote.cardType}:${remote.reviewedAt}`
       if (!existingKeys.has(key)) {
         const { id: _id, ...entry } = remote
         await db.review_log.add({ ...entry, pendingSync: false })
-        existingKeys.add(key); imported++
+        existingKeys.add(key)
+        imported++
       }
     }
 
     for (const remote of payload.streaks ?? []) {
-      if (remote.userId !== userId) continue
+      if (remote.userId !== userId)
+        continue
       const local = await db.streaks.get(remote.date)
       if (!local || remote.current_streak > local.current_streak) {
         await db.streaks.put({
-          ...remote, userId,
+          ...remote,
+          userId,
           max_streak: local ? Math.max(local.max_streak, remote.max_streak) : remote.max_streak,
-        }); imported++
+        })
+        imported++
       }
     }
 

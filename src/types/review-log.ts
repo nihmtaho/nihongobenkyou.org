@@ -4,20 +4,20 @@ export type CardType = 'vocab' | 'kanji'
 
 export interface ReviewLogEntry {
   id?: number
-  userId:        string
-  vocabId:       string
-  bookSource:    string
-  cardType:      CardType
-  rating:        SRSRating       // 1=Again 2=Hard 3=Good 4=Easy
-  scheduledDays: number          // was intervalDays
-  stability:     number          // new FSRS field
-  difficulty:    number          // new FSRS field
-  dueDate:       string
-  reviewCount:   number
-  isKnown:       boolean
-  reviewedAt:    string
-  pendingSync:   boolean
-  remoteId:      number | null
+  userId: string
+  vocabId: string
+  bookSource: string
+  cardType: CardType
+  rating: SRSRating // 1=Again 2=Hard 3=Good 4=Easy
+  scheduledDays: number // was intervalDays
+  stability: number // new FSRS field
+  difficulty: number // new FSRS field
+  dueDate: string
+  reviewCount: number
+  isKnown: boolean
+  reviewedAt: string
+  pendingSync: boolean
+  remoteId: number | null
 }
 
 export interface RemoteReviewEvent {
