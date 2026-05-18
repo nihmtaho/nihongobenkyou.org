@@ -88,7 +88,11 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
         userId,
         vocabId: srsCard.cardId,
         bookSource: srsCard.cardType === 'kanji' ? 'kanji' : 'minna_shokyuu_1',
-        cardType: srsCard.cardType === 'kanji' ? 'kanji' : 'vocab',
+        cardType: srsCard.cardType === 'kanji'
+          ? 'kanji'
+          : srsCard.cardType === 'custom_vocab'
+            ? 'custom_vocab'
+            : 'vocab',
         rating,
         scheduledDays: result.scheduled_days,
         stability: result.stability,

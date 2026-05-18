@@ -1,6 +1,6 @@
 import type { SRSRating } from './srs'
 
-export type CardType = 'vocab' | 'kanji'
+export type CardType = 'vocab' | 'kanji' | 'custom_vocab'
 
 export interface ReviewLogEntry {
   id?: number
