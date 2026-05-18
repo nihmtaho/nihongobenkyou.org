@@ -84,6 +84,9 @@ export function ProfileSection() {
                     <Link to="/auth/register">Tạo tài khoản</Link>
                   </Button>
                 </div>
+                <p className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest text-warning border border-warning/30 bg-warning/10 px-2 py-1 self-start">
+                  ⚠ Đang phát triển
+                </p>
               </div>
             )}
       </CardContent>
