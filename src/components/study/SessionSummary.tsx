@@ -46,7 +46,7 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
   }
 
   function navigateToStudy() {
-    navigate({ to: '/study', search: { tab: returnTab } })
+    navigate({ to: '/study', search: { tab: returnTab ?? 'vocab' } })
   }
 
   function handleBackToLesson() {

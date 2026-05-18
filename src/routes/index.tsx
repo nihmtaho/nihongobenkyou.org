@@ -62,7 +62,7 @@ function HomePage() {
             size="lg"
             className="font-[var(--br-heading-font)] uppercase tracking-wide w-full lg:w-auto lg:self-start"
           >
-            <Link to="/study" search={{ tab: undefined }}>
+            <Link to="/study" search={{ tab: 'vocab' }}>
               {dueCount > 0
                 ? `ÔN TẬP NGAY · ${dueCount} THẺ`
                 : 'BẮT ĐẦU HỌC'}
@@ -105,7 +105,7 @@ function HomePage() {
           {/* Quick-access links */}
           <div className="flex flex-col gap-1.5 mt-2">
             <Button variant="outline" size="sm" asChild className="font-[var(--br-mono-font)] justify-start gap-2">
-              <Link to="/study">
+              <Link to="/study" search={{ tab: 'vocab' }}>
                 <span>◈</span>
                 {' '}
                 Ôn tập từ vựng
