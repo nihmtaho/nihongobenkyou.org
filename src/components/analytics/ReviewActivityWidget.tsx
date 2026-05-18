@@ -5,6 +5,7 @@ import { useReviewStats } from '../../hooks/useReviewStats'
 
 interface ReviewActivityWidgetProps {
   userId: string
+  cardType?: 'vocab' | 'kanji' | 'custom_vocab'
 }
 
 const TODAY = new Date().toISOString().slice(0, 10)
@@ -16,8 +17,8 @@ const RATING_BAR_COLORS: Record<string, string> = {
   'text-info': 'bg-info',
 }
 
-export function ReviewActivityWidget({ userId }: ReviewActivityWidgetProps) {
-  const { data: stats, isLoading } = useReviewStats(userId)
+export function ReviewActivityWidget({ userId, cardType }: ReviewActivityWidgetProps) {
+  const { data: stats, isLoading } = useReviewStats(userId, cardType)
 
   return (
     <Card>
