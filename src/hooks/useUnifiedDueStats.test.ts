@@ -99,7 +99,7 @@ describe('useUnifiedDueStats — per-type upcoming', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
     expect(result.current.data?.vocabDueTomorrow).toBe(1)
-    expect(result.current.data?.vocabDueThisWeek).toBe(1) // IN_5_DAYS is within 7 days
+    expect(result.current.data?.vocabDueThisWeek).toBe(1) // IN_5_DAYS is in days 2–7 window (tomorrow excluded)
     expect(result.current.data?.kanjiDueTomorrow).toBe(1)
   })
 

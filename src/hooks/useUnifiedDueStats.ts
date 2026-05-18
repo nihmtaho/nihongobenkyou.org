@@ -80,7 +80,10 @@ export function useUnifiedDueStats(userId: string) {
       const mature = allCards.filter(c => c.scheduled_days >= 21).length
         + customCards.filter(c => c.scheduled_days >= 21).length
 
-      // Per-type learning / review / mature
+      // NOTE: kanjiVocabCards (vocab-type cards linked to kanji entries) are intentionally
+      // excluded from per-type buckets. They appear in the global learning/review/mature
+      // totals but not in vocabLearning/kanjiLearning etc., consistent with how vocabDue
+      // and kanjiDue are scoped.
       const vocabLearning = vocabCards.filter(c => c.scheduled_days < 8).length
       const vocabReview = vocabCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
       const vocabMature = vocabCards.filter(c => c.scheduled_days >= 21).length
