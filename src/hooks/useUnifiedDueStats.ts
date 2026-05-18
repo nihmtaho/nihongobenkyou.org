@@ -13,6 +13,21 @@ export interface UnifiedDueStats {
   learning: number
   review: number
   mature: number
+  vocabLearning: number
+  vocabReview: number
+  vocabMature: number
+  kanjiLearning: number
+  kanjiReview: number
+  kanjiMature: number
+  customDecksLearning: number
+  customDecksReview: number
+  customDecksMature: number
+  vocabDueTomorrow: number
+  vocabDueThisWeek: number
+  vocabDue21Days: number
+  kanjiDueTomorrow: number
+  kanjiDueThisWeek: number
+  kanjiDue21Days: number
   nextDueLaterTodayMs: number | null
   nextDueTomorrowMs: number | null
   nextDueThisWeekMs: number | null
@@ -65,6 +80,31 @@ export function useUnifiedDueStats(userId: string) {
       const mature = allCards.filter(c => c.scheduled_days >= 21).length
         + customCards.filter(c => c.scheduled_days >= 21).length
 
+      // Per-type learning / review / mature
+      const vocabLearning = vocabCards.filter(c => c.scheduled_days < 8).length
+      const vocabReview = vocabCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
+      const vocabMature = vocabCards.filter(c => c.scheduled_days >= 21).length
+
+      const kanjiLearning = kanjiCards.filter(c => c.scheduled_days < 8).length
+      const kanjiReview = kanjiCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
+      const kanjiMature = kanjiCards.filter(c => c.scheduled_days >= 21).length
+
+      const customDecksLearning = customCards.filter(c => c.reps >= 1 && c.scheduled_days < 7).length
+      const customDecksReview = customCards.filter(c => c.scheduled_days >= 7 && c.scheduled_days < 21).length
+      const customDecksMature = customCards.filter(c => c.scheduled_days >= 21).length
+
+      // Per-type upcoming
+      const vocabFuture = vocabCards.filter(c => c.due > todayDate)
+      const kanjiFuture = kanjiCards.filter(c => c.due > todayDate)
+
+      const vocabDueTomorrow = vocabFuture.filter(c => c.due === tomorrow).length
+      const vocabDueThisWeek = vocabFuture.filter(c => c.due > tomorrow && c.due <= weekEnd).length
+      const vocabDue21Days = vocabFuture.filter(c => c.due > weekEnd && c.due <= days21End).length
+
+      const kanjiDueTomorrow = kanjiFuture.filter(c => c.due === tomorrow).length
+      const kanjiDueThisWeek = kanjiFuture.filter(c => c.due > tomorrow && c.due <= weekEnd).length
+      const kanjiDue21Days = kanjiFuture.filter(c => c.due > weekEnd && c.due <= days21End).length
+
       const dueToday = vocabDue + kanjiVocabDue + kanjiDue + customDeckDue
 
       // All non-due upcoming cards (due date after today — date comparison only)
@@ -98,6 +138,21 @@ export function useUnifiedDueStats(userId: string) {
         learning,
         review,
         mature,
+        vocabLearning,
+        vocabReview,
+        vocabMature,
+        kanjiLearning,
+        kanjiReview,
+        kanjiMature,
+        customDecksLearning,
+        customDecksReview,
+        customDecksMature,
+        vocabDueTomorrow,
+        vocabDueThisWeek,
+        vocabDue21Days,
+        kanjiDueTomorrow,
+        kanjiDueThisWeek,
+        kanjiDue21Days,
         nextDueLaterTodayMs: null,
         nextDueTomorrowMs: earliestMs(allDueFuture.filter(c => c.due === tomorrow)),
         nextDueThisWeekMs: earliestMs(allDueFuture.filter(c => c.due > tomorrow && c.due <= weekEnd)),
