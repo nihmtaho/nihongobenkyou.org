@@ -265,15 +265,17 @@ export function useUnifiedSrsSession(
   const allCards = buildQueue()
 
   // When using a prebuilt queue, compute counts from the queue directly.
+  // Gate non-prebuilt counts on filter to avoid stale TanStack Query cache from
+  // disabled queries (e.g. dueVocab stays cached when filter switches to 'kanji').
   const vocabCount = hasPrebuilt
     ? prebuilt.filter(c => c.kind === 'vocab').length
-    : (dueVocab?.vocab.length ?? 0)
+    : (filter === 'all' || filter === 'vocab') ? (dueVocab?.vocab.length ?? 0) : 0
   const kanjiVocabCount = hasPrebuilt
     ? prebuilt.filter(c => c.kind === 'kanji-vocab').length
-    : (dueVocab?.kanjiVocab.length ?? 0)
+    : (filter === 'all' || filter === 'vocab') ? (dueVocab?.kanjiVocab.length ?? 0) : 0
   const kanjiCount = hasPrebuilt
     ? prebuilt.filter(c => c.kind === 'kanji').length
-    : (dueKanji?.length ?? 0)
+    : (filter === 'all' || filter === 'kanji') ? (dueKanji?.length ?? 0) : 0
 
   return {
     phase,
