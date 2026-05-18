@@ -323,7 +323,7 @@ describe('useReviewStats', () => {
       await waitFor(() => expect(result.current.isLoading).toBe(false))
 
       const dist = result.current.data!.ratingDistribution
-      // Only the rating=2 entry counts
+      // Only the rating=3 (Good) entry counts
       expect(dist[0].count).toBe(0) // Quên — excluded
       expect(dist[2].count).toBe(1) // Ôn — included
       expect(dist[2].pct).toBe(100)
