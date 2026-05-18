@@ -212,7 +212,7 @@ describe('useSRS – rate() consecutive_correct mutation', () => {
       vocab_id: CUSTOM_CARD_ID,
       cardType: 'custom_vocab',
       deckId: 'deck-1',
-    } as Partial<VocabWithSRS>)
+    })
 
     act(() => {
       result.current.rate(card, 3)
@@ -222,6 +222,7 @@ describe('useSRS – rate() consecutive_correct mutation', () => {
       const entries = await db.review_log.toArray()
       expect(entries).toHaveLength(1)
       expect(entries[0].cardType).toBe('custom_vocab')
+      expect(entries[0].bookSource).toBe('custom_vocab')
     })
   })
 })
