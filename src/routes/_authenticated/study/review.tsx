@@ -104,7 +104,7 @@ function StudyReviewPage() {
         onSetMode={session.setMode}
         onSetTypeInputSubMode={session.setTypeInputSubMode}
         onStart={session.startSession}
-        onBack={() => navigate({ to: '/study', search: { tab: undefined } })}
+        onBack={() => navigate({ to: '/study', search: { tab: 'vocab' } })}
       />
     )
   }

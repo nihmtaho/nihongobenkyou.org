@@ -181,4 +181,48 @@ describe('useSRS – rate() consecutive_correct mutation', () => {
       expect(stored!.consecutive_correct).toBe(5)
     })
   })
+
+  it('custom_vocab card writes review_log with cardType custom_vocab', async () => {
+    const CUSTOM_CARD_ID = 'custom_abc123'
+    const { result } = renderHook(() => useSRS('vocab', USER_ID), { wrapper: makeWrapper() })
+
+    // Seed an srs_card so upsertSRSCard finds the record
+    await db.srs_cards.put({
+      userId: USER_ID,
+      cardId: CUSTOM_CARD_ID,
+      cardType: 'custom_vocab',
+      deckId: 'deck-1',
+      state: 'review',
+      stability: 3.0,
+      difficulty: 5.0,
+      elapsed_days: 2,
+      scheduled_days: 7,
+      reps: 3,
+      lapses: 0,
+      last_review: '2026-05-01',
+      due: '2026-05-05',
+      last_rating: null,
+      is_known: false,
+      consecutive_correct: 0,
+      pending_sync: false,
+      updated_at: new Date().toISOString(),
+    })
+
+    const card = makeVocabCard({
+      vocab_id: CUSTOM_CARD_ID,
+      cardType: 'custom_vocab',
+      deckId: 'deck-1',
+    })
+
+    act(() => {
+      result.current.rate(card, 3)
+    })
+
+    await waitFor(async () => {
+      const entries = await db.review_log.toArray()
+      expect(entries).toHaveLength(1)
+      expect(entries[0].cardType).toBe('custom_vocab')
+      expect(entries[0].bookSource).toBe('custom_vocab')
+    })
+  })
 })

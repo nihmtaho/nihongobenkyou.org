@@ -135,10 +135,17 @@ function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
   }
 }
 
-export function useReviewStats(userId: string): { data: ReviewStats | null, isLoading: boolean } {
+export function useReviewStats(
+  userId: string,
+  cardType?: 'vocab' | 'kanji' | 'custom_vocab',
+): { data: ReviewStats | null, isLoading: boolean } {
   const entries = useLiveQuery<ReviewLogEntry[]>(
-    () => userId ? db.review_log.filter(e => e.userId === userId).toArray() : Promise.resolve([]),
-    [userId],
+    () => userId
+      ? db.review_log
+          .filter(e => e.userId === userId && (cardType == null || e.cardType === cardType))
+          .toArray()
+      : Promise.resolve([]),
+    [userId, cardType],
   )
   const streaks = useLiveQuery<StreakData[]>(
     () => userId ? db.streaks.where('userId').equals(userId).sortBy('date') : Promise.resolve([]),

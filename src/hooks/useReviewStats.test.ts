@@ -323,7 +323,7 @@ describe('useReviewStats', () => {
       await waitFor(() => expect(result.current.isLoading).toBe(false))
 
       const dist = result.current.data!.ratingDistribution
-      // Only the rating=2 entry counts
+      // Only the rating=3 (Good) entry counts
       expect(dist[0].count).toBe(0) // Quên — excluded
       expect(dist[2].count).toBe(1) // Ôn — included
       expect(dist[2].pct).toBe(100)
@@ -382,5 +382,75 @@ describe('useReviewStats', () => {
       await waitFor(() => expect(result.current.isLoading).toBe(false))
       expect(result.current.data?.streak).toBe(0)
     })
+  })
+})
+
+describe('useReviewStats — cardType filter', () => {
+  it('without cardType returns all entries', async () => {
+    await db.review_log.bulkAdd([
+      makeEntry({ reviewedAt: daysAgo(0) }),
+      { ...makeEntry({ reviewedAt: daysAgo(0) }), cardType: 'kanji' as const },
+    ])
+
+    const { result } = renderHook(() => useReviewStats(TEST_USER), {
+      wrapper: makeWrapper(),
+    })
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.data?.totalCount).toBe(2)
+  })
+
+  it('cardType="vocab" returns only vocab entries', async () => {
+    await db.review_log.bulkAdd([
+      makeEntry({ reviewedAt: daysAgo(0) }), // vocab
+      { ...makeEntry({ reviewedAt: daysAgo(0) }), cardType: 'kanji' as const }, // kanji — excluded
+      { ...makeEntry({ reviewedAt: daysAgo(0) }), cardType: 'custom_vocab' as const }, // custom — excluded
+    ])
+
+    const { result } = renderHook(() => useReviewStats(TEST_USER, 'vocab'), {
+      wrapper: makeWrapper(),
+    })
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.data?.totalCount).toBe(1)
+  })
+
+  it('cardType="kanji" returns only kanji entries', async () => {
+    await db.review_log.bulkAdd([
+      makeEntry({ reviewedAt: daysAgo(0) }), // vocab — excluded
+      { ...makeEntry({ reviewedAt: daysAgo(0) }), cardType: 'kanji' as const }, // kanji
+    ])
+
+    const { result } = renderHook(() => useReviewStats(TEST_USER, 'kanji'), {
+      wrapper: makeWrapper(),
+    })
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.data?.totalCount).toBe(1)
+  })
+
+  it('cardType="custom_vocab" returns only custom_vocab entries', async () => {
+    await db.review_log.bulkAdd([
+      makeEntry({ reviewedAt: daysAgo(0) }), // vocab — excluded
+      { ...makeEntry({ reviewedAt: daysAgo(0) }), cardType: 'custom_vocab' as const }, // custom
+    ])
+
+    const { result } = renderHook(() => useReviewStats(TEST_USER, 'custom_vocab'), {
+      wrapper: makeWrapper(),
+    })
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.data?.totalCount).toBe(1)
+  })
+
+  it('cardType filter preserves todayCount scoping', async () => {
+    await db.review_log.bulkAdd([
+      makeEntry({ reviewedAt: daysAgo(0) }), // vocab today
+      makeEntry({ reviewedAt: daysAgo(1) }), // vocab yesterday
+      { ...makeEntry({ reviewedAt: daysAgo(0) }), cardType: 'kanji' as const }, // kanji today — excluded
+    ])
+
+    const { result } = renderHook(() => useReviewStats(TEST_USER, 'vocab'), {
+      wrapper: makeWrapper(),
+    })
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.data?.todayCount).toBe(1)
+    expect(result.current.data?.totalCount).toBe(2)
   })
 })
