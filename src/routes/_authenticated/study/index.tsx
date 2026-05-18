@@ -1,11 +1,13 @@
+import type { ActiveTab } from '../../../components/study/study.config'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
 
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { SrsGuideDialog } from '../../../components/study/SrsGuideDialog'
+import { TABS } from '../../../components/study/study.config'
 import { DeckStudyTab } from '../../../components/study/tabs/DeckStudyTab'
 import { KanjiStudyTab } from '../../../components/study/tabs/KanjiStudyTab'
 import { VocabStudyTab } from '../../../components/study/tabs/VocabStudyTab'
@@ -13,28 +15,24 @@ import { useStreak } from '../../../hooks/useStreak'
 import { useUnifiedDueStats } from '../../../hooks/useUnifiedDueStats'
 import { useAuthStore } from '../../../stores/authStore'
 
-type StudyTab = 'vocab' | 'kanji' | 'decks'
-
-const VALID_TABS: StudyTab[] = ['vocab', 'kanji', 'decks']
-
 export const Route = createFileRoute('/_authenticated/study/')({
   validateSearch: (search: Record<string, unknown>) => ({
-    tab: VALID_TABS.includes(search.tab as StudyTab)
-      ? (search.tab as StudyTab)
-      : ('vocab' as StudyTab),
+    tab: TABS.some(t => t.id === search.tab)
+      ? (search.tab as ActiveTab)
+      : ('vocab' as ActiveTab),
   }),
   component: StudyDashboardPage,
 })
 
 const TAB_CONFIG: Array<{
-  key: StudyTab
+  key: ActiveTab
   label: string
   dueKey: 'vocabDue' | 'kanjiDue' | 'customDecksDueToday'
   badgeClass: string
 }> = [
-  { key: 'vocab', label: '単語', dueKey: 'vocabDue', badgeClass: 'bg-destructive text-destructive-foreground' },
-  { key: 'kanji', label: '漢字', dueKey: 'kanjiDue', badgeClass: 'bg-info text-foreground' },
-  { key: 'decks', label: 'デッキ', dueKey: 'customDecksDueToday', badgeClass: 'bg-primary text-primary-foreground' },
+  { key: 'vocab', label: TABS[0].jp, dueKey: 'vocabDue', badgeClass: 'bg-destructive text-destructive-foreground' },
+  { key: 'kanji', label: TABS[1].jp, dueKey: 'kanjiDue', badgeClass: 'bg-info text-foreground' },
+  { key: 'decks', label: TABS[2].jp, dueKey: 'customDecksDueToday', badgeClass: 'bg-primary text-primary-foreground' },
 ]
 
 function StudyDashboardPage() {
@@ -114,7 +112,7 @@ function StudyDashboardPage() {
                       : 'border-transparent text-muted-foreground hover:text-foreground',
                   )}
                 >
-                  {label}
+                  <span className="font-[var(--br-jp-font)]">{label}</span>
                   {dueCount > 0 && (
                     <span className={cn('text-[9px] px-1 py-0.5 font-bold leading-none', badgeClass)}>
                       {dueCount}
