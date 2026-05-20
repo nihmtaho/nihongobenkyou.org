@@ -4068,6 +4068,35 @@ lesson-16:
         example:
           ja: 明日は晴れます。
           vi: Ngày mai trời sẽ nắng.
+  - char: 使
+    meaning_vi: [sử dụng]
+    han_viet: Sử
+    mnemonic_vi: "Sử dụng (使う) là khi một người áp dụng hoặc tận dụng một công cụ, phương pháp hoặc tài nguyên nào đó để đạt được một mục đích cụ thể"
+    components:
+      - { char: 亻, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 吏, meaning_en: official, meaning_vi: quan chức, han_viet: Lại }
+    related_vocab:
+      - word: 使う
+        kana: つかう
+        han_viet: Sử
+        meaning_vi: sử dụng (động từ)
+        example:
+          ja: パソコンを使います。
+          vi: Tôi sử dụng máy tính.
+      - word: 使用
+        kana: しよう
+        han_viet: Sử Dụng
+        meaning_vi: sự sử dụng
+        example:
+          ja: この機械の使用方法を教えてください。
+          vi: Hãy cho tôi biết cách sử dụng máy này.
+      - word: 大使館
+        kana: たいしかん
+        han_viet: Đại Sử Quán
+        meaning_vi: đại sứ quán
+        example:
+          ja: 大使館に行きます。
+          vi: Tôi sẽ đến đại sứ quán.
   - char: 肉
     meaning_vi: [thịt]
     han_viet: Nhục
@@ -4341,3 +4370,732 @@ lesson-17:
         example:
           ja: ローマ字を使います。
           vi: Tôi sử dụng chữ La Mã.
+lesson-18:
+  - char: 漢
+    meaning_vi: [hán, Trung Quốc]
+    han_viet: Hán
+    mnemonic_vi: "Hán (漢字) là hệ thống chữ viết của người Trung Quốc, được sử dụng rộng rãi trong ngôn ngữ Nhật Bản và có nguồn gốc từ các ký tự Trung Quốc cổ đại"
+    components:
+      - { char: 氵, meaning_en: water, meaning_vi: nước, han_viet: Thủy }
+      - { char: 𠂉, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+    related_vocab:
+      - word: 漢字
+        kana: かんじ
+        han_viet: Hán Tự
+        meaning_vi: kanji (chữ Hán)
+        example:
+          ja: 漢字を勉強します。
+          vi: Tôi học kanji.
+      - word: 漢語
+        kana: かんご
+        han_viet: Hán Ngữ
+        meaning_vi: từ Hán, từ gốc Trung Quốc
+        example:
+          ja: 漢語は日本語の一部です。
+          vi: Từ Hán là một phần của tiếng Nhật.
+  - char: 料
+    meaning_vi: [liệu, nguyên liệu]
+    han_viet: Liệu
+    mnemonic_vi: "Nguyên liệu (材料) là những vật liệu hoặc thành phần được sử dụng để tạo ra một sản phẩm hoặc thực hiện một công việc nào đó"
+    components:
+      - { char: 米, meaning_en: rice, meaning_vi: gạo, han_viet: Mễ }
+      - { char: 斗, meaning_en: dipper, meaning_vi: cái gáo, han_viet: Đẩu }
+    related_vocab:
+      - word: 料理
+        kana: りょうり
+        han_viet: Liệu Lý
+        meaning_vi: món ăn, nấu ăn
+        example:
+          ja: 日本料理が好きです。
+          vi: Tôi thích món ăn Nhật Bản.
+      - word: 無料
+        kana: むりょう
+        han_viet: Vô Liệu
+        meaning_vi: miễn phí
+        example:
+          ja: このサービスは無料です。
+          vi: Dịch vụ này là miễn phí.
+  - char: 理
+    meaning_vi: [lý, lý do]
+    han_viet: Lý
+    mnemonic_vi: "Lý do (理由) là nguyên nhân hoặc cơ sở giải thích tại sao một sự việc xảy ra hoặc một quyết định được đưa ra"
+    components:
+      - { char: 王, meaning_en: king, meaning_vi: vua, han_viet: Vương }
+      - { char: 里, meaning_en: village, meaning_vi: làng, han_viet: Lý }
+    related_vocab:
+      - word: 理由
+        kana: りゆう
+        han_viet: Lý Do
+        meaning_vi: lý do
+        example:
+          ja: その理由を教えてください。
+          vi: Hãy cho tôi biết lý do đó.
+      - word: 無理
+        kana: むり
+        han_viet: Vô Lý
+        meaning_vi: vô lý, quá sức, không thể thực hiện được
+        example:
+          ja: それは無理です。
+          vi: Điều đó là vô lý.
+  - char: 主
+    meaning_vi: [chủ yếu, chính, chủ nhân]
+    han_viet: Chủ
+    mnemonic_vi: "Chủ (主人) là người sở hữu hoặc kiểm soát một tài sản, doanh nghiệp hoặc gia đình nào đó"
+    components:
+      - { char: 王, meaning_en: king, meaning_vi: vua, han_viet: Vương }
+      - { char: 亠, meaning_en: lid, meaning_vi: nắp, han_viet: Đầu }
+    related_vocab:
+      - word: 主な
+        kana: おもな
+        han_viet: Chủ
+        meaning_vi: chính, chủ yếu
+        example:
+          ja: 主な理由は健康のためです。
+          vi: Lý do chính là vì sức khỏe.
+      - word: 主人
+        kana: しゅじん
+        han_viet: Chủ Nhân
+        meaning_vi: chủ nhân, chồng (trong gia đình)
+        example:
+          ja: 彼は私の主人です。
+          vi: Anh ấy là chồng tôi.
+  - char: 着く
+    meaning_vi: [đến, mặc]
+    han_viet: Trước
+    mnemonic_vi: "Đến (着く) là khi một người hoặc vật di chuyển đến một địa điểm cụ thể và dừng lại ở đó"
+    components:
+      - { char: 羊, meaning_en: sheep, meaning_vi: cừu, han_viet: Dương }
+      - { char: 目, meaning_en: eye, meaning_vi: mắt, han_viet: Mục }
+    related_vocab:
+      - word: 着く
+        kana: つく
+        han_viet: Trước
+        meaning_vi: đến (động từ)
+        example:
+          ja: 駅に着きました。
+          vi: Tôi đã đến ga.
+      - word: 着る
+        kana: きる
+        han_viet: Trước
+        meaning_vi: mặc (động từ)
+        example:
+          ja: シャツを着ます。
+          vi: Tôi mặc áo sơ mi.
+      - word: 着物
+        kana: きもの
+        han_viet: Trước Vật
+        meaning_vi: kimono (trang phục truyền thống của Nhật Bản)
+        example:
+          ja: 着物を着てお祭りに行きます。
+          vi: Tôi mặc kimono và đi lễ hội.
+      - word: 上着
+        kana: うわぎ
+        han_viet: Thượng Trước
+        meaning_vi: áo khoác, áo ngoài
+        example:
+          ja: 上着を着ます。
+          vi: Tôi mặc áo khoác.
+  - char: 新
+    meaning_vi: [mới]
+    han_viet: Tân
+    mnemonic_vi: "Mới (新しい) là khi một vật hoặc ý tưởng chưa tồn tại trước đó hoặc vừa được tạo ra hoặc phát hiện"
+    components:
+      - { char: 立, meaning_en: stand, meaning_vi: đứng, han_viet: Lập }
+      - { char: 木, meaning_en: tree, meaning_vi: cây, han_viet: Mộc }
+    related_vocab:
+      - word: 新しい
+        kana: あたらしい
+        han_viet: Tân
+        meaning_vi: mới (tính từ)
+        example:
+          ja: 新しい車を買いました。
+          vi: Tôi đã mua một chiếc xe mới.
+      - word: 新聞
+        kana: しんぶん
+        han_viet: Tân Văn
+        meaning_vi: báo, tờ báo
+        example:
+          ja: 毎朝新聞を読みます。
+          vi: Tôi đọc báo mỗi sáng.
+      - word: 新車
+        kana: しんしゃ
+        han_viet: Tân Xa
+        meaning_vi: xe mới
+        example:
+          ja: 新車を買いました。
+          vi: Tôi đã mua một chiếc xe mới.
+      - word: 新年
+        kana: しんねん
+        han_viet: Tân Niên
+        meaning_vi: năm mới
+        example:
+          ja: 新年おめでとうございます。
+          vi: Chúc mừng năm mới.
+  - char: 古
+    meaning_vi: [cổ, cũ]
+    han_viet: Cổ
+    mnemonic_vi: "Cổ (古い) là khi một vật hoặc ý tưởng đã tồn tại trong một khoảng thời gian dài và có dấu hiệu của sự hao mòn hoặc lỗi thời"
+    components:
+      - { char: 十, meaning_en: ten, meaning_vi: mười, han_viet: Thập }
+      - { char: 口, meaning_en: mouth, meaning_vi: miệng, han_viet: Khẩu }
+    related_vocab:
+      - word: 古い
+        kana: ふるい
+        han_viet: Cổ
+        meaning_vi: cũ (tính từ)
+        example:
+          ja: 古い家に住んでいます。
+          vi: Tôi sống trong một ngôi nhà cũ.
+      - word: 古代
+        kana: こだい
+        han_viet: Cổ Đại
+        meaning_vi: cổ đại
+        example:
+          ja: 古代の文化を学びます。
+          vi: Tôi học về văn hóa cổ đại.
+      - word: 中古車
+        kana: ちゅうこしゃ
+        han_viet: Trung Cổ Xa
+        meaning_vi: xe đã qua sử dụng, xe cũ
+        example:
+          ja: 中古車を買いました。
+          vi: Tôi đã mua một chiếc xe đã qua sử dụng.
+      - word: 古着
+        kana: ふるぎ
+        han_viet: Cổ Trước
+        meaning_vi: quần áo cũ
+        example:
+          ja: たくさん古着があります。
+          vi: Tôi có nhiều quần áo cũ.
+  - char: 持
+    meaning_vi: [cầm, mang]
+    han_viet: Trì
+    mnemonic_vi: "Mang (持つ) là khi một người cầm hoặc giữ một vật nào đó trong tay hoặc trên người"
+    components:
+      - { char: 扌, meaning_en: hand, meaning_vi: tay, han_viet: Thủ }
+      - { char: 寺, meaning_en: temple, meaning_vi: chùa, han_viet: Tự }
+    related_vocab:
+      - word: 持つ
+        kana: もつ
+        han_viet: Trì
+        meaning_vi: mang, cầm (động từ)
+        example:
+          ja: 荷物を持ちます。
+          vi: Tôi mang hành lý.
+      - word: 気持ち
+        kana: きもち
+        han_viet: Khí Trì
+        meaning_vi: cảm giác, tâm trạng
+        example:
+          ja: 気持ちがいいです。
+          vi: Cảm giác thật tốt.
+      - word: 持ち物
+        kana: もちもの
+        han_viet: Trì Vật
+        meaning_vi: đồ đạc, vật dụng cá nhân
+        example:
+          ja: 持ち物を確認してください。
+          vi: Hãy kiểm tra đồ đạc của bạn.
+
+lesson-19:
+  - char: 電
+    meaning_vi: [điện]
+    han_viet: Điện
+    mnemonic_vi: "Điện (電気) là năng lượng được tạo ra từ sự chuyển động của các hạt mang điện, được sử dụng để cung cấp năng lượng cho các thiết bị và hệ thống điện tử"
+    components:
+      - { char: 雨, meaning_en: rain, meaning_vi: mưa, han_viet: Vũ }
+      - { char: 田, meaning_en: rice field, meaning_vi: ruộng lúa, han_viet: Điền }
+    related_vocab:
+      - word: 電車
+        kana: でんしゃ
+        han_viet: Điện Xa
+        meaning_vi: tàu điện, xe lửa
+        example:
+          ja: 電車に乗ります。
+          vi: Tôi lên tàu điện.
+      - word: 電気
+        kana: でんき
+        han_viet: Điện Khí
+        meaning_vi: điện, năng lượng điện
+        example:
+          ja: 空ガッ黒くなったから、電気をつけてください。
+          vi: Vì trời tối, hãy bật đèn.
+      - word: 電池
+        kana: でんち
+        han_viet: Điện Trì
+        meaning_vi: pin, ắc quy
+        example:
+          ja: 電池を貸してください。
+          vi: Hãy cho tôi mượn pin.
+      - word: 電話
+        kana: でんわ
+        han_viet: Điện Thoại
+        meaning_vi: điện thoại
+        example:
+          ja: 電話をかけます。
+          vi: Tôi gọi điện thoại.
+  - char: 話
+    meaning_vi: [nói chuyện]
+    han_viet: Thoại
+    mnemonic_vi: "Nói chuyện (話す) là hành động sử dụng ngôn ngữ để giao tiếp và truyền đạt ý tưởng, cảm xúc hoặc thông tin với người khác"
+    components:
+      - { char: 言, meaning_en: say, meaning_vi: nói, han_viet: Ngôn }
+      - { char: 舌, meaning_en: tongue, meaning_vi: lưỡi, han_viet: Thiệt }
+    related_vocab:
+      - word: 話す
+        kana: はなす
+        han_viet: Thoại
+        meaning_vi: nói chuyện (động từ)
+        example:
+          ja: 日本語を話します。
+          vi: Tôi nói tiếng Nhật.
+      - word: 会話
+        kana: かいわ
+        han_viet: Hội Thoại
+        meaning_vi: hội thoại, cuộc trò chuyện
+        example:
+          ja: 会話を練習します。
+          vi: Tôi luyện tập hội thoại.
+      - word: 電話
+        kana: でんわ
+        han_viet: Điện Thoại
+        meaning_vi: điện thoại
+        example:
+          ja: 電話をかけます。
+          vi: Tôi gọi điện thoại.
+      - word: 昔話
+        kana: むかしばなし
+        han_viet: Tích Thoại
+        meaning_vi: truyện cổ tích, chuyện xưa
+        example:
+          ja: 昔話を聞きます。
+          vi: Tôi nghe truyện cổ tích.
+  - char: 音
+    meaning_vi: [âm thanh]
+    han_viet: Âm
+    mnemonic_vi: "Âm thanh (音楽) là những rung động hoặc sóng âm được tạo ra bởi một nguồn nào đó và có thể được nghe thấy bởi con người hoặc động vật"
+    components:
+      - { char: 音, meaning_en: sound, meaning_vi: âm thanh, han_viet: Âm }
+    related_vocab:
+      - word: 音
+        kana: おと
+        han_viet: Âm
+        meaning_vi: âm thanh
+        example:
+          ja: 音が聞こえます。
+          vi: Tôi nghe thấy âm thanh.
+      - word: 音楽
+        kana: おんがく
+        han_viet: Âm Nhạc
+        meaning_vi: âm nhạc
+        example:
+          ja: 音楽を聴きます。
+          vi: Tôi nghe nhạc.
+  - char: 楽
+    meaning_vi: [vui vẻ, âm nhạc]
+    han_viet: Nhạc
+    mnemonic_vi: "Vui vẻ (楽しい) là khi một người cảm thấy hạnh phúc, thoải mái và tận hưởng một hoạt động hoặc tình huống nào đó"
+    components:
+      - { char: 木, meaning_en: tree, meaning_vi: cây, han_viet: Mộc }
+      - { char: 白, meaning_en: white, meaning_vi: trắng, han_viet: Bạch }
+    related_vocab:
+      - word: 楽しい
+        kana: たのしい
+        han_viet: Nhạc
+        meaning_vi: vui vẻ (tính từ)
+        example:
+          ja: パーティーは楽しかったです。
+          vi: Bữa tiệc thật vui.
+      - word: 楽しむ
+        kana: たのしむ
+        han_viet: Nhạc
+        meaning_vi: tận hưởng, thưởng thức (động từ)
+        example:
+          ja: 旅行を楽しみます。
+          vi: Tôi tận hưởng chuyến du lịch. 
+      - word: 音楽
+        kana: おんがく
+        han_viet: Âm Nhạc
+        meaning_vi: âm nhạc
+        example:
+          ja: 音楽を聴きます。
+          vi: Tôi nghe nhạc.
+      - word: 楽器
+        kana: がっき
+        han_viet: Nhạc Khí
+        meaning_vi: nhạc cụ
+        example:
+          ja: ギターは楽器です。
+          vi: Đàn guitar là một nhạc cụ.
+      - word: 楽な
+        kana: らくな
+        han_viet: Nhạc
+        meaning_vi: dễ dàng, thoải mái (tính từ)
+        example:
+          ja: この仕事は楽です。
+          vi: Công việc này dễ dàng.
+  - char: 歌
+    meaning_vi: [hát]
+    han_viet: Ca
+    mnemonic_vi: "Hát (歌う) là hành động sử dụng giọng nói để tạo ra âm nhạc hoặc thể hiện cảm xúc thông qua lời bài hát"
+    components:
+      - { char: 欠, meaning_en: lack, meaning_vi: thiếu, han_viet: Khiếm }
+      - { char: 可, meaning_en: can, meaning_vi: có thể, han_viet: Khả }
+    related_vocab:
+      - word: 歌う
+        kana: うたう
+        han_viet: Ca
+        meaning_vi: hát (động từ)
+        example:
+          ja: カラオケで歌います。
+          vi: Tôi hát ở karaoke.
+      - word: 歌
+        kana: うた
+        han_viet: Ca
+        meaning_vi: bài hát
+        example:
+          ja: この歌は好きです。
+          vi: Tôi thích bài hát này.
+      - word: 歌詞
+        kana: かし
+        han_viet: Ca Từ
+        meaning_vi: lời bài hát
+        example:
+          ja: この歌の歌詞は美しいです。
+          vi: Lời bài hát này rất đẹp.
+      - word: 歌手
+        kana: かしゅ
+        han_viet: Ca Thủ
+        meaning_vi: ca sĩ
+        example:
+          ja: 彼は有名な歌手です。
+          vi: Anh ấy là một ca sĩ nổi tiếng.
+  - char: 度
+    meaning_vi: [độ, lần]
+    han_viet: Độ
+    mnemonic_vi: "Lần (一度) là một đơn vị đo lường cho biết số lần một sự kiện hoặc hành động xảy ra"
+    components:
+      - { char: 广, meaning_en: wide, meaning_vi: rộng, han_viet: Nghiễm }
+      - { char: 又, meaning_en: again, meaning_vi: lại, han_viet: Hựu }
+    related_vocab:
+      - word: 一度
+        kana: いちど
+        han_viet: Nhất Độ
+        meaning_vi: một lần
+        example:
+          ja: 一度行ってみたいです。
+          vi: Tôi muốn đi một lần.
+      - word: 37度
+        kana: さんじゅうななど
+        han_viet: Tam Thập Cửu Độ
+        meaning_vi: 37 độ (nhiệt độ cơ thể bình thường)
+        example:
+          ja: 体温は37度です。
+          vi: Nhiệt độ cơ thể là 37 độ.
+      - word: 今度
+        kana: こんど
+        han_viet: Kim Độ
+        meaning_vi: lần tới, lần sau, sau này
+        example:
+          ja: 今度会いましょう。
+          vi: Hãy gặp nhau lần sau.
+  - char: 教
+    meaning_vi: [dạy, giáo dục]
+    han_viet: Giáo
+    mnemonic_vi: "Dạy (教える) là hành động truyền đạt kiến thức, kỹ năng hoặc thông tin cho người khác để giúp họ học hỏi và phát triển"
+    components:
+      - { char: 孝, meaning_en: filial piety, meaning_vi: hiếu thảo, han_viet: Hiếu }
+      - { char: 攵, meaning_en: rap, meaning_vi: gõ, han_viet: Phộc }
+    related_vocab:
+      - word: 教える
+        kana: おしえる
+        han_viet: Giáo
+        meaning_vi: dạy (động từ)
+        example:
+          ja: 日本語を教えます。
+          vi: Tôi dạy tiếng Nhật.
+      - word: 教師
+        kana: きょうし
+        han_viet: Giáo Sư
+        meaning_vi: giáo viên
+        example:
+          ja: 彼は教師です。
+          vi: Anh ấy là giáo viên.
+      - word: 教室
+        kana: きょうしつ
+        han_viet: Giáo Thất
+        meaning_vi: phòng học, lớp học
+        example:
+          ja: 教室に入ります。
+          vi: Tôi vào phòng học.
+      - word: 教会
+        kana: きょうかい
+        han_viet: Giáo Hội
+        meaning_vi: nhà thờ, giáo hội
+        example:
+          ja: 教会に行きます。
+          vi: Tôi đi nhà thờ.
+  - char: 習
+    meaning_vi: [học tập, luyện tập]
+    han_viet: Tập
+    mnemonic_vi: "Học tập (習う) là quá trình tiếp thu kiến thức, kỹ năng hoặc thông tin mới thông qua việc học hỏi, luyện tập và thực hành"
+    components:
+      - { char: 羽, meaning_en: feather, meaning_vi: lông vũ, han_viet: Vũ }
+      - { char: 白, meaning_en: white, meaning_vi: trắng, han_viet: Bạch }
+    related_vocab:
+      - word: 習う
+        kana: ならう
+        han_viet: Tập
+        meaning_vi: học tập (động từ)
+        example:
+          ja: 日本語を習います。
+          vi: Tôi học tiếng Nhật.
+      - word: 練習
+        kana: れんしゅう
+        han_viet: Luyện Tập
+        meaning_vi: luyện tập
+        example:
+          ja: 毎日練習します。
+          vi: Tôi luyện tập mỗi ngày.
+      - word: 予習
+        kana: よしゅう
+        han_viet: Dự Tập
+        meaning_vi: chuẩn bị bài trước, học trước
+        example:
+          ja: 授業の予習をします。
+          vi: Tôi chuẩn bị bài trước cho lớp học.
+      - word: 復習
+        kana: ふくしゅう
+        han_viet: Phục Tập
+        meaning_vi: ôn tập, học lại
+        example:
+          ja: 授業の復習をします。
+          vi: Tôi ôn tập lại bài học.
+
+lesson-20:
+  - char: 貸
+    meaning_vi: [cho mượn, cho vay]
+    han_viet: Thải
+    mnemonic_vi: "Cho mượn (貸す) là hành động cho phép một người khác sử dụng một vật hoặc tài sản nào đó trong một khoảng thời gian nhất định và thường yêu cầu trả lại sau đó"
+    components:
+      - { char: 貝, meaning_en: shell/money, meaning_vi: vỏ sò/tiền, han_viet: Bối }
+      - { char: 代, meaning_en: substitute, meaning_vi: thay thế, han_viet: Đại }
+    related_vocab:
+      - word: 貸す
+        kana: かす
+        han_viet: Thải
+        meaning_vi: cho mượn (động từ)
+        example:
+          ja: 本を貸します。
+          vi: Tôi cho mượn sách.
+      - word: 貸家
+        kana: かしや
+        han_viet: Thải Gia
+        meaning_vi: nhà cho thuê
+        example:
+          ja: 貸家を探しています。
+          vi: Tôi đang tìm nhà cho thuê.
+  - char: 借
+    meaning_vi: [mượn, vay]
+    han_viet: Tá
+    mnemonic_vi: "Mượn (借りる) là hành động nhận một vật hoặc tài sản nào đó từ người khác với sự cho phép và thường phải trả lại sau một khoảng thời gian nhất định"
+    components:
+      - { char: 人, meaning_en: person, meaning_vi: người, han_viet: Nhân }
+      - { char: 昔, meaning_en: long ago, meaning_vi: ngày xưa, han_viet: Tích }
+    related_vocab:
+      - word: 借りる
+        kana: かりる
+        han_viet: Tá
+        meaning_vi: mượn (động từ)
+        example:
+          ja: 本を借ります。
+          vi: Tôi mượn sách.
+      - word: 借金
+        kana: しゃっきん
+        han_viet: Tá Kim
+        meaning_vi: khoản nợ, vay tiền
+        example:
+          ja: 借金があります。
+          vi: Tôi có khoản nợ.
+  - char: 送
+    meaning_vi: [gửi]
+    han_viet: Tống
+    mnemonic_vi: "Gửi (送る) là hành động chuyển một vật, thông điệp hoặc người nào đó từ một nơi này đến một nơi khác"
+    components:
+      - { char: 辶, meaning_en: walk, meaning_vi: đi bộ, han_viet: Sước }
+      - { char: 关, meaning_en: gate, meaning_vi: cổng, han_viet: Quan }
+    related_vocab:
+      - word: 送る
+        kana: おくる
+        han_viet: Tống
+        meaning_vi: gửi (động từ)
+        example:
+          ja: 手紙を送ります。
+          vi: Tôi gửi thư.
+      - word: 見送ります
+        kana: みおくります
+        han_viet: Kiến Tống
+        meaning_vi: tiễn, đưa tiễn
+        example:
+          ja: 友達を見送ります。
+          vi: Tôi tiễn bạn bè.
+      - word: 送別会
+        kana: そうべつかい
+        han_viet: Tống Biệt Hội
+        meaning_vi: tiệc chia tay
+        example:
+          ja: 送別会を開きます。
+          vi: Chúng tôi tổ chức một bữa tiệc chia tay.
+      - word: 送金
+        kana: そうきん
+        han_viet: Tống Kim
+        meaning_vi: chuyển tiền, gửi tiền, tiền gửi
+        example:
+          ja: 送金をします。
+          vi: Tôi chuyển tiền.
+  - char: 強
+    meaning_vi: [mạnh, cường]
+    han_viet: Cường
+    mnemonic_vi: "Mạnh (強い) là khi một người hoặc vật có sức mạnh, khả năng hoặc ảnh hưởng lớn hơn so với người hoặc vật khác"
+    components:
+      - { char: 弓, meaning_en: bow, meaning_vi: cung, han_viet: Cung }
+      - { char: 虫, meaning_en: insect, meaning_vi: côn trùng, han_viet: Trùng }
+    related_vocab:
+      - word: 強い
+        kana: つよい
+        han_viet: Cường
+        meaning_vi: mạnh (tính từ)
+        example:
+          ja: 彼は強いです。
+          vi: Anh ấy rất mạnh.
+      - word: 強み
+        kana: つよみ
+        han_viet: Cường
+        meaning_vi: điểm mạnh, ưu điểm
+        example:
+          ja: 彼の強みはコミュニケーション能力です。
+          vi: Điểm mạnh của anh ấy là khả năng giao tiếp.
+      - word: 勉強
+        kana: べんきょう
+        han_viet: Miễn Cường
+        meaning_vi: học tập, học hành
+        example:
+          ja: 日本語を勉強します。
+          vi: Tôi học tiếng Nhật.
+  - char: 勉
+    meaning_vi: [cố gắng, nỗ lực]
+    han_viet: Miễn
+    mnemonic_vi: "Cố gắng (勉強) là khi một người đặt ra nỗ lực và sự kiên trì để đạt được một mục tiêu hoặc hoàn thành một nhiệm vụ nào đó"
+    components:
+      - { char: 力, meaning_en: power, meaning_vi: sức mạnh, han_viet: Lực }
+      - { char: 免, meaning_en: exempt, meaning_vi: miễn trừ, han_viet: Miễn }
+    related_vocab:
+      - word: 勉強
+        kana: べんきょう
+        han_viet: Miễn Cường
+        meaning_vi: học tập, học hành
+        example:
+          ja: 日本語を勉強します。
+          vi: Tôi học tiếng Nhật.
+  - char: 旅
+    meaning_vi: [du lịch, chuyến đi]
+    han_viet: Lữ
+    mnemonic_vi: "Du lịch (旅行) là hành động di chuyển từ một địa điểm này đến một địa điểm khác để khám phá, trải nghiệm và tận hưởng những điều mới mẻ"
+    components:
+      - { char: 方, meaning_en: direction, meaning_vi: phương hướng, han_viet: Phương }
+      - { char: 亠, meaning_en: lid, meaning_vi: nắp, han_viet: Đầu }
+    related_vocab:
+      - word: 旅行
+        kana: りょこう
+        han_viet: Lữ Hành
+        meaning_vi: du lịch, chuyến đi
+        example:
+          ja: 旅行に行きます。
+          vi: Tôi đi du lịch.
+      - word: 旅行者
+        kana: りょこうしゃ
+        han_viet: Lữ Hành Giả
+        meaning_vi: du khách, người đi du lịch
+        example:
+          ja: 旅行者が多いです。
+          vi: Có nhiều du khách.
+      - word: 旅館
+        kana: りょかん
+        han_viet: Lữ Quán
+        meaning_vi: nhà trọ kiểu Nhật, khách sạn truyền thống của Nhật Bản
+        example:
+          ja: 旅館に泊まります。
+          vi: Tôi ở tại một nhà trọ kiểu Nhật.
+      - word: 旅します
+        kana: たびします
+        han_viet: Lữ
+        meaning_vi: chuyến đi du lịch (động từ)
+        example:
+          ja: 世界を旅します。
+          vi: Tôi đi du lịch khắp thế giới.
+  - char: 室
+    meaning_vi: [phòng]
+    han_viet: Thất
+    mnemonic_vi: "Phòng (教室) là một không gian được sử dụng cho một mục đích cụ thể, chẳng hạn như học tập, làm việc hoặc sinh hoạt"
+    components:
+      - { char: 宀, meaning_en: roof, meaning_vi: mái nhà, han_viet: Miên }
+      - { char: 至, meaning_en: arrive, meaning_vi: đến nơi, han_viet: Chí }
+    related_vocab:
+      - word: 教室
+        kana: きょうしつ
+        han_viet: Giáo Thất
+        meaning_vi: phòng học, lớp học
+        example:
+          ja: 教室に入ります。
+          vi: Tôi vào phòng học.
+      - word: 寝室
+        kana: しんしつ
+        han_viet: Tẩm Thất
+        meaning_vi: phòng ngủ
+        example:
+          ja: 寝室はどこですか？
+          vi: Phòng ngủ ở đâu?
+      - word: 会議室
+        kana: かいぎしつ
+        han_viet: Hội Nghị Thất
+        meaning_vi: phòng họp, phòng hội nghị
+        example:
+          ja: 会議室を予約します。
+          vi: Tôi đặt phòng họp.
+  - char: 登
+    meaning_vi: [leo, đăng ký]
+    han_viet: Đăng
+    mnemonic_vi: "Leo (登る) là hành động di chuyển lên một bề mặt cao hơn, chẳng hạn như núi, cầu thang hoặc tòa nhà"
+    components:
+      - { char: 癶, meaning_en: footsteps, meaning_vi: dấu chân, han_viet: Bát }
+      - { char: 豆, meaning_en: bean, meaning_vi: đậu, han_viet: Đậu }
+    related_vocab:
+      - word: 登る
+        kana: のぼる
+        han_viet: Đăng
+        meaning_vi: leo (động từ)
+        example:
+          ja: 山に登ります。
+          vi: Tôi leo núi.
+      - word: 登山
+        kana: とざん
+        han_viet: Đăng Sơn
+        meaning_vi: leo núi, thám hiểm núi
+        example:
+          ja: 登山が好きです。
+          vi: Tôi thích leo núi.
+      - word: 登場
+        kana: とうじょう
+        han_viet: Đăng Tràng
+        meaning_vi: xuất hiện, ra mắt (trên sân khấu, trong phim, v.v.)
+        example:
+          ja: 主人公が登場します。
+          vi: Nhân vật chính xuất hiện.
+      - word: 登録
+        kana: とうろく
+        han_viet: Đăng Lục
+        meaning_vi: đăng ký
+        example:
+          ja: 会員登録をします。
+          vi: Tôi đăng ký thành viên.
