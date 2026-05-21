@@ -251,6 +251,7 @@ export async function updateChangedFiles(
           if (lessonFile.passages.length > 0)
             await db.passages.bulkPut(lessonFile.passages)
 
+          await db.lessons.delete(`${bookSource}:${lessonNumber}`)
           if (lessonFile.vocabulary.length > 0) {
             await db.lessons.put({
               lesson_id: `${bookSource}:${lessonNumber}`,
@@ -260,10 +261,9 @@ export async function updateChangedFiles(
               vocab_count: lessonFile.vocabulary.length,
             })
           }
-
-          updatedChecksums[fileEntry.filename] = fileEntry.checksum
         })
 
+        updatedChecksums[fileEntry.filename] = fileEntry.checksum
         completed++
         onProgress?.(fileEntry.filename, completed, changedFiles.length)
       }))

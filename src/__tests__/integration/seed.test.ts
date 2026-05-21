@@ -428,11 +428,6 @@ describe('seedDatasetLazy', () => {
   })
 })
 
-async function fetchTestManifest(): Promise<Manifest> {
-  const res = await fetch('/data/manifest.json')
-  return res.json() as Promise<Manifest>
-}
-
 describe('updateChangedFiles', () => {
   beforeEach(async () => {
     await db.delete()
@@ -445,8 +440,7 @@ describe('updateChangedFiles', () => {
     await db.settings.delete('dataset_seeded_mnn1')
 
     const vocabBefore = await db.vocabulary.count()
-    const manifest = await fetchTestManifest()
-    await updateChangedFiles(manifest)
+    await updateChangedFiles(SAMPLE_MANIFEST)
     const vocabAfter = await db.vocabulary.count()
     expect(vocabAfter).toBe(vocabBefore)
   })
@@ -458,8 +452,7 @@ describe('updateChangedFiles', () => {
     await db.settings.put({ key: 'lesson_checksums_mnn1', value: fakeChecksums })
 
     const updatedFiles: string[] = []
-    const manifest = await fetchTestManifest()
-    await updateChangedFiles(manifest, (file) => {
+    await updateChangedFiles(SAMPLE_MANIFEST, (file) => {
       updatedFiles.push(file)
     })
 
