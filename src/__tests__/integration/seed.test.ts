@@ -3,7 +3,7 @@ import type { VocabItem } from '../../types/vocabulary'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import { db } from '../../db/schema'
-import { checkForUpdates, invalidateLessonCache, seedDatabase, seedDatasetLazy, SeedError, seedKanji } from '../../db/seed'
+import { checkForUpdates, invalidateLessonCache, seedDatabase, seedDatasetLazy, SeedError, seedKanji, updateChangedFiles } from '../../db/seed'
 import { updateStore } from '../../stores/updateStore'
 
 const SAMPLE_LESSON_FILE = sampleVocabulary.filter(v => v.lesson_number === 1)
@@ -425,5 +425,48 @@ describe('seedDatasetLazy', () => {
     await seedDatasetLazy('mnn1')
     const result = await seedDatasetLazy('mnn1')
     expect(result).toBe('up-to-date')
+  })
+})
+
+async function fetchTestManifest(): Promise<Manifest> {
+  const res = await fetch('/data/manifest.json')
+  return res.json() as Promise<Manifest>
+}
+
+describe('updateChangedFiles', () => {
+  beforeEach(async () => {
+    await db.delete()
+    await db.open()
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatasetLazy('mnn1')
+  })
+
+  it('skips datasets that were never seeded', async () => {
+    await db.settings.delete('dataset_seeded_mnn1')
+
+    const vocabBefore = await db.vocabulary.count()
+    const manifest = await fetchTestManifest()
+    await updateChangedFiles(manifest)
+    const vocabAfter = await db.vocabulary.count()
+    expect(vocabAfter).toBe(vocabBefore)
+  })
+
+  it('updates only files with changed checksums', async () => {
+    const storedChecksums = (await db.settings.get('lesson_checksums_mnn1'))?.value as Record<string, string>
+    // Fake one changed checksum
+    const fakeChecksums = { ...storedChecksums, 'lesson-01.json': 'old-checksum' }
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: fakeChecksums })
+
+    const updatedFiles: string[] = []
+    const manifest = await fetchTestManifest()
+    await updateChangedFiles(manifest, (file) => {
+      updatedFiles.push(file)
+    })
+
+    expect(updatedFiles).toContain('lesson-01.json')
+    expect(updatedFiles).toHaveLength(1)
+    // Checksum should be updated
+    const newChecksums = (await db.settings.get('lesson_checksums_mnn1'))?.value as Record<string, string>
+    expect(newChecksums['lesson-01.json']).not.toBe('old-checksum')
   })
 })

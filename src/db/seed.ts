@@ -211,6 +211,73 @@ export async function seedDatasetLazy(
   return 'seeded'
 }
 
+const CONCURRENCY = 3
+
+export async function updateChangedFiles(
+  manifest: Manifest,
+  onProgress?: (file: string, completed: number, total: number) => void,
+): Promise<void> {
+  for (const dataset of manifest.datasets) {
+    const seededFlag = await db.settings.get(`dataset_seeded_${dataset.book_code_prefix}`)
+    if (!seededFlag?.value)
+      continue
+
+    const bookSource = bookCodePrefixToSource[dataset.book_code_prefix]
+    if (!bookSource)
+      continue
+
+    const storedChecksums = ((await db.settings.get(`lesson_checksums_${dataset.book_code_prefix}`))?.value ?? {}) as Record<string, string>
+    const changedFiles = dataset.files.filter(f => storedChecksums[f.filename] !== f.checksum)
+
+    if (changedFiles.length === 0)
+      continue
+
+    let completed = 0
+    const updatedChecksums = { ...storedChecksums }
+
+    for (let i = 0; i < changedFiles.length; i += CONCURRENCY) {
+      const batch = changedFiles.slice(i, i + CONCURRENCY)
+      await Promise.all(batch.map(async (fileEntry) => {
+        const raw = await fetchJson<unknown>(`/data/${dataset.book_code_prefix}/${fileEntry.filename}`)
+        const lessonFile = parseLessonFile(raw)
+        const lessonNumber = Number(fileEntry.filename.replace('lesson-', '').replace('.json', ''))
+
+        await db.transaction('rw', [db.vocabulary, db.lessons, db.passages, db.settings], async () => {
+          await db.vocabulary.where('[book_source+lesson_number]').equals([bookSource, lessonNumber]).delete()
+          await db.passages.where('[book_source+lesson_number]').equals([bookSource, lessonNumber]).delete()
+
+          if (lessonFile.vocabulary.length > 0)
+            await db.vocabulary.bulkPut(lessonFile.vocabulary)
+          if (lessonFile.passages.length > 0)
+            await db.passages.bulkPut(lessonFile.passages)
+
+          if (lessonFile.vocabulary.length > 0) {
+            await db.lessons.put({
+              lesson_id: `${bookSource}:${lessonNumber}`,
+              book_source: bookSource,
+              lesson_number: lessonNumber,
+              title: '',
+              vocab_count: lessonFile.vocabulary.length,
+            })
+          }
+
+          updatedChecksums[fileEntry.filename] = fileEntry.checksum
+        })
+
+        completed++
+        onProgress?.(fileEntry.filename, completed, changedFiles.length)
+      }))
+    }
+
+    await db.settings.put({ key: `lesson_checksums_${dataset.book_code_prefix}`, value: updatedChecksums })
+    await db.settings.put({ key: `dataset_version_${dataset.book_code_prefix}`, value: dataset.version })
+  }
+
+  if (manifest.app_version) {
+    await db.settings.put({ key: 'app_version', value: manifest.app_version })
+  }
+}
+
 export async function seedKanji(): Promise<'up-to-date' | 'seeded' | 'skipped'> {
   let manifest: Manifest
   try {
