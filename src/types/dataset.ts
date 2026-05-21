@@ -32,7 +32,8 @@ export interface KanjiManifestSection {
 }
 
 export interface Manifest {
-  schema_version: '1.0'
+  schema_version: '1.0' | '2.0'
+  app_version?: string
   built_at: string
   built_by: string
   built_from: string
