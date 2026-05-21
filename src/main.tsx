@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import { Toaster } from '@/components/ui/sonner'
 import { syncPackage } from './db/package-sync'
+import { db } from './db/schema'
 import { checkForUpdates } from './db/seed'
 import { uploadPendingReviews } from './db/sync'
 import { initAnonymousUser } from './lib/anonymous-user'
@@ -14,6 +15,7 @@ import { useSettingsStore } from './stores/settingsStore'
 import './app.css'
 
 const PACKAGE_SYNC_INTERVAL_MS = 60_000
+const UPDATE_CHECK_INTERVAL_MS = 2 * 60 * 60 * 1000
 
 function isSyncAllowed(): boolean {
   const { userId, email } = useAuthStore.getState()
@@ -29,8 +31,24 @@ function triggerSync(): void {
   syncPackage(userId!).catch(() => {})
 }
 
+async function maybeCheckForUpdates(): Promise<void> {
+  const lastCheck = await db.settings.get('last_update_check').catch(() => undefined)
+  if (lastCheck?.value) {
+    const elapsed = Date.now() - new Date(lastCheck.value as string).getTime()
+    if (elapsed < UPDATE_CHECK_INTERVAL_MS)
+      return
+  }
+  checkForUpdates().catch(() => {})
+}
+
 window.addEventListener('online', triggerSync)
 setInterval(triggerSync, PACKAGE_SYNC_INTERVAL_MS)
+setInterval(() => checkForUpdates().catch(() => {}), UPDATE_CHECK_INTERVAL_MS)
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible')
+    maybeCheckForUpdates()
+})
 
 registerSW({ onOfflineReady() {} })
 
