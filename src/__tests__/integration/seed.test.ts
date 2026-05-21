@@ -338,8 +338,8 @@ describe('checkForUpdates', () => {
 
   it('does not call startUpdate when everything is up-to-date', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
-    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
-    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'abc123' } })
 
     await checkForUpdates()
 
@@ -348,7 +348,9 @@ describe('checkForUpdates', () => {
 
   it('calls startUpdate with datasetOutdated=true when checksum differs', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
-    // No stored checksum — dataset is outdated
+    // dataset is seeded but has outdated checksum
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'old-checksum' } })
 
     await checkForUpdates()
 
@@ -357,14 +359,14 @@ describe('checkForUpdates', () => {
     expect(dataset?.status).not.toBe('skipped')
   })
 
-  it('calls startUpdate with datasetOutdated=true when version changes even if checksum is same', async () => {
-    const newVersionManifest: Manifest = {
+  it('calls startUpdate with datasetOutdated=true when file checksum changes', async () => {
+    const updatedManifest: Manifest = {
       ...SAMPLE_MANIFEST,
-      datasets: [{ ...SAMPLE_MANIFEST.datasets[0], version: '1.1.0' }],
+      datasets: [{ ...SAMPLE_MANIFEST.datasets[0], files: [{ filename: 'lesson-01.json', size_bytes: 100, checksum: 'new-checksum' }] }],
     }
-    mockFetch(newVersionManifest, SAMPLE_LESSON_FILE)
-    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
-    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+    mockFetch(updatedManifest, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'abc123' } })
 
     await checkForUpdates()
 
@@ -375,8 +377,8 @@ describe('checkForUpdates', () => {
 
   it('calls startUpdate with swWaiting=true when SW is waiting', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
-    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
-    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'abc123' } })
     vi.stubGlobal('navigator', {
       serviceWorker: {
         getRegistration: vi.fn().mockResolvedValue({ waiting: {} }),
@@ -425,6 +427,53 @@ describe('seedDatasetLazy', () => {
     await seedDatasetLazy('mnn1')
     const result = await seedDatasetLazy('mnn1')
     expect(result).toBe('up-to-date')
+  })
+})
+
+describe('checkForUpdates (refactored)', () => {
+  beforeEach(async () => {
+    await db.delete()
+    await db.open()
+    updateStore.setState({ phase: 'idle', steps: [], currentFile: null, progress: 0, needsReload: false, error: null })
+    vi.stubGlobal('navigator', {
+      serviceWorker: {
+        getRegistration: vi.fn().mockResolvedValue(undefined),
+      },
+    })
+  })
+
+  afterEach(() => {
+    updateStore.getState().reset()
+  })
+
+  it('saves last_update_check timestamp after call', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+
+    await checkForUpdates()
+
+    const ts = await db.settings.get('last_update_check')
+    expect(ts?.value).toBeTruthy()
+    expect(typeof ts?.value).toBe('string')
+  })
+
+  it('does not trigger update store for non-seeded datasets', async () => {
+    // dataset_seeded_mnn1 is not set — lazy load handles it
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('idle')
+  })
+
+  it('triggers update when seeded dataset has changed file checksums', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatasetLazy('mnn1')
+    // Fake an outdated checksum
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'old-checksum' } })
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('updating')
   })
 })
 

@@ -332,20 +332,37 @@ export async function checkForUpdates(): Promise<void> {
     return
   }
 
+  await db.settings.put({ key: 'last_update_check', value: new Date().toISOString() })
+
   const reg = await navigator.serviceWorker?.getRegistration().catch(() => undefined)
   const swWaiting = !!reg?.waiting
 
-  const dataset = manifest.datasets[0]
-  const [storedChecksum, storedVersion, storedKanjiChecksum] = await Promise.all([
-    db.settings.get('manifest_checksum'),
-    db.settings.get('dataset_version'),
-    db.settings.get('kanji_n5_checksum'),
-  ])
+  // Migration: if old manifest_checksum exists but new seeded flags don't, initialize them
+  // so the next update check will use per-file checksums instead
+  const oldChecksum = await db.settings.get('manifest_checksum')
+  if (oldChecksum?.value) {
+    for (const dataset of manifest.datasets) {
+      const alreadyMigrated = await db.settings.get(`dataset_seeded_${dataset.book_code_prefix}`)
+      if (!alreadyMigrated) {
+        await db.settings.put({ key: `dataset_seeded_${dataset.book_code_prefix}`, value: true })
+      }
+    }
+  }
 
-  const datasetOutdated = !!dataset && (
-    storedChecksum?.value !== dataset.checksum
-    || storedVersion?.value !== dataset.version
-  )
+  let datasetOutdated = false
+  for (const dataset of manifest.datasets) {
+    const seededFlag = await db.settings.get(`dataset_seeded_${dataset.book_code_prefix}`)
+    if (!seededFlag?.value)
+      continue
+
+    const storedChecksums = ((await db.settings.get(`lesson_checksums_${dataset.book_code_prefix}`))?.value ?? {}) as Record<string, string>
+    if (dataset.files.some(f => storedChecksums[f.filename] !== f.checksum)) {
+      datasetOutdated = true
+      break
+    }
+  }
+
+  const storedKanjiChecksum = await db.settings.get('kanji_n5_checksum')
   const kanjiOutdated = !!manifest.kanji && storedKanjiChecksum?.value !== manifest.kanji.n5_checksum
 
   if (swWaiting || datasetOutdated || kanjiOutdated) {
