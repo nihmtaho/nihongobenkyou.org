@@ -366,6 +366,6 @@ export async function checkForUpdates(): Promise<void> {
   const kanjiOutdated = !!manifest.kanji && storedKanjiChecksum?.value !== manifest.kanji.n5_checksum
 
   if (swWaiting || datasetOutdated || kanjiOutdated) {
-    updateStore.getState().startUpdate(swWaiting, datasetOutdated, kanjiOutdated)
+    updateStore.getState().startUpdate(swWaiting, datasetOutdated, kanjiOutdated, manifest)
   }
 }

@@ -1,8 +1,18 @@
+import type { Manifest } from '../../types/dataset'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { updateStore } from '../../stores/updateStore'
 import { UpdateProgressModal } from './UpdateProgressModal'
+
+const MINIMAL_MANIFEST: Manifest = {
+  schema_version: '2.0',
+  app_version: '1.0.0',
+  built_at: '',
+  built_by: 'test',
+  built_from: 'test',
+  datasets: [],
+}
 
 vi.mock('../../db/seed', () => ({
   seedDatabase: vi.fn().mockResolvedValue(undefined),
@@ -25,28 +35,28 @@ describe('updateProgressModal', () => {
   })
 
   it('renders modal when phase is updating', () => {
-    updateStore.getState().startUpdate(false, true, false)
+    updateStore.getState().startUpdate(false, true, false, MINIMAL_MANIFEST)
     render(<UpdateProgressModal />)
     expect(screen.getByText('Đang tải phiên bản mới...')).toBeInTheDocument()
   })
 
   it('shows only non-skipped steps', () => {
     // sw is skipped (swWaiting=false), dataset is shown (datasetOutdated=true)
-    updateStore.getState().startUpdate(false, true, false)
+    updateStore.getState().startUpdate(false, true, false, MINIMAL_MANIFEST)
     render(<UpdateProgressModal />)
     expect(screen.getByText('Tải dữ liệu từ vựng')).toBeInTheDocument()
     expect(screen.queryByText('Cập nhật ứng dụng')).not.toBeInTheDocument()
   })
 
   it('shows "Hoàn tất ✓" when phase is done', () => {
-    updateStore.getState().startUpdate(false, true, false)
+    updateStore.getState().startUpdate(false, true, false, MINIMAL_MANIFEST)
     updateStore.getState().finish()
     render(<UpdateProgressModal />)
     expect(screen.getByText('Hoàn tất ✓')).toBeInTheDocument()
   })
 
   it('shows progress bar and filename during dataset step', () => {
-    updateStore.getState().startUpdate(false, true, false)
+    updateStore.getState().startUpdate(false, true, false, MINIMAL_MANIFEST)
     updateStore.getState().setStepActive('dataset')
     updateStore.getState().setProgress('lesson-07.json', 28)
     render(<UpdateProgressModal />)
@@ -54,7 +64,7 @@ describe('updateProgressModal', () => {
   })
 
   it('shows error message and retry button when error is set', () => {
-    updateStore.getState().startUpdate(false, true, false)
+    updateStore.getState().startUpdate(false, true, false, MINIMAL_MANIFEST)
     updateStore.getState().setError('Không thể tải dữ liệu')
     render(<UpdateProgressModal />)
     expect(screen.getByText('Không thể tải dữ liệu')).toBeInTheDocument()
@@ -63,7 +73,7 @@ describe('updateProgressModal', () => {
   })
 
   it('clicking "Bỏ qua lần này" resets the store to idle', async () => {
-    updateStore.getState().startUpdate(false, true, false)
+    updateStore.getState().startUpdate(false, true, false, MINIMAL_MANIFEST)
     updateStore.getState().setError('Network error')
     render(<UpdateProgressModal />)
 
