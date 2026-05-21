@@ -7,9 +7,8 @@ import { fetchProfile } from '../api/profiles'
 import { fetchUserCardSnapshots } from '../api/review-log'
 import { supabase } from '../api/supabase'
 import { fetchRemoteUserCards } from '../api/user-cards'
-import { bookCodePrefixToSource } from '../lib/datasets.config'
 import { db } from './schema'
-import { seedDatabase } from './seed'
+import { seedDatasetLazy } from './seed'
 import { downloadNewReviews } from './sync'
 
 const DEFAULT_DIFFICULTY = 5
@@ -171,12 +170,11 @@ export async function onboardNewDevice(
   // Identify which datasets are needed and seed any that are missing
   const allCards = await db.srs_cards.where('[userId+cardType]').equals([userId, 'vocab']).toArray()
   const neededPrefixes = new Set(allCards.map(c => c.cardId.split('_')[0]))
-  const neededSources = [...neededPrefixes]
-    .map(prefix => bookCodePrefixToSource[prefix])
-    .filter(Boolean)
 
-  if (neededSources.length > 0) {
-    await Promise.all(neededSources.map(() => seedDatabase().catch(() => {})))
+  if (neededPrefixes.size > 0) {
+    await Promise.all(
+      [...neededPrefixes].map(prefix => seedDatasetLazy(prefix).catch(() => {})),
+    )
   }
 
   queryClient.invalidateQueries({ queryKey: ['user-cards', userId] })

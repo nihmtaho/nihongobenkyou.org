@@ -37,6 +37,7 @@ vi.mock('../../api/supabase', () => ({
 
 vi.mock('../../db/seed', () => ({
   seedDatabase: vi.fn().mockResolvedValue('up-to-date'),
+  seedDatasetLazy: vi.fn().mockResolvedValue('up-to-date'),
   seedKanji: vi.fn().mockResolvedValue('up-to-date'),
   SeedError: class SeedError extends Error { name = 'SeedError' },
 }))
