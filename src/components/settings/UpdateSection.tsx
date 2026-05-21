@@ -61,8 +61,8 @@ export function UpdateSection() {
   const isUpdating = phase === 'updating'
 
   return (
-    <Card className="p-4">
-      <CardContent className="p-0">
+    <Card>
+      <CardContent className="p-4">
         <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">
           CẬP NHẬT DỮ LIỆU
         </h2>
