@@ -8,6 +8,7 @@ import {
   LanguageSection,
   ProfileSection,
   SyncSection,
+  UpdateSection,
 } from '../../components/settings'
 
 export const Route = createFileRoute('/settings/')({
@@ -25,6 +26,7 @@ function SettingsPage() {
       <FontSizeSection />
       <DarkModeSection />
       <SyncSection />
+      <UpdateSection />
       <BackupSection />
       <DangerZoneSection />
       <AccountSection />
