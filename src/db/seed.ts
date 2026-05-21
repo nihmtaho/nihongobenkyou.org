@@ -2,6 +2,7 @@ import type { LessonMeta, Manifest } from '../types/dataset'
 import type { KanjiItem } from '../types/kanji'
 import type { Passage } from '../types/passages'
 import type { VocabItem } from '../types/vocabulary'
+import { bookCodePrefixToSource } from '../lib/datasets.config'
 import { updateStore } from '../stores/updateStore'
 import { db } from './schema'
 
@@ -25,6 +26,23 @@ export class SeedError extends Error {
     if (cause)
       this.cause = cause
   }
+}
+
+function buildLessonMetas(vocabItems: VocabItem[]): LessonMeta[] {
+  const lessonMap = new Map<number, LessonMeta>()
+  for (const v of vocabItems) {
+    if (!lessonMap.has(v.lesson_number)) {
+      lessonMap.set(v.lesson_number, {
+        lesson_id: `${v.book_source}:${v.lesson_number}`,
+        book_source: v.book_source,
+        lesson_number: v.lesson_number,
+        title: '',
+        vocab_count: 0,
+      })
+    }
+    lessonMap.get(v.lesson_number)!.vocab_count++
+  }
+  return Array.from(lessonMap.values()).sort((a, b) => a.lesson_number - b.lesson_number)
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -87,20 +105,7 @@ export async function seedDatabase(
       passages.push(...lessonFile.passages)
     }
 
-    const lessonMap = new Map<number, LessonMeta>()
-    for (const v of vocabItems) {
-      if (!lessonMap.has(v.lesson_number)) {
-        lessonMap.set(v.lesson_number, {
-          lesson_id: `${v.book_source}:${v.lesson_number}`,
-          book_source: v.book_source,
-          lesson_number: v.lesson_number,
-          title: '',
-          vocab_count: 0,
-        })
-      }
-      lessonMap.get(v.lesson_number)!.vocab_count++
-    }
-    lessonMetas.push(...Array.from(lessonMap.values()).sort((a, b) => a.lesson_number - b.lesson_number))
+    lessonMetas.push(...buildLessonMetas(vocabItems))
   }
   catch (err) {
     if (err instanceof SeedError)
@@ -120,6 +125,83 @@ export async function seedDatabase(
         await db.passages.bulkPut(passages)
       await db.settings.put({ key: 'manifest_checksum', value: dataset.checksum })
       await db.settings.put({ key: 'dataset_version', value: dataset.version })
+    })
+  }
+  catch (err) {
+    throw new SeedError('Seed transaction failed — database may be in a partial state', err)
+  }
+
+  return 'seeded'
+}
+
+export async function seedDatasetLazy(
+  bookPrefix: string,
+  onProgress?: (file: string, index: number, total: number) => void,
+): Promise<'up-to-date' | 'seeded'> {
+  let manifest: Manifest
+  try {
+    manifest = await fetchJson<Manifest>('/data/manifest.json')
+  }
+  catch (err) {
+    if (err instanceof SeedError)
+      throw err
+    throw new SeedError('Failed to fetch manifest.json', err)
+  }
+
+  const dataset = manifest.datasets.find(d => d.book_code_prefix === bookPrefix)
+  if (!dataset)
+    throw new SeedError(`No dataset found for prefix: ${bookPrefix}`)
+
+  const [seededFlag, storedVersion] = await Promise.all([
+    db.settings.get(`dataset_seeded_${bookPrefix}`),
+    db.settings.get(`dataset_version_${bookPrefix}`),
+  ])
+
+  if (seededFlag?.value === true && storedVersion?.value === dataset.version)
+    return 'up-to-date'
+
+  await invalidateLessonCache(bookPrefix)
+
+  const bookSource = bookCodePrefixToSource[bookPrefix]
+  if (!bookSource)
+    throw new SeedError(`No book source mapping for prefix: ${bookPrefix}`)
+
+  const vocabItems: VocabItem[] = []
+  const passages: Passage[] = []
+  const checksums: Record<string, string> = {}
+
+  try {
+    for (let i = 0; i < dataset.files.length; i++) {
+      const file = dataset.files[i]
+      onProgress?.(file.filename, i + 1, dataset.files.length)
+      const raw = await fetchJson<unknown>(`/data/${bookPrefix}/${file.filename}`)
+      const lessonFile = parseLessonFile(raw)
+      vocabItems.push(...lessonFile.vocabulary)
+      passages.push(...lessonFile.passages)
+      checksums[file.filename] = file.checksum
+    }
+  }
+  catch (err) {
+    if (err instanceof SeedError)
+      throw err
+    throw new SeedError('Failed to fetch lesson files', err)
+  }
+
+  const lessonMetas = buildLessonMetas(vocabItems)
+
+  try {
+    await db.transaction('rw', [db.vocabulary, db.lessons, db.passages, db.settings], async () => {
+      await db.vocabulary.where('book_source').equals(bookSource).delete()
+      await db.lessons.where('book_source').equals(bookSource).delete()
+      await db.passages.where('book_source').equals(bookSource).delete()
+      await db.vocabulary.bulkPut(vocabItems)
+      if (lessonMetas.length > 0)
+        await db.lessons.bulkPut(lessonMetas)
+      if (passages.length > 0)
+        await db.passages.bulkPut(passages)
+      await db.settings.put({ key: `dataset_seeded_${bookPrefix}`, value: true })
+      await db.settings.put({ key: `dataset_version_${bookPrefix}`, value: dataset.version })
+      await db.settings.put({ key: `lesson_checksums_${bookPrefix}`, value: checksums })
     })
   }
   catch (err) {

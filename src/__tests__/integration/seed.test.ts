@@ -3,7 +3,7 @@ import type { VocabItem } from '../../types/vocabulary'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import { db } from '../../db/schema'
-import { checkForUpdates, invalidateLessonCache, seedDatabase, SeedError, seedKanji } from '../../db/seed'
+import { checkForUpdates, invalidateLessonCache, seedDatabase, seedDatasetLazy, SeedError, seedKanji } from '../../db/seed'
 import { updateStore } from '../../stores/updateStore'
 
 const SAMPLE_LESSON_FILE = sampleVocabulary.filter(v => v.lesson_number === 1)
@@ -395,5 +395,35 @@ describe('checkForUpdates', () => {
 
     await expect(checkForUpdates()).resolves.not.toThrow()
     expect(updateStore.getState().phase).toBe('idle')
+  })
+})
+
+describe('seedDatasetLazy', () => {
+  beforeEach(async () => {
+    await db.delete()
+    await db.open()
+  })
+
+  it('seeds only the requested book_code_prefix', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+
+    const result = await seedDatasetLazy('mnn1')
+    expect(result).toBe('seeded')
+
+    const seededFlag = await db.settings.get('dataset_seeded_mnn1')
+    expect(seededFlag?.value).toBe(true)
+
+    const checksums = await db.settings.get('lesson_checksums_mnn1')
+    expect(typeof checksums?.value).toBe('object')
+
+    const vocabCount = await db.vocabulary.count()
+    expect(vocabCount).toBeGreaterThan(0)
+  })
+
+  it('returns up-to-date on second call with same version', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatasetLazy('mnn1')
+    const result = await seedDatasetLazy('mnn1')
+    expect(result).toBe('up-to-date')
   })
 })
