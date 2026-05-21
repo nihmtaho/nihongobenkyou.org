@@ -2,9 +2,11 @@ import type { SRSStats } from '../../../components/common/SRSProgressBar'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { SRSProgressBar } from '../../../components/common/SRSProgressBar'
 import { KanjiLessonPanel } from '../../../components/kanji/KanjiLessonPanel'
 import { useBookProgress } from '../../../hooks/useBookProgress'
+import { useDatasetReady } from '../../../hooks/useDatasetReady'
 import { useLessons } from '../../../hooks/useLessons'
 import { useUserCards } from '../../../hooks/useUserCards'
 import { useVocabulary } from '../../../hooks/useVocabulary'
@@ -33,6 +35,7 @@ function BookPage() {
   const { book } = Route.useParams()
   const dataset = datasets.find(d => d.id === book)
   const { data: lessons, isLoading } = useLessons(book)
+  const { isReady: datasetReady, isLoading: datasetLoading } = useDatasetReady(book)
   const userId = useAuthStore(s => s.userId) ?? ''
   const [activeTab, setActiveTab] = useState<Tab>('vocab')
 
@@ -40,6 +43,19 @@ function BookPage() {
     return (
       <div className="p-4">
         <p className="font-[var(--br-mono-font)] text-muted-foreground">Dataset not found.</p>
+      </div>
+    )
+  }
+
+  if (datasetLoading && !datasetReady) {
+    return (
+      <div className="flex flex-col gap-2 p-4">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-[2px] text-muted-foreground animate-pulse">
+          Đang chuẩn bị dữ liệu...
+        </p>
+        {Array.from({ length: 5 }, (_, i) => `skel-${i}`).map(key => (
+          <Skeleton key={key} className="h-16 w-full" />
+        ))}
       </div>
     )
   }
