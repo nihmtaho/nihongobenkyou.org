@@ -64,6 +64,8 @@ export async function run(config: DatasetConfig): Promise<void> {
   const newDatasetVersion = bumpPatch(oldDatasetVersion)
   const oldKanjiVersion = oldManifest?.kanji?.version ?? '1.0.0'
   const newKanjiVersion = bumpPatch(oldKanjiVersion)
+  const oldAppVersion = oldManifest?.app_version ?? '1.0.0'
+  const newAppVersion = bumpPatch(oldAppVersion)
 
   const files: FileEntry[] = []
   const fileContents: Buffer[] = []
@@ -104,7 +106,8 @@ export async function run(config: DatasetConfig): Promise<void> {
   )
 
   const manifest: Manifest = {
-    schema_version: '1.0',
+    schema_version: '2.0',
+    app_version: newAppVersion,
     built_at: new Date().toISOString(),
     built_by: 'build:dataset',
     built_from: config.id,
