@@ -18,6 +18,6 @@ export function useDatasetReady(datasetId: string) {
   return {
     isReady: data === 'up-to-date' || data === 'seeded',
     isLoading,
-    error: error as Error | null,
+    error,
   }
 }

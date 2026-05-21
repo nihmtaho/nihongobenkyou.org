@@ -173,7 +173,13 @@ export async function onboardNewDevice(
 
   if (neededPrefixes.size > 0) {
     await Promise.all(
-      [...neededPrefixes].map(prefix => seedDatasetLazy(prefix).catch(() => {})),
+      [...neededPrefixes].map(prefix =>
+        seedDatasetLazy(prefix).catch((err) => {
+          if (err instanceof NetworkError)
+            return
+          throw err
+        }),
+      ),
     )
   }
 
