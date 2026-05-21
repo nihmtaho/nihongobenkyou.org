@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { seedDatabase, seedKanji } from '../../db/seed'
+import { seedKanji, updateChangedFiles } from '../../db/seed'
 import { updateStore, useUpdateStore } from '../../stores/updateStore'
 
 function StepIcon({ status }: { status: 'pending' | 'active' | 'done' | 'skipped' }) {
@@ -27,6 +27,8 @@ export function UpdateProgressModal() {
   const steps = useUpdateStore(s => s.steps)
   const currentFile = useUpdateStore(s => s.currentFile)
   const progress = useUpdateStore(s => s.progress)
+  const changedFilesTotal = useUpdateStore(s => s.changedFilesTotal)
+  const changedFilesCompleted = useUpdateStore(s => s.changedFilesCompleted)
   const error = useUpdateStore(s => s.error)
   const isRunningRef = useRef(false)
 
@@ -65,9 +67,12 @@ export function UpdateProgressModal() {
       const datasetStep = store.steps.find(s => s.id === 'dataset')
       if (datasetStep && datasetStep.status !== 'skipped') {
         store.setStepActive('dataset')
-        await seedDatabase((file, index, total) => {
-          store.setProgress(file, Math.round((index / total) * 100))
-        })
+        const manifest = store.pendingManifest
+        if (manifest) {
+          await updateChangedFiles(manifest, (file, completed, total) => {
+            store.setChangedFilesProgress(file, completed, total)
+          })
+        }
         store.setStepDone('dataset')
       }
 
@@ -134,11 +139,14 @@ export function UpdateProgressModal() {
                 }
               >
                 {step.label}
-                {step.id === 'dataset' && step.status === 'active' && currentFile && (
+                {step.id === 'dataset' && step.status === 'active' && changedFilesTotal > 0 && (
                   <span className="text-muted-foreground font-normal ml-1">
                     (
-                    {currentFile}
-                    )
+                    {changedFilesCompleted}
+                    /
+                    {changedFilesTotal}
+                    {' '}
+                    files)
                   </span>
                 )}
               </span>

@@ -15,7 +15,7 @@ const MINIMAL_MANIFEST: Manifest = {
 }
 
 vi.mock('../../db/seed', () => ({
-  seedDatabase: vi.fn().mockResolvedValue(undefined),
+  updateChangedFiles: vi.fn().mockResolvedValue(undefined),
   seedKanji: vi.fn().mockResolvedValue(undefined),
 }))
 
