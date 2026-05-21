@@ -465,6 +465,17 @@ describe('checkForUpdates (refactored)', () => {
     expect(updateStore.getState().phase).toBe('idle')
   })
 
+  it('migration: sets dataset_seeded flag when old manifest_checksum exists but new flag does not', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'manifest_checksum', value: 'old-checksum' })
+    // dataset_seeded_mnn1 intentionally absent
+
+    await checkForUpdates()
+
+    const seeded = await db.settings.get('dataset_seeded_mnn1')
+    expect(seeded?.value).toBe(true)
+  })
+
   it('triggers update when seeded dataset has changed file checksums', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
     await seedDatasetLazy('mnn1')
