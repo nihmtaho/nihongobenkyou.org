@@ -21,6 +21,7 @@ const SAMPLE_MANIFEST: Manifest = {
       lesson_count: 1,
       vocab_count: SAMPLE_LESSON_FILE.length,
       checksum: 'abc123checksum',
+      type: 'vocab',
       files: [{ filename: 'lesson-01.json', size_bytes: 100, checksum: 'abc123' }],
     },
   ],
