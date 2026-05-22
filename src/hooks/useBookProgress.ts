@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { db } from '../db/schema'
+import { getSRSCardsForKanjiChars, getSRSCardsForVocabIds } from '../db/srs-cards'
 
 export interface BookProgressStats {
   total: number
@@ -29,11 +30,7 @@ export function useBookProgress(
       if (bookType === 'kanji') {
         const allKanji = await db.kanji.toArray()
         const kanjiChars = allKanji.map(k => k.char)
-        const cards = await db.srs_cards
-          .where('[userId+cardId]')
-          .anyOf(kanjiChars.map(c => [userId, c]))
-          .filter(c => c.cardType === 'kanji')
-          .toArray()
+        const cards = await getSRSCardsForKanjiChars(userId, kanjiChars)
         const futureDates = cards.map(c => c.due).filter(d => d > today).sort()
         return {
           total: allKanji.length,
@@ -51,11 +48,7 @@ export function useBookProgress(
       const allVocab = await db.vocabulary.where('book_source').equals(bookSource).toArray()
       const vocabIds = allVocab.map(v => v.vocab_id)
 
-      const cards = await db.srs_cards
-        .where('[userId+cardId]')
-        .anyOf(vocabIds.map(id => [userId, id]))
-        .filter(c => c.cardType === 'vocab')
-        .toArray()
+      const cards = await getSRSCardsForVocabIds(userId, vocabIds)
 
       const futureDates = cards.map(c => c.due).filter(d => d > today).sort()
 
