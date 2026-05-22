@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 import { seedDatasetLazy } from '../db/seed'
 import { datasets } from '../lib/datasets.config'
@@ -6,6 +7,7 @@ import { datasets } from '../lib/datasets.config'
 export function useDatasetReady(datasetId: string) {
   const dataset = datasets.find(d => d.id === datasetId)
   const prefix = dataset?.book_code_prefix ?? ''
+  const queryClient = useQueryClient()
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['dataset-ready', prefix],
@@ -14,6 +16,14 @@ export function useDatasetReady(datasetId: string) {
     retry: 2,
     enabled: !!prefix,
   })
+
+  useEffect(() => {
+    if (data === 'seeded') {
+      queryClient.invalidateQueries({ queryKey: ['lessons'] })
+      queryClient.invalidateQueries({ queryKey: ['vocabulary'] })
+      queryClient.invalidateQueries({ queryKey: ['book-progress'] })
+    }
+  }, [data, queryClient])
 
   return {
     isReady: data === 'up-to-date' || data === 'seeded',
