@@ -50,6 +50,13 @@ async function runPipeline(): Promise<void> {
   for (const config of enabledDatasets) {
     process.stdout.write(`\nBuilding dataset: ${config.id} (${config.version})\n`)
 
+    if (config.type === 'kanji') {
+      // Kanji data is built by the build-kanji step above (n5-kanji.json)
+      // No lesson files to manifest; useDatasetReady skips manifest check for kanji
+      process.stdout.write(`✓ ${config.id}: skipped (kanji — handled by build-kanji)\n`)
+      continue
+    }
+
     const raw = buildPath('01-raw.json')
     const pitched = buildPath('02-pitched.json')
     const withIds = buildPath('03-vocab-id.json')
