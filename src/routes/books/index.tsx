@@ -49,13 +49,17 @@ function BookCard({ dataset, userId }: { dataset: Dataset, userId: string }) {
     <Link to="/books/$book" params={{ book: dataset.id }}>
       <div className="bg-card border border-border/10 transition-colors hover:border-l-4 hover:border-l-primary cursor-pointer">
         <div className="card-body p-4 gap-2">
-          <div className="flex gap-1">
+          <div className="flex gap-1 flex-wrap">
             {dataset.jlpt_level && (
               <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-primary text-primary px-1.5 py-0.5">
                 #N
                 {dataset.jlpt_level}
               </span>
             )}
+            <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-border text-muted-foreground px-1.5 py-0.5">
+              #
+              {dataset.type}
+            </span>
           </div>
           <h2 className="card-title font-[var(--br-heading-font)] text-xl uppercase tracking-tight leading-tight">
             {dataset.title}
