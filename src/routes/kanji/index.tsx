@@ -2,11 +2,9 @@ import type { KanjiItem } from '../../types/kanji'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { KanjiCard } from '../../components/kanji/KanjiCard'
-import { KanjiLessonPanel } from '../../components/kanji/KanjiLessonPanel'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Skeleton } from '../../components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '../../components/ui/tabs'
 import { useKanjiList } from '../../hooks/useKanjiList'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -18,61 +16,18 @@ export const Route = createFileRoute('/kanji/')({
   component: KanjiPage,
 })
 
-type Tab = 'lessons' | 'browse'
-
 function KanjiPage() {
   const userId = useAuthStore(s => s.userId) ?? ''
-  const [activeTab, setActiveTab] = useState<Tab>('lessons')
 
   return (
-    // lg:h-full fills main's height so columns can have independent overflow-y-auto
     <div className="flex flex-col lg:h-full">
-
-      {/* Page header */}
-      <div className="sticky top-0 lg:static z-10 bg-background px-4 pt-4 border-b border-border/10 flex-shrink-0">
-        <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase mb-3">
+      <div className="sticky top-0 lg:static z-10 bg-background px-4 pt-4 border-b border-border/10 flex-shrink-0 pb-3">
+        <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase">
           漢字
         </h1>
-
-        {/* Tabs — mobile only */}
-        <Tabs value={activeTab} onValueChange={v => setActiveTab(v as Tab)} className="lg:hidden">
-          <TabsList variant="line" className="w-full h-auto gap-0 p-0 border-b border-border">
-            <TabsTrigger
-              value="lessons"
-              className="flex-1 px-4 py-2 h-auto font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest after:bg-primary data-active:font-bold"
-            >
-              Theo bài
-            </TabsTrigger>
-            <TabsTrigger
-              value="browse"
-              className="flex-1 px-4 py-2 h-auto font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest after:bg-primary data-active:font-bold"
-            >
-              Duyệt
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
       </div>
-
-      {/* Mobile: tab content scrolls via main */}
-      <div className="lg:hidden flex flex-col">
-        {activeTab === 'lessons' && (
-          <KanjiLessonPanel userId={userId} title="THEO BÀI" />
-        )}
-        {activeTab === 'browse' && (
-          <BrowsePanel userId={userId} />
-        )}
-      </div>
-
-      {/* Desktop: two independent scroll panels */}
-      {/* flex-1 min-h-0 → fills remaining height after page header */}
-      {/* each column overflow-y-auto → scrolls independently within grid cell */}
-      <div className="hidden lg:grid lg:grid-cols-[2fr_3fr] lg:flex-1 lg:min-h-0 divide-x divide-border/10">
-        <div className="overflow-y-auto">
-          <KanjiLessonPanel userId={userId} title="THEO BÀI" stickyStats={true} />
-        </div>
-        <div className="overflow-y-auto">
-          <BrowsePanel userId={userId} stickyFilters={true} />
-        </div>
+      <div className="flex-1 overflow-y-auto">
+        <BrowsePanel userId={userId} />
       </div>
     </div>
   )
