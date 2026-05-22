@@ -213,6 +213,14 @@ function KanjiDetailPage() {
       <div className="p-4 max-w-5xl mx-auto">
         {/* Navigation bar — back + lesson position + prev/next */}
         <div className="flex items-center mb-4 -ml-2">
+          <Button
+            size="icon-lg"
+            variant="ghost"
+            aria-label="Quay lại"
+            onClick={() => navigate({ to: '/kanji' })}
+          >
+            {chevronLeft}
+          </Button>
           {kanji.lesson_number != null && lessonKanji && lessonKanji.length > 1 && (
             <>
               <span className="flex-1 text-center font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider">
