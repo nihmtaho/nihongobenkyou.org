@@ -1,3 +1,11 @@
+book:
+  title: "Kanji N5"
+  title_vi: "Hán tự N5"
+  subtitle: "漢字 N5"
+  description: "130 hán tự cơ bản cấp độ N5 — Minna no Nihongo"
+  type: kanji
+  jlpt_level: 5
+
 languages:
   en: English
   vi: Tiếng Việt

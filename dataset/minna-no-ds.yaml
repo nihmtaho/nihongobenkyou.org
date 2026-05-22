@@ -1,3 +1,11 @@
+book:
+  title: "Minna no Nihongo Shokyuu I"
+  title_vi: "Minna no Nihongo Sơ cấp I"
+  subtitle: "みんなの日本語 初級I"
+  description: "Giáo trình tiếng Nhật sơ cấp phổ biến nhất tại Nhật Bản"
+  type: vocab
+  jlpt_level: 5
+
 languages:
   en: English
   fr: Français
