@@ -210,53 +210,7 @@ function KanjiDetailPage() {
 
   return (
     <>
-      <div className="p-4 max-w-5xl mx-auto">
-        {/* Navigation bar — back + lesson position + prev/next */}
-        <div className="flex items-center mb-4 -ml-2">
-          <Button
-            size="icon-lg"
-            variant="ghost"
-            aria-label="Quay lại"
-            onClick={() => navigate({ to: '/kanji' })}
-          >
-            {chevronLeft}
-          </Button>
-          {kanji.lesson_number != null && lessonKanji && lessonKanji.length > 1 && (
-            <>
-              <span className="flex-1 text-center font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider">
-                BÀI
-                {' '}
-                {String(kanji.lesson_number).padStart(2, '0')}
-                {' '}
-                ·
-                {' '}
-                {currentIndex + 1}
-                /
-                {lessonKanji.length}
-              </span>
-              <div className="flex gap-1">
-                <Button
-                  size="icon-lg"
-                  aria-label="Hán tự trước"
-                  disabled={!prevChar}
-                  className="disabled:opacity-30"
-                  onClick={() => prevChar && navigate({ to: '/kanji/$char', params: { char: prevChar } })}
-                >
-                  {chevronLeft}
-                </Button>
-                <Button
-                  size="icon-lg"
-                  aria-label="Hán tự tiếp theo"
-                  disabled={!nextChar}
-                  className="disabled:opacity-30"
-                  onClick={() => nextChar && navigate({ to: '/kanji/$char', params: { char: nextChar } })}
-                >
-                  {chevronRight}
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
+      <div className="p-4 max-w-5xl mx-auto pb-28 lg:pb-20">
 
         {/* Mobile layout (< lg): single column */}
         <div className="flex flex-col gap-6 lg:hidden">
@@ -344,6 +298,42 @@ function KanjiDetailPage() {
           </div>
         </div>
       </div>
+
+      {kanji.lesson_number != null && lessonKanji && lessonKanji.length > 1 && (
+        <div className="fixed bottom-[72px] lg:bottom-6 left-0 right-0 z-20 flex justify-center pointer-events-none">
+          <div className="flex items-center gap-3 bg-background border border-border/10 px-3 py-2 pointer-events-auto">
+            <Button
+              size="icon-lg"
+              aria-label="Hán tự trước"
+              disabled={!prevChar}
+              className="disabled:opacity-30"
+              onClick={() => prevChar && navigate({ to: '/kanji/$char', params: { char: prevChar } })}
+            >
+              {chevronLeft}
+            </Button>
+            <span className="font-[var(--br-mono-font)] text-[11px] uppercase text-muted-foreground tracking-wider select-none">
+              BÀI
+              {' '}
+              {String(kanji.lesson_number).padStart(2, '0')}
+              {' '}
+              ·
+              {' '}
+              {currentIndex + 1}
+              /
+              {lessonKanji.length}
+            </span>
+            <Button
+              size="icon-lg"
+              aria-label="Hán tự tiếp theo"
+              disabled={!nextChar}
+              className="disabled:opacity-30"
+              onClick={() => nextChar && navigate({ to: '/kanji/$char', params: { char: nextChar } })}
+            >
+              {chevronRight}
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   )
 }
