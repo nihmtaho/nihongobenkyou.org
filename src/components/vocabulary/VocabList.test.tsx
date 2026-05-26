@@ -68,8 +68,9 @@ describe('vocabList mobile layout', () => {
     expect(screen.getByText('食べる')).toBeInTheDocument()
 
     const mobileScroller = container.querySelector('.lg\\:hidden')
-    expect(mobileScroller?.className).toContain('flex-1')
+    expect(mobileScroller?.className).toContain('h-full')
     expect(mobileScroller?.className).toContain('min-h-0')
+    expect(mobileScroller?.className).not.toContain('flex-1')
     expect(mobileScroller?.className).not.toContain('h-[calc(100vh-4rem)]')
 
     const spacer = mobileScroller?.firstElementChild as HTMLDivElement | null
