@@ -70,6 +70,26 @@ export async function deleteSRSCardsForDeck(userId: string, deckId: string): Pro
     .delete()
 }
 
+export async function getSRSCardsForVocabIds(userId: string, vocabIds: string[]): Promise<SRSCard[]> {
+  if (!vocabIds.length)
+    return []
+  return db.srs_cards
+    .where('[userId+cardId]')
+    .anyOf(vocabIds.map(id => [userId, id]))
+    .filter(c => c.cardType === 'vocab')
+    .toArray()
+}
+
+export async function getSRSCardsForKanjiChars(userId: string, chars: string[]): Promise<SRSCard[]> {
+  if (!chars.length)
+    return []
+  return db.srs_cards
+    .where('[userId+cardId]')
+    .anyOf(chars.map(c => [userId, c]))
+    .filter(c => c.cardType === 'kanji')
+    .toArray()
+}
+
 export async function migrateSRSCardsUserId(oldUserId: string, newUserId: string): Promise<void> {
   await db.transaction('rw', ['srs_cards'], async () => {
     const rows = await db.srs_cards.filter(r => r.userId === oldUserId).toArray()

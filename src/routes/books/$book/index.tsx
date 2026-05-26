@@ -1,16 +1,17 @@
 import type { SRSStats } from '../../../components/common/SRSProgressBar'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { SRSProgressBar } from '../../../components/common/SRSProgressBar'
 import { KanjiLessonPanel } from '../../../components/kanji/KanjiLessonPanel'
 import { useBookProgress } from '../../../hooks/useBookProgress'
+import { useDatasetReady } from '../../../hooks/useDatasetReady'
 import { useLessons } from '../../../hooks/useLessons'
 import { useUserCards } from '../../../hooks/useUserCards'
 import { useVocabulary } from '../../../hooks/useVocabulary'
 import { datasets } from '../../../lib/datasets.config'
 import { formatNextReview } from '../../../lib/next-review'
-import { cn } from '../../../lib/utils'
 import { useAuthStore } from '../../../stores/authStore'
 
 function AnimatedNumber({ value, delay = 0 }: { value: number, delay?: number }) {
@@ -27,14 +28,11 @@ export const Route = createFileRoute('/books/$book/')({
   component: BookPage,
 })
 
-type Tab = 'vocab' | 'kanji'
-
 function BookPage() {
   const { book } = Route.useParams()
   const dataset = datasets.find(d => d.id === book)
-  const { data: lessons, isLoading } = useLessons(book)
+  const { isReady: datasetReady, isLoading: datasetLoading } = useDatasetReady(book)
   const userId = useAuthStore(s => s.userId) ?? ''
-  const [activeTab, setActiveTab] = useState<Tab>('vocab')
 
   if (!dataset) {
     return (
@@ -44,14 +42,84 @@ function BookPage() {
     )
   }
 
+  if (datasetLoading && !datasetReady) {
+    return (
+      <div className="flex flex-col gap-2 p-4">
+        <p className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-[2px] text-muted-foreground animate-pulse">
+          Đang chuẩn bị dữ liệu...
+        </p>
+        {Array.from({ length: 5 }, (_, i) => `skel-${i}`).map(key => (
+          <Skeleton key={key} className="h-16 w-full" />
+        ))}
+      </div>
+    )
+  }
+
+  if (dataset.type === 'kanji') {
+    return <KanjiBookPage userId={userId} dataset={dataset} />
+  }
+
+  return <VocabBookPage book={book} userId={userId} dataset={dataset} />
+}
+
+function KanjiBookPage({
+  userId,
+  dataset,
+}: {
+  userId: string
+  dataset: (typeof datasets)[number]
+}) {
   return (
     <div>
-      {/* Spacer for mobile expanded nav (84px expanded content height) */}
       <div className="lg:hidden h-[84px]" aria-hidden />
-
-      {/* Sticky header — desktop shows title; mobile shows tabs only */}
       <div className="sticky top-0 z-10 bg-background px-4 border-b border-border/10">
-        {/* Desktop only: back link + title */}
+        <div className="hidden lg:block pt-4">
+          <Link
+            to="/books"
+            className="inline-flex items-center gap-1 text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground hover:text-foreground transition-colors mb-3"
+          >
+            ← BOOKS
+          </Link>
+          <div className="flex items-end justify-between mb-3">
+            <div>
+              <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight leading-none">
+                {dataset.title}
+              </h1>
+              <p className="text-sm text-muted-foreground font-[var(--br-jp-font)] mt-0.5">{dataset.title_vi}</p>
+            </div>
+            <div className="flex items-center gap-2 mb-0.5">
+              {dataset.jlpt_level && (
+                <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-primary text-primary px-1.5 py-0.5">
+                  {`N${dataset.jlpt_level}`}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="p-4 flex flex-col gap-4">
+        <BookProgressOverview userId={userId} bookSource={dataset.id} bookType="kanji" />
+        <KanjiLessonPanel userId={userId} title="HÁN TỰ THEO BÀI" />
+      </div>
+    </div>
+  )
+}
+
+function VocabBookPage({
+  book,
+  userId,
+  dataset,
+}: {
+  book: string
+  userId: string
+  dataset: (typeof datasets)[number]
+}) {
+  const { data: lessons, isLoading } = useLessons(book)
+
+  return (
+    <div>
+      <div className="lg:hidden h-[84px]" aria-hidden />
+      <div className="sticky top-0 z-10 bg-background px-4 border-b border-border/10">
         <div className="hidden lg:block pt-4">
           <Link
             to="/books"
@@ -78,52 +146,9 @@ function BookPage() {
             </div>
           </div>
         </div>
-
-        {/* Tabs — mobile only */}
-        <div className="lg:hidden flex border-b-2 border-border" role="tablist">
-          {(['vocab', 'kanji'] as const).map((tab) => {
-            const isActive = activeTab === tab
-            return (
-              <button
-                key={tab}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActiveTab(tab)}
-                className={cn(
-                  'flex-1 h-11 flex items-center justify-center gap-1.5',
-                  'font-[var(--br-mono-font)] text-[11px] uppercase tracking-widest',
-                  'border-b-2 -mb-[2px] transition-colors duration-150',
-                  isActive
-                    ? 'border-primary text-foreground font-bold'
-                    : 'border-transparent text-muted-foreground',
-                )}
-              >
-                {tab === 'vocab' ? 'Từ vựng' : '漢字 Hán tự'}
-              </button>
-            )
-          })}
-        </div>
       </div>
-
-      {/* Mobile: tab content */}
-      <div className="lg:hidden p-4 flex flex-col gap-4">
-        {activeTab === 'vocab' && (
-          <LessonGrid book={book} bookSource={dataset.id} lessons={lessons} isLoading={isLoading} userId={userId} />
-        )}
-        {activeTab === 'kanji' && (
-          <KanjiLessonPanel userId={userId} title="HÁN TỰ THEO BÀI" />
-        )}
-      </div>
-
-      {/* Desktop: two-panel */}
-      <div className="hidden lg:grid lg:grid-cols-[3fr_2fr] lg:divide-x lg:divide-border/10">
-        <div className="p-6 flex flex-col gap-4">
-          <LessonGrid book={book} bookSource={dataset.id} lessons={lessons} isLoading={isLoading} userId={userId} />
-        </div>
-        <div className="overflow-y-auto">
-          <KanjiLessonPanel userId={userId} title="HÁN TỰ THEO BÀI" />
-        </div>
+      <div className="p-4 flex flex-col gap-4">
+        <LessonGrid book={book} bookSource={dataset.id} lessons={lessons} isLoading={isLoading} userId={userId} />
       </div>
     </div>
   )
@@ -145,8 +170,16 @@ interface LessonGridProps {
   userId: string
 }
 
-function BookProgressOverview({ userId, bookSource }: { userId: string, bookSource: string }) {
-  const { data: stats } = useBookProgress(userId, bookSource)
+function BookProgressOverview({
+  userId,
+  bookSource,
+  bookType = 'vocab',
+}: {
+  userId: string
+  bookSource: string
+  bookType?: 'vocab' | 'kanji'
+}) {
+  const { data: stats } = useBookProgress(userId, bookSource, bookType)
   const now = useMemo(() => new Date().toISOString(), [])
 
   if (!stats || !userId)

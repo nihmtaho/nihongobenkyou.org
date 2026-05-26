@@ -82,10 +82,8 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
         </p>
       )}
 
-      {/* SRS progress bar */}
       <SRSProgressBar stats={panelSrsStats} height="h-2" animDelay={0.1} />
 
-      {/* Stats */}
       <div className="grid grid-cols-4 border border-border/10 bg-card">
         {[
           { value: Math.max(0, total - studied), label: 'CHƯA', color: 'text-foreground/50' },
@@ -143,20 +141,23 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
             </div>
           )}
 
-      {/* Lesson accordion */}
-      <div className="px-6 py-4 flex flex-col gap-1">
-        {(lessonNums ?? []).map((num, idx) => (
-          <LessonAccordionRow
-            key={num}
-            lessonNum={num}
-            rowIndex={idx}
-            kanjiInLesson={(allKanji as KanjiEntry[] | undefined)?.filter(k => k.lesson_number === num) ?? []}
-            onStudy={stats => setStudyLesson({ num, ...stats })}
-          />
-        ))}
+      <div className="px-6 py-4 flex flex-col gap-3">
+        <div className="grid grid-cols-2 gap-2">
+          {(lessonNums ?? []).map((num, idx) => {
+            const kanjiInLesson = (allKanji as KanjiEntry[] | undefined)?.filter(k => k.lesson_number === num) ?? []
+            return (
+              <KanjiLessonCard
+                key={num}
+                lessonNum={num}
+                rowIndex={idx}
+                kanjiInLesson={kanjiInLesson}
+                onStudy={stats => setStudyLesson({ num, ...stats })}
+              />
+            )
+          })}
+        </div>
       </div>
 
-      {/* Study mode picker modal — rendered once at panel level to avoid z-index issues */}
       {studyLesson !== null && (
         <KanjiStudyModal
           lessonNum={studyLesson.num}
@@ -168,15 +169,7 @@ export function KanjiLessonPanel({ userId, title, stickyStats = false }: KanjiLe
   )
 }
 
-function tileStatusColor(intervalDays: number): string {
-  if (intervalDays >= 21)
-    return 'bg-success'
-  if (intervalDays >= 8)
-    return 'bg-info'
-  return 'bg-warning'
-}
-
-function LessonAccordionRow({
+function KanjiLessonCard({
   lessonNum,
   kanjiInLesson,
   rowIndex,
@@ -188,8 +181,6 @@ function LessonAccordionRow({
   onStudy: (stats: { total: number, new: number, learning: number, review: number, mature: number }) => void
 }) {
   const navigate = useNavigate()
-  const [open, setOpen] = useState(false)
-
   const total = kanjiInLesson.length
   const studied = kanjiInLesson.filter(k => k.card !== undefined).length
   const mature = kanjiInLesson.filter(k => (k.card?.scheduled_days ?? 0) >= 21).length
@@ -205,85 +196,37 @@ function LessonAccordionRow({
   }
 
   const animDelay = Math.min(rowIndex * 0.03, 0.3)
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
-  const nextReview = formatNextReview(
-    kanjiInLesson.map(k => k.card?.due).filter((d): d is string => !!d),
-    today,
-  )
 
   return (
-    <div className="border border-border/10 bg-card">
-      <div
-        role="button"
-        tabIndex={0}
-        className="w-full px-3 pt-2.5 pb-2 text-left hover:border-l-4 hover:border-l-primary transition-all cursor-pointer"
-        onClick={() => setOpen(o => !o)}
-        onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && setOpen(o => !o)}
-      >
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="font-[var(--br-heading-font)] text-base uppercase tracking-tight shrink-0">
-              Bài
-              {' '}
-              {String(lessonNum).padStart(2, '0')}
-            </span>
-            <span className="font-[var(--br-mono-font)] text-[10px] text-muted-foreground uppercase shrink-0">
-              {total}
-              {' '}
-              hán tự
-            </span>
-            {nextReview && (
-              <span className="font-[var(--br-mono-font)] text-[9px] uppercase text-foreground/40 truncate">
-                · ôn:
-                {' '}
-                {nextReview}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              size="xs"
-              aria-label="Học bài này"
-              className="text-[10px] font-[var(--br-mono-font)] uppercase"
-              onClick={(e) => {
-                e.stopPropagation()
-                onStudy({ total, new: Math.max(0, total - studied), learning, review, mature })
-              }}
-            >
-              Học
-            </Button>
-            <span className="font-[var(--br-mono-font)] text-[10px] text-muted-foreground">{open ? '▲' : '▼'}</span>
-          </div>
-        </div>
-        <SRSProgressBar stats={srsStats} height="h-1.5" animDelay={animDelay} />
+    <div
+      role="button"
+      tabIndex={0}
+      className="bg-card border border-border/10 p-3 cursor-pointer transition-all hover:border-l-4 hover:border-l-primary flex flex-col gap-2"
+      onClick={() => navigate({ to: '/kanji/lesson/$lesson', params: { lesson: String(lessonNum) } })}
+      onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && navigate({ to: '/kanji/lesson/$lesson', params: { lesson: String(lessonNum) } })}
+    >
+      <div className="flex items-start justify-between">
+        <h2 className="font-[var(--br-heading-font)] text-3xl leading-none">
+          {String(lessonNum).padStart(2, '0')}
+        </h2>
+        <Button
+          size="xs"
+          aria-label="Học bài này"
+          className="text-[10px] font-[var(--br-mono-font)] uppercase shrink-0"
+          onClick={(e) => {
+            e.stopPropagation()
+            onStudy({ total, new: Math.max(0, total - studied), learning, review, mature })
+          }}
+        >
+          Học
+        </Button>
       </div>
-
-      {open && (
-        <div className="px-3 pb-3 pt-1 border-t border-border/10">
-          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-            {kanjiInLesson.map(item => (
-              <div
-                key={item.char}
-                role="button"
-                tabIndex={0}
-                className="flex flex-col items-center gap-1 bg-background border border-border/10 p-2 cursor-pointer hover:border-primary transition-colors"
-                onClick={() => navigate({ to: '/kanji/$char', params: { char: item.char } })}
-                onKeyDown={e => e.key === 'Enter' && navigate({ to: '/kanji/$char', params: { char: item.char } })}
-              >
-                <span className="text-2xl font-bold leading-none" style={{ fontFamily: 'var(--br-jp-font)' }}>
-                  {item.char}
-                </span>
-                <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground truncate w-full text-center">
-                  {item.han_viet ?? '—'}
-                </span>
-                {item.card !== undefined && (
-                  <span className={`w-1.5 h-1.5 ${tileStatusColor(item.card.scheduled_days ?? 0)}`} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground uppercase">
+        {total}
+        {' '}
+        hán tự
+      </p>
+      <SRSProgressBar stats={srsStats} height="h-1.5" animDelay={animDelay} />
     </div>
   )
 }

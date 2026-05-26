@@ -3,7 +3,7 @@ import type { VocabItem } from '../../types/vocabulary'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sampleVocabulary } from '../../__fixtures__/vocabulary'
 import { db } from '../../db/schema'
-import { checkForUpdates, invalidateLessonCache, seedDatabase, SeedError, seedKanji } from '../../db/seed'
+import { checkForUpdates, invalidateLessonCache, seedDatabase, seedDatasetLazy, SeedError, seedKanji, updateChangedFiles } from '../../db/seed'
 import { updateStore } from '../../stores/updateStore'
 
 const SAMPLE_LESSON_FILE = sampleVocabulary.filter(v => v.lesson_number === 1)
@@ -21,6 +21,7 @@ const SAMPLE_MANIFEST: Manifest = {
       lesson_count: 1,
       vocab_count: SAMPLE_LESSON_FILE.length,
       checksum: 'abc123checksum',
+      type: 'vocab',
       files: [{ filename: 'lesson-01.json', size_bytes: 100, checksum: 'abc123' }],
     },
   ],
@@ -338,8 +339,8 @@ describe('checkForUpdates', () => {
 
   it('does not call startUpdate when everything is up-to-date', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
-    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
-    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'abc123' } })
 
     await checkForUpdates()
 
@@ -348,7 +349,9 @@ describe('checkForUpdates', () => {
 
   it('calls startUpdate with datasetOutdated=true when checksum differs', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
-    // No stored checksum — dataset is outdated
+    // dataset is seeded but has outdated checksum
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'old-checksum' } })
 
     await checkForUpdates()
 
@@ -357,14 +360,14 @@ describe('checkForUpdates', () => {
     expect(dataset?.status).not.toBe('skipped')
   })
 
-  it('calls startUpdate with datasetOutdated=true when version changes even if checksum is same', async () => {
-    const newVersionManifest: Manifest = {
+  it('calls startUpdate with datasetOutdated=true when file checksum changes', async () => {
+    const updatedManifest: Manifest = {
       ...SAMPLE_MANIFEST,
-      datasets: [{ ...SAMPLE_MANIFEST.datasets[0], version: '1.1.0' }],
+      datasets: [{ ...SAMPLE_MANIFEST.datasets[0], files: [{ filename: 'lesson-01.json', size_bytes: 100, checksum: 'new-checksum' }] }],
     }
-    mockFetch(newVersionManifest, SAMPLE_LESSON_FILE)
-    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
-    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+    mockFetch(updatedManifest, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'abc123' } })
 
     await checkForUpdates()
 
@@ -375,8 +378,8 @@ describe('checkForUpdates', () => {
 
   it('calls startUpdate with swWaiting=true when SW is waiting', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
-    await db.settings.put({ key: 'manifest_checksum', value: 'abc123checksum' })
-    await db.settings.put({ key: 'dataset_version', value: '1.0.0' })
+    await db.settings.put({ key: 'dataset_seeded_mnn1', value: true })
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'abc123' } })
     vi.stubGlobal('navigator', {
       serviceWorker: {
         getRegistration: vi.fn().mockResolvedValue({ waiting: {} }),
@@ -395,5 +398,129 @@ describe('checkForUpdates', () => {
 
     await expect(checkForUpdates()).resolves.not.toThrow()
     expect(updateStore.getState().phase).toBe('idle')
+  })
+})
+
+describe('seedDatasetLazy', () => {
+  beforeEach(async () => {
+    await db.delete()
+    await db.open()
+  })
+
+  it('seeds only the requested book_code_prefix', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+
+    const result = await seedDatasetLazy('mnn1')
+    expect(result).toBe('seeded')
+
+    const seededFlag = await db.settings.get('dataset_seeded_mnn1')
+    expect(seededFlag?.value).toBe(true)
+
+    const checksums = await db.settings.get('lesson_checksums_mnn1')
+    expect(typeof checksums?.value).toBe('object')
+
+    const vocabCount = await db.vocabulary.count()
+    expect(vocabCount).toBeGreaterThan(0)
+  })
+
+  it('returns up-to-date on second call with same version', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatasetLazy('mnn1')
+    const result = await seedDatasetLazy('mnn1')
+    expect(result).toBe('up-to-date')
+  })
+})
+
+describe('checkForUpdates (refactored)', () => {
+  beforeEach(async () => {
+    await db.delete()
+    await db.open()
+    updateStore.setState({ phase: 'idle', steps: [], currentFile: null, progress: 0, needsReload: false, error: null })
+    vi.stubGlobal('navigator', {
+      serviceWorker: {
+        getRegistration: vi.fn().mockResolvedValue(undefined),
+      },
+    })
+  })
+
+  afterEach(() => {
+    updateStore.getState().reset()
+  })
+
+  it('saves last_update_check timestamp after call', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+
+    await checkForUpdates()
+
+    const ts = await db.settings.get('last_update_check')
+    expect(ts?.value).toBeTruthy()
+    expect(typeof ts?.value).toBe('string')
+  })
+
+  it('does not trigger update store for non-seeded datasets', async () => {
+    // dataset_seeded_mnn1 is not set — lazy load handles it
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('idle')
+  })
+
+  it('migration: sets dataset_seeded flag when old manifest_checksum exists but new flag does not', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await db.settings.put({ key: 'manifest_checksum', value: 'old-checksum' })
+    // dataset_seeded_mnn1 intentionally absent
+
+    await checkForUpdates()
+
+    const seeded = await db.settings.get('dataset_seeded_mnn1')
+    expect(seeded?.value).toBe(true)
+  })
+
+  it('triggers update when seeded dataset has changed file checksums', async () => {
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatasetLazy('mnn1')
+    // Fake an outdated checksum
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: { 'lesson-01.json': 'old-checksum' } })
+
+    await checkForUpdates()
+
+    expect(updateStore.getState().phase).toBe('updating')
+  })
+})
+
+describe('updateChangedFiles', () => {
+  beforeEach(async () => {
+    await db.delete()
+    await db.open()
+    mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
+    await seedDatasetLazy('mnn1')
+  })
+
+  it('skips datasets that were never seeded', async () => {
+    await db.settings.delete('dataset_seeded_mnn1')
+
+    const vocabBefore = await db.vocabulary.count()
+    await updateChangedFiles(SAMPLE_MANIFEST)
+    const vocabAfter = await db.vocabulary.count()
+    expect(vocabAfter).toBe(vocabBefore)
+  })
+
+  it('updates only files with changed checksums', async () => {
+    const storedChecksums = (await db.settings.get('lesson_checksums_mnn1'))?.value as Record<string, string>
+    // Fake one changed checksum
+    const fakeChecksums = { ...storedChecksums, 'lesson-01.json': 'old-checksum' }
+    await db.settings.put({ key: 'lesson_checksums_mnn1', value: fakeChecksums })
+
+    const updatedFiles: string[] = []
+    await updateChangedFiles(SAMPLE_MANIFEST, (file) => {
+      updatedFiles.push(file)
+    })
+
+    expect(updatedFiles).toContain('lesson-01.json')
+    expect(updatedFiles).toHaveLength(1)
+    // Checksum should be updated
+    const newChecksums = (await db.settings.get('lesson_checksums_mnn1'))?.value as Record<string, string>
+    expect(newChecksums['lesson-01.json']).not.toBe('old-checksum')
   })
 })

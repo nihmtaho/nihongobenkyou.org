@@ -2,6 +2,9 @@ export interface DatasetConfig {
   id: string
   title: string
   title_vi: string
+  subtitle?: string
+  description?: string
+  type: 'vocab' | 'kanji'
   source_file: string
   lesson_key_prefix: string
   lesson_range: [number, number]
@@ -32,7 +35,8 @@ export interface KanjiManifestSection {
 }
 
 export interface Manifest {
-  schema_version: '1.0'
+  schema_version: '1.0' | '2.0'
+  app_version?: string
   built_at: string
   built_by: string
   built_from: string
@@ -47,6 +51,9 @@ export interface DatasetManifest {
   lesson_count: number
   vocab_count: number
   checksum: string
+  type: 'vocab' | 'kanji'
+  subtitle?: string
+  description?: string
   files: FileEntry[]
 }
 

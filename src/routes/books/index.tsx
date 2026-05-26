@@ -17,9 +17,6 @@ function BooksPage() {
 
   return (
     <div className="p-4 flex flex-col gap-4">
-      <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
-        BOOKS
-      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {enabled.map(dataset => (
           <BookCard key={dataset.id} dataset={dataset} userId={userId} />
@@ -49,13 +46,17 @@ function BookCard({ dataset, userId }: { dataset: Dataset, userId: string }) {
     <Link to="/books/$book" params={{ book: dataset.id }}>
       <div className="bg-card border border-border/10 transition-colors hover:border-l-4 hover:border-l-primary cursor-pointer">
         <div className="card-body p-4 gap-2">
-          <div className="flex gap-1">
+          <div className="flex gap-1 flex-wrap">
             {dataset.jlpt_level && (
               <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-primary text-primary px-1.5 py-0.5">
                 #N
                 {dataset.jlpt_level}
               </span>
             )}
+            <span className="inline-block text-[10px] font-[var(--br-mono-font)] border border-border text-muted-foreground px-1.5 py-0.5">
+              #
+              {dataset.type}
+            </span>
           </div>
           <h2 className="card-title font-[var(--br-heading-font)] text-xl uppercase tracking-tight leading-tight">
             {dataset.title}

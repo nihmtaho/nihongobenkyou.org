@@ -1,3 +1,4 @@
+import type { Manifest } from '../types/dataset'
 import { useStore } from 'zustand'
 import { createStore } from 'zustand/vanilla'
 
@@ -15,13 +16,17 @@ export interface UpdateState {
   steps: UpdateStep[]
   currentFile: string | null
   progress: number
+  changedFilesTotal: number
+  changedFilesCompleted: number
   needsReload: boolean
   error: string | null
+  pendingManifest: Manifest | null
 
-  startUpdate: (swWaiting: boolean, datasetOutdated: boolean, kanjiOutdated: boolean) => void
+  startUpdate: (swWaiting: boolean, datasetOutdated: boolean, kanjiOutdated: boolean, manifest: Manifest) => void
   setStepActive: (id: StepId) => void
   setStepDone: (id: StepId) => void
   setProgress: (file: string, percent: number) => void
+  setChangedFilesProgress: (file: string, completed: number, total: number) => void
   setError: (msg: string) => void
   setNeedsReload: (v: boolean) => void
   finish: () => void
@@ -41,27 +46,34 @@ export const updateStore = createStore<UpdateState>(set => ({
   steps: [],
   currentFile: null,
   progress: 0,
+  changedFilesTotal: 0,
+  changedFilesCompleted: 0,
   needsReload: false,
   error: null,
+  pendingManifest: null,
 
-  startUpdate: (swWaiting, datasetOutdated, kanjiOutdated) => {
+  startUpdate: (swWaiting, datasetOutdated, kanjiOutdated, manifest) => {
     const steps: UpdateStep[] = STEP_DEFINITIONS.map((s) => {
       let status: StepStatus = 'pending'
-      if (s.id === 'sw' && !swWaiting) {
+      if (s.id === 'sw' && !swWaiting)
         status = 'skipped'
-      }
-
-      if (s.id === 'dataset' && !datasetOutdated) {
+      if (s.id === 'dataset' && !datasetOutdated)
         status = 'skipped'
-      }
-
-      if (s.id === 'kanji' && !kanjiOutdated) {
+      if (s.id === 'kanji' && !kanjiOutdated)
         status = 'skipped'
-      }
-
       return { ...s, status }
     })
-    set({ phase: 'updating', steps, progress: 0, currentFile: null, needsReload: false, error: null })
+    set({
+      phase: 'updating',
+      steps,
+      progress: 0,
+      currentFile: null,
+      changedFilesTotal: 0,
+      changedFilesCompleted: 0,
+      needsReload: false,
+      error: null,
+      pendingManifest: manifest,
+    })
   },
 
   setStepActive: id =>
@@ -71,6 +83,14 @@ export const updateStore = createStore<UpdateState>(set => ({
     set(state => ({ steps: state.steps.map(s => (s.id === id ? { ...s, status: 'done' } : s)) })),
 
   setProgress: (file, percent) => set({ currentFile: file, progress: percent }),
+
+  setChangedFilesProgress: (file, completed, total) =>
+    set({
+      currentFile: file,
+      changedFilesCompleted: completed,
+      changedFilesTotal: total,
+      progress: Math.round((completed / total) * 100),
+    }),
 
   setError: msg => set({ error: msg }),
 
@@ -85,7 +105,17 @@ export const updateStore = createStore<UpdateState>(set => ({
     })),
 
   reset: () =>
-    set({ phase: 'idle', steps: [], currentFile: null, progress: 0, needsReload: false, error: null }),
+    set({
+      phase: 'idle',
+      steps: [],
+      currentFile: null,
+      progress: 0,
+      changedFilesTotal: 0,
+      changedFilesCompleted: 0,
+      needsReload: false,
+      error: null,
+      pendingManifest: null,
+    }),
 }))
 
 export function useUpdateStore<T>(selector: (state: UpdateState) => T): T {

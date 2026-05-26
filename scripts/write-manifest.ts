@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
+import yaml from 'js-yaml'
 
 export function bumpPatch(version: string): string {
   const parts = version.split('.')
@@ -26,6 +27,28 @@ function readOldManifest(manifestPath: string): Manifest | undefined {
   }
   catch {
     return undefined
+  }
+}
+
+interface BookYamlMetadata {
+  title?: string
+  title_vi?: string
+  subtitle?: string
+  description?: string
+  type?: string
+  jlpt_level?: number
+}
+
+function readBookMetadata(sourceFile: string): BookYamlMetadata {
+  const fullPath = path.join(process.cwd(), sourceFile)
+  if (!existsSync(fullPath))
+    return {}
+  try {
+    const raw = yaml.load(readFileSync(fullPath, 'utf-8')) as Record<string, unknown>
+    return (raw?.book as BookYamlMetadata) ?? {}
+  }
+  catch {
+    return {}
   }
 }
 
@@ -60,10 +83,13 @@ export async function run(config: DatasetConfig): Promise<void> {
   const [rangeStart, rangeEnd] = config.lesson_range
 
   const oldManifest = readOldManifest(manifestPath)
+  const bookMeta = readBookMetadata(config.source_file)
   const oldDatasetVersion = oldManifest?.datasets.find(d => d.id === config.id)?.version ?? config.version
   const newDatasetVersion = bumpPatch(oldDatasetVersion)
   const oldKanjiVersion = oldManifest?.kanji?.version ?? '1.0.0'
   const newKanjiVersion = bumpPatch(oldKanjiVersion)
+  const oldAppVersion = oldManifest?.app_version ?? '1.0.0'
+  const newAppVersion = bumpPatch(oldAppVersion)
 
   const files: FileEntry[] = []
   const fileContents: Buffer[] = []
@@ -104,7 +130,8 @@ export async function run(config: DatasetConfig): Promise<void> {
   )
 
   const manifest: Manifest = {
-    schema_version: '1.0',
+    schema_version: '2.0',
+    app_version: newAppVersion,
     built_at: new Date().toISOString(),
     built_by: 'build:dataset',
     built_from: config.id,
@@ -116,6 +143,9 @@ export async function run(config: DatasetConfig): Promise<void> {
         lesson_count: rangeEnd - rangeStart + 1,
         vocab_count: vocabCount,
         checksum: datasetChecksum,
+        type: (bookMeta.type as 'vocab' | 'kanji') ?? config.type ?? 'vocab',
+        ...(bookMeta.subtitle && { subtitle: bookMeta.subtitle }),
+        ...(bookMeta.description && { description: bookMeta.description }),
         files,
       },
     ],

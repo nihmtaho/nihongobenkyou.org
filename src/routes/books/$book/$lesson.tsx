@@ -96,11 +96,11 @@ function LessonPage() {
   }
 
   return (
-    <div className="lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
-      <div className="sticky top-0 z-10 bg-background border-b border-border/10 shrink-0">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <div className="z-10 bg-background border-b border-border/10 shrink-0">
         {/* Main header */}
-        <div className="p-4 flex items-end justify-between">
-          <div>
+        <div className="p-4 flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <Link
               to="/books/$book"
               params={{ book }}
@@ -111,11 +111,11 @@ function LessonPage() {
             <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-1">
               {book.toUpperCase()}
             </p>
-            <h1 className="text-7xl font-black font-[var(--br-heading-font)] tracking-tighter leading-none">
+            <h1 className="text-6xl sm:text-7xl font-black font-[var(--br-heading-font)] tracking-tighter leading-none">
               {String(lessonNumber).padStart(2, '0')}
             </h1>
           </div>
-          <div className="flex gap-1.5 mb-2">
+          <div className="flex flex-col items-end gap-2 pt-1 shrink-0 sm:flex-row sm:items-center sm:pt-0 sm:mt-2">
             <HiddenVocabBadge count={hiddenCount} onClick={() => setHiddenPanelOpen(true)} />
             {dueCount > 0 && (
               <Button
@@ -149,7 +149,7 @@ function LessonPage() {
         {!isLoading && total > 0 && (
           <div className="px-4 pb-3 flex flex-col gap-2">
             <SRSProgressBar stats={srsStats} height="h-2" animDelay={0.05} />
-            <div className="flex items-end gap-4 overflow-x-auto pb-0.5">
+            <div className="flex items-end gap-3 overflow-x-auto pb-0.5 sm:gap-4">
               {[
                 { count: newCount, label: 'CHƯA HỌC', color: 'text-foreground/50' },
                 { count: learningCount, label: 'ĐANG HỌC', color: 'text-warning' },
@@ -157,16 +157,16 @@ function LessonPage() {
                 { count: matureCount, label: 'ĐÃ THUỘC', color: 'text-success' },
               ].map(({ count, label, color }) => (
                 <div key={label} className="flex flex-col shrink-0">
-                  <span className={`text-sm font-black font-[var(--br-mono-font)] leading-none tabular-nums ${color}`}>
+                  <span className={`text-xs sm:text-sm font-black font-[var(--br-mono-font)] leading-none tabular-nums ${color}`}>
                     {count}
                   </span>
-                  <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground uppercase">{label}</span>
+                  <span className="text-[8px] sm:text-[9px] font-[var(--br-mono-font)] text-muted-foreground uppercase">{label}</span>
                 </div>
               ))}
               {dueCount > 0 && (
                 <div className="flex flex-col shrink-0 border-l border-border/10 pl-4">
-                  <span className="text-sm font-black font-[var(--br-mono-font)] text-destructive leading-none tabular-nums">{dueCount}</span>
-                  <span className="text-[9px] font-[var(--br-mono-font)] text-muted-foreground uppercase">ĐẾN HẠN</span>
+                  <span className="text-xs sm:text-sm font-black font-[var(--br-mono-font)] text-destructive leading-none tabular-nums">{dueCount}</span>
+                  <span className="text-[8px] sm:text-[9px] font-[var(--br-mono-font)] text-muted-foreground uppercase">ĐẾN HẠN</span>
                 </div>
               )}
               {nextReview && (
@@ -238,7 +238,7 @@ function LessonPage() {
         )}
       </div>
 
-      <div className="lg:flex-1 lg:min-h-0">
+      <div className="flex-1 min-h-0 overflow-hidden">
         <VocabList
           items={nonDeprecated}
           cards={cards}

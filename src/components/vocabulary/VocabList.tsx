@@ -85,8 +85,11 @@ export function VocabList({ items, cards, userId, isLoading, hiddenPanelOpen, on
   return (
     <>
       {/* Mobile: virtualized card stack */}
-      <div ref={parentRef} className="lg:hidden h-[calc(100vh-4rem)] overflow-auto">
-        <div style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}>
+      <div ref={parentRef} className="lg:hidden h-full min-h-0 overflow-y-auto">
+        <div
+          className="pb-[calc(env(safe-area-inset-bottom)+5.5rem)]"
+          style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}
+        >
           {virtualizer.getVirtualItems().map((virtualItem) => {
             const item = items[virtualItem.index]
             const card = cards.get(item.vocab_id) ?? null

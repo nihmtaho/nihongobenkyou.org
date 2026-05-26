@@ -1,3 +1,11 @@
+book:
+  title: "Kanji N5"
+  title_vi: "Hán tự N5"
+  subtitle: "漢字 N5"
+  description: "130 hán tự cơ bản cấp độ N5 — Minna no Nihongo"
+  type: kanji
+  jlpt_level: 5
+
 languages:
   en: English
   vi: Tiếng Việt
@@ -4460,7 +4468,7 @@ lesson-18:
         example:
           ja: 彼は私の主人です。
           vi: Anh ấy là chồng tôi.
-  - char: 着く
+  - char: 着
     meaning_vi: [đến, mặc]
     han_viet: Trước
     mnemonic_vi: "Đến (着く) là khi một người hoặc vật di chuyển đến một địa điểm cụ thể và dừng lại ở đó"
