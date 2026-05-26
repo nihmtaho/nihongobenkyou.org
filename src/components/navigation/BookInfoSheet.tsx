@@ -12,7 +12,7 @@ export function BookInfoSheet({ open, onOpenChange, bookPrefix }: BookInfoSheetP
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="pb-[env(safe-area-inset-bottom)]">
+      <SheetContent side="bottom">
         <SheetHeader className="sr-only">
           <SheetTitle>{dataset ? dataset.title : 'Book Info'}</SheetTitle>
         </SheetHeader>

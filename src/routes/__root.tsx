@@ -93,7 +93,7 @@ function RootLayout() {
       <OfflineAuthNotice />
       <ReactivationBanner />
       <OfflineIndicator />
-      <div className="flex min-h-screen lg:h-screen lg:overflow-hidden">
+      <div className="flex h-dvh min-h-0 lg:overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col min-h-0 lg:overflow-hidden">
           <DesktopTopBar />

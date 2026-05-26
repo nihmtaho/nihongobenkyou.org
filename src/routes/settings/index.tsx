@@ -18,7 +18,7 @@ export const Route = createFileRoute('/settings/')({
 function SettingsPage() {
   return (
     <div className="p-4 max-w-lg mx-auto flex flex-col gap-6">
-      <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight">
+      <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight lg:hidden">
         CÀI ĐẶT
       </h1>
       <ProfileSection />

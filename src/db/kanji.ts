@@ -1,6 +1,7 @@
 import type { KanjiItem } from '../types/kanji'
 import type { SRSCard } from '../types/srs'
 import type { VocabItem } from '../types/vocabulary'
+import { removeDiacritics } from '../lib/text-utils'
 import { db } from './schema'
 import { initSRSCard, upsertSRSCard } from './srs-cards'
 
@@ -9,6 +10,7 @@ interface KanjiFilters {
   lesson_number?: number
   radical?: string
   stroke_count?: number
+  query?: string
 }
 
 export async function getKanji(char: string): Promise<KanjiItem | undefined> {
@@ -17,6 +19,8 @@ export async function getKanji(char: string): Promise<KanjiItem | undefined> {
 
 export async function getAllKanji(filters?: KanjiFilters): Promise<KanjiItem[]> {
   let collection = db.kanji.toCollection()
+  const rawQuery = filters?.query?.trim() ?? ''
+  const normalizedQuery = rawQuery ? removeDiacritics(rawQuery) : ''
 
   if (filters?.lesson_number !== undefined) {
     collection = db.kanji.where('lesson_number').equals(filters.lesson_number)
@@ -32,6 +36,12 @@ export async function getAllKanji(filters?: KanjiFilters): Promise<KanjiItem[]> 
       return false
     if (filters?.stroke_count !== undefined && k.stroke_count !== filters.stroke_count)
       return false
+    if (rawQuery) {
+      const matchesChar = k.char.includes(rawQuery)
+      const matchesHanViet = removeDiacritics(k.han_viet ?? '').includes(normalizedQuery)
+      if (!matchesChar && !matchesHanViet)
+        return false
+    }
     return true
   })
 }

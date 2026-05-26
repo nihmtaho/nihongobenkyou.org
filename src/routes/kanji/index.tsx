@@ -20,8 +20,8 @@ function KanjiPage() {
   const userId = useAuthStore(s => s.userId) ?? ''
 
   return (
-    <div className="flex flex-col lg:h-full">
-      <div className="sticky top-0 lg:static z-10 bg-background px-4 pt-4 border-b border-border/10 flex-shrink-0 pb-3">
+    <div className="flex flex-col min-h-full lg:h-full">
+      <div className="sticky top-0 z-10 bg-background px-4 pt-4 border-b border-border/10 flex-shrink-0 pb-3 lg:hidden">
         <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase">
           漢字
         </h1>
@@ -43,11 +43,13 @@ interface BrowsePanelProps {
 
 function BrowsePanel({ userId, stickyFilters = false }: BrowsePanelProps) {
   const navigate = useNavigate()
+  const [query, setQuery] = useState('')
   const [jlptFilter, setJlptFilter] = useState<KanjiItem['jlpt_level'] | undefined>(undefined)
   const [radicalFilter, setRadicalFilter] = useState('')
   const [strokeFilter, setStrokeFilter] = useState<number | undefined>(undefined)
 
   const { data: kanjiList, isLoading } = useKanjiList(userId, {
+    query: query || undefined,
     jlpt_level: jlptFilter,
     radical: radicalFilter || undefined,
     stroke_count: strokeFilter,
@@ -80,8 +82,15 @@ function BrowsePanel({ userId, stickyFilters = false }: BrowsePanelProps) {
       <div className="flex gap-3">
         <Input
           type="text"
-          placeholder="Radical (e.g. 木)"
+          placeholder="Tìm theo hán tự / Hán Việt"
           className="h-8 text-sm font-[var(--br-jp-font)] flex-1"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+        <Input
+          type="text"
+          placeholder="Bộ thủ"
+          className="h-8 w-20 text-sm font-[var(--br-jp-font)] shrink-0"
           value={radicalFilter}
           onChange={e => setRadicalFilter(e.target.value)}
           maxLength={1}
@@ -144,6 +153,7 @@ function BrowsePanel({ userId, stickyFilters = false }: BrowsePanelProps) {
               size="sm"
               className="font-[var(--br-mono-font)] uppercase"
               onClick={() => {
+                setQuery('')
                 setJlptFilter(undefined)
                 setRadicalFilter('')
                 setStrokeFilter(undefined)

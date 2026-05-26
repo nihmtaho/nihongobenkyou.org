@@ -91,6 +91,24 @@ describe('useKanjiList', () => {
     expect(chars).not.toContain('土')
   })
 
+  it('filters by exact kanji character query', async () => {
+    const { result } = renderHook(() => useKanjiList(TEST_USER, { query: '水' }), {
+      wrapper: makeWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data?.map(k => k.char)).toEqual(['水'])
+  })
+
+  it('filters by han viet query without requiring diacritics', async () => {
+    const { result } = renderHook(() => useKanjiList(TEST_USER, { query: 'thuy' }), {
+      wrapper: makeWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data?.map(k => k.char)).toEqual(['水'])
+  })
+
   it('merges srs_cards for SRS badge data', async () => {
     await db.srs_cards.put(makeKanjiCard('木', { scheduled_days: 21 }))
 

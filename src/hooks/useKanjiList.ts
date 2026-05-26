@@ -13,6 +13,7 @@ interface KanjiFilters {
   lesson_number?: number
   radical?: string
   stroke_count?: number
+  query?: string
 }
 
 export function useKanjiList(userId: string, filters?: KanjiFilters) {
