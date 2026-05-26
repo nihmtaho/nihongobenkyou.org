@@ -71,10 +71,6 @@ function CustomDecksPage() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto flex flex-col gap-6">
-      <h1 className="text-4xl font-bold uppercase font-[var(--br-heading-font)] tracking-tight lg:hidden">
-        MY DECKS
-      </h1>
-
       {!isAuthenticated && (
         <p className="text-xs text-muted-foreground border border-border/30 px-3 py-2">
           💾 Dữ liệu được lưu trên thiết bị này.

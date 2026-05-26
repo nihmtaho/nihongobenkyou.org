@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getBackLabel, getNavConfig } from './nav-config'
+import { getBackLabel, getNavConfig, usesDesktopStyleTopBar } from './nav-config'
 
 describe('getNavConfig', () => {
   it('matches exact route', () => {
@@ -43,5 +43,21 @@ describe('getBackLabel', () => {
   it('returns undefined for routes with no showBack', () => {
     expect(getBackLabel('/')).toBeUndefined()
     expect(getBackLabel('/books')).toBeUndefined()
+  })
+})
+
+describe('usesDesktopStyleTopBar', () => {
+  it('uses the desktop-style top bar on top-level tab routes', () => {
+    expect(usesDesktopStyleTopBar('/')).toBe(true)
+    expect(usesDesktopStyleTopBar('/books')).toBe(true)
+    expect(usesDesktopStyleTopBar('/kanji')).toBe(true)
+    expect(usesDesktopStyleTopBar('/study')).toBe(true)
+    expect(usesDesktopStyleTopBar('/custom')).toBe(true)
+  })
+
+  it('keeps the overlay mobile nav on detail routes', () => {
+    expect(usesDesktopStyleTopBar('/books/mnn1')).toBe(false)
+    expect(usesDesktopStyleTopBar('/kanji/graph')).toBe(false)
+    expect(usesDesktopStyleTopBar('/settings')).toBe(false)
   })
 })

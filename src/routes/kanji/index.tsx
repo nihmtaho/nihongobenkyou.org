@@ -21,11 +21,6 @@ function KanjiPage() {
 
   return (
     <div className="flex flex-col min-h-full lg:h-full">
-      <div className="sticky top-0 z-10 bg-background px-4 pt-4 border-b border-border/10 flex-shrink-0 pb-3 lg:hidden">
-        <h1 className="text-4xl font-black font-[var(--br-heading-font)] tracking-tight uppercase">
-          漢字
-        </h1>
-      </div>
       <div className="flex-1 overflow-y-auto">
         <BrowsePanel userId={userId} />
       </div>

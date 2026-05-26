@@ -9,6 +9,8 @@ import { Sidebar } from '../components/navigation/Sidebar'
 import { OfflineIndicator } from '../components/offline/OfflineIndicator'
 import { UpdateProgressModal } from '../components/update/UpdateProgressModal'
 import { useAuth } from '../hooks/useAuth'
+import { usesDesktopStyleTopBar } from '../lib/nav-config'
+import { cn } from '../lib/utils'
 import { useSettingsStore } from '../stores/settingsStore'
 
 const ROUTE_TITLES: Record<string, string> = {
@@ -23,7 +25,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/leaderboard': 'Leaderboard',
 }
 
-function DesktopTopBar() {
+function DesktopTopBar({ showOnMobile = false }: { showOnMobile?: boolean }) {
   const { location } = useRouterState()
   const pathname = location.pathname
   const activeTheme = useSettingsStore(s => s.activeTheme)
@@ -39,7 +41,12 @@ function DesktopTopBar() {
     ?? ''
 
   return (
-    <div className="hidden lg:flex items-center justify-between px-6 border-b border-border/10 bg-background flex-shrink-0 h-12">
+    <div
+      className={cn(
+        'items-center justify-between border-b border-border/10 bg-background flex-shrink-0 h-12',
+        showOnMobile ? 'flex px-4 lg:px-6' : 'hidden lg:flex px-6',
+      )}
+    >
       <span className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
         {title}
       </span>
@@ -52,9 +59,11 @@ function DesktopTopBar() {
 }
 
 function RootLayout() {
+  const { location } = useRouterState()
   const activeTheme = useSettingsStore(s => s.activeTheme)
   const fontSize = useSettingsStore(s => s.fontSize)
   const queryClient = useQueryClient()
+  const showDesktopLikeTopBar = usesDesktopStyleTopBar(location.pathname)
 
   useAuth()
 
@@ -96,8 +105,14 @@ function RootLayout() {
       <div className="flex h-dvh min-h-0 lg:overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col min-h-0 lg:overflow-hidden">
-          <DesktopTopBar />
-          <main className="flex-1 pt-11 pb-24 lg:pt-0 lg:pb-0 lg:overflow-y-auto min-h-0">
+          <DesktopTopBar showOnMobile={showDesktopLikeTopBar} />
+          <main
+            className={cn(
+              'flex-1 pb-24 lg:pb-0 lg:overflow-y-auto min-h-0',
+              showDesktopLikeTopBar ? 'pt-0' : 'pt-11',
+              'lg:pt-0',
+            )}
+          >
             <Outlet />
           </main>
         </div>

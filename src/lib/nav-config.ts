@@ -59,3 +59,12 @@ export function getBackLabel(pathname: string): string | undefined {
   const targetPath = config.backTo ?? (pathname.slice(0, pathname.lastIndexOf('/')) || '/')
   return getNavConfig(targetPath)?.title
 }
+
+export function usesDesktopStyleTopBar(pathname: string): boolean {
+  const config = getNavConfig(pathname)
+
+  if (!config || config.hideNav)
+    return false
+
+  return !config.showBack && !config.showInfoIcon && !config.hasExpandedHeader
+}
