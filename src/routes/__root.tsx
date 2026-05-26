@@ -108,7 +108,7 @@ function RootLayout() {
           <DesktopTopBar showOnMobile={showDesktopLikeTopBar} />
           <main
             className={cn(
-              'flex-1 pb-[calc(env(safe-area-inset-bottom)+6rem)] lg:pb-0 lg:overflow-y-auto min-h-0',
+              'flex-1 pb-24 lg:pb-0 lg:overflow-y-auto min-h-0',
               showDesktopLikeTopBar ? 'pt-0' : 'pt-11',
               'lg:pt-0',
             )}
