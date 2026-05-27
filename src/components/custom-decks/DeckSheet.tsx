@@ -113,7 +113,7 @@ export function DeckSheet({ deck, userId, onClose }: Props) {
         >
           <div className="w-0.5 h-8 rounded-full bg-border group-hover:bg-primary/50 transition-colors" />
         </div>
-        <SheetHeader className="pl-3 pr-5 py-4 border-b border-border/30">
+        <SheetHeader className="pl-3 pr-12 py-4 border-b border-border/30">
           {isEditing
             ? (
                 <div className="flex flex-col gap-2">
