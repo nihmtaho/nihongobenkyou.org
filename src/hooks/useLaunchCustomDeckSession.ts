@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { getDeckWords, updateDeck } from '../db/custom-decks-local'
 import { getHiddenIds } from '../db/hidden-vocab'
 import { getSRSCardsForDeck, initSRSCard } from '../db/srs-cards'
+import { fisherYates } from '../lib/utils'
 import { useStudySessionStore } from '../stores/studySessionStore'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 
@@ -109,7 +110,7 @@ export function useLaunchCustomDeckSession(userId: string) {
         }]
       })
 
-      queue = [...queue].sort(() => Math.random() - 0.5)
+      queue = fisherYates(queue)
       if (cardCount !== 'all')
         queue = queue.slice(0, cardCount)
 

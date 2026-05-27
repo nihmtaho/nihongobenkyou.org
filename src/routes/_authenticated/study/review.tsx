@@ -105,6 +105,8 @@ function StudyReviewPage() {
         onSetTypeInputSubMode={session.setTypeInputSubMode}
         onStart={session.startSession}
         onBack={() => navigate({ to: '/study', search: { tab: 'vocab' } })}
+        newCount={session.newCount}
+        reviewCount={session.reviewCount}
       />
     )
   }
@@ -117,7 +119,7 @@ function StudyReviewPage() {
           correct: session.stats.correct,
           total: session.stats.total,
           startTime: session.stats.startTime,
-          wrongCards: [],
+          wrongCards: session.stats.wrongCards,
         }}
         mode={session.mode}
         ratingCounts={session.stats.ratingCounts}

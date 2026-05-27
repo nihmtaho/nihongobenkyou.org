@@ -19,6 +19,7 @@ export interface SRSCard {
   lapses: number
   last_review: string // YYYY-MM-DD
   due: string // YYYY-MM-DD
+  due_datetime?: string | null // full ISO, for learning/relearning precision
 
   // Rating
   last_rating: SRSRating | null

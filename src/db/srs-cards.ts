@@ -40,13 +40,25 @@ export async function getDueCards(
   now: string,
   cardType?: SRSCard['cardType'],
 ): Promise<SRSCard[]> {
+  const nowDate = now.slice(0, 10)
+  const nowISO = new Date().toISOString()
+
   const cards = await db.srs_cards
     .where('[userId+due]')
-    .between([userId, Dexie.minKey], [userId, now], true, true)
+    .between([userId, Dexie.minKey], [userId, nowDate], true, true)
     .toArray()
-  if (cardType)
-    return cards.filter(c => c.cardType === cardType && !c.is_known)
-  return cards.filter(c => !c.is_known)
+
+  return cards.filter((c) => {
+    if (c.is_known)
+      return false
+    if (cardType && c.cardType !== cardType)
+      return false
+    // For learning/relearning cards with datetime precision, require due_datetime has passed
+    if ((c.state === 'learning' || c.state === 'relearning') && c.due_datetime) {
+      return c.due_datetime <= nowISO
+    }
+    return true
+  })
 }
 
 export async function getSRSCardsForDeck(userId: string, deckId: string): Promise<SRSCard[]> {

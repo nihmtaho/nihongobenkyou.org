@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { db } from '../db/schema'
+import { SRS_THRESHOLDS } from '../lib/srs-constants'
 
 export interface UnifiedDueStats {
   dueToday: number
@@ -73,28 +74,28 @@ export function useUnifiedDueStats(userId: string) {
       const customDeckDue = customCards.filter(c => c.due <= todayDate).length
 
       const allCards = [...vocabCards, ...kanjiVocabCards, ...kanjiCards]
-      const learning = allCards.filter(c => c.scheduled_days < 8).length
-        + customCards.filter(c => c.reps >= 1 && c.scheduled_days < 7).length
-      const review = allCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
-        + customCards.filter(c => c.scheduled_days >= 7 && c.scheduled_days < 21).length
-      const mature = allCards.filter(c => c.scheduled_days >= 21).length
-        + customCards.filter(c => c.scheduled_days >= 21).length
+      const learning = allCards.filter(c => c.scheduled_days < SRS_THRESHOLDS.learning).length
+        + customCards.filter(c => c.reps >= 1 && c.scheduled_days < SRS_THRESHOLDS.learning).length
+      const review = allCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.learning && c.scheduled_days < SRS_THRESHOLDS.review).length
+        + customCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.learning && c.scheduled_days < SRS_THRESHOLDS.review).length
+      const mature = allCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.review).length
+        + customCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.review).length
 
       // NOTE: kanjiVocabCards (vocab-type cards linked to kanji entries) are intentionally
       // excluded from per-type buckets. They appear in the global learning/review/mature
       // totals but not in vocabLearning/kanjiLearning etc., consistent with how vocabDue
       // and kanjiDue are scoped.
-      const vocabLearning = vocabCards.filter(c => c.scheduled_days < 8).length
-      const vocabReview = vocabCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
-      const vocabMature = vocabCards.filter(c => c.scheduled_days >= 21).length
+      const vocabLearning = vocabCards.filter(c => c.scheduled_days < SRS_THRESHOLDS.learning).length
+      const vocabReview = vocabCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.learning && c.scheduled_days < SRS_THRESHOLDS.review).length
+      const vocabMature = vocabCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.review).length
 
-      const kanjiLearning = kanjiCards.filter(c => c.scheduled_days < 8).length
-      const kanjiReview = kanjiCards.filter(c => c.scheduled_days >= 8 && c.scheduled_days < 21).length
-      const kanjiMature = kanjiCards.filter(c => c.scheduled_days >= 21).length
+      const kanjiLearning = kanjiCards.filter(c => c.scheduled_days < SRS_THRESHOLDS.learning).length
+      const kanjiReview = kanjiCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.learning && c.scheduled_days < SRS_THRESHOLDS.review).length
+      const kanjiMature = kanjiCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.review).length
 
-      const customDecksLearning = customCards.filter(c => c.reps >= 1 && c.scheduled_days < 7).length
-      const customDecksReview = customCards.filter(c => c.scheduled_days >= 7 && c.scheduled_days < 21).length
-      const customDecksMature = customCards.filter(c => c.scheduled_days >= 21).length
+      const customDecksLearning = customCards.filter(c => c.reps >= 1 && c.scheduled_days < SRS_THRESHOLDS.learning).length
+      const customDecksReview = customCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.learning && c.scheduled_days < SRS_THRESHOLDS.review).length
+      const customDecksMature = customCards.filter(c => c.scheduled_days >= SRS_THRESHOLDS.review).length
 
       // Per-type upcoming
       const vocabFuture = vocabCards.filter(c => c.due > todayDate)

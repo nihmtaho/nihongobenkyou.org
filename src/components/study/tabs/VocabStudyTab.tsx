@@ -27,7 +27,7 @@ const UPCOMING_ROWS = [
 export function VocabStudyTab({ userId, stats }: VocabStudyTabProps) {
   const navigate = useNavigate()
   const clearSession = useStudySessionStore(s => s.clearSession)
-  const dueCount = stats.vocabDue
+  const dueCount = stats.vocabDue + (stats.kanjiVocabDue ?? 0)
 
   function startReview() {
     clearSession()
@@ -57,6 +57,17 @@ export function VocabStudyTab({ userId, stats }: VocabStudyTabProps) {
       >
         {dueCount > 0 ? `▶ ÔN TẬP TỪ VỰNG (${dueCount})` : '✓ ĐÃ ÔN TẬP XONG'}
       </Button>
+
+      {dueCount === 0 && (
+        <Button
+          size="xl"
+          variant="ghost"
+          className="w-full font-[var(--br-heading-font)] uppercase tracking-wide"
+          onClick={startReview}
+        >
+          ▶ TỰ ÔN (free)
+        </Button>
+      )}
 
       {/* Analytics widget (vocab-scoped) */}
       <ReviewActivityWidget userId={userId} cardType="vocab" />
