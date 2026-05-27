@@ -33,7 +33,7 @@ export function useCustomDeckProgress(userId: string, deckId: string) {
       const learning = reviewed.filter(r => r.scheduled_days < 7).length
       const learned = reviewed.filter(r => r.scheduled_days >= 7 && r.scheduled_days < 21).length
       const mature = reviewed.filter(r => r.scheduled_days >= 21).length
-      const dueToday = vocabRows.filter(r => r.due <= today).length
+      const dueToday = vocabRows.filter(r => r.due <= today && !r.is_known).length
       const percentComplete = total === 0 ? 0 : Math.round(((learned + mature) / total) * 100)
 
       const futureDates = vocabRows.filter(r => r.due > today).map(r => r.due)

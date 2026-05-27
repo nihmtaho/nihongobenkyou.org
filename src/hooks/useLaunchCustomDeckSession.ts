@@ -57,9 +57,18 @@ export function useLaunchCustomDeckSession(userId: string) {
         qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deck.id] })
       }
 
+      // Only filter to due cards when at least one eligible card is due today.
+      // If nothing is due (user clicked "HỌC TIẾP"), fall through to all eligible cards.
+      const hasDueEligible = words.some((w) => {
+        const s = srsMap.get(w.id)
+        return s && !s.is_known && !hiddenIds.has(w.id) && s.due <= today
+      })
+
       let queue: VocabWithSRS[] = words.flatMap((w) => {
         const s = srsMap.get(w.id)
-        if (s?.is_known || hiddenIds.has(w.id))
+        if (!s || s.is_known || hiddenIds.has(w.id))
+          return []
+        if (hasDueEligible && s.due > today)
           return []
         return [{
           vocab_id: w.id,

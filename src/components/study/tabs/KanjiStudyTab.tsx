@@ -3,6 +3,7 @@ import type { UnifiedDueStats } from '../../../hooks/useUnifiedDueStats'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useStudySessionStore } from '../../../stores/studySessionStore'
 import { ReviewActivityWidget } from '../../analytics/ReviewActivityWidget'
 
 interface KanjiStudyTabProps {
@@ -25,9 +26,11 @@ const UPCOMING_ROWS = [
 
 export function KanjiStudyTab({ userId, stats }: KanjiStudyTabProps) {
   const navigate = useNavigate()
+  const clearSession = useStudySessionStore(s => s.clearSession)
   const dueCount = stats.kanjiDue
 
   function startReview() {
+    clearSession()
     navigate({ to: '/study/review', search: { filter: 'kanji' } })
   }
 

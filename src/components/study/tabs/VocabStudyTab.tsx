@@ -3,6 +3,7 @@ import type { UnifiedDueStats } from '../../../hooks/useUnifiedDueStats'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useStudySessionStore } from '../../../stores/studySessionStore'
 import { ReviewActivityWidget } from '../../analytics/ReviewActivityWidget'
 
 interface VocabStudyTabProps {
@@ -25,9 +26,11 @@ const UPCOMING_ROWS = [
 
 export function VocabStudyTab({ userId, stats }: VocabStudyTabProps) {
   const navigate = useNavigate()
+  const clearSession = useStudySessionStore(s => s.clearSession)
   const dueCount = stats.vocabDue
 
   function startReview() {
+    clearSession()
     navigate({ to: '/study/review', search: { filter: 'vocab' } })
   }
 

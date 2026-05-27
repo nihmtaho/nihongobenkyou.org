@@ -18,7 +18,7 @@ export function useCustomDeckMutations(userId: string) {
   const updateDeckMutation = useMutation({
     mutationFn: ({ deckId, updates }: {
       deckId: string
-      updates: Partial<Pick<CustomDeck, 'title' | 'description'>>
+      updates: Partial<Pick<CustomDeck, 'title' | 'description' | 'is_active'>>
     }) => updateDeck(deckId, updates),
     onSuccess: () => invalidate(),
   })

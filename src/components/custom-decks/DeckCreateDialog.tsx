@@ -12,7 +12,7 @@ import {
 interface Props {
   open: boolean
   isPending?: boolean
-  onSave: (data: { title: string, description?: string }) => void
+  onSave: (data: { title: string, description?: string, is_active?: boolean }) => void
   onClose: () => void
 }
 
