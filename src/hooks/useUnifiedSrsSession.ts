@@ -3,7 +3,7 @@ import type { MeaningLanguage, StudyMode, TypeInputSubMode } from '../types/stud
 import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { db } from '../db/schema'
 import { getDueCards } from '../db/srs-cards'
 import { fisherYates } from '../lib/utils'
@@ -150,6 +150,27 @@ export function useUnifiedSrsSession(
       setPhase('pre-session')
     }
   }, [phase, isLoading])
+
+  // When a new prebuilt queue is provided while the session is already 'complete'
+  // (e.g. retrying wrong cards on the same mounted route), reset state so the
+  // auto-start effect can fire again for the new queue.
+  const prevPrebuiltRef = useRef(prebuilt)
+  useEffect(() => {
+    const prev = prevPrebuiltRef.current
+    prevPrebuiltRef.current = prebuilt
+    if (prebuilt != null && prev !== prebuilt && phase === 'complete') {
+      // eslint-disable-next-line react/set-state-in-effect
+      setPhase('pre-session')
+      // eslint-disable-next-line react/set-state-in-effect
+      setQueue([])
+      // eslint-disable-next-line react/set-state-in-effect
+      setCurrentIndex(0)
+      // eslint-disable-next-line react/set-state-in-effect
+      setStats(makeStats())
+    }
+  // phase is intentionally read at effect-run time, not re-subscribed
+  // eslint-disable-next-line react/exhaustive-deps
+  }, [prebuilt])
 
   function buildQueue(): UnifiedCard[] {
     if (hasPrebuilt)

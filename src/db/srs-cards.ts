@@ -69,10 +69,19 @@ export async function getSRSCardsForDeck(userId: string, deckId: string): Promis
 }
 
 export async function getDueCardsForDeck(userId: string, deckId: string, now: string): Promise<SRSCard[]> {
-  return db.srs_cards
+  const nowDate = new Date(now)
+  const candidates = await db.srs_cards
     .where('[userId+deckId+due]')
     .between([userId, deckId, Dexie.minKey], [userId, deckId, now], true, true)
     .toArray()
+  return candidates.filter((c) => {
+    if (c.is_known)
+      return false
+    if ((c.state === 'learning' || c.state === 'relearning') && c.due_datetime) {
+      return new Date(c.due_datetime) <= nowDate
+    }
+    return true
+  })
 }
 
 export async function deleteSRSCardsForDeck(userId: string, deckId: string): Promise<void> {

@@ -48,7 +48,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
         is_known,
         due_datetime: result.due_datetime,
         consecutive_correct: newConsecutiveCorrect,
-        pending_sync: true,
+        pending_sync: false,
         updated_at: now,
       })
 
@@ -58,6 +58,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
       qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deckId] })
       qc.invalidateQueries({ queryKey: ['unified-due-stats', userId] })
       qc.invalidateQueries({ queryKey: ['review-stats', userId] })
+      qc.invalidateQueries({ queryKey: ['due-vocab-unified', userId] })
     },
     retry: 0,
   })

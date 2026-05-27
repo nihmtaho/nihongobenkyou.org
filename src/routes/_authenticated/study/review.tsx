@@ -47,6 +47,7 @@ function StudyReviewPage() {
   const storeDeckSource = useStudySessionStore(s => s.deckSource)
   const storeCustomDeckId = useStudySessionStore(s => s.customDeckId)
   const clearSession = useStudySessionStore(s => s.clearSession)
+  const setSessionWrongCards = useStudySessionStore(s => s.setSessionWrongCards)
 
   // Captured at mount: true means the user already chose a mode in the lesson/deck popup.
   // Using a ref because storeQueue will be cleared after session init, so a variable would
@@ -63,12 +64,21 @@ function StudyReviewPage() {
       }
     : undefined)
 
+  // Track latest wrongCards via ref so the effect below doesn't need them in its deps.
+  const sessionWrongCardsRef = useRef(session.stats.wrongCards)
+  sessionWrongCardsRef.current = session.stats.wrongCards
+
   // Clear the store once the session ends so a next navigation starts fresh.
+  // Also persist wrong cards to the store so the lesson page can display the retry banner.
   useEffect(() => {
     if (session.phase === 'complete') {
+      const wc = sessionWrongCardsRef.current
       clearSession()
+      if (wc.length > 0) {
+        setSessionWrongCards(wc)
+      }
     }
-  }, [session.phase, clearSession])
+  }, [session.phase, clearSession, setSessionWrongCards])
 
   // Auto-start for lesson/deck launches — mode was already chosen in the popup.
   useEffect(() => {

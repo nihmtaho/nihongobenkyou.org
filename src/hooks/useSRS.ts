@@ -131,6 +131,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       if (subject === 'kanji') {
         queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
         queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] })
+        queryClient.invalidateQueries({ queryKey: ['due-kanji-unified', userId] })
       }
     },
     retry: 0,
