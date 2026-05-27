@@ -8,8 +8,8 @@ import { uploadPendingReviews } from '../db/sync'
 import { scheduleFSRS } from '../lib/srs'
 import { computeTypeInputRatingForDisplay } from '../lib/srs-utils'
 
-const KNOWN_MIN_SCHEDULED = 21
-const KNOWN_MIN_REPS = 5
+const KNOWN_MIN_SCHEDULED = 60
+const KNOWN_MIN_REPS = 8
 
 export interface TypeInputResult {
   rating: SRSRating
@@ -114,6 +114,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
         ...result,
         last_rating: rating,
         is_known,
+        due_datetime: result.due_datetime,
         consecutive_correct: newConsecutiveCorrect,
         pending_sync: false,
         updated_at: now,
@@ -130,6 +131,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       if (subject === 'kanji') {
         queryClient.invalidateQueries({ queryKey: ['kanji-srs-due', userId] })
         queryClient.invalidateQueries({ queryKey: ['kanji-list', userId] })
+        queryClient.invalidateQueries({ queryKey: ['due-kanji-unified', userId] })
       }
     },
     retry: 0,

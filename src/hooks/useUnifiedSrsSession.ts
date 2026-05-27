@@ -3,9 +3,10 @@ import type { MeaningLanguage, StudyMode, TypeInputSubMode } from '../types/stud
 import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { db } from '../db/schema'
 import { getDueCards } from '../db/srs-cards'
+import { fisherYates } from '../lib/utils'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useCustomDeckVocabSRS } from './useCustomDeckVocabSRS'
 import { useSRS } from './useSRS'
@@ -17,6 +18,7 @@ export interface UnifiedSessionStats {
   total: number
   startTime: Date
   ratingCounts: Record<SRSRating, number>
+  wrongCards: UnifiedCard[]
 }
 
 export interface UnifiedSrsSessionOptions {
@@ -26,11 +28,8 @@ export interface UnifiedSrsSessionOptions {
   customDeckId?: string // when set, vocab ratings go to custom deck SRS
 }
 
-// Fixed requeue delay for Again cards (replaces deleted randomAgainDelay)
-const AGAIN_REQUEUE_DELAY_MS = 6 * 60 * 1000
-
 function makeStats(): UnifiedSessionStats {
-  return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0 } }
+  return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0 }, wrongCards: [] }
 }
 
 function buildRvIdSet(
@@ -47,15 +46,6 @@ function buildRvIdSet(
   return ids
 }
 
-function fisherYates<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
-}
-
 export function useUnifiedSrsSession(
   userId: string,
   filter: CardTypeFilter,
@@ -65,6 +55,7 @@ export function useUnifiedSrsSession(
   const hasPrebuilt = prebuilt != null && prebuilt.length > 0
 
   const meaningLanguage = useSettingsStore(s => s.meaningLanguage) as MeaningLanguage
+  const newCardsPerDay = useSettingsStore(s => s.newCardsPerDay)
   const vocabSRS = useSRS('vocab', userId)
   const kanjiSRS = useSRS('kanji', userId)
   const customDeckId = options?.customDeckId ?? ''
@@ -77,7 +68,6 @@ export function useUnifiedSrsSession(
   const [stats, setStats] = useState<UnifiedSessionStats>(makeStats)
   const [mode, setMode] = useState<StudyMode>(options?.initialMode ?? 'flashcard')
   const [typeInputSubMode, setTypeInputSubMode] = useState<TypeInputSubMode>(options?.initialSubMode ?? 'word→hira')
-  const [deferred, setDeferred] = useState<{ card: UnifiedCard, showAfter: number }[]>([])
 
   const { data: dueVocab, isLoading: vocabLoading } = useQuery({
     queryKey: ['due-vocab-unified', userId],
@@ -89,7 +79,7 @@ export function useUnifiedSrsSession(
       const allDue = await db.srs_cards
         .where('[userId+due]')
         .belowOrEqual([userId, todayDate])
-        .filter(c => c.userId === userId && !c.is_known && c.cardType !== 'kanji')
+        .filter(c => c.userId === userId && !c.is_known && c.cardType === 'vocab')
         .toArray()
 
       // Bulk-load vocab to avoid N+1
@@ -98,33 +88,6 @@ export function useUnifiedSrsSession(
         .map(c => c.cardId)
       const vocabItems = await db.vocabulary.where('vocab_id').anyOf(regularVocabIds).toArray()
       const vocabMap = new Map(vocabItems.map(v => [v.vocab_id, v]))
-
-      // Fall back to custom_vocabulary for IDs not found in standard vocabulary
-      const missingIds = regularVocabIds.filter(id => !vocabMap.has(id))
-      if (missingIds.length > 0) {
-        const customItems = await db.custom_vocabulary.where('id').anyOf(missingIds).toArray()
-        for (const cv of customItems) {
-          vocabMap.set(cv.id, {
-            vocab_id: cv.id,
-            word: cv.kanji ?? null,
-            reading: cv.kana,
-            romaji: '',
-            meaning_en: '',
-            meaning_vi: cv.meaning_vi,
-            han_viet: cv.han_viet ?? null,
-            pitch_pattern: null,
-            pitch_type: null,
-            audio_filename: null,
-            pos: [],
-            jlpt_level: null,
-            book_source: 'custom',
-            lesson_number: 0,
-            examples: [],
-            tags: [],
-            deprecated: false,
-          })
-        }
-      }
 
       const vocab: UnifiedCard[] = []
       const kanjiVocab: UnifiedCard[] = []
@@ -188,6 +151,27 @@ export function useUnifiedSrsSession(
     }
   }, [phase, isLoading])
 
+  // When a new prebuilt queue is provided while the session is already 'complete'
+  // (e.g. retrying wrong cards on the same mounted route), reset state so the
+  // auto-start effect can fire again for the new queue.
+  const prevPrebuiltRef = useRef(prebuilt)
+  useEffect(() => {
+    const prev = prevPrebuiltRef.current
+    prevPrebuiltRef.current = prebuilt
+    if (prebuilt != null && prev !== prebuilt && phase === 'complete') {
+      // eslint-disable-next-line react/set-state-in-effect
+      setPhase('pre-session')
+      // eslint-disable-next-line react/set-state-in-effect
+      setQueue([])
+      // eslint-disable-next-line react/set-state-in-effect
+      setCurrentIndex(0)
+      // eslint-disable-next-line react/set-state-in-effect
+      setStats(makeStats())
+    }
+  // phase is intentionally read at effect-run time, not re-subscribed
+  // eslint-disable-next-line react/exhaustive-deps
+  }, [prebuilt])
+
   function buildQueue(): UnifiedCard[] {
     if (hasPrebuilt)
       return prebuilt
@@ -200,7 +184,11 @@ export function useUnifiedSrsSession(
     if (filter === 'all' || filter === 'kanji') {
       all.push(...(dueKanji ?? []))
     }
-    return all
+
+    const newCards = all.filter(c => c.card.state === 'new')
+    const reviewCards = all.filter(c => c.card.state !== 'new')
+    const limitedNewCards = newCards.slice(0, newCardsPerDay)
+    return [...reviewCards, ...limitedNewCards]
   }
 
   function startSession() {
@@ -210,7 +198,6 @@ export function useUnifiedSrsSession(
     setQueue(built)
     setCurrentIndex(0)
     setStats(makeStats())
-    setDeferred([])
     setPhase('active')
   }
 
@@ -221,6 +208,7 @@ export function useUnifiedSrsSession(
       correct: isCorrect ? s.correct + 1 : s.correct,
       total: s.total + 1,
       ratingCounts: { ...s.ratingCounts, [rating]: s.ratingCounts[rating] + 1 },
+      wrongCards: rating === 1 ? [...s.wrongCards, card] : s.wrongCards,
     }))
 
     if (card.kind === 'kanji') {
@@ -239,23 +227,14 @@ export function useUnifiedSrsSession(
       vocabSRS.rate(card.card, rating)
     }
 
+    const addedToQueue = rating === 1 ? 1 : 0
     if (rating === 1) {
-      const showAfter = Date.now() + AGAIN_REQUEUE_DELAY_MS
-      setDeferred(d => [...d, { card, showAfter }])
+      setQueue(q => [...q, card])
     }
 
     const next = currentIndex + 1
-    if (next >= queue.length) {
-      const now = Date.now()
-      const ready = deferred.filter(d => d.showAfter <= now)
-      if (ready.length > 0) {
-        setQueue(ready.map(d => d.card))
-        setDeferred(d => d.filter(x => x.showAfter > now))
-        setCurrentIndex(0)
-      }
-      else {
-        setPhase('complete')
-      }
+    if (next >= queue.length + addedToQueue) {
+      setPhase('complete')
     }
     else {
       setCurrentIndex(next)
@@ -263,6 +242,8 @@ export function useUnifiedSrsSession(
   }
 
   const allCards = buildQueue()
+  const newCount = allCards.filter(c => c.card.state === 'new').length
+  const reviewCount = allCards.filter(c => c.card.state !== 'new').length
 
   // When using a prebuilt queue, compute counts from the queue directly.
   // Gate non-prebuilt counts on filter to avoid stale TanStack Query cache from
@@ -295,5 +276,7 @@ export function useUnifiedSrsSession(
     vocabCount,
     kanjiVocabCount,
     kanjiCount,
+    newCount,
+    reviewCount,
   }
 }

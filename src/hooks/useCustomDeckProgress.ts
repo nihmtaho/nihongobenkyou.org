@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { db } from '../db/schema'
 import { getSRSCardsForDeck } from '../db/srs-cards'
+import { SRS_THRESHOLDS } from '../lib/srs-constants'
 
 export interface DeckProgress {
   total: number
@@ -30,10 +31,10 @@ export function useCustomDeckProgress(userId: string, deckId: string) {
 
       const reviewed = vocabRows.filter(r => r.reps >= 1)
       const started = reviewed.length
-      const learning = reviewed.filter(r => r.scheduled_days < 7).length
-      const learned = reviewed.filter(r => r.scheduled_days >= 7 && r.scheduled_days < 21).length
-      const mature = reviewed.filter(r => r.scheduled_days >= 21).length
-      const dueToday = vocabRows.filter(r => r.due <= today).length
+      const learning = reviewed.filter(r => r.scheduled_days < SRS_THRESHOLDS.learning).length
+      const learned = reviewed.filter(r => r.scheduled_days >= SRS_THRESHOLDS.learning && r.scheduled_days < SRS_THRESHOLDS.review).length
+      const mature = reviewed.filter(r => r.scheduled_days >= SRS_THRESHOLDS.review).length
+      const dueToday = vocabRows.filter(r => r.due <= today && !r.is_known).length
       const percentComplete = total === 0 ? 0 : Math.round(((learned + mature) / total) * 100)
 
       const futureDates = vocabRows.filter(r => r.due > today).map(r => r.due)

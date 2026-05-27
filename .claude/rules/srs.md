@@ -134,7 +134,7 @@ Lapses are only incremented on `Review → Relearning` transitions (the card was
 
 ## `is_known` flag
 
-Cards are auto-marked known when `scheduled_days >= 7 && reps >= 3`. The `is_known` flag is also togglable manually. Use `modify()` (not read+upsert) to update `is_known` to avoid TOCTOU races.
+Cards are auto-marked known when `scheduled_days >= 60 && reps >= 8`. The `is_known` flag is also togglable manually. Use `modify()` (not read+upsert) to update `is_known` to avoid TOCTOU races.
 
 ## Sync field mapping
 

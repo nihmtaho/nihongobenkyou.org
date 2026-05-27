@@ -1,6 +1,5 @@
 import type { SRSStats } from '../../../components/common/SRSProgressBar'
 import type { StudyMode, TypeInputSubMode } from '../../../types/study'
-import type { UnifiedCard } from '../../../types/unified-card'
 import type { VocabWithSRS } from '../../../types/vocabulary'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
@@ -70,15 +69,18 @@ function LessonPage() {
     [cardList, today],
   )
 
-  // Deduplicated wrong cards from the last session for this lesson
+  // Deduplicated wrong vocab cards from the last session for this lesson
   const retryCards = useMemo(() => {
     const seen = new Set<string>()
     const result: VocabWithSRS[] = []
-    for (const c of stats.wrongCards as unknown as VocabWithSRS[]) {
-      if (c.book_source === book && c.lesson_number === lessonNumber && !seen.has(c.vocab_id)) {
-        seen.add(c.vocab_id)
-        result.push(c)
-      }
+    for (const raw of stats.wrongCards) {
+      if (raw.kind !== 'vocab')
+        continue
+      const c = raw.card
+      if (c.book_source !== book || c.lesson_number !== lessonNumber || seen.has(c.vocab_id))
+        continue
+      seen.add(c.vocab_id)
+      result.push(c)
     }
     return result
   }, [stats.wrongCards, book, lessonNumber])
@@ -86,7 +88,11 @@ function LessonPage() {
   const hasRetry = retryCards.length > 0
 
   function handleRetry() {
-    initSession(retryCards as unknown as UnifiedCard[], retryMode, retryMode === 'type-input' ? retrySubMode : undefined)
+    initSession(
+      retryCards.map(c => ({ kind: 'vocab' as const, card: c })),
+      retryMode,
+      retryMode === 'type-input' ? retrySubMode : undefined,
+    )
     navigate({ to: '/study/review', search: { filter: 'all' } })
   }
 

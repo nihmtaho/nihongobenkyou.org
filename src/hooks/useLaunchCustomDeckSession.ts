@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { getDeckWords, updateDeck } from '../db/custom-decks-local'
 import { getHiddenIds } from '../db/hidden-vocab'
 import { getSRSCardsForDeck, initSRSCard } from '../db/srs-cards'
+import { fisherYates } from '../lib/utils'
 import { useStudySessionStore } from '../stores/studySessionStore'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 
@@ -57,10 +58,28 @@ export function useLaunchCustomDeckSession(userId: string) {
         qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deck.id] })
       }
 
+      const nowDate = new Date(now)
+      const hasDueEligible = words.some((w) => {
+        const s = srsMap.get(w.id)
+        if (!s || s.is_known || hiddenIds.has(w.id))
+          return false
+        if ((s.state === 'learning' || s.state === 'relearning') && s.due_datetime) {
+          return new Date(s.due_datetime) <= nowDate
+        }
+        return s.due <= today
+      })
+
       let queue: VocabWithSRS[] = words.flatMap((w) => {
         const s = srsMap.get(w.id)
-        if (s?.is_known || hiddenIds.has(w.id))
+        if (!s || s.is_known || hiddenIds.has(w.id))
           return []
+        if (hasDueEligible) {
+          const isDue = (s.state === 'learning' || s.state === 'relearning') && s.due_datetime
+            ? new Date(s.due_datetime) <= nowDate
+            : s.due <= today
+          if (!isDue)
+            return []
+        }
         return [{
           vocab_id: w.id,
           word: w.kanji ?? null,
@@ -100,7 +119,7 @@ export function useLaunchCustomDeckSession(userId: string) {
         }]
       })
 
-      queue = [...queue].sort(() => Math.random() - 0.5)
+      queue = fisherYates(queue)
       if (cardCount !== 'all')
         queue = queue.slice(0, cardCount)
 

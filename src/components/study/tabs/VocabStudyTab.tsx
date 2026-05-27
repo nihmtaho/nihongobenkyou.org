@@ -3,6 +3,7 @@ import type { UnifiedDueStats } from '../../../hooks/useUnifiedDueStats'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useStudySessionStore } from '../../../stores/studySessionStore'
 import { ReviewActivityWidget } from '../../analytics/ReviewActivityWidget'
 
 interface VocabStudyTabProps {
@@ -25,9 +26,11 @@ const UPCOMING_ROWS = [
 
 export function VocabStudyTab({ userId, stats }: VocabStudyTabProps) {
   const navigate = useNavigate()
-  const dueCount = stats.vocabDue
+  const clearSession = useStudySessionStore(s => s.clearSession)
+  const dueCount = stats.vocabDue + (stats.kanjiVocabDue ?? 0)
 
   function startReview() {
+    clearSession()
     navigate({ to: '/study/review', search: { filter: 'vocab' } })
   }
 
@@ -37,7 +40,9 @@ export function VocabStudyTab({ userId, stats }: VocabStudyTabProps) {
       <div className="grid grid-cols-4 gap-2">
         {STAT_ROWS.map(({ key, label, color }) => (
           <div key={label} className="bg-card border border-border/10 p-2 text-center">
-            <p className={cn('text-xl font-black', color)}>{stats[key]}</p>
+            <p className={cn('text-xl font-black', color)}>
+              {key === 'vocabDue' ? dueCount : stats[key]}
+            </p>
             <p className="text-[8px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
               {label}
             </p>
@@ -54,6 +59,17 @@ export function VocabStudyTab({ userId, stats }: VocabStudyTabProps) {
       >
         {dueCount > 0 ? `▶ ÔN TẬP TỪ VỰNG (${dueCount})` : '✓ ĐÃ ÔN TẬP XONG'}
       </Button>
+
+      {dueCount === 0 && (
+        <Button
+          size="xl"
+          variant="ghost"
+          className="w-full font-[var(--br-heading-font)] uppercase tracking-wide"
+          onClick={startReview}
+        >
+          ▶ TỰ ÔN (free)
+        </Button>
+      )}
 
       {/* Analytics widget (vocab-scoped) */}
       <ReviewActivityWidget userId={userId} cardType="vocab" />

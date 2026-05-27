@@ -41,7 +41,7 @@ export function SessionSummary({ stats, mode, ratingCounts, streak, lessonContex
   const hasWrong = !isPerfect && stats.wrongCards.length > 0
 
   function handleRetryWrong() {
-    requeueWrongCards()
+    requeueWrongCards(stats.wrongCards)
     navigate({ to: '/study/review', search: { filter: 'all' } })
   }
 

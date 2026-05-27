@@ -32,9 +32,10 @@ interface StudySessionState {
   markNeedsReview: (card: UnifiedCard) => void
   markAttempted: () => void
   advanceCard: () => void
-  requeueWrongCards: () => void
+  requeueWrongCards: (cards?: UnifiedCard[]) => void
   resetSession: () => void
   clearSession: () => void
+  setSessionWrongCards: (cards: UnifiedCard[]) => void
 }
 
 export const useStudySessionStore = create<StudySessionState>()(
@@ -71,9 +72,9 @@ export const useStudySessionStore = create<StudySessionState>()(
 
       advanceCard: () => set(s => ({ currentIndex: s.currentIndex + 1 })),
 
-      requeueWrongCards: () =>
+      requeueWrongCards: (cards?: UnifiedCard[]) =>
         set(s => ({
-          queue: s.stats.wrongCards,
+          queue: cards ?? s.stats.wrongCards,
           currentIndex: 0,
           stats: { ...EMPTY_STATS, startTime: new Date() },
         })),
@@ -83,6 +84,9 @@ export const useStudySessionStore = create<StudySessionState>()(
 
       clearSession: () =>
         set({ queue: [], currentIndex: 0, mode: null, deckSource: 'lesson', filter: 'all', customDeckId: null, stats: { ...EMPTY_STATS } }),
+
+      setSessionWrongCards: (cards: UnifiedCard[]) =>
+        set(s => ({ stats: { ...s.stats, wrongCards: cards } })),
     }),
     {
       name: 'study-session',

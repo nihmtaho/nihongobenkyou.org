@@ -14,6 +14,8 @@ interface PreSessionScreenProps {
   onSetTypeInputSubMode: (m: TypeInputSubMode) => void
   onStart: () => void
   onBack: () => void
+  newCount?: number
+  reviewCount?: number
 }
 
 const MODES_FOR_FILTER: Record<CardTypeFilter, StudyMode[]> = {
@@ -51,6 +53,8 @@ export function PreSessionScreen({
   onSetTypeInputSubMode,
   onStart,
   onBack,
+  newCount,
+  reviewCount,
 }: PreSessionScreenProps) {
   const total = vocabCount + kanjiCount + kanjiVocabCount
   const availableModes = MODES_FOR_FILTER[filter]
@@ -70,6 +74,19 @@ export function PreSessionScreen({
         <p className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest text-muted-foreground mt-1">
           THẺ ĐẾN HẠN
         </p>
+        {(newCount !== undefined || reviewCount !== undefined) && (
+          <p className="text-[11px] font-[var(--br-mono-font)] text-muted-foreground mt-1">
+            📘
+            {' '}
+            {newCount ?? 0}
+            {' '}
+            mới · 🔄
+            {' '}
+            {reviewCount ?? 0}
+            {' '}
+            ôn tập
+          </p>
+        )}
       </div>
 
       {/* Counts by type */}
