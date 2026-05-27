@@ -40,7 +40,9 @@ export function VocabStudyTab({ userId, stats }: VocabStudyTabProps) {
       <div className="grid grid-cols-4 gap-2">
         {STAT_ROWS.map(({ key, label, color }) => (
           <div key={label} className="bg-card border border-border/10 p-2 text-center">
-            <p className={cn('text-xl font-black', color)}>{stats[key]}</p>
+            <p className={cn('text-xl font-black', color)}>
+              {key === 'vocabDue' ? dueCount : stats[key]}
+            </p>
             <p className="text-[8px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
               {label}
             </p>
