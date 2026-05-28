@@ -92,18 +92,18 @@ AS $$
     SELECT
       RANK() OVER (ORDER BY ls.cards_reviewed DESC) AS rank,
       ls.user_id,
-      COALESCE(NULLIF(p.display_name, ''), split_part(u.email, '@', 1), 'Người dùng') AS display_name,
+      COALESCE(NULLIF(p.display_name, ''), 'Người dùng') AS display_name,
       p.avatar_url,
       ls.cards_reviewed,
       ls.user_id = auth.uid() AS is_current_user
     FROM leaderboard_scores ls
     JOIN current_week cw ON ls.week_start = cw.week_start
     LEFT JOIN profiles p ON ls.user_id = p.user_id
-    LEFT JOIN auth.users u ON ls.user_id = u.id
   )
-  SELECT * FROM ranked WHERE rank <= p_limit
+  -- NOTE: RANK() is intentional. Ties at boundary may return more than p_limit rows.
+  SELECT * FROM ranked WHERE rank <= LEAST(GREATEST(p_limit, 1), 100)
   UNION ALL
-  SELECT * FROM ranked WHERE is_current_user = true AND rank > p_limit
+  SELECT * FROM ranked WHERE is_current_user = true AND rank > LEAST(GREATEST(p_limit, 1), 100)
   ORDER BY rank
 $$;
 
