@@ -28,7 +28,7 @@ export function useDailyGoal(
           .filter(e => e.userId === userId)
           .count()
       : Promise.resolve(0),
-    [userId],
+    [userId, today],
   )
 
   const streaks = useLiveQuery<StreakData[]>(
