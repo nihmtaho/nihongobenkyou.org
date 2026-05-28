@@ -35,7 +35,7 @@ export function useDailyGoal(
     () => userId
       ? db.streaks.where('userId').equals(userId).toArray()
       : Promise.resolve([]),
-    [userId],
+    [userId, today],
   )
 
   if (!userId)
