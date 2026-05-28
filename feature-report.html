@@ -380,15 +380,15 @@
 <div class="stats-bar">
   <div class="stat-cell">
     <div class="stat-label">Files Indexed</div>
-    <div class="stat-value">747</div>
+    <div class="stat-value">771</div>
   </div>
   <div class="stat-cell">
-    <div class="stat-label">Symbol Nodes</div>
-    <div class="stat-value">6,677</div>
+    <div class="stat-label">Tests passing</div>
+    <div class="stat-value">541</div>
   </div>
   <div class="stat-cell">
-    <div class="stat-label">Edges (relationships)</div>
-    <div class="stat-value">13,969</div>
+    <div class="stat-label">PRs Merged</div>
+    <div class="stat-value">68</div>
   </div>
   <div class="stat-cell">
     <div class="stat-label">Existing Study Modes</div>
@@ -400,7 +400,7 @@
   </div>
   <div class="stat-cell">
     <div class="stat-label">Đã triển khai</div>
-    <div class="stat-value" style="color: var(--green);">1</div>
+    <div class="stat-value" style="color: var(--green);">3</div>
   </div>
 </div>
 
@@ -469,9 +469,14 @@
       <div class="desc">shadcn/ui (Lyra) + Tailwind v4. data-theme="brutalist-{dataset}". Dark mode. Font size tunable.</div>
     </div>
     <div class="feature-cell">
-      <div class="tag">Social · Stub</div>
-      <div class="name">Leaderboard (type stub)</div>
-      <div class="desc"><code>LeaderboardEntry</code> type + route stub đã định nghĩa — chưa có UI/API thực sự.</div>
+      <div class="tag">Auth · Cloud</div>
+      <div class="name">Auth + Cloud Sync (PR #61)</div>
+      <div class="desc">Đăng nhập email/mật khẩu, Google OAuth, xác nhận email. Package sync 2 chiều: <code>srs_cards</code> + <code>custom_decks</code> + <code>streaks</code>, conflict resolution by <code>updated_at</code>, version guard trên server.</div>
+    </div>
+    <div class="feature-cell" style="border-color: var(--green)">
+      <div class="tag" style="color: var(--green)">Social · ✓ Done</div>
+      <div class="name">Weekly Leaderboard Community (PR #61)</div>
+      <div class="desc">Bảng xếp hạng tuần: podium top-3, danh sách xếp hạng, huy hiệu tôi, header đếm ngược reset. Polling 60s. DB trigger tăng điểm, RPC <code>get_weekly_leaderboard</code> với LIMIT + OFFSET — scale tới 10M users.</div>
     </div>
   </div>
 
@@ -510,7 +515,7 @@
     </div>
 
     <!-- 02 -->
-    <div class="proposal">
+    <div class="proposal proposal-done">
       <div class="proposal-num">02</div>
       <div class="proposal-body">
         <h3>Leaderboard Thực Sự (Social)</h3>
@@ -521,18 +526,72 @@
           <strong>Tại sao:</strong> Code đã có skeleton sẵn — chỉ cần hoàn thiện. Social comparison là động lực học lớn, đặc biệt với cộng đồng học tiếng Nhật người Việt. Tận dụng <code>sessions</code> table và <code>streaks</code> đã có.
         </div>
         <div class="files">
-          <span class="file-chip">src/routes/leaderboard.tsx (new route)</span>
-          <span class="file-chip">src/api/leaderboard.ts (new)</span>
-          <span class="file-chip">src/hooks/useLeaderboard.ts (new)</span>
-          <span class="file-chip">supabase/functions/leaderboard/ (new)</span>
+          <span class="file-chip">src/routes/_authenticated/leaderboard.tsx</span>
+          <span class="file-chip">src/api/leaderboard.ts</span>
+          <span class="file-chip">src/hooks/useLeaderboard.ts</span>
+          <span class="file-chip">src/components/leaderboard/LeaderboardPodium.tsx</span>
+          <span class="file-chip">src/components/leaderboard/LeaderboardList.tsx</span>
+          <span class="file-chip">src/components/leaderboard/LeaderboardHeader.tsx</span>
+          <span class="file-chip">src/components/leaderboard/LeaderboardMyRank.tsx</span>
+          <span class="file-chip">supabase/migrations/…_leaderboard_scores.sql</span>
         </div>
         <div class="tags">
           <span class="tag-pill effort-low">Effort: Low</span>
           <span class="tag-pill impact-high">Impact: HIGH</span>
           <span class="tag-pill type-feature">Feature</span>
         </div>
+        <div class="done-meta">
+          <span>✓ Implemented 2026-05-28</span>
+          <span>·</span>
+          <span>PR <a href="https://github.com/nihmtaho/nihongobenkyou.org/pull/61" target="_blank">#61</a></span>
+          <span>·</span>
+          <span>Merged → develop <code style="color:var(--green)">7d84e5b</code> 2026-05-28</span>
+          <span>·</span>
+          <span>541 tests · 0 lint errors</span>
+        </div>
       </div>
-      <div class="priority-badge priority-p1">P1 · Must</div>
+      <div class="done-badge-stack">
+        <div class="priority-badge priority-p1">P1 · Must</div>
+        <div class="done-badge">✓ Merged</div>
+      </div>
+    </div>
+
+    <!-- 02b — Auth + Cloud Sync (also in PR #61) -->
+    <div class="proposal proposal-done">
+      <div class="proposal-num">02b</div>
+      <div class="proposal-body">
+        <h3>Auth Hoàn Chỉnh + Cloud Sync 2 Thiết Bị</h3>
+        <p class="summary">
+          Đăng nhập email/mật khẩu, Google OAuth với xác nhận email. Package sync 2 chiều giữa các thiết bị: <code>srs_cards</code>, <code>custom_decks</code>, <code>custom_vocabulary</code>, <code>streaks</code>. Merge conflict resolution by <code>updated_at</code>. 3 sync bug đã được vá sau review.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> Người dùng học trên nhiều thiết bị (điện thoại + máy tính). Mất tiến độ khi chuyển máy là điểm đau #1. Package sync giải quyết offline-first đồng thời vẫn sync khi có mạng.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/api/auth.ts (signUp emailRedirectTo, mapAuthError)</span>
+          <span class="file-chip">src/hooks/useAuth.ts (oauthMutation, resendMutation)</span>
+          <span class="file-chip">src/routes/auth/login.tsx · register.tsx</span>
+          <span class="file-chip">src/db/package-sync.ts (3 bug fixes)</span>
+          <span class="file-chip">src/types/sync-package.ts (review_log deprecated)</span>
+          <span class="file-chip">src/routes/__root.tsx (hideNav for auth pages)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-med">Effort: Medium</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+        <div class="done-meta">
+          <span>✓ Implemented 2026-05-28</span>
+          <span>·</span>
+          <span>PR <a href="https://github.com/nihmtaho/nihongobenkyou.org/pull/61" target="_blank">#61</a></span>
+          <span>·</span>
+          <span>Merged → develop <code style="color:var(--green)">7d84e5b</code> 2026-05-28</span>
+        </div>
+      </div>
+      <div class="done-badge-stack">
+        <div class="priority-badge priority-p1">P1 · Must</div>
+        <div class="done-badge">✓ Merged</div>
+      </div>
     </div>
 
     <!-- 03 -->
@@ -820,7 +879,8 @@
       <div class="roadmap-phase" style="color: var(--accent);">Phase 1<br>Q3 2026</div>
       <div class="roadmap-items">
         <span class="roadmap-item roadmap-item-done">Daily Goal Widget</span>
-        <span class="roadmap-item">Leaderboard UI</span>
+        <span class="roadmap-item roadmap-item-done">Leaderboard UI</span>
+        <span class="roadmap-item roadmap-item-done">Auth + Cloud Sync</span>
         <span class="roadmap-item">Push Notifications</span>
       </div>
     </div>
@@ -875,12 +935,19 @@
         <td>Edge Function (cron)</td>
         <td>Web Push API, VAPID keys</td>
       </tr>
-      <tr>
+      <tr class="row-done">
         <td>Leaderboard</td>
         <td>—</td>
         <td><code>useLeaderboard</code></td>
-        <td>Materialized view</td>
-        <td>—</td>
+        <td>Table + trigger + RPC <code>get_weekly_leaderboard</code></td>
+        <td>— (PR <a href="https://github.com/nihmtaho/nihongobenkyou.org/pull/61" style="color:var(--green)">#61</a>)</td>
+      </tr>
+      <tr class="row-done">
+        <td>Auth + Cloud Sync</td>
+        <td><code>settings</code> (device_id, version)</td>
+        <td><code>useAuth</code> (oauthMutation, resendMutation)</td>
+        <td>RPC <code>upload_sync_package</code>, RLS</td>
+        <td>— (PR <a href="https://github.com/nihmtaho/nihongobenkyou.org/pull/61" style="color:var(--green)">#61</a>)</td>
       </tr>
       <tr>
         <td>Achievement System</td>
@@ -960,8 +1027,8 @@
 <footer>
   Generated by <strong>CodeGraph v0.9.4</strong> + <strong>GitHub Copilot CLI</strong> ·
   nihongobenkyou.org codebase ·
-  747 files · 6,677 nodes · 13,969 edges ·
-  27/05/2026
+  771 files · 68 commits · 541 tests passing ·
+  <strong>Updated 28/05/2026</strong> — PR #61 merged (Leaderboard + Auth + Cloud Sync)
   <br><br>
   Phân tích dựa trên static code graph — symbols, call graph, type hierarchy.
   Không có LLM hallucination về file không tồn tại — tất cả file reference đã được verify trong index.
