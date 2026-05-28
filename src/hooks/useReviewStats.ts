@@ -2,6 +2,7 @@ import type { StreakData } from '../db/schema'
 import type { ReviewLogEntry } from '../types/review-log'
 
 import { db } from '../db/schema'
+import { getToday } from '../lib/date-utils'
 import { useLiveQuery } from '../lib/use-live-query'
 
 export interface DayActivity {
@@ -36,10 +37,6 @@ const RATING_CONFIG = [
   { label: 'Ôn', color: 'text-success' },
   { label: 'Dễ', color: 'text-info' },
 ] as const
-
-function getToday(): string {
-  return new Date().toISOString().slice(0, 10)
-}
 
 // Compute ISO date string for the Monday of the current week.
 // getDay() returns 0 for Sunday; treat Sunday as day 7 so Monday is always day 1.
