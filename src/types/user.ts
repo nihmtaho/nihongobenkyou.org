@@ -19,12 +19,12 @@ export interface AuthState {
 }
 
 export interface LeaderboardEntry {
+  rank: number
   user_id: string
   display_name: string
   avatar_url: string | null
   cards_reviewed: number
-  current_streak: number
-  rank: number
+  is_current_user: boolean
 }
 
 export type OAuthProvider = 'google' | 'apple'
