@@ -30,6 +30,8 @@ function mapAuthError(message: string): string {
     return 'Liên kết hết hạn'
   if (message.includes('over_request_rate_limit') || message.includes('rate limit'))
     return 'Quá nhiều yêu cầu, vui lòng thử lại sau'
+  if (message.includes('Unsupported provider') || message.includes('provider is not enabled'))
+    return 'Đăng nhập Google chưa được kích hoạt trên hệ thống'
   return 'Đã xảy ra lỗi. Vui lòng thử lại'
 }
 

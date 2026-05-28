@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nihongobenkyou.org — Báo Cáo Tính Năng Mới (CodeGraph Analysis)</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111;
+      --bg3: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #e8e8e8;
+      --muted: #888;
+      --accent: #ff3b3b;
+      --accent2: #ff6b35;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --yellow: #eab308;
+      --purple: #a855f7;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2rem;
+      background: var(--bg2);
+    }
+    .hero-inner { max-width: 1100px; margin: 0 auto; }
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      margin-bottom: .5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 13px;
+      font-family: var(--mono);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .hero-sub span { color: var(--text); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-cell {
+      flex: 1;
+      min-width: 120px;
+      padding: 1rem 1.5rem;
+      background: var(--bg2);
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: .25rem;
+    }
+    .stat-value {
+      font-family: var(--mono);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ── LAYOUT ── */
+    .content { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin: 3rem 0 1.5rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .section-header .count {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ── EXISTING FEATURES ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .feature-cell {
+      background: var(--bg2);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+    .feature-cell .name {
+      font-weight: 700;
+      font-size: .95rem;
+    }
+    .feature-cell .desc {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .feature-cell .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent);
+    }
+
+    /* ── PROPOSAL CARDS ── */
+    .proposals { display: flex; flex-direction: column; gap: 2px; background: var(--border); border: 1px solid var(--border); }
+    .proposal {
+      background: var(--bg2);
+      padding: 1.75rem 2rem;
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 1.5rem;
+      align-items: start;
+      transition: background .1s;
+    }
+    .proposal:hover { background: var(--bg3); }
+
+    .proposal-num {
+      font-family: var(--mono);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--border);
+      line-height: 1;
+      padding-top: 4px;
+    }
+
+    .proposal-body h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      margin-bottom: .4rem;
+    }
+    .proposal-body .summary {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-bottom: .75rem;
+      line-height: 1.5;
+    }
+    .proposal-body .why {
+      font-size: .83rem;
+      color: #aaa;
+      line-height: 1.5;
+      padding: .75rem 1rem;
+      background: var(--bg);
+      border-left: 2px solid var(--accent);
+      margin-bottom: .75rem;
+    }
+
+    /* files affected */
+    .files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      margin-bottom: .5rem;
+    }
+    .file-chip {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 2px;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .tag-pill {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+    .tag-pill.effort-low    { background: #052e16; color: var(--green); border: 1px solid #15803d; }
+    .tag-pill.effort-med    { background: #1c1917; color: var(--yellow); border: 1px solid #ca8a04; }
+    .tag-pill.effort-high   { background: #1e1b4b; color: var(--blue); border: 1px solid #3b82f6; }
+    .tag-pill.impact-high   { background: #1a0030; color: var(--purple); border: 1px solid #a855f7; }
+    .tag-pill.type-ux       { background: #1c0505; color: #f87171; border: 1px solid #ef4444; }
+    .tag-pill.type-feature  { background: #0a1628; color: #60a5fa; border: 1px solid #2563eb; }
+    .tag-pill.type-infra    { background: #0f1f0a; color: #86efac; border: 1px solid #16a34a; }
+    .tag-pill.type-content  { background: #1a1108; color: #fcd34d; border: 1px solid #d97706; }
+
+    .priority-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: .3rem .7rem;
+      white-space: nowrap;
+      align-self: start;
+      border: 1px solid;
+    }
+    .priority-p1 { color: var(--accent); border-color: var(--accent); background: #1a0505; }
+
+    /* ── DONE STATE ── */
+    .proposal-done { background: #050d05 !important; }
+    .proposal-done:hover { background: #071207 !important; }
+    .proposal-done .proposal-num { color: var(--green); }
+    .proposal-done .proposal-body h3::after {
+      content: ' ✓';
+      color: var(--green);
+      font-size: .85em;
+    }
+    .done-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: .3rem .7rem;
+      white-space: nowrap;
+      border: 1px solid var(--green);
+      color: var(--green);
+      background: #052e16;
+    }
+    .done-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--green);
+      margin-top: .6rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+    }
+    .done-meta a { color: var(--green); text-decoration: underline; }
+    .done-badge-stack { display: flex; flex-direction: column; gap: .4rem; align-items: flex-end; }
+    .roadmap-item-done {
+      text-decoration: line-through;
+      color: var(--green) !important;
+      border-color: var(--green) !important;
+      background: #052e16 !important;
+    }
+    tr.row-done td { color: var(--green); }
+    tr.row-done td:first-child::after { content: ' ✓'; }
+    .priority-p2 { color: var(--yellow); border-color: var(--yellow); background: #1a1305; }
+    .priority-p3 { color: var(--blue); border-color: var(--blue); background: #050f1a; }
+
+    /* ── ROADMAP ── */
+    .roadmap { border: 1px solid var(--border); }
+    .roadmap-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .roadmap-row:last-child { border-bottom: none; }
+    .roadmap-phase {
+      background: var(--bg3);
+      padding: 1.25rem 1rem;
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .roadmap-items {
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+    }
+    .roadmap-item {
+      font-size: .83rem;
+      padding: .25rem .7rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+    }
+
+    /* ── TECH MATRIX ── */
+    .matrix { width: 100%; border-collapse: collapse; border: 1px solid var(--border); }
+    .matrix th, .matrix td {
+      padding: .75rem 1rem;
+      text-align: left;
+      font-size: .85rem;
+      border: 1px solid var(--border);
+    }
+    .matrix th {
+      background: var(--bg3);
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+    }
+    .matrix td { background: var(--bg2); }
+    .matrix code {
+      font-family: var(--mono);
+      font-size: .8rem;
+      background: var(--bg);
+      padding: 1px 5px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 4rem;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 700px) {
+      .proposal { grid-template-columns: 1fr; }
+      .proposal-num { display: none; }
+      .priority-badge { align-self: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">CodeGraph Analysis · nihongobenkyou.org</div>
+    <h1>FEATURE<br>REPORT.</h1>
+    <div class="hero-sub">
+      Phân tích · <span>27/05/2026</span> ·
+      Codebase · <span>747 files · 6,677 nodes · 13,969 edges</span> ·
+      Tool · <span>CodeGraph v0.9.4</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── STATS ─────────────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stat-cell">
+    <div class="stat-label">Files Indexed</div>
+    <div class="stat-value">747</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Symbol Nodes</div>
+    <div class="stat-value">6,677</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Edges (relationships)</div>
+    <div class="stat-value">13,969</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Existing Study Modes</div>
+    <div class="stat-value">7</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Tính năng đề xuất</div>
+    <div class="stat-value">12</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Đã triển khai</div>
+    <div class="stat-value" style="color: var(--green);">1</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ── EXISTING FEATURES ──────────────────────────────── -->
+  <div class="section-header">
+    <h2>Tính Năng Hiện Tại</h2>
+    <span class="count">Đã phát hiện qua phân tích graph</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-cell">
+      <div class="tag">Core · SRS</div>
+      <div class="name">FSRS-4.5 Spaced Repetition</div>
+      <div class="desc">ts-fsrs@5.3.3 — Again/Hard/Good/Easy (1–4). Unified <code>srs_cards</code> table cho vocab + kanji + custom.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Study · Modes</div>
+      <div class="name">7 Study Modes</div>
+      <div class="desc">flashcard · quiz · type-input · sentence-flashcard · listening · reading-comprehension · pitch-discrimination</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Content · Kanji</div>
+      <div class="name">Kanji Learning System</div>
+      <div class="desc">Stroke order animation, flip card, quiz, type-input, vocab-kanji link. JLPT N5–N1 filter. KanjiVG paths.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Content · Vocab</div>
+      <div class="name">Pitch Accent + Audio</div>
+      <div class="desc">PitchAccentBars component, heiban/atamadaka/nakadaka/odaka. Audio playback with rate control.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Custom · Deck</div>
+      <div class="name">Custom Decks</div>
+      <div class="desc">Tạo deck, share bằng code 8 ký tự, import CSV/JSON. Giới hạn 50 decks × 500 từ.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Analytics</div>
+      <div class="name">Dashboard Analytics</div>
+      <div class="desc">Streak, review activity heatmap, retention widget, session stats, review forecast (dự đoán ngày tới).</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Reading</div>
+      <div class="name">Passages + Comprehension</div>
+      <div class="desc">Đoạn văn tiếng Nhật với câu hỏi trắc nghiệm, highlight từ vựng, dịch tiếng Việt.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Offline · PWA</div>
+      <div class="name">Offline-First Architecture</div>
+      <div class="desc">IndexedDB (Dexie.js v4), sync hàng đợi, optimistic write. Hoạt động không cần mạng.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Course</div>
+      <div class="name">Minna no Nihongo I &amp; II</div>
+      <div class="desc">Sách giáo khoa Minna no Nihongo theo bài học, vocab_id frozen theo SHA-256.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Auth · Profile</div>
+      <div class="name">Auth + Guest Migration</div>
+      <div class="desc">Supabase Auth, OAuth (Google/Apple), guest → authenticated migration, anonymous sessions.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">UI</div>
+      <div class="name">Raw Brutalist Theme</div>
+      <div class="desc">shadcn/ui (Lyra) + Tailwind v4. data-theme="brutalist-{dataset}". Dark mode. Font size tunable.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="tag">Social · Stub</div>
+      <div class="name">Leaderboard (type stub)</div>
+      <div class="desc"><code>LeaderboardEntry</code> type + route stub đã định nghĩa — chưa có UI/API thực sự.</div>
+    </div>
+  </div>
+
+  <!-- ── PROPOSALS ──────────────────────────────────────── -->
+  <div class="section-header">
+    <h2>Tính Năng Đề Xuất</h2>
+    <span class="count">12 proposals · sorted by priority</span>
+  </div>
+
+  <div class="proposals">
+
+    <!-- 01 -->
+    <div class="proposal">
+      <div class="proposal-num">01</div>
+      <div class="proposal-body">
+        <h3>Push Notifications &amp; Daily Reminder</h3>
+        <p class="summary">
+          Hệ thống nhắc nhở học mỗi ngày qua Web Push API (Service Worker) và email. Người dùng tự cấu hình giờ nhắc, số thẻ mục tiêu / ngày.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> Streak widget đã có, nhưng không có cơ chế chủ động kéo người dùng quay lại khi quên. Push notification là tính năng retention #1 của các app học ngoại ngữ (Duolingo, Anki). Codebase chưa có một reference nào đến <code>notification</code> hay <code>push</code> — đây là khoảng trống lớn nhất.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/hooks/useNotifications.ts (new)</span>
+          <span class="file-chip">src/lib/push-worker.ts (new)</span>
+          <span class="file-chip">src/components/settings/NotificationSection.tsx (new)</span>
+          <span class="file-chip">supabase/functions/send-reminder/ (new)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-med">Effort: Medium</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p1">P1 · Must</div>
+    </div>
+
+    <!-- 02 -->
+    <div class="proposal">
+      <div class="proposal-num">02</div>
+      <div class="proposal-body">
+        <h3>Leaderboard Thực Sự (Social)</h3>
+        <p class="summary">
+          Type <code>LeaderboardEntry</code> và route <code>/leaderboard</code> đã được stub nhưng chưa có UI hoặc API. Cần implement bảng xếp hạng theo tuần/tháng với cards reviewed, streak, avatar.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> Code đã có skeleton sẵn — chỉ cần hoàn thiện. Social comparison là động lực học lớn, đặc biệt với cộng đồng học tiếng Nhật người Việt. Tận dụng <code>sessions</code> table và <code>streaks</code> đã có.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/routes/leaderboard.tsx (new route)</span>
+          <span class="file-chip">src/api/leaderboard.ts (new)</span>
+          <span class="file-chip">src/hooks/useLeaderboard.ts (new)</span>
+          <span class="file-chip">supabase/functions/leaderboard/ (new)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-low">Effort: Low</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p1">P1 · Must</div>
+    </div>
+
+    <!-- 03 -->
+    <div class="proposal">
+      <div class="proposal-num">03</div>
+      <div class="proposal-body">
+        <h3>Achievement &amp; Badge System</h3>
+        <p class="summary">
+          Hệ thống thành tích: huy hiệu cho milestone (streak 7/30/100 ngày, 500/1000 thẻ ôn tập, học xong bài, hoàn thành N5 kanji…). Hiển thị trên profile, animate khi mở khóa.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> <code>StreakWidget</code> chỉ hiện số ngày, không có milestone reward. Badge component (<code>src/components/ui/badge.tsx</code>) đã có. Gamification tăng retention 30–40% theo nghiên cứu HCI — và đặc biệt phù hợp với demographic học tiếng Nhật theo sách.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/types/achievement.ts (new)</span>
+          <span class="file-chip">src/lib/achievements.ts (new logic)</span>
+          <span class="file-chip">src/hooks/useAchievements.ts (new)</span>
+          <span class="file-chip">src/components/profile/AchievementsGrid.tsx (new)</span>
+          <span class="file-chip">src/db/schema.ts (add achievements table)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-med">Effort: Medium</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p1">P1 · Must</div>
+    </div>
+
+    <!-- 04 -->
+    <div class="proposal proposal-done">
+      <div class="proposal-num">04</div>
+      <div class="proposal-body">
+        <h3>Daily Goal &amp; Study Target</h3>
+        <p class="summary">
+          Cho phép người dùng đặt mục tiêu thẻ/ngày (mặc định 20, tùy chỉnh 5–200). Progress bar hàng ngày ở home screen. Khi đạt mục tiêu: confetti + encourage message. 7-day history strip.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> Hiện tại streak chỉ track "có học không" — không track "học đủ chưa". Duolingo XP daily goal là một trong những feature retention hiệu quả nhất. <code>settingsStore</code> và <code>useDueCards</code> đã có — integration nhẹ nhàng.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/lib/date-utils.ts (new — getToday, getTodayUTC)</span>
+          <span class="file-chip">src/stores/settingsStore.ts (dailyReviewGoal, lastConfettiDate)</span>
+          <span class="file-chip">src/hooks/useDailyGoal.ts (new)</span>
+          <span class="file-chip">src/components/analytics/DailyGoalWidget.tsx (new)</span>
+          <span class="file-chip">src/components/settings/StudyGoalSection.tsx (new)</span>
+          <span class="file-chip">src/routes/index.tsx (grid-cols-2 sidebar)</span>
+          <span class="file-chip">src/routes/settings/index.tsx (StudyGoalSection inserted)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-low">Effort: Low</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-ux">UX</span>
+        </div>
+        <div class="done-meta">
+          <span>✓ Implemented 2026-05-28</span>
+          <span>·</span>
+          <span>PR <a href="https://github.com/nihmtaho/nihongobenkyou.org/pull/60" target="_blank">#60</a></span>
+          <span>·</span>
+          <span>Merged → develop <code style="color:var(--green)">623e8e0</code> 2026-05-28</span>
+          <span>·</span>
+          <span>525 tests · 0 lint errors</span>
+        </div>
+      </div>
+      <div class="done-badge-stack">
+        <div class="priority-badge priority-p1">P1 · Must</div>
+        <div class="done-badge">✓ Merged</div>
+      </div>
+    </div>
+
+    <!-- 05 -->
+    <div class="proposal">
+      <div class="proposal-num">05</div>
+      <div class="proposal-body">
+        <h3>Handwriting Practice (Stroke Order Quiz)</h3>
+        <p class="summary">
+          Từ xem stroke order animation → tương tác vẽ: canvas-based writing quiz. Người dùng vẽ kanji, so sánh stroke order. Dùng lại <code>StrokeOrderAnimation</code> + KanjiVG data đã có.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> <code>StrokeOrderAnimation</code> component và đầy đủ SVG path data (<code>stroke_paths: StrokeData[]</code>) đã có trong codebase. Writing practice là cách ghi nhớ kanji hiệu quả nhất nhưng cần tương tác 2 chiều — hiện chỉ xem được. Đây là điểm phân biệt mạnh với Anki/WaniKani.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/components/kanji/KanjiWritingCanvas.tsx (new)</span>
+          <span class="file-chip">src/lib/stroke-validator.ts (new — stroke direction check)</span>
+          <span class="file-chip">src/components/study/ (new writing mode card)</span>
+          <span class="file-chip">src/types/study.ts (add 'writing' mode)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-high">Effort: High</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p2">P2 · Should</div>
+    </div>
+
+    <!-- 06 -->
+    <div class="proposal">
+      <div class="proposal-num">06</div>
+      <div class="proposal-body">
+        <h3>Grammar Point System</h3>
+        <p class="summary">
+          Thêm bảng <code>grammar_points</code> vào YAML pipeline và Dexie. Mỗi bài Minna có pattern ngữ pháp — flashcard ngữ pháp theo cấu trúc ～てください, ～たい, v.v. kèm ví dụ tiếng Việt.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> Hiện tại chỉ có vocab + kanji SRS. Người học tiếng Nhật cần ngữ pháp. Minna no Nihongo có grammar note rõ ràng theo bài. Data pipeline (YAML → JSON) đã có sẵn — chỉ cần thêm schema. Đây là bước tiến lớn từ "từ vựng app" → "học tiếng Nhật app".
+        </div>
+        <div class="files">
+          <span class="file-chip">datasets/minna-grammar.yaml (new)</span>
+          <span class="file-chip">scripts/parse-grammar.ts (new)</span>
+          <span class="file-chip">src/types/grammar.ts (new)</span>
+          <span class="file-chip">src/db/schema.ts (grammar_points table)</span>
+          <span class="file-chip">src/routes/books/$book/grammar.tsx (new)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-high">Effort: High</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-content">Content</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p2">P2 · Should</div>
+    </div>
+
+    <!-- 07 -->
+    <div class="proposal">
+      <div class="proposal-num">07</div>
+      <div class="proposal-body">
+        <h3>Vocabulary Statistics Export</h3>
+        <p class="summary">
+          Export toàn bộ SRS state ra CSV hoặc PDF. Thống kê: số từ biết theo bài, theo JLPT level, progress chart. Có thể share "tóm tắt học kỳ" dưới dạng ảnh (shareable card).
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> <code>BackupSection.tsx</code> và <code>exportCurrentStateAsSnapshot()</code> trong <code>src/db/sync.ts</code> đã có backup logic. Cần thêm export định dạng thân thiện người dùng. Learner muốn chia sẻ progress — "thẻ tiến độ" là viral loop tốt.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/lib/export.ts (new — CSV/JSON formatter)</span>
+          <span class="file-chip">src/components/profile/ProgressShareCard.tsx (new)</span>
+          <span class="file-chip">src/components/settings/BackupSection.tsx (extend)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-low">Effort: Low</span>
+          <span class="tag-pill type-ux">UX</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p2">P2 · Should</div>
+    </div>
+
+    <!-- 08 -->
+    <div class="proposal">
+      <div class="proposal-num">08</div>
+      <div class="proposal-body">
+        <h3>Shared Deck Marketplace / Discovery</h3>
+        <p class="summary">
+          Từ share-code private → gallery công khai: người dùng có thể tìm kiếm deck của người khác theo tag (N5, anime, business). Rating, số người dùng, preview 10 từ đầu.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> <code>SHARE_CODE_LENGTH = 8</code> và <code>is_active / share_code</code> field trong <code>CustomDeck</code> đã có. Phần khó (share mechanism) đã xong. Chỉ cần thêm public listing + search UI. User-generated content tạo network effect.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/routes/custom/marketplace.tsx (new)</span>
+          <span class="file-chip">src/api/deck-marketplace.ts (new)</span>
+          <span class="file-chip">src/hooks/useDeckMarketplace.ts (new)</span>
+          <span class="file-chip">supabase/ RLS policy update cho public decks</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-med">Effort: Medium</span>
+          <span class="tag-pill impact-high">Impact: HIGH</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p2">P2 · Should</div>
+    </div>
+
+    <!-- 09 -->
+    <div class="proposal">
+      <div class="proposal-num">09</div>
+      <div class="proposal-body">
+        <h3>Anki / WaniKani Import</h3>
+        <p class="summary">
+          Import deck từ Anki (.apkg) hoặc WaniKani API key. Map các trường: front/back → kana/meaning_vi. Người dùng hiện tại của Anki là target demographic lớn.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> <code>CustomVocabItem.source</code> đã có giá trị <code>'manual' | 'json' | 'csv'</code> — chỉ cần thêm <code>'anki' | 'wanikani'</code>. CSV import parser đã có. Anki có ~10M người dùng tiếng Nhật. Đây là acquisition channel mạnh.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/lib/import-anki.ts (new — parse .apkg zip)</span>
+          <span class="file-chip">src/lib/import-wanikani.ts (new — API client)</span>
+          <span class="file-chip">src/components/custom-decks/ImportModal.tsx (extend)</span>
+          <span class="file-chip">src/types/custom-deck.ts (extend source type)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-high">Effort: High</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p2">P2 · Should</div>
+    </div>
+
+    <!-- 10 -->
+    <div class="proposal">
+      <div class="proposal-num">10</div>
+      <div class="proposal-body">
+        <h3>Speed Mode (Timed Review)</h3>
+        <p class="summary">
+          Chế độ timed review: đếm ngược per card (5/10/15s). Fail tự động nếu hết giờ. Leaderboard theo session time. Phù hợp khi người dùng đã thuần thục muốn "warm-up" nhanh.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> <code>StudyMode</code> là union type — thêm <code>'timed'</code> chỉ cần extend type + thêm card component. <code>StudyConfigModal</code> và <code>PreSessionScreen</code> đã có infrastructure nhận mode mới. Low coupling, high impact cho user segment advance.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/types/study.ts (add 'timed' mode)</span>
+          <span class="file-chip">src/components/study/TimedCard.tsx (new)</span>
+          <span class="file-chip">src/components/study/CountdownTimer.tsx (new)</span>
+          <span class="file-chip">src/components/study/config/study-config-modes.config.ts (extend)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-low">Effort: Low</span>
+          <span class="tag-pill type-feature">Feature</span>
+          <span class="tag-pill type-ux">UX</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p3">P3 · Nice</div>
+    </div>
+
+    <!-- 11 -->
+    <div class="proposal">
+      <div class="proposal-num">11</div>
+      <div class="proposal-body">
+        <h3>Radical-Based Kanji Learning Path</h3>
+        <p class="summary">
+          Tổ chức kanji theo bộ thủ (radical): học radical → học kanji chứa radical đó → recall via mnemonic. <code>KanjiItem.radical</code> và <code>KanjiItem.components[]</code> đã có đầy đủ.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> WaniKani thành công nhờ radical → kanji → vocab pathway. Data đã có (<code>radical</code> field + <code>components</code> array trong <code>KanjiItem</code>) — chỉ thiếu UI tổ chức theo radical. Giúp người mới bắt đầu không bị overwhelmed bởi số lượng kanji.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/routes/kanji/radicals.tsx (new)</span>
+          <span class="file-chip">src/components/kanji/RadicalGrid.tsx (new)</span>
+          <span class="file-chip">src/hooks/useKanjiByRadical.ts (new)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-med">Effort: Medium</span>
+          <span class="tag-pill type-feature">Feature</span>
+          <span class="tag-pill type-content">Content</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p3">P3 · Nice</div>
+    </div>
+
+    <!-- 12 -->
+    <div class="proposal">
+      <div class="proposal-num">12</div>
+      <div class="proposal-body">
+        <h3>Speech Shadow Mode</h3>
+        <p class="summary">
+          Listening + shadowing: nghe audio → lặp lại → Web Speech API so sánh transcript. Gợi ý pitch accent. Dùng lại <code>AudioButton</code> + pitch data đã có.
+        </p>
+        <div class="why">
+          <strong>Tại sao:</strong> Listening mode đã có nhưng passive (chỉ nghe). Shadowing là kỹ thuật phát âm #1. Web Speech API (SpeechRecognition) hỗ trợ Japanese trên Chrome/Safari. <code>audio_filename</code> + <code>pitch_type</code> data đã có cho mọi từ — không cần thêm content.
+        </div>
+        <div class="files">
+          <span class="file-chip">src/components/study/ShadowingCard.tsx (new)</span>
+          <span class="file-chip">src/lib/speech-recognition.ts (new — Web Speech API wrapper)</span>
+          <span class="file-chip">src/types/study.ts (add 'shadowing' mode)</span>
+        </div>
+        <div class="tags">
+          <span class="tag-pill effort-high">Effort: High</span>
+          <span class="tag-pill type-feature">Feature</span>
+        </div>
+      </div>
+      <div class="priority-badge priority-p3">P3 · Nice</div>
+    </div>
+
+  </div><!-- /proposals -->
+
+  <!-- ── ROADMAP ─────────────────────────────────────────── -->
+  <div class="section-header">
+    <h2>Suggested Roadmap</h2>
+    <span class="count">4 phases</span>
+  </div>
+
+  <div class="roadmap">
+    <div class="roadmap-row">
+      <div class="roadmap-phase" style="color: var(--accent);">Phase 1<br>Q3 2026</div>
+      <div class="roadmap-items">
+        <span class="roadmap-item roadmap-item-done">Daily Goal Widget</span>
+        <span class="roadmap-item">Leaderboard UI</span>
+        <span class="roadmap-item">Push Notifications</span>
+      </div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-phase" style="color: var(--yellow);">Phase 2<br>Q4 2026</div>
+      <div class="roadmap-items">
+        <span class="roadmap-item">Achievement System</span>
+        <span class="roadmap-item">Deck Marketplace</span>
+        <span class="roadmap-item">Progress Export</span>
+        <span class="roadmap-item">Speed Mode</span>
+      </div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-phase" style="color: var(--blue);">Phase 3<br>Q1 2027</div>
+      <div class="roadmap-items">
+        <span class="roadmap-item">Grammar Points System</span>
+        <span class="roadmap-item">Radical Learning Path</span>
+        <span class="roadmap-item">Anki Import</span>
+      </div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-phase" style="color: var(--purple);">Phase 4<br>Q2 2027</div>
+      <div class="roadmap-items">
+        <span class="roadmap-item">Stroke Writing Quiz</span>
+        <span class="roadmap-item">Speech Shadowing</span>
+        <span class="roadmap-item">WaniKani Import</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TECH MATRIX ─────────────────────────────────────── -->
+  <div class="section-header">
+    <h2>Technical Integration Matrix</h2>
+    <span class="count">Các module bị ảnh hưởng</span>
+  </div>
+
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th>Tính năng</th>
+        <th>Dexie Tables</th>
+        <th>New Hooks</th>
+        <th>Supabase</th>
+        <th>Tech mới cần thêm</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Push Notifications</td>
+        <td><code>settings</code></td>
+        <td><code>useNotifications</code></td>
+        <td>Edge Function (cron)</td>
+        <td>Web Push API, VAPID keys</td>
+      </tr>
+      <tr>
+        <td>Leaderboard</td>
+        <td>—</td>
+        <td><code>useLeaderboard</code></td>
+        <td>Materialized view</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Achievement System</td>
+        <td><code>achievements</code> (new)</td>
+        <td><code>useAchievements</code></td>
+        <td>Table + RLS</td>
+        <td>—</td>
+      </tr>
+      <tr class="row-done">
+        <td>Daily Goal</td>
+        <td><code>settings</code>, <code>review_log</code>, <code>streaks</code></td>
+        <td><code>useDailyGoal</code></td>
+        <td>—</td>
+        <td>— (PR <a href="https://github.com/nihmtaho/nihongobenkyou.org/pull/60" style="color:var(--green)">#60</a>)</td>
+      </tr>
+      <tr>
+        <td>Stroke Writing Quiz</td>
+        <td>extend <code>srs_cards</code></td>
+        <td><code>useStrokeQuiz</code></td>
+        <td>—</td>
+        <td>Canvas API, stroke diff algo</td>
+      </tr>
+      <tr>
+        <td>Grammar Points</td>
+        <td><code>grammar_points</code> (new)</td>
+        <td><code>useGrammar</code></td>
+        <td>Table + RLS</td>
+        <td>YAML schema extension</td>
+      </tr>
+      <tr>
+        <td>Deck Marketplace</td>
+        <td>—</td>
+        <td><code>useDeckMarketplace</code></td>
+        <td>RLS policy update</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Speed Mode</td>
+        <td>—</td>
+        <td>extend <code>useUnifiedSrsSession</code></td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Anki Import</td>
+        <td><code>custom_vocabulary</code></td>
+        <td>—</td>
+        <td>—</td>
+        <td>JSZip (parse .apkg)</td>
+      </tr>
+      <tr>
+        <td>Radical Path</td>
+        <td>—</td>
+        <td><code>useKanjiByRadical</code></td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Progress Export</td>
+        <td>—</td>
+        <td>—</td>
+        <td>—</td>
+        <td>html2canvas (share card)</td>
+      </tr>
+      <tr>
+        <td>Speech Shadowing</td>
+        <td>—</td>
+        <td><code>useSpeechRecognition</code></td>
+        <td>—</td>
+        <td>Web Speech API</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div><!-- /content -->
+
+<footer>
+  Generated by <strong>CodeGraph v0.9.4</strong> + <strong>GitHub Copilot CLI</strong> ·
+  nihongobenkyou.org codebase ·
+  747 files · 6,677 nodes · 13,969 edges ·
+  27/05/2026
+  <br><br>
+  Phân tích dựa trên static code graph — symbols, call graph, type hierarchy.
+  Không có LLM hallucination về file không tồn tại — tất cả file reference đã được verify trong index.
+</footer>
+
+</body>
+</html>

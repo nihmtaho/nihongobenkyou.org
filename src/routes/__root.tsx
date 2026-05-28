@@ -9,7 +9,7 @@ import { Sidebar } from '../components/navigation/Sidebar'
 import { OfflineIndicator } from '../components/offline/OfflineIndicator'
 import { UpdateProgressModal } from '../components/update/UpdateProgressModal'
 import { useAuth } from '../hooks/useAuth'
-import { usesDesktopStyleTopBar } from '../lib/nav-config'
+import { getNavConfig, usesDesktopStyleTopBar } from '../lib/nav-config'
 import { cn } from '../lib/utils'
 import { useSettingsStore } from '../stores/settingsStore'
 
@@ -64,6 +64,7 @@ function RootLayout() {
   const fontSize = useSettingsStore(s => s.fontSize)
   const queryClient = useQueryClient()
   const showDesktopLikeTopBar = usesDesktopStyleTopBar(location.pathname)
+  const hideNav = getNavConfig(location.pathname)?.hideNav ?? false
 
   useAuth()
 
@@ -95,6 +96,16 @@ function RootLayout() {
     else if (fontSize === 'lg')
       html.classList.add('text-lg')
   }, [fontSize])
+
+  // Auth/callback pages — full-screen, no chrome
+  if (hideNav) {
+    return (
+      <>
+        <UpdateProgressModal />
+        <Outlet />
+      </>
+    )
+  }
 
   return (
     <>
