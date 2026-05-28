@@ -5,6 +5,12 @@
       "command": "npx",
       "args": ["@playwright/mcp"],
       "cwd": "${workspaceFolder}"
+    },
+    "codegraph": {
+      "type": "stdio",
+      "command": "codegraph",
+      "args": ["serve", "--mcp"],
+      "cwd": "${workspaceFolder}"
     }
   }
 }

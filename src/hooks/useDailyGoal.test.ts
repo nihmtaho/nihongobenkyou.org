@@ -21,6 +21,14 @@ vi.mock('../lib/date-utils', () => ({
   },
 }))
 
+// Allow per-test goal overrides; default matches store initial value
+let mockGoal = 20
+vi.mock('../stores/settingsStore', () => ({
+  // eslint-disable-next-line react/component-hook-factories
+  useSettingsStore: (selector: (s: { dailyReviewGoal: number }) => unknown) =>
+    selector({ dailyReviewGoal: mockGoal }),
+}))
+
 function makeLogEntry(overrides: Partial<ReviewLogEntry> = {}): ReviewLogEntry {
   return {
     userId: 'u1',
@@ -46,13 +54,14 @@ function makeStreak(date: string, cards_reviewed: number): StreakData {
 }
 
 beforeEach(async () => {
+  mockGoal = 20
   await db.review_log.clear()
   await db.streaks.clear()
 })
 
 describe('useDailyGoal', () => {
   it('returns todayCount=0 and isComplete=false when review_log is empty', async () => {
-    const { result } = renderHook(() => useDailyGoal('u1', 20))
+    const { result } = renderHook(() => useDailyGoal('u1'))
     await waitFor(() => expect(result.current.data).not.toBeNull())
     expect(result.current.data!.todayCount).toBe(0)
     expect(result.current.data!.isComplete).toBe(false)
@@ -65,37 +74,36 @@ describe('useDailyGoal', () => {
       makeLogEntry({ reviewedAt: '2026-05-27T23:59:59.000Z' }), // yesterday — excluded
       makeLogEntry({ userId: 'u2', reviewedAt: `${FIXED_TODAY}T09:00:00.000Z` }), // different user
     ])
-    const { result } = renderHook(() => useDailyGoal('u1', 20))
+    const { result } = renderHook(() => useDailyGoal('u1'))
     await waitFor(() => expect(result.current.data).not.toBeNull())
     expect(result.current.data!.todayCount).toBe(2)
   })
 
   it('isComplete=true when todayCount >= goal', async () => {
+    mockGoal = 5
     const entries = Array.from({ length: 5 }, (_, i) =>
       makeLogEntry({ vocabId: `v${i}`, reviewedAt: `${FIXED_TODAY}T09:0${i}:00.000Z` }))
     await db.review_log.bulkAdd(entries)
-    const { result } = renderHook(() => useDailyGoal('u1', 5))
+    const { result } = renderHook(() => useDailyGoal('u1'))
     await waitFor(() => expect(result.current.data).not.toBeNull())
     expect(result.current.data!.isComplete).toBe(true)
   })
 
-  it('7-day history uses streaks table, handles gaps as 0', async () => {
-    // Only seed 2 of the 7 days
+  it('streak7 uses streaks table, handles gaps as 0', async () => {
+    mockGoal = 10
+    // Seed only 2 of the 7 days; the rest should be 0
     await db.streaks.bulkAdd([
       makeStreak('2026-05-26', 10),
       makeStreak('2026-05-28', 3), // today (partial)
     ])
-    const { result } = renderHook(() => useDailyGoal('u1', 10))
+    const { result } = renderHook(() => useDailyGoal('u1'))
     await waitFor(() => expect(result.current.data).not.toBeNull())
-    const history = result.current.data!.history
-    expect(history).toHaveLength(7)
-    expect(history[0].date).toBe('2026-05-22') // oldest
-    expect(history[6].date).toBe(FIXED_TODAY) // newest
-    // Gap days should be 0
-    expect(history.find(h => h.date === '2026-05-23')!.count).toBe(0)
-    // 2026-05-26: 10 reviews >= goal 10 → achieved
-    expect(history.find(h => h.date === '2026-05-26')!.achieved).toBe(true)
-    // today: 3 reviews < goal 10 → not achieved
-    expect(history.find(h => h.date === '2026-05-28')!.achieved).toBe(false)
+    const { streak7 } = result.current.data!
+    // 7 days: 2026-05-22 … 2026-05-28
+    expect(streak7).toHaveLength(7)
+    expect(streak7[0]).toBe(0) // 2026-05-22
+    expect(streak7[1]).toBe(0) // 2026-05-23 (gap)
+    expect(streak7[4]).toBe(10) // 2026-05-26
+    expect(streak7[6]).toBe(3) // 2026-05-28 (today)
   })
 })

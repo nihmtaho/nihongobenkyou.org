@@ -119,3 +119,8 @@ Add dataset: create `datasets/<name>.yaml`, add to `src/lib/datasets.config.ts`,
 ## Documentation
 
 All project documentation: `/Users/nihmtaho/Documents/Obsidian Vault/nihongobenkyo.org/`
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
