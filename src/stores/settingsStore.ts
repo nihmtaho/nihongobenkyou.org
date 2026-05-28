@@ -10,7 +10,11 @@ interface SettingsState {
   darkMode: boolean
   syncEnabled: boolean
   newCardsPerDay: number
+  dailyReviewGoal: number
+  lastConfettiDate: string | null
   setNewCardsPerDay: (n: number) => void
+  setDailyReviewGoal: (n: number) => void
+  setLastConfettiDate: (date: string | null) => void
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -23,7 +27,11 @@ export const useSettingsStore = create<SettingsState>()(
       darkMode: false,
       syncEnabled: true,
       newCardsPerDay: 20,
+      dailyReviewGoal: 20,
+      lastConfettiDate: null,
       setNewCardsPerDay: newCardsPerDay => set({ newCardsPerDay }),
+      setDailyReviewGoal: dailyReviewGoal => set({ dailyReviewGoal }),
+      setLastConfettiDate: lastConfettiDate => set({ lastConfettiDate }),
     }),
     { name: 'nihongo-settings' },
   ),
