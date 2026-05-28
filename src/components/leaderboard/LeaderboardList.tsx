@@ -1,11 +1,8 @@
 import type { LeaderboardEntry } from '../../types/user'
+import { getInitial } from '../../lib/text-utils'
 
 interface Props {
-  entries: LeaderboardEntry[] // entries with rank > 3
-}
-
-function getInitial(name: string): string {
-  return name.trim().charAt(0).toUpperCase()
+  entries: LeaderboardEntry[] // entries with rank > PODIUM_SIZE
 }
 
 export function LeaderboardList({ entries }: Props) {

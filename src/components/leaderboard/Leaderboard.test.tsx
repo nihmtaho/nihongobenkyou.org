@@ -89,7 +89,7 @@ describe('leaderboardHeader', () => {
         weekStart="2026-05-25"
         weekEnd="2026-05-31"
         daysUntilReset={5}
-        isStale={false}
+        isOffline={false}
       />,
     )
     expect(screen.getByText(/Bảng Xếp Hạng/)).toBeInTheDocument()
@@ -101,7 +101,7 @@ describe('leaderboardHeader', () => {
         weekStart="2026-05-25"
         weekEnd="2026-05-31"
         daysUntilReset={5}
-        isStale={true}
+        isOffline={true}
       />,
     )
     expect(screen.getByText(/offline/i)).toBeInTheDocument()
@@ -113,7 +113,7 @@ describe('leaderboardHeader', () => {
         weekStart="2026-05-25"
         weekEnd="2026-05-31"
         daysUntilReset={3}
-        isStale={false}
+        isOffline={false}
       />,
     )
     expect(screen.getByText(/3 ngày/)).toBeInTheDocument()

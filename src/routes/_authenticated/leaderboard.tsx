@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_authenticated/leaderboard')({
 })
 
 function LeaderboardPage() {
-  const { podium, rest, myEntry, isLoading, isError, isStale } = useLeaderboard()
+  const { podium, rest, myEntry, isLoading, isError } = useLeaderboard()
   const { weekStart, weekEnd, daysUntilReset } = getWeekBounds()
 
   if (isLoading) {
@@ -46,7 +46,7 @@ function LeaderboardPage() {
           weekStart={weekStart}
           weekEnd={weekEnd}
           daysUntilReset={daysUntilReset}
-          isStale={isStale}
+          isOffline={isError}
         />
         <div className="text-center py-16 text-muted-foreground">
           <p className="text-4xl mb-4">🏆</p>
@@ -63,7 +63,7 @@ function LeaderboardPage() {
         weekStart={weekStart}
         weekEnd={weekEnd}
         daysUntilReset={daysUntilReset}
-        isStale={isStale}
+        isOffline={isError}
       />
       <LeaderboardPodium entries={podium} />
       <LeaderboardList entries={rest} />

@@ -1,11 +1,9 @@
 import type { LeaderboardEntry } from '../../types/user'
+import { PODIUM_SIZE } from '../../hooks/useLeaderboard'
+import { getInitial } from '../../lib/text-utils'
 
 interface Props {
-  entries: LeaderboardEntry[] // top 3 entries, sorted by rank ascending
-}
-
-function getInitial(name: string): string {
-  return name.trim().charAt(0).toUpperCase()
+  entries: LeaderboardEntry[] // top PODIUM_SIZE entries, sorted by rank ascending
 }
 
 interface PodiumEntryProps {
@@ -33,9 +31,10 @@ export function LeaderboardPodium({ entries }: Props) {
   if (entries.length === 0)
     return null
 
-  const first = entries.find(e => e.rank === 1)
-  const second = entries.find(e => e.rank === 2)
-  const third = entries.find(e => e.rank === 3)
+  // Use positional indexing on sorted entries to handle rank ties gracefully.
+  // Podium layout order: 2nd (left), 1st (center, tallest), 3rd (right).
+  const sorted = entries.slice(0, PODIUM_SIZE)
+  const [first, second, third] = sorted.sort((a, b) => a.rank - b.rank)
 
   return (
     <div className="flex items-end gap-2 px-4 pb-0 pt-4 bg-muted/30 rounded-t border border-b-0">

@@ -2,7 +2,7 @@ interface Props {
   weekStart: string
   weekEnd: string
   daysUntilReset: number
-  isStale: boolean
+  isOffline: boolean
 }
 
 function fmtShort(dateStr: string): string {
@@ -10,7 +10,7 @@ function fmtShort(dateStr: string): string {
   return `${Number(d)}/${Number(m)}`
 }
 
-export function LeaderboardHeader({ weekStart, weekEnd, daysUntilReset, isStale }: Props) {
+export function LeaderboardHeader({ weekStart, weekEnd, daysUntilReset, isOffline }: Props) {
   return (
     <div className="flex items-start justify-between mb-4">
       <div>
@@ -29,7 +29,7 @@ export function LeaderboardHeader({ weekStart, weekEnd, daysUntilReset, isStale 
           ngày
         </p>
       </div>
-      {isStale && (
+      {isOffline && (
         <span className="text-xs border border-warning text-warning rounded px-2 py-0.5">
           Đang offline
         </span>

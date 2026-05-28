@@ -2,30 +2,34 @@ import type { LeaderboardEntry } from '../types/user'
 import { useQuery } from '@tanstack/react-query'
 import { fetchWeeklyLeaderboard } from '../api/leaderboard'
 
+export const PODIUM_SIZE = 3
+
 export interface UseLeaderboardResult {
   entries: LeaderboardEntry[]
-  podium: LeaderboardEntry[] // top 3 (for podium component)
-  rest: LeaderboardEntry[] // rank 4+ (for list component)
-  myEntry: LeaderboardEntry | null // current user's entry if outside top 3
+  podium: LeaderboardEntry[] // top PODIUM_SIZE entries
+  rest: LeaderboardEntry[] // entries ranked beyond podium
+  myEntry: LeaderboardEntry | null // current user's entry if outside podium
   isLoading: boolean
   isError: boolean
-  isStale: boolean
 }
 
 export function useLeaderboard(limit = 20): UseLeaderboardResult {
   const query = useQuery<LeaderboardEntry[]>({
     queryKey: ['leaderboard', 'weekly', limit],
     queryFn: () => fetchWeeklyLeaderboard(limit),
-    staleTime: 30_000,
+    // refetchInterval keeps data fresh; staleTime: Infinity prevents isStale
+    // from flickering as a false "offline" signal between 60 s refetch cycles.
+    staleTime: Number.POSITIVE_INFINITY,
     refetchInterval: 60_000,
+    retry: 0,
   })
 
   const entries = query.data ?? []
-  const podium = entries.filter(e => e.rank <= 3)
-  const rest = entries.filter(e => e.rank > 3 && !e.is_current_user)
+  const podium = entries.filter(e => e.rank <= PODIUM_SIZE)
+  const rest = entries.filter(e => e.rank > PODIUM_SIZE && !e.is_current_user)
   const myEntryRaw = entries.find(e => e.is_current_user) ?? null
   // Only show sticky footer if the user is NOT in the podium
-  const myEntry = myEntryRaw && myEntryRaw.rank > 3 ? myEntryRaw : null
+  const myEntry = myEntryRaw && myEntryRaw.rank > PODIUM_SIZE ? myEntryRaw : null
 
   return {
     entries,
@@ -34,6 +38,5 @@ export function useLeaderboard(limit = 20): UseLeaderboardResult {
     myEntry,
     isLoading: query.isLoading,
     isError: query.isError,
-    isStale: query.isStale,
   }
 }
