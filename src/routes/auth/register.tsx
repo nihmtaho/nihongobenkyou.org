@@ -13,7 +13,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
 
 function RegisterPage() {
   const navigate = useNavigate()
-  const { isAuthenticated, storeEmail } = useAuthStore(s => ({ isAuthenticated: s.isAuthenticated, storeEmail: s.email }))
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated)
+  const storeEmail = useAuthStore(s => s.email)
   const { registerMutation, oauthMutation } = useAuth()
   const [validationError, setValidationError] = useState<string | null>(null)
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null)

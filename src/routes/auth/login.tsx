@@ -13,7 +13,8 @@ export const Route = createFileRoute('/auth/login')({
 
 function LoginPage() {
   const navigate = useNavigate()
-  const { isAuthenticated, email } = useAuthStore(s => ({ isAuthenticated: s.isAuthenticated, email: s.email }))
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated)
+  const email = useAuthStore(s => s.email)
   const { loginMutation, oauthMutation } = useAuth()
 
   if (isAuthenticated && email !== null) {
