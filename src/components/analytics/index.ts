@@ -1,3 +1,4 @@
+export { DailyGoalWidget } from './DailyGoalWidget'
 export { LearningAnalyticsWidget } from './LearningAnalyticsWidget'
 export { RetentionWidget } from './RetentionWidget'
 export { ReviewActivityWidget } from './ReviewActivityWidget'
