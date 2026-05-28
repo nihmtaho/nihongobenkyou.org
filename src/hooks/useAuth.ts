@@ -5,7 +5,9 @@ import {
   checkAccountStatus,
   NetworkError,
   reactivateAccount,
+  resendConfirmationEmail,
   signIn,
+  signInWithOAuth,
   signOut,
   signUp,
 } from '../api/auth'
@@ -137,5 +139,16 @@ export function useAuth() {
     retry: 0,
   })
 
-  return { loginMutation, registerMutation, logoutMutation }
+  const oauthMutation = useMutation({
+    mutationFn: (provider: Parameters<typeof signInWithOAuth>[0]) =>
+      signInWithOAuth(provider),
+    retry: 0,
+  })
+
+  const resendMutation = useMutation({
+    mutationFn: (email: string) => resendConfirmationEmail(email),
+    retry: 0,
+  })
+
+  return { loginMutation, registerMutation, logoutMutation, oauthMutation, resendMutation }
 }

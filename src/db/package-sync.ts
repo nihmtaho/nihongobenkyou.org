@@ -27,14 +27,13 @@ async function setLocalVersion(version: number): Promise<void> {
 }
 
 export async function buildPackage(userId: string): Promise<SyncPackagePayload> {
-  const [srsCards, customDecks, customVocab, reviewLog, streaks] = await Promise.all([
+  const [srsCards, customDecks, customVocab, streaks] = await Promise.all([
     db.srs_cards.filter(c => c.userId === userId).toArray(),
     db.custom_decks.where('user_id').equals(userId).toArray(),
     db.custom_vocabulary.where('user_id').equals(userId).toArray(),
-    db.review_log.filter(e => e.userId === userId).toArray(),
     db.streaks.where('userId').equals(userId).toArray(),
   ])
-  return { srs_cards: srsCards, custom_decks: customDecks, custom_vocabulary: customVocab, review_log: reviewLog, streaks }
+  return { srs_cards: srsCards, custom_decks: customDecks, custom_vocabulary: customVocab, streaks }
 }
 
 export async function mergePackageIntoDexie(
@@ -45,7 +44,6 @@ export async function mergePackageIntoDexie(
     'srs_cards',
     'custom_decks',
     'custom_vocabulary',
-    'review_log',
     'streaks',
   ], async () => {
     let imported = 0
@@ -74,24 +72,7 @@ export async function mergePackageIntoDexie(
       if (remote.user_id !== userId)
         continue
       const local = await db.custom_vocabulary.get(remote.id)
-      if (!local) {
-        await db.custom_vocabulary.put(remote)
-        imported++
-      }
-    }
-
-    const existingKeys = new Set(
-      (await db.review_log.filter(e => e.userId === userId).toArray())
-        .map(e => `${e.vocabId}:${e.cardType}:${e.reviewedAt}`),
-    )
-    for (const remote of payload.review_log ?? []) {
-      if (remote.userId !== userId)
-        continue
-      const key = `${remote.vocabId}:${remote.cardType}:${remote.reviewedAt}`
-      if (!existingKeys.has(key)) {
-        const { id: _id, ...entry } = remote
-        await db.review_log.add({ ...entry, pendingSync: false })
-        existingKeys.add(key)
+      if (!local || (remote.updated_at ?? '') >= (local.updated_at ?? '')) {
         imported++
       }
     }
@@ -156,9 +137,10 @@ export async function syncPackage(userId: string): Promise<void> {
     try {
       const confirmedVersion = await uploadSyncPackage(deviceId, uploadVersion, payload)
 
+      let mergedRejectedVersion = true
       if (confirmedVersion !== uploadVersion) {
-        // Upload rejected — another device holds a newer version
-        // Download it so next cycle builds from merged state
+        // Upload rejected — another device holds a newer version.
+        // Download it and merge so next cycle builds from merged state.
         try {
           const newerRemote = await fetchRemotePackage(userId)
           if (newerRemote?.payload) {
@@ -166,11 +148,14 @@ export async function syncPackage(userId: string): Promise<void> {
           }
         }
         catch {
-          // NetworkError — leave local version as-is, retry next cycle
+          // NetworkError — don't advance local version; retry next cycle with merged state
+          mergedRejectedVersion = false
         }
       }
 
-      await setLocalVersion(confirmedVersion)
+      if (mergedRejectedVersion) {
+        await setLocalVersion(confirmedVersion)
+      }
     }
     catch (err) {
       if (err instanceof AuthError)

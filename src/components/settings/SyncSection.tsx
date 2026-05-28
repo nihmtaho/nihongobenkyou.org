@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { syncPackage } from '../../db/package-sync'
 import { uploadPendingReviews } from '../../db/sync'
 import { useSyncStatus } from '../../hooks/useSyncStatus'
 import { useAuthStore } from '../../stores/authStore'
@@ -24,6 +25,7 @@ export function SyncSection() {
     setIsSyncing(true)
     try {
       await uploadPendingReviews()
+      await syncPackage(userId!)
     }
     catch {
       // Silent — will retry on next online event

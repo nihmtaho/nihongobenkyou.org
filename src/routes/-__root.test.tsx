@@ -54,6 +54,7 @@ vi.mock('../hooks/useAuth', () => ({
 
 vi.mock('../lib/nav-config', () => ({
   usesDesktopStyleTopBar: vi.fn(() => false),
+  getNavConfig: vi.fn(() => ({ hideNav: false })),
 }))
 
 vi.mock('../stores/settingsStore', () => ({

@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { getLastNDates, getToday, getTodayUTC } from './date-utils'
+import { getLastNDates, getToday, getTodayUTC, getWeekBounds } from './date-utils'
 
 describe('getToday()', () => {
   it('returns a string matching YYYY-MM-DD format', () => {
@@ -76,5 +76,54 @@ describe('getLastNDates()', () => {
   it('getLastNDates(0) returns empty array', () => {
     const dates = getLastNDates(0)
     expect(dates).toHaveLength(0)
+  })
+})
+
+describe('getWeekBounds()', () => {
+  it('returns weekStart as Monday and weekEnd as Sunday', () => {
+    // Mock a Wednesday UTC+7 (2026-05-27 is a Wednesday)
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-05-27T10:00:00+07:00'))
+
+    const { weekStart, weekEnd } = getWeekBounds()
+
+    expect(weekStart).toBe('2026-05-25') // Monday
+    expect(weekEnd).toBe('2026-05-31') // Sunday
+
+    vi.useRealTimers()
+  })
+
+  it('returns weekStart as today when called on a Monday', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-05-25T00:01:00+07:00'))
+
+    const { weekStart } = getWeekBounds()
+
+    expect(weekStart).toBe('2026-05-25')
+
+    vi.useRealTimers()
+  })
+
+  it('returns weekEnd as today when called on a Sunday', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-05-31T23:59:00+07:00'))
+
+    const { weekEnd, daysUntilReset } = getWeekBounds()
+
+    expect(weekEnd).toBe('2026-05-31')
+    expect(daysUntilReset).toBe(1)
+
+    vi.useRealTimers()
+  })
+
+  it('daysUntilReset is 7 on a Monday', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-05-25T08:00:00+07:00'))
+
+    const { daysUntilReset } = getWeekBounds()
+
+    expect(daysUntilReset).toBe(7)
+
+    vi.useRealTimers()
   })
 })

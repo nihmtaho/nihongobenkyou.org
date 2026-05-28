@@ -22,6 +22,7 @@ export const ROUTE_NAV_CONFIG: Record<string, RouteNavConfig> = {
   '/study': { title: 'STUDY' },
   '/study/review': { hideNav: true },
   '/custom': { title: 'MY DECKS' },
+  '/leaderboard': { title: 'LEADERBOARD' },
   '/profile': { title: 'PROFILE', showBack: true, backTo: '/' },
   '/settings': { title: 'SETTINGS', showBack: true, backTo: '/', hideBottomBar: true },
   '/auth/login': { hideNav: true },

@@ -1,5 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { BookOpen, BrainCircuit, Home, Languages, Layers } from 'lucide-react'
+import { BookOpen, BrainCircuit, Home, Languages, Layers, Trophy } from 'lucide-react'
 import { getNavConfig } from '@/lib/nav-config'
 import { cn } from '@/lib/utils'
 
@@ -8,7 +8,8 @@ const NAV_ITEMS = [
   { to: '/books', label: 'BOOKS', Icon: BookOpen, ariaLabel: 'Books' },
   { to: '/kanji', label: 'KANJI', Icon: Languages, ariaLabel: 'Kanji' },
   { to: '/study', label: 'STUDY', Icon: BrainCircuit, ariaLabel: 'Study' },
-  { to: '/custom', label: 'MY DECKS', Icon: Layers, ariaLabel: 'My Decks' },
+  { to: '/custom', label: 'DECKS', Icon: Layers, ariaLabel: 'My Decks' },
+  { to: '/leaderboard', label: 'TOP', Icon: Trophy, ariaLabel: 'Leaderboard' },
 ] as const
 
 export function BottomDock() {

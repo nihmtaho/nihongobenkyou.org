@@ -13,3 +13,8 @@ export function normalizeViMeaning(text: string): string {
     .trim()
     .toLowerCase()
 }
+
+/** Returns the first character of a display name, uppercased — for avatar initials. */
+export function getInitial(name: string): string {
+  return name.trim().charAt(0).toUpperCase()
+}

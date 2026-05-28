@@ -2,6 +2,8 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { sendPasswordResetEmail } from '../../api/auth'
 
 export const Route = createFileRoute('/auth/forgot-password')({
@@ -60,16 +62,16 @@ function ForgotPasswordPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <label htmlFor="email" className="font-[var(--br-mono-font)] text-[11px] uppercase">
+              <Label htmlFor="email" className="font-[var(--br-mono-font)] text-[11px] uppercase">
                 Email
-              </label>
-              <input
+              </Label>
+              <Input
                 id="email"
                 type="email"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="input input-bordered w-full"
+                className="w-full"
                 disabled={isLoading}
               />
             </div>

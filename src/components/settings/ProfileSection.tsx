@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useCallback, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -76,16 +77,13 @@ export function ProfileSection() {
                   Đang dùng với tư cách Khách — tiến trình lưu trên thiết bị này.
                 </p>
                 <div className="flex gap-2">
-                  <Button size="sm" className="font-[var(--br-heading-font)] uppercase flex-1" disabled>
-                    Đăng nhập
+                  <Button size="sm" className="font-[var(--br-heading-font)] uppercase flex-1" asChild>
+                    <Link to="/auth/login">Đăng nhập</Link>
                   </Button>
-                  <Button variant="outline" size="sm" className="font-[var(--br-heading-font)] uppercase flex-1" disabled>
-                    Tạo tài khoản
+                  <Button variant="outline" size="sm" className="font-[var(--br-heading-font)] uppercase flex-1" asChild>
+                    <Link to="/auth/register">Tạo tài khoản</Link>
                   </Button>
                 </div>
-                <p className="text-[10px] font-[var(--br-mono-font)] uppercase tracking-widest text-warning border border-warning/30 bg-warning/10 px-2 py-1 self-start">
-                  ⚠ Đang phát triển
-                </p>
               </div>
             )}
       </CardContent>
