@@ -87,7 +87,8 @@ function loadCollapsed(): boolean {
 export function Sidebar() {
   const { location } = useRouterState()
   const pathname = location.pathname
-  const { displayName, email, avatarUrl } = useAuthStore()
+  const { displayName, email, avatarUrl, isAuthenticated } = useAuthStore()
+  const isGuest = isAuthenticated && email === null
   const [imgFailed, setImgFailed] = useState(false)
   const [collapsed, setCollapsed] = useState<boolean>(loadCollapsed)
 
@@ -102,7 +103,86 @@ export function Sidebar() {
     })
   }
 
-  const nameLabel = displayName ?? email?.split('@')[0] ?? 'Guest'
+  const nameLabel = displayName ?? email?.split('@')[0] ?? 'Khách'
+
+  // ── Collapsed user row ──
+  const collapsedUserRow = isGuest
+    ? (
+        <div className="tooltip tooltip-right" data-tip="Đăng nhập">
+          <Link
+            to="/auth/login"
+            aria-label="Đăng nhập"
+            className="flex items-center justify-center h-12 w-full hover:bg-card transition-colors"
+          >
+            <User size={14} className="text-primary" />
+          </Link>
+        </div>
+      )
+    : (
+        <div className="tooltip tooltip-right" data-tip={nameLabel}>
+          <div className="avatar placeholder cursor-default flex items-center justify-center h-12 w-full">
+            <div className="bg-secondary text-foreground w-8 h-8 border border-border/10 flex items-center justify-center">
+              {avatarUrl && !imgFailed
+                ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Avatar"
+                      className="object-cover w-full h-full"
+                      onError={() => setImgFailed(true)}
+                    />
+                  )
+                : <User size={14} className="text-foreground/50" />}
+            </div>
+          </div>
+        </div>
+      )
+
+  // ── Expanded user row ──
+  const expandedUserRow = isGuest
+    ? (
+        <div className="flex items-center gap-3 px-4 h-12 flex-shrink-0 border-b border-border/10">
+          <div className="flex-none w-8 h-8 border border-dashed border-border/30 flex items-center justify-center">
+            <User size={14} className="text-foreground/30" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground leading-none mb-1">
+              Chưa đăng nhập
+            </p>
+            <Link
+              to="/auth/login"
+              className="text-[11px] font-[var(--br-mono-font)] uppercase text-primary hover:underline leading-none"
+            >
+              Đăng nhập →
+            </Link>
+          </div>
+        </div>
+      )
+    : (
+        <div className="flex items-center gap-3 px-4 h-12 flex-shrink-0 border-b border-border/10">
+          <div className="avatar placeholder flex-none">
+            <div className="bg-secondary text-foreground w-8 h-8 border border-border/10 flex items-center justify-center">
+              {avatarUrl && !imgFailed
+                ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Avatar"
+                      className="object-cover w-full h-full"
+                      onError={() => setImgFailed(true)}
+                    />
+                  )
+                : <User size={14} className="text-foreground/50" />}
+            </div>
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground leading-none mb-0.5">
+              Signed in
+            </p>
+            <p className="text-sm font-[var(--br-heading-font)] truncate leading-none">
+              {nameLabel}
+            </p>
+          </div>
+        </div>
+      )
 
   return (
     <div
@@ -131,50 +211,10 @@ export function Sidebar() {
       {collapsed
         ? (
             <div className="flex items-center justify-center h-12 flex-shrink-0 border-b border-border/10">
-              <div className="tooltip tooltip-right" data-tip={nameLabel}>
-                <div className="avatar placeholder cursor-default">
-                  <div className="bg-secondary text-foreground w-8 h-8 border border-border/10 flex items-center justify-center">
-                    {avatarUrl && !imgFailed
-                      ? (
-                          <img
-                            src={avatarUrl}
-                            alt="Avatar"
-                            className="object-cover w-full h-full"
-                            onError={() => setImgFailed(true)}
-                          />
-                        )
-                      : <User size={14} className="text-foreground/50" />}
-                  </div>
-                </div>
-              </div>
+              {collapsedUserRow}
             </div>
           )
-        : (
-            <div className="flex items-center gap-3 px-4 h-12 flex-shrink-0 border-b border-border/10">
-              <div className="avatar placeholder flex-none">
-                <div className="bg-secondary text-foreground w-8 h-8 border border-border/10 flex items-center justify-center">
-                  {avatarUrl && !imgFailed
-                    ? (
-                        <img
-                          src={avatarUrl}
-                          alt="Avatar"
-                          className="object-cover w-full h-full"
-                          onError={() => setImgFailed(true)}
-                        />
-                      )
-                    : <User size={14} className="text-foreground/50" />}
-                </div>
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground leading-none mb-0.5">
-                  Signed in
-                </p>
-                <p className="text-sm font-[var(--br-heading-font)] truncate leading-none">
-                  {nameLabel}
-                </p>
-              </div>
-            </div>
-          )}
+        : expandedUserRow}
 
       {/* Nav items */}
       <nav className="flex-1 overflow-y-auto flex flex-col">
