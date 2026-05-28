@@ -59,6 +59,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_review_log_insert ON public.review_log;
 CREATE TRIGGER on_review_log_insert
   AFTER INSERT ON public.review_log
   FOR EACH ROW EXECUTE FUNCTION public.increment_leaderboard_score();
