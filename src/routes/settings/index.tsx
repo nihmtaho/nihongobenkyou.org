@@ -7,6 +7,7 @@ import {
   FontSizeSection,
   LanguageSection,
   ProfileSection,
+  StudyGoalSection,
   SyncSection,
   UpdateSection,
 } from '../../components/settings'
@@ -25,6 +26,7 @@ function SettingsPage() {
       <LanguageSection />
       <FontSizeSection />
       <DarkModeSection />
+      <StudyGoalSection />
       <SyncSection />
       <UpdateSection />
       <BackupSection />

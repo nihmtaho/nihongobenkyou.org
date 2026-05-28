@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
+  DailyGoalWidget,
   LearningAnalyticsWidget,
   RetentionWidget,
   ReviewActivityWidget,
@@ -88,10 +89,13 @@ function HomePage() {
           {/* Learning progress */}
           <LearningAnalyticsWidget userId={userId} />
 
-          {/* Mobile-only: streak */}
+          {/* Mobile-only: streak + goal */}
           <div className="flex flex-col gap-4 lg:hidden">
             <div className="h-px bg-foreground/10 my-0 opacity-20" />
-            <StreakWidget userId={userId} />
+            <div className="grid grid-cols-2 gap-3">
+              <StreakWidget userId={userId} />
+              <DailyGoalWidget userId={userId} />
+            </div>
           </div>
         </div>
 
@@ -100,7 +104,10 @@ function HomePage() {
           <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
             TIẾN ĐỘ HÔM NAY
           </p>
-          <StreakWidget userId={userId} />
+          <div className="grid grid-cols-2 gap-3">
+            <StreakWidget userId={userId} />
+            <DailyGoalWidget userId={userId} />
+          </div>
 
           {/* Quick-access links */}
           <div className="flex flex-col gap-1.5 mt-2">
