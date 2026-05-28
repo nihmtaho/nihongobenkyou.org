@@ -13,20 +13,25 @@ export function DailyGoalWidget({ userId }: DailyGoalWidgetProps) {
   const lastConfettiDate = useSettingsStore(s => s.lastConfettiDate)
   const setLastConfettiDate = useSettingsStore(s => s.setLastConfettiDate)
   const confettiRef = useRef<HTMLDivElement>(null)
+  const confettiFiredRef = useRef(false)
 
   const { data, isLoading } = useDailyGoal(userId)
 
-  // Fire confetti once per day on first completion
+  // Fire confetti once per day on first completion.
+  // confettiFiredRef breaks the re-render cycle: setLastConfettiDate updates
+  // lastConfettiDate (a dep), which would re-run the effect and cancel the timer early.
   useEffect(() => {
     if (!data?.isComplete)
       return
     const today = getToday()
-    if (lastConfettiDate === today)
+    if (lastConfettiDate === today || confettiFiredRef.current)
       return
+    confettiFiredRef.current = true
     setLastConfettiDate(today)
     confettiRef.current?.classList.add('animate-confetti')
     const timer = setTimeout(() => {
       confettiRef.current?.classList.remove('animate-confetti')
+      confettiFiredRef.current = false
     }, 2000)
     return () => clearTimeout(timer)
   }, [data?.isComplete, lastConfettiDate, setLastConfettiDate])
