@@ -6,6 +6,7 @@ import {
   NetworkError,
   reactivateAccount,
   signIn,
+  signInWithOAuth,
   signOut,
   signUp,
 } from '../api/auth'
@@ -137,5 +138,11 @@ export function useAuth() {
     retry: 0,
   })
 
-  return { loginMutation, registerMutation, logoutMutation }
+  const oauthMutation = useMutation({
+    mutationFn: (provider: Parameters<typeof signInWithOAuth>[0]) =>
+      signInWithOAuth(provider),
+    retry: 0,
+  })
+
+  return { loginMutation, registerMutation, logoutMutation, oauthMutation }
 }

@@ -14,7 +14,7 @@ export const Route = createFileRoute('/auth/login')({
 function LoginPage() {
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
-  const { loginMutation } = useAuth()
+  const { loginMutation, oauthMutation } = useAuth()
 
   if (isAuthenticated) {
     navigate({ to: '/' })
@@ -25,6 +25,10 @@ function LoginPage() {
     loginMutation.mutate({ email, password }, {
       onSuccess: () => navigate({ to: '/' }),
     })
+  }
+
+  function handleGoogleSignIn() {
+    oauthMutation.mutate('google')
   }
 
   const error = loginMutation.error?.message ?? null
@@ -50,7 +54,13 @@ function LoginPage() {
             <div className="h-px flex-1 bg-border/20" />
           </div>
 
-          {OAUTH_PROVIDERS.includes('google') && <GoogleSignInButton />}
+          {OAUTH_PROVIDERS.includes('google') && (
+            <GoogleSignInButton
+              onSignIn={handleGoogleSignIn}
+              isLoading={oauthMutation.isPending}
+              error={oauthMutation.error?.message ?? null}
+            />
+          )}
 
           <div className="flex flex-col gap-2 text-center">
             <Link

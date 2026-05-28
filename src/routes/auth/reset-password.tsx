@@ -3,6 +3,8 @@ import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { AuthError, updatePassword } from '../../api/auth'
 import { supabase } from '../../api/supabase'
 
@@ -90,31 +92,31 @@ function ResetPasswordPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <label htmlFor="password" className="font-[var(--br-mono-font)] text-[11px] uppercase">
+              <Label htmlFor="password" className="font-[var(--br-mono-font)] text-[11px] uppercase">
                 Mật khẩu mới
-              </label>
-              <input
+              </Label>
+              <Input
                 id="password"
                 name="password"
                 type="password"
                 required
                 autoComplete="new-password"
-                className="input input-bordered w-full"
+                className="w-full"
                 disabled={isLoading}
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label htmlFor="confirmPassword" className="font-[var(--br-mono-font)] text-[11px] uppercase">
+              <Label htmlFor="confirmPassword" className="font-[var(--br-mono-font)] text-[11px] uppercase">
                 Xác nhận mật khẩu
-              </label>
-              <input
+              </Label>
+              <Input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 required
                 autoComplete="new-password"
-                className="input input-bordered w-full"
+                className="w-full"
                 disabled={isLoading}
               />
             </div>
