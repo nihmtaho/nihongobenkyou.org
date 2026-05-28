@@ -1,7 +1,7 @@
 import type { StreakData } from '../db/schema'
 
 import { db } from '../db/schema'
-import { getLastNDates, getToday } from '../lib/date-utils'
+import { getLastNDates, getTodayUTC } from '../lib/date-utils'
 import { useLiveQuery } from '../lib/use-live-query'
 import { useSettingsStore } from '../stores/settingsStore'
 
@@ -16,7 +16,7 @@ export function useDailyGoal(
   userId: string,
 ): { data: DailyGoalData | null, isLoading: boolean } {
   const goal = useSettingsStore(s => s.dailyReviewGoal)
-  const today = getToday()
+  const today = getTodayUTC()
 
   // Use the reviewedAt index to avoid a full table scan; filter userId in JS
   // (no standalone userId index on review_log — compound [userId+vocabId+cardType] only)

@@ -11,7 +11,7 @@ import 'fake-indexeddb/auto'
 // Pin "today" so tests are deterministic
 const FIXED_TODAY = '2026-05-28'
 vi.mock('../lib/date-utils', () => ({
-  getToday: () => FIXED_TODAY,
+  getTodayUTC: () => FIXED_TODAY,
   getLastNDates: (n: number) => {
     return Array.from({ length: n }, (_, i) => {
       const d = new Date(FIXED_TODAY)

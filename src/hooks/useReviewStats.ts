@@ -2,7 +2,7 @@ import type { StreakData } from '../db/schema'
 import type { ReviewLogEntry } from '../types/review-log'
 
 import { db } from '../db/schema'
-import { getToday } from '../lib/date-utils'
+import { getTodayUTC } from '../lib/date-utils'
 import { useLiveQuery } from '../lib/use-live-query'
 
 export interface DayActivity {
@@ -60,7 +60,7 @@ function buildLast7Dates(today: string): string[] {
 }
 
 function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
-  const today = getToday()
+  const today = getTodayUTC()
   const monday = getMondayOfCurrentWeek(today)
   const currentMonth = today.slice(0, 7) // 'YYYY-MM'
   const last7Dates = buildLast7Dates(today)

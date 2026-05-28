@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getLastNDates, getToday } from './date-utils'
+import { getLastNDates, getToday, getTodayUTC } from './date-utils'
 
 describe('getToday()', () => {
   it('returns a string matching YYYY-MM-DD format', () => {
@@ -12,6 +12,15 @@ describe('getToday()', () => {
     const today = getToday()
     const expected = new Date().toLocaleDateString('en-CA')
     expect(today).toBe(expected)
+  })
+})
+
+describe('getTodayUTC', () => {
+  it('returns current UTC date as YYYY-MM-DD', () => {
+    const result = getTodayUTC()
+    expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    // Must match the UTC date from toISOString
+    expect(result).toBe(new Date().toISOString().slice(0, 10))
   })
 })
 

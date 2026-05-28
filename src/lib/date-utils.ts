@@ -11,6 +11,14 @@ export function getToday(): string {
 }
 
 /**
+ * Returns today's date as 'YYYY-MM-DD' in UTC.
+ * Use this when comparing against ISO-8601 timestamps stored via new Date().toISOString().
+ */
+export function getTodayUTC(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
+/**
  * Returns an array of the last N calendar dates (inclusive of today),
  * oldest first. Example with n=3 and today='2026-05-28':
  *   ['2026-05-26', '2026-05-27', '2026-05-28']
