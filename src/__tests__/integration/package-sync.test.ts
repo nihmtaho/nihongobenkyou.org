@@ -8,8 +8,8 @@ import { buildPackage, mergePackageIntoDexie } from '../../db/package-sync'
 import { db } from '../../db/schema'
 
 describe('syncPackagePayload shape', () => {
-  it('review_log is typed as ReviewLogEntry[]', () => {
-    expectTypeOf<SyncPackagePayload['review_log']>().toEqualTypeOf<ReviewLogEntry[]>()
+  it('review_log is optional/deprecated in the payload', () => {
+    expectTypeOf<SyncPackagePayload['review_log']>().toEqualTypeOf<unknown[] | undefined>()
   })
 
   it('streaks is typed as StreakData[]', () => {
@@ -47,7 +47,6 @@ function makeEmptyPkg(overrides: Partial<SyncPackagePayload> = {}): SyncPackageP
     srs_cards: [],
     custom_decks: [],
     custom_vocabulary: [],
-    review_log: [],
     streaks: [],
     ...overrides,
   }
@@ -70,22 +69,12 @@ afterEach(async () => {
 })
 
 describe('buildPackage', () => {
-  it('includes review_log entries for the user', async () => {
+  it('does not include review_log (synced via separate channel)', async () => {
     await db.review_log.add(makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'))
-    await db.review_log.add(makeLogEntry('mnn1_bbb', '2026-05-01T11:00:00Z'))
 
     const pkg = await buildPackage(UID)
 
-    expect(pkg.review_log).toHaveLength(2)
-  })
-
-  it('excludes review_log entries from other users', async () => {
-    await db.review_log.add(makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'))
-    await db.review_log.add({ ...makeLogEntry('mnn1_bbb', '2026-05-01T11:00:00Z'), userId: 'other-user' })
-
-    const pkg = await buildPackage(UID)
-
-    expect(pkg.review_log).toHaveLength(1)
+    expect(pkg.review_log).toBeUndefined()
   })
 
   it('includes streaks for the user', async () => {
@@ -103,57 +92,6 @@ describe('buildPackage', () => {
     const pkg = await buildPackage(UID)
 
     expect(pkg.streaks).toHaveLength(1)
-  })
-})
-
-describe('mergePackageIntoDexie — review_log', () => {
-  it('adds new review_log entries from the package', async () => {
-    const pkg = makeEmptyPkg({ review_log: [makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z')] })
-
-    await mergePackageIntoDexie(UID, pkg)
-
-    const entries = await db.review_log.toArray()
-    expect(entries).toHaveLength(1)
-    expect(entries[0].vocabId).toBe('mnn1_aaa')
-  })
-
-  it('does not duplicate an entry that already exists locally', async () => {
-    await db.review_log.add(makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'))
-    const pkg = makeEmptyPkg({ review_log: [makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z')] })
-
-    await mergePackageIntoDexie(UID, pkg)
-
-    expect(await db.review_log.count()).toBe(1)
-  })
-
-  it('adds entry with different reviewedAt even for same vocabId', async () => {
-    await db.review_log.add(makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'))
-    const pkg = makeEmptyPkg({ review_log: [makeLogEntry('mnn1_aaa', '2026-05-02T10:00:00Z')] })
-
-    await mergePackageIntoDexie(UID, pkg)
-
-    expect(await db.review_log.count()).toBe(2)
-  })
-
-  it('treats same vocabId+reviewedAt with different cardType as distinct entries', async () => {
-    await db.review_log.add(makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'))
-    const pkg = makeEmptyPkg({
-      review_log: [{ ...makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'), cardType: 'kanji' }],
-    })
-
-    await mergePackageIntoDexie(UID, pkg)
-
-    expect(await db.review_log.count()).toBe(2)
-  })
-
-  it('imported entry has pendingSync=false', async () => {
-    const entry = { ...makeLogEntry('mnn1_aaa', '2026-05-01T10:00:00Z'), pendingSync: true }
-    const pkg = makeEmptyPkg({ review_log: [entry] })
-
-    await mergePackageIntoDexie(UID, pkg)
-
-    const stored = await db.review_log.toArray()
-    expect(stored[0].pendingSync).toBe(false)
   })
 })
 

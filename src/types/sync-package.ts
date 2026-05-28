@@ -1,14 +1,14 @@
 import type { StreakData } from '../db/schema'
 import type { CustomDeck, CustomVocabItem } from './custom-deck'
-import type { ReviewLogEntry } from './review-log'
 import type { SRSCard } from './srs'
 
 export interface SyncPackagePayload {
   srs_cards: SRSCard[]
   custom_decks: CustomDeck[]
   custom_vocabulary: CustomVocabItem[]
-  review_log: ReviewLogEntry[]
   streaks: StreakData[]
+  /** @deprecated review_log is synced via its own channel — ignored when present */
+  review_log?: unknown[]
 }
 
 export interface RemoteSyncPackage {

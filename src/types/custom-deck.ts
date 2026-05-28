@@ -21,6 +21,7 @@ export interface CustomVocabItem {
   meaning_vi: string
   source: 'manual' | 'json' | 'csv'
   created_at: string
+  updated_at?: string
 }
 
 export interface ParsedVocabItem {
