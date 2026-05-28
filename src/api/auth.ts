@@ -35,8 +35,16 @@ function mapAuthError(message: string): string {
   return 'Đã xảy ra lỗi. Vui lòng thử lại'
 }
 
+function getAppUrl(): string {
+  return (import.meta.env.VITE_APP_URL as string | undefined) ?? window.location.origin
+}
+
 export async function signUp(email: string, password: string): Promise<void> {
-  const { error } = await supabase.auth.signUp({ email, password })
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: `${getAppUrl()}/auth/callback` },
+  })
   if (error) {
     if (error.status === 0 || error.status === undefined || error.status >= 500)
       throw new NetworkError(mapAuthError(error.message))
@@ -62,10 +70,16 @@ export async function signOut(): Promise<void> {
 export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: `${import.meta.env.VITE_APP_URL as string}/auth/callback` },
+    options: { redirectTo: `${getAppUrl()}/auth/callback` },
   })
   if (error)
     throw new NetworkError(mapAuthError(error.message))
+}
+
+export async function resendConfirmationEmail(email: string): Promise<void> {
+  const { error } = await supabase.auth.resend({ type: 'signup', email })
+  if (error)
+    throw new AuthError(mapAuthError(error.message))
 }
 
 /** @deprecated Use signInWithOAuth('google') instead */

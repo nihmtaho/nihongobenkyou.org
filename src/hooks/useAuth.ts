@@ -5,6 +5,7 @@ import {
   checkAccountStatus,
   NetworkError,
   reactivateAccount,
+  resendConfirmationEmail,
   signIn,
   signInWithOAuth,
   signOut,
@@ -144,5 +145,10 @@ export function useAuth() {
     retry: 0,
   })
 
-  return { loginMutation, registerMutation, logoutMutation, oauthMutation }
+  const resendMutation = useMutation({
+    mutationFn: (email: string) => resendConfirmationEmail(email),
+    retry: 0,
+  })
+
+  return { loginMutation, registerMutation, logoutMutation, oauthMutation, resendMutation }
 }

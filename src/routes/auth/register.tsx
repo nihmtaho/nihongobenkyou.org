@@ -15,7 +15,7 @@ function RegisterPage() {
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
   const storeEmail = useAuthStore(s => s.email)
-  const { registerMutation, oauthMutation } = useAuth()
+  const { registerMutation, oauthMutation, resendMutation } = useAuth()
   const [validationError, setValidationError] = useState<string | null>(null)
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null)
 
@@ -38,7 +38,21 @@ function RegisterPage() {
               <strong>{registeredEmail}</strong>
               . Nhấn vào liên kết trong email để kích hoạt tài khoản.
             </p>
-            <Link to="/auth/login" className="text-sm font-[var(--br-mono-font)] text-primary underline">
+            {resendMutation.isSuccess && (
+              <p className="text-sm text-green-600">✓ Đã gửi lại email xác nhận</p>
+            )}
+            {resendMutation.error && (
+              <p className="text-sm text-destructive">{resendMutation.error.message}</p>
+            )}
+            <button
+              type="button"
+              onClick={() => resendMutation.mutate(registeredEmail)}
+              disabled={resendMutation.isPending || resendMutation.isSuccess}
+              className="text-sm font-[var(--br-mono-font)] text-primary underline disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {resendMutation.isPending ? 'Đang gửi...' : 'Gửi lại email xác nhận'}
+            </button>
+            <Link to="/auth/login" className="text-sm font-[var(--br-mono-font)] text-foreground/60 underline">
               Quay lại đăng nhập
             </Link>
           </div>
