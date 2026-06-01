@@ -12,9 +12,15 @@ interface SettingsState {
   newCardsPerDay: number
   dailyReviewGoal: number
   lastConfettiDate: string | null
+  reminderTime: string
+  dailyTarget: number
+  notificationsEnabled: boolean
   setNewCardsPerDay: (n: number) => void
   setDailyReviewGoal: (n: number) => void
   setLastConfettiDate: (date: string | null) => void
+  setReminderTime: (time: string) => void
+  setDailyTarget: (target: number) => void
+  setNotificationsEnabled: (v: boolean) => void
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -29,9 +35,15 @@ export const useSettingsStore = create<SettingsState>()(
       newCardsPerDay: 20,
       dailyReviewGoal: 20,
       lastConfettiDate: null,
+      reminderTime: '20:00',
+      dailyTarget: 20,
+      notificationsEnabled: false,
       setNewCardsPerDay: newCardsPerDay => set({ newCardsPerDay }),
       setDailyReviewGoal: dailyReviewGoal => set({ dailyReviewGoal }),
       setLastConfettiDate: lastConfettiDate => set({ lastConfettiDate }),
+      setReminderTime: reminderTime => set({ reminderTime }),
+      setDailyTarget: dailyTarget => set({ dailyTarget }),
+      setNotificationsEnabled: notificationsEnabled => set({ notificationsEnabled }),
     }),
     { name: 'nihongo-settings' },
   ),

@@ -6,6 +6,7 @@ import {
   DarkModeSection,
   FontSizeSection,
   LanguageSection,
+  NotificationSection,
   ProfileSection,
   StudyGoalSection,
   SyncSection,
@@ -27,6 +28,7 @@ function SettingsPage() {
       <FontSizeSection />
       <DarkModeSection />
       <StudyGoalSection />
+      <NotificationSection />
       <SyncSection />
       <UpdateSection />
       <BackupSection />
