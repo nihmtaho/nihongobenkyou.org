@@ -72,15 +72,12 @@ export function useUnifiedSrsSession(
   const { data: dueVocab, isLoading: vocabLoading } = useQuery({
     queryKey: ['due-vocab-unified', userId],
     queryFn: async () => {
-      const todayDate = new Date().toISOString().slice(0, 10)
+      const nowISO = new Date().toISOString()
       const allKanji = await db.kanji.toArray()
       const rvIdSet = buildRvIdSet(allKanji)
 
-      const allDue = await db.srs_cards
-        .where('[userId+due]')
-        .belowOrEqual([userId, todayDate])
-        .filter(c => c.userId === userId && !c.is_known && c.cardType === 'vocab')
-        .toArray()
+      // getDueCards applies the due_datetime guard for learning/relearning cards
+      const allDue = await getDueCards(userId, nowISO, 'vocab')
 
       // Bulk-load vocab to avoid N+1
       const regularVocabIds = allDue
