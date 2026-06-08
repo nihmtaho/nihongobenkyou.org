@@ -15,6 +15,11 @@ vi.mock('../api/supabase', () => ({
     },
     from: vi.fn().mockReturnValue({
       upsert: vi.fn().mockResolvedValue({ error: null }),
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
+      }),
       delete: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
           eq: vi.fn().mockResolvedValue({ error: null }),
@@ -178,9 +183,11 @@ describe('useNotifications', () => {
   })
 
   describe('updateTime and updateTarget', () => {
-    it('updateTime delegates to setReminderTime', () => {
+    it('updateTime delegates to setReminderTime', async () => {
       const { result } = renderHook(() => useNotifications())
-      act(() => result.current.updateTime('08:30'))
+      await act(async () => {
+        await result.current.updateTime('08:30')
+      })
       expect(storeState.setReminderTime).toHaveBeenCalledWith('08:30')
     })
 

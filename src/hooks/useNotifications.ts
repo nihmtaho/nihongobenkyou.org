@@ -78,6 +78,29 @@ export function useNotifications() {
       enable()
   }, [notificationsEnabled, enable, disable])
 
+  const syncReminderTime = useCallback(async (time: string) => {
+    setReminderTime(time)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user)
+        return
+      const reg = await navigator.serviceWorker?.getRegistration('/push-worker.js')
+      if (!reg)
+        return
+      const sub = await reg.pushManager?.getSubscription()
+      if (!sub)
+        return
+      await supabase
+        .from('user_push_subscriptions')
+        .update({ reminder_time: time })
+        .eq('user_id', user.id)
+        .eq('endpoint', sub.endpoint)
+    }
+    catch {
+      // Non-blocking — localStorage is the source of truth for the UI
+    }
+  }, [setReminderTime])
+
   return {
     supported,
     permission,
@@ -85,7 +108,7 @@ export function useNotifications() {
     reminderTime,
     dailyTarget,
     toggle,
-    updateTime: setReminderTime,
+    updateTime: syncReminderTime,
     updateTarget: setDailyTarget,
   }
 }
