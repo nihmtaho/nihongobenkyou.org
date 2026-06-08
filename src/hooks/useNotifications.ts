@@ -43,13 +43,14 @@ export function useNotifications() {
         endpoint: subscription.endpoint,
         p256dh: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('p256dh')!))),
         auth: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))),
+        reminder_time: reminderTime,
       }, { onConflict: 'user_id,endpoint' })
       setNotificationsEnabled(true)
     }
     catch (err) {
       console.error('Push subscription failed', err)
     }
-  }, [supported, setNotificationsEnabled])
+  }, [supported, setNotificationsEnabled, reminderTime])
 
   const disable = useCallback(async () => {
     setNotificationsEnabled(false)
