@@ -5,7 +5,7 @@ import { createElement } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { db } from '../db/schema'
-import { useSRS } from './useSRS'
+import { computeAnswerRating, useSRS } from './useSRS'
 
 vi.mock('../db/sync', () => ({
   uploadPendingReviews: vi.fn().mockResolvedValue(undefined),
@@ -58,6 +58,28 @@ function makeVocabCard(overrides: Partial<VocabWithSRS> = {}): VocabWithSRS {
     ...overrides,
   }
 }
+
+describe('computeAnswerRating', () => {
+  it('returns 1 (Again) when incorrect regardless of consecutive_correct', () => {
+    expect(computeAnswerRating({ consecutive_correct: 10 }, false)).toBe(1)
+  })
+
+  it('returns 3 (Good) when correct and consecutive_correct < 3', () => {
+    expect(computeAnswerRating({ consecutive_correct: 2 }, true)).toBe(3)
+  })
+
+  it('returns 3 (Good) when correct and consecutive_correct is 0', () => {
+    expect(computeAnswerRating({ consecutive_correct: 0 }, true)).toBe(3)
+  })
+
+  it('returns 4 (Easy) when correct and consecutive_correct is exactly 3', () => {
+    expect(computeAnswerRating({ consecutive_correct: 3 }, true)).toBe(4)
+  })
+
+  it('returns 4 (Easy) when correct and consecutive_correct > 3', () => {
+    expect(computeAnswerRating({ consecutive_correct: 5 }, true)).toBe(4)
+  })
+})
 
 describe('useSRS – answerTypeInput', () => {
   beforeEach(async () => {
