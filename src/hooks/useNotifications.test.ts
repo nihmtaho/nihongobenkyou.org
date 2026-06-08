@@ -132,7 +132,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect((window.Notification as unknown as { requestPermission: ReturnType<typeof vi.fn> }).requestPermission).toHaveBeenCalled()
@@ -146,7 +146,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect(storeState.setNotificationsEnabled).toHaveBeenCalledWith(true)
@@ -159,7 +159,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect(navigator.serviceWorker.register).not.toHaveBeenCalled()
@@ -175,7 +175,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect(storeState.setNotificationsEnabled).toHaveBeenCalledWith(false)
@@ -186,7 +186,7 @@ describe('useNotifications', () => {
     it('updateTime delegates to setReminderTime', async () => {
       const { result } = renderHook(() => useNotifications())
       await act(async () => {
-        await result.current.updateTime('08:30')
+        result.current.updateTime('08:30')
       })
       expect(storeState.setReminderTime).toHaveBeenCalledWith('08:30')
     })
