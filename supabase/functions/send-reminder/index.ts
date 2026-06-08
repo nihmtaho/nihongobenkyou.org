@@ -53,8 +53,8 @@ Deno.serve(async (_req) => {
     }),
   )
 
-  const sent = results.filter(r => r.status === 'fulfilled').length
-  const failed = results.filter(r => r.status === 'rejected').length
+  const sent = results.filter((r: PromiseSettledResult<void>) => r.status === 'fulfilled').length
+  const failed = results.filter((r: PromiseSettledResult<void>) => r.status === 'rejected').length
 
   return new Response(JSON.stringify({ sent, failed, hour: currentHour }), {
     headers: { 'Content-Type': 'application/json' },
