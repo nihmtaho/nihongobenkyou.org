@@ -73,6 +73,7 @@ export async function mergePackageIntoDexie(
         continue
       const local = await db.custom_vocabulary.get(remote.id)
       if (!local || (remote.updated_at ?? '') >= (local.updated_at ?? '')) {
+        await db.custom_vocabulary.put(remote)
         imported++
       }
     }
