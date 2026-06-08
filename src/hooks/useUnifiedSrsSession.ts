@@ -123,8 +123,8 @@ export function useUnifiedSrsSession(
   const { data: dueKanji, isLoading: kanjiLoading } = useQuery({
     queryKey: ['due-kanji-unified', userId],
     queryFn: async () => {
-      const todayDate = new Date().toISOString().slice(0, 10)
-      const cards = await getDueCards(userId, todayDate, 'kanji')
+      const nowISO = new Date().toISOString()
+      const cards = await getDueCards(userId, nowISO, 'kanji')
       const kanjiItems = await db.kanji.where('char').anyOf(cards.map(c => c.cardId)).toArray()
       const kanjiMap = new Map(kanjiItems.map(k => [k.char, k]))
       return cards.flatMap((card): UnifiedCard[] => {

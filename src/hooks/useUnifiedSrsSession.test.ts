@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { db } from '../db/schema'
 import { getDueCards } from '../db/srs-cards'
 import { initFSRSCard } from '../lib/srs'
 
 describe('getDueCards — due_datetime guard for learning/relearning cards', () => {
   const UID = 'due-guard-test-user'
+
+  afterEach(async () => {
+    await db.srs_cards.where('userId').equals(UID).delete()
+  })
 
   function makeCard(
     state: 'learning' | 'relearning' | 'review',
