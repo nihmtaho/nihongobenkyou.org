@@ -204,6 +204,45 @@ describe('useSRS – rate() consecutive_correct mutation', () => {
     })
   })
 
+  it('answer() with consecutive_correct=3 writes last_rating=4 (Easy) to Dexie', async () => {
+    await db.srs_cards.put({
+      userId: USER_ID,
+      cardId: VOCAB_ID,
+      cardType: 'vocab',
+      deckId: null,
+      state: 'review',
+      stability: 4.2,
+      difficulty: 5.0,
+      elapsed_days: 2,
+      scheduled_days: 4,
+      reps: 4,
+      lapses: 0,
+      last_review: '2026-05-01',
+      due: '2026-05-05',
+      last_rating: null,
+      is_known: false,
+      consecutive_correct: 3,
+      pending_sync: false,
+      updated_at: new Date().toISOString(),
+    })
+
+    const { result } = renderHook(() => useSRS('vocab', USER_ID), { wrapper: makeWrapper() })
+    const card = makeVocabCard({ consecutive_correct: 3 })
+
+    act(() => {
+      result.current.answer(card, true)
+    })
+
+    await waitFor(async () => {
+      const stored = await db.srs_cards
+        .where('[userId+cardId]')
+        .equals([USER_ID, VOCAB_ID])
+        .first()
+      expect(stored).toBeDefined()
+      expect(stored!.last_rating).toBe(4)
+    })
+  })
+
   it('custom_vocab card writes review_log with cardType custom_vocab', async () => {
     const CUSTOM_CARD_ID = 'custom_abc123'
     const { result } = renderHook(() => useSRS('vocab', USER_ID), { wrapper: makeWrapper() })
