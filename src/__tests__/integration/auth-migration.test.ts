@@ -148,6 +148,14 @@ describe('migrateAnonymousData', () => {
     const result = await db.srs_cards.get([AUTH_ID, 'vocab-123'])
     expect(result).toBeDefined()
     expect(result?.reps).toBe(10)
+
+    // Anon card must be deleted (unconditional cleanup)
+    const anonResult = await db.srs_cards.get([ANON_ID, 'vocab-123'])
+    expect(anonResult).toBeUndefined()
+
+    // anonymous_user_id setting must be cleaned up
+    const anonSetting = await db.settings.get('anonymous_user_id')
+    expect(anonSetting).toBeUndefined()
   })
 
   it('preserves original card data (cardId, scheduled_days, due)', async () => {

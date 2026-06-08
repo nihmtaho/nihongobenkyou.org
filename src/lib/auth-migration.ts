@@ -19,10 +19,11 @@ export async function migrateAnonymousData(
   }
 
   const cardIds = cards.map(c => c.cardId)
+  const cardIdSet = new Set(cardIds)
   const existingAuthCards = await db.srs_cards
     .where('[userId+cardType]')
     .equals([authenticatedUserId, 'vocab'])
-    .filter(c => cardIds.includes(c.cardId))
+    .filter(c => cardIdSet.has(c.cardId))
     .toArray()
   const authCardMap = new Map(existingAuthCards.map(c => [c.cardId, c]))
 
@@ -37,43 +38,45 @@ export async function migrateAnonymousData(
   const bookSourceMap = new Map(vocabItems.map(v => [v.vocab_id, v.book_source]))
   const now = new Date().toISOString()
 
-  // Always delete ALL anonymous cards — no orphaned anon data should remain.
-  // Only re-key the subset that are actually newer than the remote version.
-  await db.srs_cards
-    .where('[userId+cardType]')
-    .equals([anonymousUserId, 'vocab'])
-    .delete()
+  await db.transaction('rw', ['srs_cards', 'review_log', 'settings'], async () => {
+    // Always delete ALL anonymous cards — no orphaned anon data should remain.
+    // Only re-key the subset that are actually newer than the remote version.
+    await db.srs_cards
+      .where('[userId+cardType]')
+      .equals([anonymousUserId, 'vocab'])
+      .delete()
 
-  if (cardsToMigrate.length === 0) {
+    if (cardsToMigrate.length === 0) {
+      await db.settings.delete('anonymous_user_id')
+      return
+    }
+
+    await db.srs_cards.bulkPut(
+      cardsToMigrate.map(c => ({ ...c, userId: authenticatedUserId, pending_sync: false })),
+    )
+
+    // Create review_log entries so the migrated SRS state reaches Supabase
+    await db.review_log.bulkAdd(
+      cardsToMigrate.map(c => ({
+        userId: authenticatedUserId,
+        vocabId: c.cardId,
+        bookSource: bookSourceMap.get(c.cardId) ?? 'minna_shokyuu_1',
+        cardType: 'vocab' as const,
+        rating: (c.last_rating ?? 2) as 1 | 2 | 3 | 4,
+        scheduledDays: c.scheduled_days,
+        stability: c.stability,
+        difficulty: c.difficulty,
+        dueDate: c.due,
+        reviewCount: c.reps,
+        isKnown: c.is_known ?? false,
+        reviewedAt: c.updated_at || now,
+        pendingSync: true,
+        remoteId: null,
+      })),
+    )
+
     await db.settings.delete('anonymous_user_id')
-    return 0
-  }
-
-  await db.srs_cards.bulkPut(
-    cardsToMigrate.map(c => ({ ...c, userId: authenticatedUserId, pending_sync: false })),
-  )
-
-  // Create review_log entries so the migrated SRS state reaches Supabase
-  await db.review_log.bulkAdd(
-    cardsToMigrate.map(c => ({
-      userId: authenticatedUserId,
-      vocabId: c.cardId,
-      bookSource: bookSourceMap.get(c.cardId) ?? 'minna_shokyuu_1',
-      cardType: 'vocab' as const,
-      rating: (c.last_rating ?? 2) as 1 | 2 | 3 | 4,
-      scheduledDays: c.scheduled_days,
-      stability: c.stability,
-      difficulty: c.difficulty,
-      dueDate: c.due,
-      reviewCount: c.reps,
-      isKnown: c.is_known ?? false,
-      reviewedAt: c.updated_at || now,
-      pendingSync: true,
-      remoteId: null,
-    })),
-  )
-
-  await db.settings.delete('anonymous_user_id')
+  })
 
   uploadPendingReviews().catch(() => {})
 
