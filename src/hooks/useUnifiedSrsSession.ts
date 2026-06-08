@@ -186,17 +186,28 @@ export function useUnifiedSrsSession(
     const newCards = all.filter(c => c.card.state === 'new')
     const reviewCards = all.filter(c => c.card.state !== 'new')
     const limitedNewCards = newCards.slice(0, newCardsPerDay)
-    if (newCards.length > newCardsPerDay) {
-      toast.info(`Giới hạn ${newCardsPerDay} thẻ mới hôm nay (${newCards.length - newCardsPerDay} thẻ còn lại cho ngày mai)`)
-    }
     return [...reviewCards, ...limitedNewCards]
   }
 
   function startSession() {
-    const built = fisherYates(buildQueue())
-    if (built.length === 0)
+    const built = buildQueue()
+
+    if (!hasPrebuilt) {
+      const allAvailableNew = [
+        ...(dueVocab?.vocab ?? []),
+        ...(dueVocab?.kanjiVocab ?? []),
+        ...(dueKanji ?? []),
+      ].filter(c => c.card.state === 'new')
+      const overflow = allAvailableNew.length - newCardsPerDay
+      if (overflow > 0) {
+        toast.info(`Giới hạn ${newCardsPerDay} thẻ mới hôm nay (${overflow} thẻ còn lại cho ngày mai)`)
+      }
+    }
+
+    const shuffled = fisherYates(built)
+    if (shuffled.length === 0)
       return // nothing to study
-    setQueue(built)
+    setQueue(shuffled)
     setCurrentIndex(0)
     setStats(makeStats())
     setPhase('active')
