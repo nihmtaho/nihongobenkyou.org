@@ -4,6 +4,7 @@ import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { db } from '../db/schema'
 import { getDueCards } from '../db/srs-cards'
 import { fisherYates } from '../lib/utils'
@@ -185,6 +186,9 @@ export function useUnifiedSrsSession(
     const newCards = all.filter(c => c.card.state === 'new')
     const reviewCards = all.filter(c => c.card.state !== 'new')
     const limitedNewCards = newCards.slice(0, newCardsPerDay)
+    if (newCards.length > newCardsPerDay) {
+      toast.info(`Giới hạn ${newCardsPerDay} thẻ mới hôm nay (${newCards.length - newCardsPerDay} thẻ còn lại cho ngày mai)`)
+    }
     return [...reviewCards, ...limitedNewCards]
   }
 
