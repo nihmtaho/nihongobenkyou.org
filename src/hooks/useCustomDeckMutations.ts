@@ -12,7 +12,15 @@ export function useCustomDeckMutations(userId: string) {
     mutationFn: (input: { title: string, description?: string }) =>
       createDeck(userId, input),
     onSuccess: () => invalidate(),
-    onError: () => toast.error('Không tạo được deck. Vui lòng thử lại.'),
+    onError: (err: Error) => {
+      if (err.message.startsWith('DECK_LIMIT_REACHED')) {
+        const limit = err.message.split(':')[1]
+        toast.error(`Đã đạt giới hạn ${limit} deck. Xóa deck cũ để tạo mới.`)
+      }
+      else {
+        toast.error('Không tạo được deck. Vui lòng thử lại.')
+      }
+    },
   })
 
   const updateDeckMutation = useMutation({

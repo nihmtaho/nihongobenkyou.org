@@ -1,4 +1,5 @@
 import type { CustomDeck, CustomVocabItem, ParsedVocabItem } from '../types/custom-deck'
+import { MAX_DECKS_PER_USER, MAX_WORDS_PER_DECK } from '../lib/constants'
 import { db } from './schema'
 import { getSRSCardsForDeck, initSRSCard, migrateSRSCardsUserId } from './srs-cards'
 
@@ -6,6 +7,10 @@ export async function createDeck(
   userId: string,
   input: { title: string, description?: string },
 ): Promise<CustomDeck> {
+  const deckCount = await db.custom_decks.where('user_id').equals(userId).count()
+  if (deckCount >= MAX_DECKS_PER_USER) {
+    throw new Error(`DECK_LIMIT_REACHED:${MAX_DECKS_PER_USER}`)
+  }
   const now = new Date().toISOString()
   const deck: CustomDeck = {
     id: crypto.randomUUID(),
@@ -65,6 +70,11 @@ export async function addWords(
   items: ParsedVocabItem[],
   source: 'manual' | 'json' | 'csv' = 'json',
 ): Promise<void> {
+  const deck = await db.custom_decks.get(deckId)
+  if (deck && deck.word_count + items.length > MAX_WORDS_PER_DECK) {
+    const remaining = MAX_WORDS_PER_DECK - deck.word_count
+    throw new Error(`WORD_LIMIT_REACHED:${MAX_WORDS_PER_DECK}:${remaining}`)
+  }
   const now = new Date().toISOString()
   const words: CustomVocabItem[] = items.map(item => ({
     id: crypto.randomUUID(),
