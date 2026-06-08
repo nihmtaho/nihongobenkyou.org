@@ -25,8 +25,13 @@ export function useCustomVocabMutations(deckId: string, userId: string) {
     onSuccess: () => invalidate(),
     onError: (err: Error) => {
       if (err.message.startsWith('WORD_LIMIT_REACHED')) {
-        const [, max, remaining] = err.message.split(':')
-        toast.error(`Giới hạn ${max} từ/deck. Còn ${remaining} chỗ trống.`)
+        const parts = err.message.split(':')
+        const max = parts[1]
+        const remaining = Number(parts[2])
+        const msg = remaining > 0
+          ? `Giới hạn ${max} từ/deck. Còn ${remaining} chỗ trống.`
+          : `Deck đã đầy (${max} từ).`
+        toast.error(msg)
       }
       else {
         toast.error('Không thêm được từ. Vui lòng thử lại.')

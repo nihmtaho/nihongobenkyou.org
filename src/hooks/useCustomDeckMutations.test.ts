@@ -44,7 +44,7 @@ describe('deck and word count limits', () => {
 
     await expect(createDeck(UID, { title: 'One more' }))
       .rejects
-      .toThrow('DECK_LIMIT_REACHED')
+      .toThrow(`DECK_LIMIT_REACHED:${MAX_DECKS_PER_USER}`)
   })
 
   it('throws WORD_LIMIT_REACHED when adding would exceed MAX_WORDS_PER_DECK', async () => {
@@ -66,7 +66,7 @@ describe('deck and word count limits', () => {
 
     await expect(addWords('deck-word-limit', UID, items))
       .rejects
-      .toThrow('WORD_LIMIT_REACHED')
+      .toThrow(`WORD_LIMIT_REACHED:${MAX_WORDS_PER_DECK}:1`)
   })
 
   it('allows creating a deck when under the limit', async () => {

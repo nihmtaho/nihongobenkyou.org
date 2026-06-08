@@ -70,11 +70,6 @@ export async function addWords(
   items: ParsedVocabItem[],
   source: 'manual' | 'json' | 'csv' = 'json',
 ): Promise<void> {
-  const deck = await db.custom_decks.get(deckId)
-  if (deck && deck.word_count + items.length > MAX_WORDS_PER_DECK) {
-    const remaining = MAX_WORDS_PER_DECK - deck.word_count
-    throw new Error(`WORD_LIMIT_REACHED:${MAX_WORDS_PER_DECK}:${remaining}`)
-  }
   const now = new Date().toISOString()
   const words: CustomVocabItem[] = items.map(item => ({
     id: crypto.randomUUID(),
@@ -89,8 +84,12 @@ export async function addWords(
   }))
 
   await db.transaction('rw', [db.custom_decks, db.custom_vocabulary], async () => {
-    await db.custom_vocabulary.bulkAdd(words)
     const deck = await db.custom_decks.get(deckId)
+    if (deck && deck.word_count + words.length > MAX_WORDS_PER_DECK) {
+      const remaining = MAX_WORDS_PER_DECK - deck.word_count
+      throw new Error(`WORD_LIMIT_REACHED:${MAX_WORDS_PER_DECK}:${remaining}`)
+    }
+    await db.custom_vocabulary.bulkAdd(words)
     if (deck) {
       await db.custom_decks.update(deckId, {
         word_count: deck.word_count + words.length,
