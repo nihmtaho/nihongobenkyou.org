@@ -18,23 +18,44 @@ export async function migrateAnonymousData(
     return 0
   }
 
-  const vocabIds = cards.map(c => c.cardId)
+  const cardIds = cards.map(c => c.cardId)
+  const existingAuthCards = await db.srs_cards
+    .where('[userId+cardType]')
+    .equals([authenticatedUserId, 'vocab'])
+    .filter(c => cardIds.includes(c.cardId))
+    .toArray()
+  const authCardMap = new Map(existingAuthCards.map(c => [c.cardId, c]))
+
+  // Skip cards where the remote (authenticated) version is already newer
+  const cardsToMigrate = cards.filter((c) => {
+    const authCard = authCardMap.get(c.cardId)
+    return !authCard || c.updated_at > authCard.updated_at
+  })
+
+  const vocabIds = cardsToMigrate.map(c => c.cardId)
   const vocabItems = await db.vocabulary.where('vocab_id').anyOf(vocabIds).toArray()
   const bookSourceMap = new Map(vocabItems.map(v => [v.vocab_id, v.book_source]))
   const now = new Date().toISOString()
 
-  // Re-key srs_cards to authenticated user. pending_sync=false: review_log drives sync now.
+  // Always delete ALL anonymous cards — no orphaned anon data should remain.
+  // Only re-key the subset that are actually newer than the remote version.
   await db.srs_cards
     .where('[userId+cardType]')
     .equals([anonymousUserId, 'vocab'])
     .delete()
+
+  if (cardsToMigrate.length === 0) {
+    await db.settings.delete('anonymous_user_id')
+    return 0
+  }
+
   await db.srs_cards.bulkPut(
-    cards.map(c => ({ ...c, userId: authenticatedUserId, pending_sync: false })),
+    cardsToMigrate.map(c => ({ ...c, userId: authenticatedUserId, pending_sync: false })),
   )
 
   // Create review_log entries so the migrated SRS state reaches Supabase
   await db.review_log.bulkAdd(
-    cards.map(c => ({
+    cardsToMigrate.map(c => ({
       userId: authenticatedUserId,
       vocabId: c.cardId,
       bookSource: bookSourceMap.get(c.cardId) ?? 'minna_shokyuu_1',
@@ -56,5 +77,5 @@ export async function migrateAnonymousData(
 
   uploadPendingReviews().catch(() => {})
 
-  return cards.length
+  return cardsToMigrate.length
 }
