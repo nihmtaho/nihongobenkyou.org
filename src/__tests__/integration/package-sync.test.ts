@@ -187,6 +187,7 @@ describe('mergePackageIntoDexie — custom_vocabulary', () => {
     await mergePackageIntoDexie(UID, pkg)
 
     const stored = await db.custom_vocabulary.get('vocab-shared')
+    expect(stored).toBeDefined()
     expect(stored?.meaning_vi).toBe('updated')
   })
 })
