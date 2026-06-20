@@ -14,17 +14,18 @@ const UPLOAD_CHUNK_SIZE = 200
 const DEFAULT_FSRS_DIFFICULTY = 5
 const DEFAULT_STABILITY_DAYS = 1
 
-let isSyncing = false
+let syncPromise: Promise<void> | null = null
 
-export async function uploadPendingReviews(): Promise<void> {
-  if (isSyncing)
-    return
-  isSyncing = true
+export function uploadPendingReviews(): Promise<void> {
+  if (syncPromise)
+    return syncPromise
 
-  try {
+  syncPromise = (async () => {
     const userId = await getCurrentUserId()
     if (!userId)
       return
+
+    window.dispatchEvent(new Event('sync-start'))
 
     const pending = await db.review_log
       .toCollection()
@@ -74,8 +75,10 @@ export async function uploadPendingReviews(): Promise<void> {
         })
       }
       catch (err) {
-        if (err instanceof AuthError)
+        if (err instanceof AuthError) {
+          window.dispatchEvent(new CustomEvent('sync-error', { detail: { message: err instanceof Error ? err.message : 'Sync failed' } }))
           throw err
+        }
         hasFailed = true
       }
     }
@@ -87,10 +90,11 @@ export async function uploadPendingReviews(): Promise<void> {
     }
 
     window.dispatchEvent(new Event('sync-complete'))
-  }
-  finally {
-    isSyncing = false
-  }
+  })().finally(() => {
+    syncPromise = null
+  })
+
+  return syncPromise
 }
 
 export async function downloadNewReviews(userId: string): Promise<void> {

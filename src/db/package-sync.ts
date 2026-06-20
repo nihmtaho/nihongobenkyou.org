@@ -117,17 +117,18 @@ export async function mergePackageIntoDexie(
   })
 }
 
-let isSyncing = false
+let syncPackagePromise: Promise<void> | null = null
 
-export async function syncPackage(userId: string): Promise<void> {
-  if (isSyncing)
-    return
-  isSyncing = true
+export function syncPackage(userId: string): Promise<void> {
+  if (syncPackagePromise)
+    return syncPackagePromise
 
-  try {
+  syncPackagePromise = (async () => {
     const authedUserId = await getCurrentUserId()
     if (!authedUserId)
       return
+
+    window.dispatchEvent(new Event('sync-start'))
 
     const [deviceId, localVersion] = await Promise.all([
       getOrCreateDeviceId(),
@@ -145,6 +146,7 @@ export async function syncPackage(userId: string): Promise<void> {
     catch (err) {
       if (err instanceof NetworkError)
         return
+      window.dispatchEvent(new CustomEvent('sync-error', { detail: { message: err instanceof Error ? err.message : 'Sync failed' } }))
       throw err
     }
 
@@ -180,16 +182,19 @@ export async function syncPackage(userId: string): Promise<void> {
       }
     }
     catch (err) {
-      if (err instanceof AuthError)
+      if (err instanceof AuthError) {
+        window.dispatchEvent(new CustomEvent('sync-error', { detail: { message: err instanceof Error ? err.message : 'Sync failed' } }))
         throw err
+      }
       // NetworkError or SyncError — leave version unchanged, retry next cycle
     }
 
     window.dispatchEvent(new Event('sync-complete'))
-  }
-  finally {
-    isSyncing = false
-  }
+  })().finally(() => {
+    syncPackagePromise = null
+  })
+
+  return syncPackagePromise
 }
 
 // Used on new device login: download and apply the remote package without uploading.
