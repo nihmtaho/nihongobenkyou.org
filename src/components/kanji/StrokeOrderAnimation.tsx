@@ -218,8 +218,8 @@ export function StrokeOrderAnimation({ strokes, viewBox = '0 0 109 109', classNa
       <div className="bg-card border border-border/10 p-2 flex justify-center">
         <svg
           viewBox={viewBox}
-          width="200"
-          height="200"
+          width="100%"
+          className="aspect-square"
           style={{ fontFamily: 'var(--br-jp-font)' }}
         >
           {strokes.map((stroke, i) => (
