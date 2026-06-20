@@ -1,5 +1,6 @@
 import type { StreakData } from '../../db/schema'
 
+import type { CustomVocabItem } from '../../types/custom-deck'
 import type { ReviewLogEntry } from '../../types/review-log'
 import type { SyncPackagePayload } from '../../types/sync-package'
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it } from 'vitest'
@@ -134,5 +135,59 @@ describe('mergePackageIntoDexie — streaks', () => {
     const s = await db.streaks.get('2026-05-01')
     expect(s?.current_streak).toBe(12)
     expect(s?.max_streak).toBe(15) // local max preserved
+  })
+})
+
+describe('mergePackageIntoDexie — custom_vocabulary', () => {
+  const UID = 'cv-sync-test-user'
+
+  function makeVocab(id: string, updatedAt: string): CustomVocabItem {
+    return {
+      id,
+      deck_id: 'deck-1',
+      user_id: UID,
+      kana: 'てすと',
+      kanji: 'テスト',
+      han_viet: null,
+      meaning_vi: 'kiểm tra',
+      source: 'manual' as const,
+      created_at: updatedAt,
+      updated_at: updatedAt,
+    }
+  }
+
+  it('writes remote custom_vocab to Dexie when no local copy exists', async () => {
+    const remoteEntry = makeVocab('vocab-remote-1', '2026-06-01T10:00:00.000Z')
+    const pkg: SyncPackagePayload = {
+      srs_cards: [],
+      custom_decks: [],
+      custom_vocabulary: [remoteEntry],
+      streaks: [],
+    }
+
+    await mergePackageIntoDexie(UID, pkg)
+
+    const stored = await db.custom_vocabulary.get('vocab-remote-1')
+    expect(stored).toBeDefined()
+    expect(stored?.kana).toBe('てすと')
+  })
+
+  it('overwrites local custom_vocab when remote is newer', async () => {
+    const oldEntry = makeVocab('vocab-shared', '2026-05-01T00:00:00.000Z')
+    await db.custom_vocabulary.put(oldEntry)
+
+    const newerRemote = { ...oldEntry, meaning_vi: 'updated', updated_at: '2026-06-01T00:00:00.000Z' }
+    const pkg: SyncPackagePayload = {
+      srs_cards: [],
+      custom_decks: [],
+      custom_vocabulary: [newerRemote],
+      streaks: [],
+    }
+
+    await mergePackageIntoDexie(UID, pkg)
+
+    const stored = await db.custom_vocabulary.get('vocab-shared')
+    expect(stored).toBeDefined()
+    expect(stored?.meaning_vi).toBe('updated')
   })
 })

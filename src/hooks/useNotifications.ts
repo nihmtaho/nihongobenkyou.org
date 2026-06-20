@@ -43,13 +43,14 @@ export function useNotifications() {
         endpoint: subscription.endpoint,
         p256dh: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('p256dh')!))),
         auth: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))),
+        reminder_time: reminderTime,
       }, { onConflict: 'user_id,endpoint' })
       setNotificationsEnabled(true)
     }
     catch (err) {
       console.error('Push subscription failed', err)
     }
-  }, [supported, setNotificationsEnabled])
+  }, [supported, setNotificationsEnabled, reminderTime])
 
   const disable = useCallback(async () => {
     setNotificationsEnabled(false)
@@ -78,6 +79,29 @@ export function useNotifications() {
       enable()
   }, [notificationsEnabled, enable, disable])
 
+  const syncReminderTime = useCallback(async (time: string) => {
+    setReminderTime(time)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user)
+        return
+      const reg = await navigator.serviceWorker?.getRegistration('/push-worker.js')
+      if (!reg)
+        return
+      const sub = await reg.pushManager?.getSubscription()
+      if (!sub)
+        return
+      await supabase
+        .from('user_push_subscriptions')
+        .update({ reminder_time: time })
+        .eq('user_id', user.id)
+        .eq('endpoint', sub.endpoint)
+    }
+    catch {
+      // Non-blocking — localStorage is the source of truth for the UI
+    }
+  }, [setReminderTime])
+
   return {
     supported,
     permission,
@@ -85,7 +109,7 @@ export function useNotifications() {
     reminderTime,
     dailyTarget,
     toggle,
-    updateTime: setReminderTime,
+    updateTime: syncReminderTime,
     updateTarget: setDailyTarget,
   }
 }

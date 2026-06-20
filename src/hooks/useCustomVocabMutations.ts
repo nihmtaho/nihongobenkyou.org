@@ -1,5 +1,6 @@
 import type { CustomVocabItem, ParsedVocabItem } from '../types/custom-deck'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { addWords, deleteWord, updateWord } from '../db/custom-decks-local'
 import { CUSTOM_DECKS_KEY } from './useCustomDecks'
 import { DECK_WORDS_KEY } from './useCustomDeckWords'
@@ -22,6 +23,20 @@ export function useCustomVocabMutations(deckId: string, userId: string) {
       source?: 'manual' | 'json' | 'csv'
     }) => addWords(deckId, userId, items, source),
     onSuccess: () => invalidate(),
+    onError: (err: Error) => {
+      if (err.message.startsWith('WORD_LIMIT_REACHED')) {
+        const parts = err.message.split(':')
+        const max = parts[1]
+        const remaining = Number(parts[2])
+        const msg = remaining > 0
+          ? `Giới hạn ${max} từ/deck. Còn ${remaining} chỗ trống.`
+          : `Deck đã đầy (${max} từ).`
+        toast.error(msg)
+      }
+      else {
+        toast.error('Không thêm được từ. Vui lòng thử lại.')
+      }
+    },
   })
 
   const deleteWordMutation = useMutation({

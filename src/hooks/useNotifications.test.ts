@@ -15,6 +15,11 @@ vi.mock('../api/supabase', () => ({
     },
     from: vi.fn().mockReturnValue({
       upsert: vi.fn().mockResolvedValue({ error: null }),
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
+      }),
       delete: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
           eq: vi.fn().mockResolvedValue({ error: null }),
@@ -127,7 +132,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect((window.Notification as unknown as { requestPermission: ReturnType<typeof vi.fn> }).requestPermission).toHaveBeenCalled()
@@ -141,7 +146,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect(storeState.setNotificationsEnabled).toHaveBeenCalledWith(true)
@@ -154,7 +159,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect(navigator.serviceWorker.register).not.toHaveBeenCalled()
@@ -170,7 +175,7 @@ describe('useNotifications', () => {
       await act(async () => {})
 
       await act(async () => {
-        await result.current.toggle()
+        result.current.toggle()
       })
 
       expect(storeState.setNotificationsEnabled).toHaveBeenCalledWith(false)
@@ -178,9 +183,11 @@ describe('useNotifications', () => {
   })
 
   describe('updateTime and updateTarget', () => {
-    it('updateTime delegates to setReminderTime', () => {
+    it('updateTime delegates to setReminderTime', async () => {
       const { result } = renderHook(() => useNotifications())
-      act(() => result.current.updateTime('08:30'))
+      await act(async () => {
+        result.current.updateTime('08:30')
+      })
       expect(storeState.setReminderTime).toHaveBeenCalledWith('08:30')
     })
 

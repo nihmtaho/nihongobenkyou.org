@@ -21,17 +21,7 @@ import { useAuthStore } from '../stores/authStore'
 import { runGuestMigration } from './useMigrateGuestDecks'
 
 async function handleFirstSignIn(userId: string, queryClient: QueryClient): Promise<void> {
-  // 1. Migrate anonymous SRS data if this is a first-time login
-  const anonSetting = await db.settings.get('anonymous_user_id')
-  const anonId = anonSetting?.value as string | undefined
-  if (anonId && anonId !== userId) {
-    await migrateAnonymousData(anonId, userId)
-  }
-
-  // Migrate any custom decks created as guest → real user
-  await runGuestMigration(userId)
-
-  // 2. Check if account was soft-deleted within grace period — reactivate silently
+  // 1. Check if account was soft-deleted within grace period — reactivate silently
   try {
     const status = await checkAccountStatus(userId)
     if (status.isDeleted && status.isWithinGracePeriod) {
@@ -43,7 +33,7 @@ async function handleFirstSignIn(userId: string, queryClient: QueryClient): Prom
     // NetworkError during status check — do not block login
   }
 
-  // 3. Fetch remote SRS state and seed required datasets on this device
+  // 2. Fetch remote SRS state and seed required datasets on this device
   try {
     await onboardNewDevice(userId, queryClient)
   }
@@ -53,7 +43,7 @@ async function handleFirstSignIn(userId: string, queryClient: QueryClient): Prom
     console.error('onboardNewDevice failed (non-blocking):', err)
   }
 
-  // 4. Download sync package (includes custom_decks + custom_vocabulary)
+  // 3. Download sync package (includes custom_decks + custom_vocabulary)
   try {
     await downloadPackageForNewDevice(userId)
   }
@@ -62,7 +52,18 @@ async function handleFirstSignIn(userId: string, queryClient: QueryClient): Prom
       console.error('downloadPackageForNewDevice failed (non-blocking):', err)
   }
 
-  // 5. Trigger profile hydration query
+  // 4. Migrate anonymous SRS data AFTER remote data is in Dexie —
+  // migrateAnonymousData skips cards where the authenticated version is newer.
+  const anonSetting = await db.settings.get('anonymous_user_id')
+  const anonId = anonSetting?.value as string | undefined
+  if (anonId && anonId !== userId) {
+    await migrateAnonymousData(anonId, userId)
+  }
+
+  // 5. Migrate any custom decks created as guest → real user
+  await runGuestMigration(userId)
+
+  // 6. Trigger profile hydration query
   await queryClient.invalidateQueries({ queryKey: ['profile', userId] })
 }
 

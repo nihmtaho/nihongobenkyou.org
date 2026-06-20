@@ -2,6 +2,7 @@ import type { SRSCard } from '../../types/srs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { db } from '../../db/schema'
 import { migrateAnonymousData } from '../../lib/auth-migration'
+import { initFSRSCard } from '../../lib/srs'
 
 vi.mock('../../db/sync', () => ({
   uploadPendingReviews: vi.fn().mockResolvedValue(undefined),
@@ -105,6 +106,56 @@ describe('migrateAnonymousData', () => {
     expect(count).toBe(0)
     const setting = await db.settings.get('anonymous_user_id')
     expect(setting).toBeUndefined()
+  })
+
+  it('does not overwrite an existing authenticated card with an older anonymous card', async () => {
+    // Simulate: remote data was already written to Dexie (onboardNewDevice ran first)
+    const remoteCard = {
+      userId: AUTH_ID,
+      cardId: 'vocab-123',
+      cardType: 'vocab' as const,
+      deckId: null,
+      ...initFSRSCard(),
+      last_rating: 3 as const,
+      is_known: false,
+      consecutive_correct: 1,
+      pending_sync: false,
+      updated_at: '2026-06-05T12:00:00.000Z',
+      reps: 10,
+    }
+    await db.srs_cards.put(remoteCard)
+
+    // Anonymous card is older
+    const anonCard = {
+      userId: ANON_ID,
+      cardId: 'vocab-123',
+      cardType: 'vocab' as const,
+      deckId: null,
+      ...initFSRSCard(),
+      last_rating: 2 as const,
+      is_known: false,
+      consecutive_correct: 0,
+      pending_sync: true,
+      updated_at: '2026-05-01T00:00:00.000Z',
+      reps: 1,
+    }
+    await db.srs_cards.put(anonCard)
+    await db.settings.put({ key: 'anonymous_user_id', value: ANON_ID })
+
+    await migrateAnonymousData(ANON_ID, AUTH_ID)
+
+    // Remote card's reps must be preserved (anon was older — should not overwrite)
+    const result = await db.srs_cards.get([AUTH_ID, 'vocab-123'])
+    expect(result).toBeDefined()
+    expect(result?.reps).toBe(10)
+
+    // Anon card must be deleted (unconditional cleanup)
+    const anonResult = await db.srs_cards.get([ANON_ID, 'vocab-123'])
+    expect(anonResult).toBeUndefined()
+
+    // anonymous_user_id setting must be cleaned up
+    const anonSetting = await db.settings.get('anonymous_user_id')
+    expect(anonSetting).toBeUndefined()
   })
 
   it('preserves original card data (cardId, scheduled_days, due)', async () => {

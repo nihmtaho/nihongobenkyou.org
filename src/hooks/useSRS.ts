@@ -62,6 +62,17 @@ function toSRSCard(card: SRSCard | VocabWithSRS, userId: string): SRSCard {
   return card as SRSCard
 }
 
+// Export for testing.
+// Emits Easy(4) after 3+ consecutive correct answers; Good(3) otherwise; Again(1) on incorrect.
+export function computeAnswerRating(
+  card: Pick<SRSCard, 'consecutive_correct'>,
+  isCorrect: boolean,
+): SRSRating {
+  if (!isCorrect)
+    return 1
+  return (card.consecutive_correct ?? 0) >= 3 ? 4 : 3
+}
+
 export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSReturn<T> {
   const queryClient = useQueryClient()
   const cardType: SRSCard['cardType'] = subject === 'vocab' ? 'vocab' : 'kanji'
@@ -144,7 +155,8 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
   }
 
   function answer(card: SRSCard | VocabWithSRS, isCorrect: boolean): void {
-    rate(card, isCorrect ? 3 : 1) // Good=3, Again=1
+    const srsCard = toSRSCard(card, userId)
+    rate(srsCard, computeAnswerRating(srsCard, isCorrect))
   }
 
   function answerTypeInput(card: SRSCard | VocabWithSRS, isCorrect: boolean): TypeInputResult {

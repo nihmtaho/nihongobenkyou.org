@@ -4,6 +4,7 @@ import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { db } from '../db/schema'
 import { getDueCards } from '../db/srs-cards'
 import { fisherYates } from '../lib/utils'
@@ -72,15 +73,12 @@ export function useUnifiedSrsSession(
   const { data: dueVocab, isLoading: vocabLoading } = useQuery({
     queryKey: ['due-vocab-unified', userId],
     queryFn: async () => {
-      const todayDate = new Date().toISOString().slice(0, 10)
+      const nowISO = new Date().toISOString()
       const allKanji = await db.kanji.toArray()
       const rvIdSet = buildRvIdSet(allKanji)
 
-      const allDue = await db.srs_cards
-        .where('[userId+due]')
-        .belowOrEqual([userId, todayDate])
-        .filter(c => c.userId === userId && !c.is_known && c.cardType === 'vocab')
-        .toArray()
+      // getDueCards applies the due_datetime guard for learning/relearning cards
+      const allDue = await getDueCards(userId, nowISO, 'vocab')
 
       // Bulk-load vocab to avoid N+1
       const regularVocabIds = allDue
@@ -126,8 +124,8 @@ export function useUnifiedSrsSession(
   const { data: dueKanji, isLoading: kanjiLoading } = useQuery({
     queryKey: ['due-kanji-unified', userId],
     queryFn: async () => {
-      const todayDate = new Date().toISOString().slice(0, 10)
-      const cards = await getDueCards(userId, todayDate, 'kanji')
+      const nowISO = new Date().toISOString()
+      const cards = await getDueCards(userId, nowISO, 'kanji')
       const kanjiItems = await db.kanji.where('char').anyOf(cards.map(c => c.cardId)).toArray()
       const kanjiMap = new Map(kanjiItems.map(k => [k.char, k]))
       return cards.flatMap((card): UnifiedCard[] => {
@@ -192,10 +190,24 @@ export function useUnifiedSrsSession(
   }
 
   function startSession() {
-    const built = fisherYates(buildQueue())
-    if (built.length === 0)
+    const built = buildQueue()
+
+    if (!hasPrebuilt) {
+      const allAvailableNew = [
+        ...(dueVocab?.vocab ?? []),
+        ...(dueVocab?.kanjiVocab ?? []),
+        ...(dueKanji ?? []),
+      ].filter(c => c.card.state === 'new')
+      const overflow = allAvailableNew.length - newCardsPerDay
+      if (overflow > 0) {
+        toast.info(`Giới hạn ${newCardsPerDay} thẻ mới hôm nay (${overflow} thẻ còn lại cho ngày mai)`)
+      }
+    }
+
+    const shuffled = fisherYates(built)
+    if (shuffled.length === 0)
       return // nothing to study
-    setQueue(built)
+    setQueue(shuffled)
     setCurrentIndex(0)
     setStats(makeStats())
     setPhase('active')
