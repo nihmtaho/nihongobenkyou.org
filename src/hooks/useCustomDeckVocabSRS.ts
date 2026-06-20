@@ -12,19 +12,19 @@ const KNOWN_MIN_REPS = 8
 export function useCustomDeckVocabSRS(userId: string, deckId: string) {
   const qc = useQueryClient()
 
-  const mutation = useMutation({
-    mutationFn: async ({ card, rating }: { card: VocabWithSRS, rating: SRSRating }) => {
+  const mutation = useMutation<number, Error, { card: VocabWithSRS, rating: SRSRating }>({
+    mutationFn: async ({ card, rating }) => {
       await initSRSCard(userId, card.vocab_id, 'custom_vocab', deckId || null)
       const existing = await db.srs_cards.get([userId, card.vocab_id])
       if (!existing)
-        return
+        return 0
 
       const result = scheduleFSRS(existing, rating)
       const is_known = result.scheduled_days >= KNOWN_MIN_SCHEDULED && result.reps >= KNOWN_MIN_REPS
       const newConsecutiveCorrect = rating === 1 ? 0 : (existing.consecutive_correct ?? 0) + 1
       const now = new Date().toISOString()
 
-      await db.review_log.add({
+      const reviewLogId = await db.review_log.add({
         userId,
         vocabId: card.vocab_id,
         bookSource: 'custom_vocab',
@@ -39,7 +39,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
         reviewedAt: now,
         pendingSync: true,
         remoteId: null,
-      })
+      }) as number
 
       await upsertSRSCard({
         ...existing,
@@ -53,6 +53,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
       })
 
       uploadPendingReviews().catch(() => {})
+      return reviewLogId
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['custom-deck-progress', userId, deckId] })
@@ -65,6 +66,8 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
 
   return {
     rate: (card: VocabWithSRS, rating: SRSRating) => mutation.mutate({ card, rating }),
+    rateAsync: (card: VocabWithSRS, rating: SRSRating): Promise<number> =>
+      mutation.mutateAsync({ card, rating }),
     isPending: mutation.isPending,
   }
 }

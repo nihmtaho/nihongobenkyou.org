@@ -21,6 +21,7 @@ type SRSSubject = 'vocab' | 'kanji'
 interface VocabSRSReturn {
   dueCards: UseQueryResult<SRSCard[]>
   rate: (card: SRSCard | VocabWithSRS, rating: SRSRating) => void
+  rateAsync: (card: SRSCard | VocabWithSRS, rating: SRSRating) => Promise<number>
   answer: (card: SRSCard | VocabWithSRS, isCorrect: boolean) => void
   answerTypeInput: (card: SRSCard | VocabWithSRS, isCorrect: boolean) => TypeInputResult
   isPending: boolean
@@ -29,6 +30,7 @@ interface VocabSRSReturn {
 interface KanjiSRSReturn {
   dueCards: UseQueryResult<SRSCard[]>
   rate: (card: SRSCard, rating: SRSRating) => void
+  rateAsync: (card: SRSCard, rating: SRSRating) => Promise<number>
   answer: (card: SRSCard, isCorrect: boolean) => void
   answerTypeInput: (card: SRSCard, isCorrect: boolean) => TypeInputResult
   isPending: boolean
@@ -84,10 +86,10 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
     staleTime: 0,
   })
 
-  const mutation = useMutation<void, Error, { card: SRSCard | VocabWithSRS, rating: SRSRating }>({
+  const mutation = useMutation<number, Error, { card: SRSCard | VocabWithSRS, rating: SRSRating }>({
     mutationFn: async ({ card, rating }) => {
       if (!userId)
-        return
+        return 0
       const srsCard = toSRSCard(card, userId)
       const result = scheduleFSRS(srsCard, rating)
       const newReps = result.reps
@@ -95,7 +97,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       const newConsecutiveCorrect = rating === 1 ? 0 : (srsCard.consecutive_correct ?? 0) + 1
       const now = new Date().toISOString()
 
-      await db.review_log.add({
+      const reviewLogId = await db.review_log.add({
         userId,
         vocabId: srsCard.cardId,
         bookSource: srsCard.cardType === 'kanji'
@@ -118,7 +120,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
         reviewedAt: now,
         pendingSync: true,
         remoteId: null,
-      })
+      }) as number
 
       await upsertSRSCard({
         ...srsCard,
@@ -132,6 +134,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       })
 
       uploadPendingReviews().catch(() => {})
+      return reviewLogId
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['review-stats', userId] })
@@ -154,6 +157,12 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
     mutation.mutate({ card, rating })
   }
 
+  function rateAsync(card: SRSCard | VocabWithSRS, rating: SRSRating): Promise<number> {
+    if (!userId)
+      return Promise.resolve(0)
+    return mutation.mutateAsync({ card, rating })
+  }
+
   function answer(card: SRSCard | VocabWithSRS, isCorrect: boolean): void {
     const srsCard = toSRSCard(card, userId)
     rate(srsCard, computeAnswerRating(srsCard, isCorrect))
@@ -171,7 +180,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
     return { rating, shouldRequeue: false }
   }
 
-  return { dueCards, rate, answer, answerTypeInput, isPending: mutation.isPending } as unknown as SRSReturn<T>
+  return { dueCards, rate, rateAsync, answer, answerTypeInput, isPending: mutation.isPending } as unknown as SRSReturn<T>
 }
 
 export const useVocabSRS = (userId: string) => useSRS('vocab', userId)
