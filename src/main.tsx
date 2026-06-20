@@ -1,9 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createRouter, RouterProvider } from '@tanstack/react-router'
+import { QueryClient } from '@tanstack/react-query'
+import { createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { registerSW } from 'virtual:pwa-register'
-import { Toaster } from '@/components/ui/sonner'
+import { App } from './App'
 import { syncPackage } from './db/package-sync'
 import { db } from './db/schema'
 import { checkForUpdates } from './db/seed'
@@ -50,8 +49,6 @@ document.addEventListener('visibilitychange', () => {
     maybeCheckForUpdates()
 })
 
-registerSW({ onOfflineReady() {} })
-
 const queryClient = new QueryClient()
 const router = createRouter({ routeTree })
 
@@ -69,10 +66,7 @@ async function bootstrap() {
 
   ReactDOM.createRoot(rootElement).render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <Toaster position="top-right" />
-      </QueryClientProvider>
+      <App queryClient={queryClient} router={router} />
     </StrictMode>,
   )
 

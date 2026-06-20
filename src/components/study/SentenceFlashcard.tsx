@@ -1,6 +1,7 @@
 import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
+import { JapaneseText } from '@/components/ui/japanese-text'
 import { highlightSentence } from '../../lib/sentence-highlight'
 import { AudioButton } from '../vocabulary/AudioButton'
 import { RatingBar } from './shared/RatingBar'
@@ -32,13 +33,13 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
         >
           {!isFlipped
             ? (
-                <span className="text-4xl font-bold" style={{ fontFamily: 'var(--br-jp-font)' }}>
+                <JapaneseText className="text-4xl font-bold">
                   {target}
-                </span>
+                </JapaneseText>
               )
             : (
                 <>
-                  <span className="text-2xl" style={{ fontFamily: 'var(--br-jp-font)' }}>{target}</span>
+                  <JapaneseText className="text-2xl">{target}</JapaneseText>
                   <span className="text-xl font-bold">{meaning}</span>
                   <AudioButton audioFilename={card.audio_filename} vocabId={card.vocab_id} />
                 </>
@@ -59,7 +60,7 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
       >
         {!isFlipped
           ? (
-              <p className="text-xl text-center leading-relaxed" style={{ fontFamily: 'var(--br-jp-font)' }}>
+              <JapaneseText className="text-xl text-center leading-relaxed">
                 {sentenceParts!.length === 1
                   ? sentenceParts![0]
                   : (
@@ -69,13 +70,11 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
                         <span>{sentenceParts![2]}</span>
                       </>
                     )}
-              </p>
+              </JapaneseText>
             )
           : (
               <>
-                <p className="text-base text-center leading-relaxed" style={{ fontFamily: 'var(--br-jp-font)' }}>
-                  {example.vi}
-                </p>
+                <p className="text-base text-center leading-relaxed">{example.vi}</p>
                 <span className="text-lg font-bold text-primary">{meaning}</span>
                 <AudioButton audioFilename={card.audio_filename} vocabId={card.vocab_id} />
               </>

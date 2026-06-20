@@ -4,6 +4,7 @@ import type { VocabWithSRS } from '../../types/vocabulary'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { JapaneseText } from '@/components/ui/japanese-text'
 import { useFlipCardState } from '../../hooks/useFlipCardState'
 import { moraCount } from '../../lib/mora'
 import { parsePitchPattern } from '../../lib/pitch'
@@ -94,24 +95,18 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
               className="bg-background border-2 border-foreground shadow-xl flex flex-col min-h-[240px] portrait:min-h-[55svh]"
             >
               <div className="flex-1 flex flex-col items-center justify-center px-10 pt-10 pb-4 gap-4">
-                <span
-                  className={`${jpSize} font-bold leading-none`}
-                  style={{ fontFamily: 'var(--br-jp-font)' }}
-                >
+                <JapaneseText className={`${jpSize} font-bold leading-none`}>
                   {word}
-                </span>
+                </JapaneseText>
 
                 {hintRevealed
                   ? (
                       <div className="flex flex-col items-center gap-2">
                         <PitchAccentBars pattern={pitchPattern} kana={card.reading} />
                         <div className="flex items-center gap-2">
-                          <span
-                            className="text-sm text-muted-foreground"
-                            style={{ fontFamily: 'var(--br-jp-font)' }}
-                          >
+                          <JapaneseText className="text-sm text-muted-foreground">
                             {card.reading}
-                          </span>
+                          </JapaneseText>
                           <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground/50">
                             {card.romaji}
                           </span>
@@ -161,24 +156,18 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
                       />
                     )
                   : (
-                      <span
-                        className="text-4xl sm:text-5xl font-bold leading-none"
-                        style={{ fontFamily: 'var(--br-jp-font)' }}
-                      >
+                      <JapaneseText className="text-4xl sm:text-5xl font-bold leading-none">
                         {word}
-                      </span>
+                      </JapaneseText>
                     )}
               </div>
 
               {/* Reading strip */}
               <div className="px-5 py-2.5 flex items-center gap-4 border-b border-border/10 bg-card/50">
                 <div className="flex flex-col gap-0.5">
-                  <p
-                    className="text-sm leading-none"
-                    style={{ fontFamily: 'var(--br-jp-font)' }}
-                  >
+                  <JapaneseText className="text-sm leading-none">
                     {card.reading}
-                  </p>
+                  </JapaneseText>
                   <p className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">{card.romaji}</p>
                 </div>
                 {pitchPattern && <PitchAccentBars pattern={pitchPattern} kana={card.reading} />}
@@ -205,18 +194,10 @@ export function VocabFlipCard({ card, meaningLanguage, onRate }: VocabFlipCardPr
                   </p>
                   {examples.map((ex, i) => (
                     <div key={ex.ja} className={`border-l-4 border-primary pl-3 ${i > 0 ? 'mt-1' : ''}`}>
-                      <p
-                        className="text-sm leading-snug"
-                        style={{ fontFamily: 'var(--br-jp-font)' }}
-                      >
+                      <JapaneseText className="text-sm leading-snug">
                         {ex.ja}
-                      </p>
-                      <p
-                        className="text-xs text-muted-foreground"
-                        style={{ fontFamily: 'var(--br-jp-font)' }}
-                      >
-                        {ex.vi}
-                      </p>
+                      </JapaneseText>
+                      <p className="text-xs text-muted-foreground">{ex.vi}</p>
                     </div>
                   ))}
                 </div>

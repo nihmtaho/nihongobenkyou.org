@@ -79,6 +79,7 @@ function RootLayout() {
 
   // Apply synchronously before paint — same pattern as theme to avoid FOUC
   if (typeof document !== 'undefined') {
+    document.documentElement.lang = 'vi'
     document.documentElement.dataset.theme = activeTheme
     const html = document.documentElement
     html.classList.remove('text-sm', 'text-lg')
