@@ -1,6 +1,7 @@
 import type { SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { writeReviewLog } from '../db/review-log'
 import { db } from '../db/schema'
 import { initSRSCard, upsertSRSCard } from '../db/srs-cards'
 import { uploadPendingReviews } from '../db/sync'
@@ -24,22 +25,7 @@ export function useCustomDeckVocabSRS(userId: string, deckId: string) {
       const newConsecutiveCorrect = rating === 1 ? 0 : (existing.consecutive_correct ?? 0) + 1
       const now = new Date().toISOString()
 
-      const reviewLogId = await db.review_log.add({
-        userId,
-        vocabId: card.vocab_id,
-        bookSource: 'custom_vocab',
-        cardType: 'custom_vocab',
-        rating,
-        scheduledDays: result.scheduled_days,
-        stability: result.stability,
-        difficulty: result.difficulty,
-        dueDate: result.due,
-        reviewCount: result.reps,
-        isKnown: is_known,
-        reviewedAt: now,
-        pendingSync: true,
-        remoteId: null,
-      }) as number
+      const reviewLogId = await writeReviewLog({ userId, srsCard: existing, rating, result, isKnown: is_known })
 
       await upsertSRSCard({
         ...existing,

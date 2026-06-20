@@ -4,7 +4,7 @@ import type { SRSCard, SRSRating } from '../types/srs'
 import type { VocabWithSRS } from '../types/vocabulary'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { db } from '../db/schema'
+import { writeReviewLog } from '../db/review-log'
 import { getDueCards, upsertSRSCard } from '../db/srs-cards'
 import { uploadPendingReviews } from '../db/sync'
 import { createFSRS, STATE_MAP, STATE_REVERSE } from '../lib/srs'
@@ -127,30 +127,7 @@ export function useSRS<T extends SRSSubject>(subject: T, userId: string): SRSRet
       const newConsecutiveCorrect = rating === 1 ? 0 : (srsCard.consecutive_correct ?? 0) + 1
       const nowIso = now.toISOString()
 
-      const reviewLogId = await db.review_log.add({
-        userId,
-        vocabId: srsCard.cardId,
-        bookSource: srsCard.cardType === 'kanji'
-          ? 'kanji'
-          : srsCard.cardType === 'custom_vocab'
-            ? 'custom_vocab'
-            : 'minna_shokyuu_1',
-        cardType: srsCard.cardType === 'kanji'
-          ? 'kanji'
-          : srsCard.cardType === 'custom_vocab'
-            ? 'custom_vocab'
-            : 'vocab',
-        rating,
-        scheduledDays: result.scheduled_days,
-        stability: result.stability,
-        difficulty: result.difficulty,
-        dueDate: result.due,
-        reviewCount: newReps,
-        isKnown: is_known,
-        reviewedAt: nowIso,
-        pendingSync: true,
-        remoteId: null,
-      }) as number
+      const reviewLogId = await writeReviewLog({ userId, srsCard, rating, result, isKnown: is_known })
 
       await upsertSRSCard({
         ...srsCard,
