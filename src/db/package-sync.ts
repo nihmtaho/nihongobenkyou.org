@@ -48,36 +48,57 @@ export async function mergePackageIntoDexie(
   ], async () => {
     let imported = 0
 
-    for (const remote of payload.srs_cards ?? []) {
-      if (remote.userId !== userId)
-        continue
-      const local = await db.srs_cards.get([userId, remote.cardId])
-      if (!local || remote.updated_at > local.updated_at) {
-        await db.srs_cards.put({ ...remote, pending_sync: false })
-        imported++
+    // srs_cards: bulkGet → Map → filter winners → bulkPut (2 bulk ops instead of n individual ops)
+    const remoteSrsCards = (payload.srs_cards ?? []).filter(r => r.userId === userId)
+    if (remoteSrsCards.length > 0) {
+      // NOTE: srs_cards uses a compound primary key [userId+cardId]; Dexie types it as `never`
+      // so we must cast — bulkGet with compound keys works correctly at runtime.
+      const remoteKeys = remoteSrsCards.map(r => [userId, r.cardId]) as never[]
+      const localCards = await db.srs_cards.bulkGet(remoteKeys)
+      const localSrsMap = new Map(localCards.filter(Boolean).map(c => [c!.cardId, c!]))
+      const srsWinners = remoteSrsCards
+        .filter((remote) => {
+          const local = localSrsMap.get(remote.cardId)
+          return !local || remote.updated_at > local.updated_at
+        })
+        .map(remote => ({ ...remote, pending_sync: false as const }))
+      if (srsWinners.length > 0) {
+        await db.srs_cards.bulkPut(srsWinners)
+        imported += srsWinners.length
       }
     }
 
-    for (const remote of payload.custom_decks ?? []) {
-      if (remote.user_id !== userId)
-        continue
-      const local = await db.custom_decks.get(remote.id)
-      if (!local || remote.updated_at > local.updated_at) {
-        await db.custom_decks.put(remote)
-        imported++
+    // custom_decks: bulkGet → Map → filter winners → bulkPut
+    const remoteDecks = (payload.custom_decks ?? []).filter(r => r.user_id === userId)
+    if (remoteDecks.length > 0) {
+      const localDecks = await db.custom_decks.bulkGet(remoteDecks.map(r => r.id))
+      const localDecksMap = new Map(localDecks.filter(Boolean).map(d => [d!.id, d!]))
+      const deckWinners = remoteDecks.filter((remote) => {
+        const local = localDecksMap.get(remote.id)
+        return !local || remote.updated_at > local.updated_at
+      })
+      if (deckWinners.length > 0) {
+        await db.custom_decks.bulkPut(deckWinners)
+        imported += deckWinners.length
       }
     }
 
-    for (const remote of payload.custom_vocabulary ?? []) {
-      if (remote.user_id !== userId)
-        continue
-      const local = await db.custom_vocabulary.get(remote.id)
-      if (!local || (remote.updated_at ?? '') >= (local.updated_at ?? '')) {
-        await db.custom_vocabulary.put(remote)
-        imported++
+    // custom_vocabulary: bulkGet → Map → filter winners → bulkPut
+    const remoteVocab = (payload.custom_vocabulary ?? []).filter(r => r.user_id === userId)
+    if (remoteVocab.length > 0) {
+      const localVocab = await db.custom_vocabulary.bulkGet(remoteVocab.map(r => r.id))
+      const localVocabMap = new Map(localVocab.filter(Boolean).map(v => [v!.id, v!]))
+      const vocabWinners = remoteVocab.filter((remote) => {
+        const local = localVocabMap.get(remote.id)
+        return !local || (remote.updated_at ?? '') >= (local.updated_at ?? '')
+      })
+      if (vocabWinners.length > 0) {
+        await db.custom_vocabulary.bulkPut(vocabWinners)
+        imported += vocabWinners.length
       }
     }
 
+    // streaks: keep per-record logic (non-trivial max_streak merge requires reading each local record)
     for (const remote of payload.streaks ?? []) {
       if (remote.userId !== userId)
         continue
