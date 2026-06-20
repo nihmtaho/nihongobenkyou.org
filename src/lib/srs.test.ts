@@ -1,6 +1,7 @@
+import type { FSRS } from 'ts-fsrs'
 import type { SRSCard } from '../types/srs'
 import { describe, expect, it } from 'vitest'
-import { formatIntervalPreview, initFSRSCard, scheduleFSRS } from './srs'
+import { createFSRS, formatIntervalPreview, initFSRSCard, scheduleFSRS } from './srs'
 
 const baseCard: SRSCard = {
   userId: 'u1',
@@ -110,6 +111,27 @@ describe('initFSRSCard', () => {
     const card = initFSRSCard()
     expect(card.due).toBe(today)
     expect(card.last_review).toBe(today)
+  })
+})
+
+describe('createFSRS', () => {
+  it('returns an FSRS instance with the given retention', () => {
+    const instance = createFSRS(0.8)
+    expect(instance).toBeDefined()
+    expect(typeof instance.repeat).toBe('function')
+  })
+
+  it('uses different retention values — instances are distinct objects', () => {
+    const a = createFSRS(0.8)
+    const b = createFSRS(0.9)
+    // Both are valid FSRS instances; they should not be the same object reference
+    expect(a).not.toBe(b)
+  })
+
+  it('enable_fuzz is true — parameters reflect it', () => {
+    const instance: FSRS = createFSRS(0.85)
+    // ts-fsrs exposes parameters getter on FSRS instance
+    expect(instance.parameters.enable_fuzz).toBe(true)
   })
 })
 

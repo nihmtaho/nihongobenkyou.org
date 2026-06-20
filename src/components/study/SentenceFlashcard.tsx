@@ -1,20 +1,15 @@
-import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { ButtonGroup } from '@/components/ui/button-group'
 import { highlightSentence } from '../../lib/sentence-highlight'
 import { AudioButton } from '../vocabulary/AudioButton'
+import { RatingBar } from './shared/RatingBar'
 
 interface SentenceFlashcardProps {
   card: VocabWithSRS
   meaningLanguage: MeaningLanguage
-  onRate: (rating: SRSRating) => void
+  onRate: Parameters<typeof RatingBar>[0]['onRate']
 }
-
-const RATING_VARIANTS = ['destructive', 'warning', 'success', 'info'] as const
-const RATING_LABELS = ['Again', 'Hard', 'Good', 'Easy'] as const
 
 export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFlashcardProps) {
   const [isFlipped, setIsFlipped] = useState(false)
@@ -91,17 +86,5 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
       </div>
       {isFlipped && <RatingBar onRate={onRate} />}
     </div>
-  )
-}
-
-function RatingBar({ onRate }: { onRate: (r: SRSRating) => void }) {
-  return (
-    <ButtonGroup className="w-full">
-      {([1, 2, 3, 4] as SRSRating[]).map(r => (
-        <Button key={r} variant={RATING_VARIANTS[r - 1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r - 1].toLowerCase()}>
-          {RATING_LABELS[r - 1]}
-        </Button>
-      ))}
-    </ButtonGroup>
   )
 }
