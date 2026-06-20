@@ -137,4 +137,11 @@ function RootLayout() {
 
 export const Route = createRootRoute({
   component: RootLayout,
+  errorComponent: ({ error }) => (
+    <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-8">
+      <p className="font-[var(--br-mono-font)] text-destructive text-sm uppercase tracking-widest">Đã có lỗi xảy ra</p>
+      <p className="font-[var(--br-mono-font)] text-xs text-muted-foreground">{error?.message}</p>
+      <a href="/" className="font-[var(--br-mono-font)] text-xs uppercase underline">Về trang chủ</a>
+    </div>
+  ),
 })

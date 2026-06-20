@@ -1,6 +1,8 @@
+import type { SRSCard } from '@/types/srs'
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { computeRetrievability } from '@/lib/srs'
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60)
@@ -15,9 +17,10 @@ interface Props {
   srsMode: 'flashcard' | 'type-input'
   canUndo?: boolean
   onUndo?: () => void
+  card?: SRSCard
 }
 
-export function SrsHeader({ current, total, elapsed, srsMode, canUndo = false, onUndo }: Props) {
+export function SrsHeader({ current, total, elapsed, srsMode, canUndo = false, onUndo, card }: Props) {
   const padded = srsMode === 'type-input'
 
   useEffect(() => {
@@ -35,6 +38,14 @@ export function SrsHeader({ current, total, elapsed, srsMode, canUndo = false, o
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [canUndo, onUndo])
 
+  const retrievabilityBadge = card && card.state !== 'new'
+    ? (() => {
+        const elapsedDays = Math.max(0, Math.floor((Date.now() - new Date(card.last_review).getTime()) / (1000 * 60 * 60 * 24)))
+        const r = computeRetrievability(card.stability, elapsedDays)
+        return r
+      })()
+    : null
+
   return (
     <>
       <div className={`flex items-center justify-between ${padded ? 'px-4' : ''}`}>
@@ -45,6 +56,12 @@ export function SrsHeader({ current, total, elapsed, srsMode, canUndo = false, o
           {total}
         </span>
         <div className="flex items-center gap-2">
+          {retrievabilityBadge !== null && (
+            <span className="font-[var(--br-mono-font)] text-[10px] uppercase text-foreground/50">
+              {retrievabilityBadge}
+              % nhớ
+            </span>
+          )}
           {onUndo && (
             <Button
               variant="ghost"

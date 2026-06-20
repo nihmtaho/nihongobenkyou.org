@@ -71,6 +71,12 @@ export function initFSRSCard(): Pick<SRSCard, 'state' | 'stability' | 'difficult
   }
 }
 
+export function computeRetrievability(stability: number, elapsedDays: number): number {
+  if (stability <= 0)
+    return 100
+  return Math.round(0.9 ** (elapsedDays / stability) * 100)
+}
+
 export function formatIntervalPreview(days: number): string {
   if (days <= 0)
     return '< 1d'

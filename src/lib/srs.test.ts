@@ -1,7 +1,7 @@
 import type { FSRS } from 'ts-fsrs'
 import type { SRSCard } from '../types/srs'
 import { describe, expect, it } from 'vitest'
-import { createFSRS, formatIntervalPreview, initFSRSCard, scheduleFSRS } from './srs'
+import { computeRetrievability, createFSRS, formatIntervalPreview, initFSRSCard, scheduleFSRS } from './srs'
 
 const baseCard: SRSCard = {
   userId: 'u1',
@@ -132,6 +132,20 @@ describe('createFSRS', () => {
     const instance: FSRS = createFSRS(0.85)
     // ts-fsrs exposes parameters getter on FSRS instance
     expect(instance.parameters.enable_fuzz).toBe(true)
+  })
+})
+
+describe('computeRetrievability', () => {
+  it('returns 100 when elapsedDays is 0', () => {
+    expect(computeRetrievability(10, 0)).toBe(100)
+  })
+
+  it('returns 90 when elapsed equals stability (10 days each)', () => {
+    expect(computeRetrievability(10, 10)).toBe(90)
+  })
+
+  it('returns 100 when stability is 0 (guard against division by zero)', () => {
+    expect(computeRetrievability(0, 5)).toBe(100)
   })
 })
 
