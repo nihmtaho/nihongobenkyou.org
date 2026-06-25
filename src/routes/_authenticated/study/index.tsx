@@ -42,7 +42,7 @@ function StudyDashboardPage() {
   const [guideOpen, setGuideOpen] = useState(false)
   const queryClient = useQueryClient()
   const { data: stats, isLoading } = useUnifiedDueStats(userId)
-  const { data: streak } = useStreak(userId)
+  const streak = useStreak(userId)
 
   // Auto-invalidate when the soonest upcoming card becomes overdue.
   useEffect(() => {

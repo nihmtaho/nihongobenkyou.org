@@ -506,9 +506,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>StreakWidget: dùng useLiveQuery thay useQuery</h3>
+        <h3>StreakWidget: dùng useLiveQuery thay useQuery<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>useStreak</code> dùng <code>useQuery</code> (one-shot); review trong session ghi <code>db.streaks</code> nhưng widget không refresh tới khi invalidate thủ công → stale.</div>
         <div class="item-fix">Thay bằng <code>useLiveQuery</code> (như <code>useDailyGoal</code> đã làm) → widget react tức thì.</div>
         <div class="files"><span class="file-chip">src/hooks/useStreak.ts:8</span><span class="file-chip">src/components/analytics/StreakWidget.tsx</span></div>
@@ -546,9 +546,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Import deck lớn: bulkPut thay Promise.all</h3>
+        <h3>Import deck lớn: bulkPut thay Promise.all<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>addWords</code> gọi <code>Promise.all(words.map(initSRSCard))</code> — 500 put riêng lẻ ngoài transaction cho import CSV 500 từ.</div>
         <div class="item-fix">Helper <code>bulkInitSRSCards</code> dùng <code>bulkPut</code> 1 thao tác, pre-check tồn tại bằng <code>anyOf().count()</code> → O(n) round-trip còn 2.</div>
         <div class="files"><span class="file-chip">src/db/srs-cards.ts</span><span class="file-chip">src/db/custom-decks-local.ts:96</span></div>
@@ -576,9 +576,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Confetti keyframe: chuyển inline &lt;style&gt; vào app.css</h3>
+        <h3>Confetti keyframe: chuyển inline &lt;style&gt; vào app.css<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>DailyGoalWidget</code> nhúng raw <code>&lt;style&gt;@keyframes confetti-fall&gt;</code> trong JSX — React re-insert mỗi render; vi phạm rule "mọi style ở app.css".</div>
         <div class="item-fix">Đưa keyframe vào <code>app.css</code>, component chỉ apply class <code>.animate-confetti</code> có điều kiện.</div>
         <div class="files"><span class="file-chip">src/components/analytics/DailyGoalWidget.tsx:51–65</span><span class="file-chip">src/app.css</span></div>

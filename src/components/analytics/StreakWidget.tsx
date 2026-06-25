@@ -7,9 +7,9 @@ interface StreakWidgetProps {
 }
 
 export function StreakWidget({ userId }: StreakWidgetProps) {
-  const { data: streak, isLoading } = useStreak(userId)
+  const streak = useStreak(userId)
 
-  if (isLoading) {
+  if (streak === undefined) {
     return <Skeleton className="h-16 w-full" />
   }
 

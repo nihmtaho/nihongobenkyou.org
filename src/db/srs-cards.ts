@@ -35,6 +35,40 @@ export async function initSRSCard(
   })
 }
 
+export async function bulkInitSRSCards(
+  userId: string,
+  cards: { id: string, cardType: SRSCard['cardType'], deckId: string | null }[],
+): Promise<void> {
+  if (cards.length === 0)
+    return
+
+  const keys = cards.map(c => [userId, c.id] as [string, string])
+  // eslint-disable-next-line ts/no-explicit-any
+  const existing = await (db.srs_cards as any).bulkGet(keys) as (SRSCard | undefined)[]
+  const existingSet = new Set(
+    existing.filter((e): e is SRSCard => e !== undefined).map(e => e.cardId),
+  )
+
+  const now = new Date().toISOString()
+  const newCards: SRSCard[] = cards
+    .filter(c => !existingSet.has(c.id))
+    .map(c => ({
+      userId,
+      cardId: c.id,
+      cardType: c.cardType,
+      deckId: c.deckId,
+      ...initFSRSCard(),
+      last_rating: null,
+      is_known: false,
+      consecutive_correct: 0,
+      pending_sync: false,
+      updated_at: now,
+    }))
+
+  if (newCards.length > 0)
+    await db.srs_cards.bulkPut(newCards)
+}
+
 export async function getDueCards(
   userId: string,
   now: string,
