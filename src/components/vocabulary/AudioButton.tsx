@@ -14,7 +14,10 @@ export function AudioButton({ audioFilename, vocabId, rate = 1.0 }: AudioButtonP
   const soundRef = useRef<Howl | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [hasError, setHasError] = useState(false)
-  const [speed, setSpeed] = useState<0.5 | 1.0>(rate <= 0.5 ? 0.5 : 1.0)
+  const [isHalf, setIsHalf] = useState(false)
+
+  // Actual playback rate: half-speed toggle applies on top of external rate prop
+  const actualRate = (isHalf ? 0.5 : 1.0) * rate
 
   useEffect(() => {
     if (!audioFilename || !containerRef.current)
@@ -54,12 +57,8 @@ export function AudioButton({ audioFilename, vocabId, rate = 1.0 }: AudioButtonP
     if (!soundRef.current || isPlaying || hasError)
       return
     setIsPlaying(true)
-    soundRef.current.rate(speed)
+    soundRef.current.rate(actualRate)
     soundRef.current.play()
-  }
-
-  function toggleSpeed() {
-    setSpeed(s => s === 1.0 ? 0.5 : 1.0)
   }
 
   if (hasError) {
@@ -78,7 +77,7 @@ export function AudioButton({ audioFilename, vocabId, rate = 1.0 }: AudioButtonP
         className="font-[var(--br-mono-font)]"
         onClick={handlePlay}
         disabled={isPlaying}
-        aria-label={`Play pronunciation for ${vocabId}${speed === 0.5 ? ' at 0.5x speed' : ''}`}
+        aria-label={`Play pronunciation for ${vocabId}${isHalf ? ` at ${actualRate}x speed` : ''}`}
       >
         {isPlaying ? '▶ PLAYING' : '▶ PLAY'}
       </Button>
@@ -86,10 +85,10 @@ export function AudioButton({ audioFilename, vocabId, rate = 1.0 }: AudioButtonP
         variant="ghost"
         size="sm"
         className="font-[var(--br-mono-font)] text-[11px] px-2 text-muted-foreground"
-        onClick={toggleSpeed}
-        aria-label={`Playback speed: ${speed}x — click to toggle`}
+        onClick={() => setIsHalf(h => !h)}
+        aria-label={`Playback speed: ${isHalf ? '½x' : '1x'} — click to toggle`}
       >
-        {speed === 1.0 ? '1x' : '½x'}
+        {isHalf ? '½x' : '1x'}
       </Button>
     </div>
   )
