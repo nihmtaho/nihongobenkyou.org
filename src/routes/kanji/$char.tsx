@@ -187,7 +187,7 @@ function KanjiDetailPage() {
       <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Stroke Order</p>
       {kanji.stroke_paths && kanji.stroke_paths.length > 0
         ? (
-            <StrokeOrderAnimation strokes={kanji.stroke_paths} />
+            <StrokeOrderAnimation strokes={kanji.stroke_paths} char={char} />
           )
         : (
             <p className="text-sm text-muted-foreground font-[var(--br-mono-font)]">

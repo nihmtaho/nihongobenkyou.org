@@ -10,6 +10,7 @@ type Speed = (typeof SPEEDS)[number]
 
 interface StrokeOrderAnimationProps {
   strokes: StrokeData[]
+  char?: string
   viewBox?: string
   className?: string
 }
@@ -64,7 +65,7 @@ function IconRotateCcw() {
   )
 }
 
-export function StrokeOrderAnimation({ strokes, viewBox = '0 0 109 109', className }: StrokeOrderAnimationProps) {
+export function StrokeOrderAnimation({ strokes, char, viewBox = '0 0 109 109', className }: StrokeOrderAnimationProps) {
   const pathsRef = useRef<(SVGPathElement | null)[]>([])
   const strokeLengthsRef = useRef<number[]>([])
   const animationRef = useRef<Animation | null>(null)
@@ -221,6 +222,8 @@ export function StrokeOrderAnimation({ strokes, viewBox = '0 0 109 109', classNa
           width="100%"
           className="aspect-square"
           style={{ fontFamily: 'var(--br-jp-font)' }}
+          role="img"
+          aria-label={char ? `Stroke order for ${char}: ${strokes.length} strokes` : `Kanji stroke order: ${strokes.length} strokes`}
         >
           {strokes.map((stroke, i) => (
             <path

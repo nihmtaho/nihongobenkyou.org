@@ -57,7 +57,7 @@ function StrokeOrderPage() {
       {/* Animation or fallback */}
       {kanji?.stroke_paths && kanji.stroke_paths.length > 0
         ? (
-            <StrokeOrderAnimation strokes={kanji.stroke_paths} />
+            <StrokeOrderAnimation strokes={kanji.stroke_paths} char={char} />
           )
         : (
             <div className="bg-card border border-border/10 p-6 flex flex-col items-center gap-3">
