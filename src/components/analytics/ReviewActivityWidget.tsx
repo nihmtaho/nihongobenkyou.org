@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useReviewStats } from '../../hooks/useReviewStats'
+import { useTranslation } from '../../hooks/useTranslation'
 
 interface ReviewActivityWidgetProps {
   userId: string
@@ -18,6 +19,7 @@ const RATING_BAR_COLORS: Record<string, string> = {
 }
 
 export function ReviewActivityWidget({ userId, cardType }: ReviewActivityWidgetProps) {
+  const { t } = useTranslation()
   const { data: stats, isLoading } = useReviewStats(userId, cardType)
 
   return (
@@ -26,15 +28,17 @@ export function ReviewActivityWidget({ userId, cardType }: ReviewActivityWidgetP
         {/* Header */}
         <div className="flex items-center justify-between">
           <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
-            CHI TIẾT ÔN TẬP
+            {t('review.title')}
           </p>
           {stats && (
             <span className="text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
-              TỔNG
+              {t('review.total')}
               {' '}
               {stats.totalCount}
               {' '}
-              · THÁNG NÀY
+              ·
+              {' '}
+              {t('review.thisMonth')}
               {' '}
               {stats.monthCount}
             </span>
@@ -46,42 +50,42 @@ export function ReviewActivityWidget({ userId, cardType }: ReviewActivityWidgetP
           <StatChip
             icon="◉"
             iconColor="text-destructive"
-            label="STREAK"
+            label={t('streak.label')}
             isLoading={isLoading}
             value={stats ? `${stats.streak}` : '0'}
-            unit="ngày"
+            unit={t('unit.days')}
           />
           <StatChip
             icon="◫"
             iconColor="text-info"
-            label="HÔM NAY"
+            label={t('stat.today')}
             isLoading={isLoading}
             value={stats ? `${stats.todayCount}` : '0'}
-            unit="lượt"
+            unit={t('unit.times')}
           />
           <StatChip
             icon="▦"
             iconColor="text-success"
-            label="TUẦN NÀY"
+            label={t('stat.thisWeek')}
             isLoading={isLoading}
             value={stats ? `${stats.weekCount}` : '0'}
-            unit="lượt"
+            unit={t('unit.times')}
           />
           <StatChip
             icon="◷"
             iconColor="text-warning"
-            label="TB/NGÀY"
+            label={t('stat.avgPerDay')}
             isLoading={isLoading}
             value={stats ? `${stats.avgPerDay}` : '0'}
-            unit="lượt"
+            unit={t('unit.times')}
           />
           <StatChip
             icon="◎"
             iconColor="text-primary"
-            label="ĐÃ HỌC"
+            label={t('stat.learned')}
             isLoading={isLoading}
             value={stats ? `${stats.totalCount}` : '0'}
-            unit="thẻ"
+            unit={t('unit.cards')}
           />
         </div>
 
@@ -138,10 +142,11 @@ function ActivityDotGrid({
   stats: ReturnType<typeof useReviewStats>['data']
   isLoading: boolean
 }) {
+  const { t } = useTranslation()
   return (
     <div>
       <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest mb-2">
-        7 NGÀY GẦN NHẤT
+        {t('review.last7Days')}
       </p>
       {isLoading
         ? (
@@ -208,12 +213,13 @@ function RatingDistribution({
   stats: ReturnType<typeof useReviewStats>['data']
   isLoading: boolean
 }) {
+  const { t } = useTranslation()
   const total7Days = stats?.ratingDistribution.reduce((a, b) => a + b.count, 0) ?? 0
 
   return (
     <div>
       <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest mb-2">
-        PHÂN BỔ ĐÁNH GIÁ
+        {t('review.ratingDist')}
         {total7Days > 0 && (
           <span className="ml-1 text-muted-foreground/60">
             (
