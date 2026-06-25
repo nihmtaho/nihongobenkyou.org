@@ -1,14 +1,31 @@
+import type { LeaderboardPeriod } from '../../hooks/useLeaderboard'
+import { useState } from 'react'
 import {
   LeaderboardHeader,
   LeaderboardList,
   LeaderboardMyRank,
   LeaderboardPodium,
 } from '../../components/leaderboard'
+import { Button } from '../../components/ui/button'
+import { ButtonGroup } from '../../components/ui/button-group'
 import { useLeaderboard } from '../../hooks/useLeaderboard'
 import { getWeekBounds } from '../../lib/date-utils'
 
+const PERIOD_OPTIONS: { value: LeaderboardPeriod, label: string }[] = [
+  { value: 'weekly', label: 'Tuần này' },
+  { value: 'monthly', label: 'Tháng này' },
+  { value: 'all_time', label: 'Toàn thời gian' },
+]
+
+const EMPTY_MESSAGES: Record<LeaderboardPeriod, string> = {
+  weekly: 'Chưa có ai ôn tập tuần này.',
+  monthly: 'Chưa có ai ôn tập tháng này.',
+  all_time: 'Chưa có dữ liệu ôn tập.',
+}
+
 export default function LeaderboardPage() {
-  const { podium, rest, myEntry, isLoading, isError } = useLeaderboard()
+  const [period, setPeriod] = useState<LeaderboardPeriod>('weekly')
+  const { podium, rest, myEntry, isLoading, isError } = useLeaderboard(period)
   const { weekStart, weekEnd, daysUntilReset } = getWeekBounds()
 
   if (isLoading) {
@@ -33,18 +50,37 @@ export default function LeaderboardPage() {
     )
   }
 
+  const periodTabs = (
+    <ButtonGroup className="mb-4 w-full">
+      {PERIOD_OPTIONS.map(({ value, label }) => (
+        <Button
+          key={value}
+          variant={period === value ? 'default' : 'outline'}
+          size="sm"
+          className="flex-1"
+          onClick={() => setPeriod(value)}
+        >
+          {label}
+        </Button>
+      ))}
+    </ButtonGroup>
+  )
+
   if (podium.length === 0) {
     return (
       <div className="container max-w-lg mx-auto px-4 py-6">
-        <LeaderboardHeader
-          weekStart={weekStart}
-          weekEnd={weekEnd}
-          daysUntilReset={daysUntilReset}
-          isOffline={isError}
-        />
+        {periodTabs}
+        {period === 'weekly' && (
+          <LeaderboardHeader
+            weekStart={weekStart}
+            weekEnd={weekEnd}
+            daysUntilReset={daysUntilReset}
+            isOffline={isError}
+          />
+        )}
         <div className="text-center py-16 text-muted-foreground">
           <p className="text-4xl mb-4">🏆</p>
-          <p className="font-semibold">Chưa có ai ôn tập tuần này.</p>
+          <p className="font-semibold">{EMPTY_MESSAGES[period]}</p>
           <p className="text-sm mt-1">Bạn có thể là #1!</p>
         </div>
       </div>
@@ -53,12 +89,15 @@ export default function LeaderboardPage() {
 
   return (
     <div className="container max-w-lg mx-auto px-4 py-6 pb-20">
-      <LeaderboardHeader
-        weekStart={weekStart}
-        weekEnd={weekEnd}
-        daysUntilReset={daysUntilReset}
-        isOffline={isError}
-      />
+      {periodTabs}
+      {period === 'weekly' && (
+        <LeaderboardHeader
+          weekStart={weekStart}
+          weekEnd={weekEnd}
+          daysUntilReset={daysUntilReset}
+          isOffline={isError}
+        />
+      )}
       <LeaderboardPodium entries={podium} />
       <LeaderboardList entries={rest} />
       {myEntry && <LeaderboardMyRank entry={myEntry} />}

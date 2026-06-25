@@ -96,6 +96,7 @@ export async function run(inputPath: string, config: DatasetConfig, passageMap: 
       edition: entry.edition,
       sort_order: entry.id[1],
       han_viet: entry.han_viet ?? null,
+      kanji_chars: [...new Set(entry.kanji?.match(/[\u4E00-\u9FFF]/g) ?? [])],
     }))
 
     const lessonFile = path.join(outputBase, `lesson-${zeroPad(lessonNum)}.json`)

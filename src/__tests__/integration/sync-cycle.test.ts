@@ -1,7 +1,9 @@
 import type { ReviewLogEntry } from '../../types/review-log'
+import type { SyncPackagePayload } from '../../types/sync-package'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { syncPackage } from '../../db/package-sync'
 import { db } from '../../db/schema'
 import { downloadNewReviews, uploadPendingReviews } from '../../db/sync'
 
@@ -24,6 +26,11 @@ vi.mock('../../api/supabase', () => ({
       getSession: vi.fn(),
     },
   },
+}))
+
+vi.mock('../../api/sync-package', () => ({
+  fetchRemotePackage: vi.fn(),
+  uploadSyncPackage: vi.fn(),
 }))
 
 function makePendingEntry(vocabId: string): Omit<ReviewLogEntry, 'id'> {
@@ -281,5 +288,130 @@ describe('staleTime compliance (FR-009)', () => {
   it('useLesson source declares staleTime: Infinity', () => {
     const src = readFileSync(resolve(__dirname, '../../hooks/useLesson.ts'), 'utf-8')
     expect(src).toContain('staleTime: Infinity')
+  })
+})
+
+describe('syncPackage — version conflict', () => {
+  // fetchRemotePackage and uploadSyncPackage are mocked at module level.
+  // supabase.auth.getSession is mocked in the shared beforeEach to return TEST_USER_ID,
+  // so getCurrentUserId() resolves to TEST_USER_ID without any additional mock.
+
+  it('merges remote data before upload when remote version is higher than local', async () => {
+    const { fetchRemotePackage, uploadSyncPackage } = await import('../../api/sync-package')
+    const remoteCard = {
+      userId: TEST_USER_ID,
+      cardId: 'pre-upload-merge-card',
+      cardType: 'vocab' as const,
+      deckId: null,
+      state: 'review' as const,
+      stability: 7,
+      difficulty: 5,
+      elapsed_days: 3,
+      scheduled_days: 7,
+      reps: 3,
+      lapses: 0,
+      last_review: '2026-06-01',
+      due: '2026-06-08',
+      last_rating: 3 as import('../../types/srs').SRSRating,
+      is_known: false,
+      consecutive_correct: 2,
+      pending_sync: false,
+      updated_at: '2026-06-01T00:00:00.000Z',
+    }
+    const remotePayload: SyncPackagePayload = {
+      srs_cards: [remoteCard],
+      custom_decks: [],
+      custom_vocabulary: [],
+      streaks: [],
+    }
+
+    // Remote is at version 5; local starts at 0 — merge path runs before upload
+    vi.mocked(fetchRemotePackage).mockResolvedValueOnce({
+      user_id: TEST_USER_ID,
+      version: 5,
+      device_id: 'remote-device',
+      updated_at: '2026-06-01T00:00:00.000Z',
+      payload: remotePayload,
+    })
+    // Upload succeeds — confirmed version equals what we sent
+    const uploadVersion = 6 // max(5, 0) + 1
+    vi.mocked(uploadSyncPackage).mockResolvedValueOnce(uploadVersion)
+
+    await syncPackage(TEST_USER_ID)
+
+    const card = await db.srs_cards.get([TEST_USER_ID, 'pre-upload-merge-card'])
+    expect(card).toBeDefined()
+    expect(card?.scheduled_days).toBe(7)
+  })
+
+  it('re-downloads and merges when upload is rejected with a higher server version', async () => {
+    const { fetchRemotePackage, uploadSyncPackage } = await import('../../api/sync-package')
+    const conflictCard = {
+      userId: TEST_USER_ID,
+      cardId: 'conflict-resolution-card',
+      cardType: 'vocab' as const,
+      deckId: null,
+      state: 'review' as const,
+      stability: 14,
+      difficulty: 4,
+      elapsed_days: 7,
+      scheduled_days: 14,
+      reps: 5,
+      lapses: 0,
+      last_review: '2026-06-10',
+      due: '2026-06-24',
+      last_rating: 4 as import('../../types/srs').SRSRating,
+      is_known: false,
+      consecutive_correct: 4,
+      pending_sync: false,
+      updated_at: '2026-06-10T00:00:00.000Z',
+    }
+    const conflictPayload: SyncPackagePayload = {
+      srs_cards: [conflictCard],
+      custom_decks: [],
+      custom_vocabulary: [],
+      streaks: [],
+    }
+
+    // First fetch: no existing remote data
+    vi.mocked(fetchRemotePackage).mockResolvedValueOnce(null)
+    // Upload is rejected — server returns version 3 but we sent version 1
+    vi.mocked(uploadSyncPackage).mockResolvedValueOnce(3)
+    // Re-download fetch: server has newer data at version 3
+    vi.mocked(fetchRemotePackage).mockResolvedValueOnce({
+      user_id: TEST_USER_ID,
+      version: 3,
+      device_id: 'winning-device',
+      updated_at: '2026-06-10T00:00:00.000Z',
+      payload: conflictPayload,
+    })
+
+    await syncPackage(TEST_USER_ID)
+
+    // Conflicting remote data must be merged into Dexie
+    const card = await db.srs_cards.get([TEST_USER_ID, 'conflict-resolution-card'])
+    expect(card).toBeDefined()
+    expect(card?.scheduled_days).toBe(14)
+    // Local version advances to the confirmed server version
+    const versionSetting = await db.settings.get('sync_package_version')
+    expect(versionSetting?.value).toBe(3)
+  })
+
+  it('does not advance local version when re-download fails after upload conflict', async () => {
+    const { fetchRemotePackage, uploadSyncPackage } = await import('../../api/sync-package')
+    const { NetworkError } = await import('../../api/auth')
+
+    // First fetch: no remote data
+    vi.mocked(fetchRemotePackage).mockResolvedValueOnce(null)
+    // Upload rejected — server at version 5
+    vi.mocked(uploadSyncPackage).mockResolvedValueOnce(5)
+    // Re-download throws NetworkError (device is offline)
+    vi.mocked(fetchRemotePackage).mockRejectedValueOnce(new NetworkError('offline'))
+
+    await syncPackage(TEST_USER_ID)
+
+    // Version must NOT advance — we couldn't verify the merged state
+    const versionSetting = await db.settings.get('sync_package_version')
+    expect(versionSetting?.value).toBeUndefined()
   })
 })

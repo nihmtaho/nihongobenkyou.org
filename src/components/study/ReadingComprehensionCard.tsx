@@ -4,11 +4,13 @@ import type { VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
-import { highlightSentence } from '../../lib/sentence-highlight'
+import { annotatePassage } from '../../lib/sentence-highlight'
 
 interface ReadingComprehensionCardProps {
   passage: Passage
   card: VocabWithSRS
+  /** Other vocab from the session pool to underline in the passage. */
+  vocabPool?: VocabWithSRS[]
   onRate: (rating: SRSRating) => void
 }
 
@@ -17,7 +19,7 @@ type Phase = 'reading' | 'questions' | 'results'
 const RATING_LABELS = ['Again', 'Hard', 'Good', 'Easy'] as const
 const RATING_VARIANTS = ['destructive', 'warning', 'success', 'info'] as const
 
-export function ReadingComprehensionCard({ passage, card, onRate }: ReadingComprehensionCardProps) {
+export function ReadingComprehensionCard({ passage, card, vocabPool, onRate }: ReadingComprehensionCardProps) {
   const [phase, setPhase] = useState<Phase>('reading')
   const [answers, setAnswers] = useState<(number | null)[]>(passage.questions.map(() => null))
   const [currentQ, setCurrentQ] = useState(0)
@@ -43,7 +45,10 @@ export function ReadingComprehensionCard({ passage, card, onRate }: ReadingCompr
   const allCorrect = correctCount === passage.questions.length
 
   const target = card.word ?? card.reading
-  const passageParts = highlightSentence(passage.text_ja, target)
+  const knownTerms = (vocabPool ?? [])
+    .filter(v => v.vocab_id !== card.vocab_id)
+    .map(v => ({ term: v.word ?? v.reading, meaning: v.meaning_vi }))
+  const segments = annotatePassage(passage.text_ja, target, knownTerms)
 
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
@@ -51,15 +56,26 @@ export function ReadingComprehensionCard({ passage, card, onRate }: ReadingCompr
         <div className="bg-background border-2 border-foreground w-full p-6 flex flex-col gap-4">
           <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">Đọc đoạn văn</p>
           <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--br-jp-font)' }}>
-            {passageParts.length === 1
-              ? passageParts[0]
-              : (
-                  <>
-                    <span>{passageParts[0]}</span>
-                    <span className="underline decoration-2 decoration-primary font-bold">{passageParts[1]}</span>
-                    <span>{passageParts[2]}</span>
-                  </>
-                )}
+            {segments.map((seg, i) => {
+              if (seg.kind === 'target') {
+                return (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <span key={i} className="underline decoration-2 decoration-primary font-bold">
+                    {seg.text}
+                  </span>
+                )
+              }
+              if (seg.kind === 'known') {
+                return (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <span key={i} className="border-b border-muted-foreground/40" title={`${seg.text} → ${seg.meaning}`}>
+                    {seg.text}
+                  </span>
+                )
+              }
+              // eslint-disable-next-line react/no-array-index-key
+              return <span key={i}>{seg.text}</span>
+            })}
           </p>
           <Button className="w-full font-[var(--br-mono-font)]" onClick={() => setPhase('questions')}>
             Trả lời
