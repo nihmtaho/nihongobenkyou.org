@@ -110,6 +110,17 @@ describe('seedDatabase', () => {
     await expect(seedDatabase()).rejects.toBeInstanceOf(SeedError)
   })
 
+  it('throws SeedError and leaves vocabulary empty when a lesson fetch fails', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (String(url).includes('manifest.json'))
+        return new Response(JSON.stringify(SAMPLE_MANIFEST), { status: 200 })
+      return new Response('Not Found', { status: 404, statusText: 'Not Found' })
+    }))
+
+    await expect(seedDatabase()).rejects.toBeInstanceOf(SeedError)
+    expect(await db.vocabulary.count()).toBe(0)
+  })
+
   it('stores dataset_version in Dexie settings after seed', async () => {
     mockFetch(SAMPLE_MANIFEST, SAMPLE_LESSON_FILE)
 
@@ -428,6 +439,17 @@ describe('seedDatasetLazy', () => {
     await seedDatasetLazy('mnn1')
     const result = await seedDatasetLazy('mnn1')
     expect(result).toBe('up-to-date')
+  })
+
+  it('throws SeedError and leaves vocabulary empty when a lesson fetch fails', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (String(url).includes('manifest.json'))
+        return new Response(JSON.stringify(SAMPLE_MANIFEST), { status: 200 })
+      return new Response('Not Found', { status: 404, statusText: 'Not Found' })
+    }))
+
+    await expect(seedDatasetLazy('mnn1')).rejects.toBeInstanceOf(SeedError)
+    expect(await db.vocabulary.count()).toBe(0)
   })
 })
 

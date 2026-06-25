@@ -119,6 +119,11 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
               {item.examples[0].fr && (
                 <p className="text-xs text-muted-foreground opacity-70">{item.examples[0].fr}</p>
               )}
+              {item.examples[0].pitch_pattern != null && (
+                <div className="mt-2">
+                  <PitchAccentBars pattern={item.examples[0].pitch_pattern} kana={item.reading} />
+                </div>
+              )}
             </div>
           )}
 

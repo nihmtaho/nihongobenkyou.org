@@ -177,6 +177,12 @@ export class NihongoDB extends Dexie {
         delete entry.easeFactor
       })
     })
+    // v15: Add multi-entry kanji_chars index to vocabulary for O(1) kanji lookup.
+    this.version(15)
+      .stores({ vocabulary: 'vocab_id, book_source, lesson_number, [book_source+lesson_number], jlpt_level, *kanji_chars' })
+      .upgrade(tx => tx.table('vocabulary').toCollection().modify((v: VocabItem) => {
+        v.kanji_chars = [...new Set(v.word?.match(/[\u4E00-\u9FFF]/g) ?? [])]
+      }))
   }
 }
 
