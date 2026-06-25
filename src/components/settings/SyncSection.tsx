@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
-import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -15,23 +14,18 @@ import { useSettingsStore } from '../../stores/settingsStore'
 export function SyncSection() {
   const { email, userId } = useAuthStore()
   const { syncEnabled } = useSettingsStore()
-  const { syncJustCompleted } = useSyncStatus()
+  const { syncJustCompleted, isSyncing, lastError, pendingCount } = useSyncStatus()
   const isRealUser = email !== null && userId !== null
-  const [isSyncing, setIsSyncing] = useState(false)
 
   async function handleManualSync() {
     if (!isRealUser || !syncEnabled)
       return
-    setIsSyncing(true)
     try {
       await uploadPendingReviews()
       await syncPackage(userId!)
     }
     catch {
-      // Silent — will retry on next online event
-    }
-    finally {
-      setIsSyncing(false)
+      // Silent — sync-error event is dispatched by sync modules; hook captures it
     }
   }
 
@@ -52,20 +46,41 @@ export function SyncSection() {
                   />
                 </Label>
                 {syncEnabled && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleManualSync}
-                    disabled={isSyncing}
-                    className="font-[var(--br-mono-font)] uppercase self-start"
-                  >
-                    {isSyncing
-                      ? <Loader2 className="animate-spin h-3 w-3" />
-                      : syncJustCompleted
-                        ? '✓ Đã đồng bộ'
-                        : 'Đồng bộ ngay'}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleManualSync}
+                        disabled={isSyncing}
+                        className="font-[var(--br-mono-font)] uppercase self-start"
+                      >
+                        {isSyncing
+                          ? (
+                              <>
+                                <Loader2 className="animate-spin h-3 w-3" />
+                                Đang đồng bộ...
+                              </>
+                            )
+                          : syncJustCompleted
+                            ? '✓ Đã đồng bộ'
+                            : 'Đồng bộ ngay'}
+                      </Button>
+                      {pendingCount > 0 && !isSyncing && (
+                        <Badge variant="secondary" className="font-[var(--br-mono-font)] text-[10px]">
+                          {pendingCount}
+                          {' '}
+                          chờ
+                        </Badge>
+                      )}
+                    </div>
+                    {lastError && (
+                      <p className="text-[10px] font-[var(--br-mono-font)] text-destructive">
+                        {lastError}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             )

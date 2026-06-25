@@ -1,4 +1,4 @@
-import type { SRSRating } from '../types/srs'
+import type { SRSCard, SRSRating } from '../types/srs'
 import type { MeaningLanguage, StudyMode, TypeInputSubMode } from '../types/study'
 import type { CardTypeFilter, UnifiedCard } from '../types/unified-card'
 import type { VocabWithSRS } from '../types/vocabulary'
@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { db } from '../db/schema'
-import { getDueCards } from '../db/srs-cards'
+import { getDueCards, upsertSRSCard } from '../db/srs-cards'
 import { fisherYates } from '../lib/utils'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useCustomDeckVocabSRS } from './useCustomDeckVocabSRS'
@@ -28,6 +28,15 @@ export interface UnifiedSrsSessionOptions {
   initialSubMode?: TypeInputSubMode
   customDeckId?: string // when set, vocab ratings go to custom deck SRS
 }
+
+interface UndoEntry {
+  card: UnifiedCard
+  snapshot: SRSCard | VocabWithSRS
+  reviewLogId: number
+  wasRequeued: boolean
+}
+
+const MAX_UNDO_DEPTH = 10
 
 function makeStats(): UnifiedSessionStats {
   return { correct: 0, total: 0, startTime: new Date(), ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0 }, wrongCards: [] }
@@ -69,6 +78,7 @@ export function useUnifiedSrsSession(
   const [stats, setStats] = useState<UnifiedSessionStats>(makeStats)
   const [mode, setMode] = useState<StudyMode>(options?.initialMode ?? 'flashcard')
   const [typeInputSubMode, setTypeInputSubMode] = useState<TypeInputSubMode>(options?.initialSubMode ?? 'word→hira')
+  const [undoStack, setUndoStack] = useState<UndoEntry[]>([])
 
   const { data: dueVocab, isLoading: vocabLoading } = useQuery({
     queryKey: ['due-vocab-unified', userId],
@@ -210,37 +220,48 @@ export function useUnifiedSrsSession(
     setQueue(shuffled)
     setCurrentIndex(0)
     setStats(makeStats())
+    setUndoStack([])
     setPhase('active')
   }
 
-  function handleRate(card: UnifiedCard, rating: SRSRating) {
+  async function handleRate(card: UnifiedCard, rating: SRSRating) {
+    const snapshot = card.card
+    const wasRequeued = rating === 1
+
+    let reviewLogId = 0
+    if (card.kind === 'kanji') {
+      reviewLogId = await kanjiSRS.rateAsync(card.card, rating)
+    }
+    else if (card.kind === 'vocab') {
+      if (customDeckId) {
+        reviewLogId = await customDeckSRS.rateAsync(card.card, rating)
+      }
+      else {
+        reviewLogId = await vocabSRS.rateAsync(card.card, rating)
+      }
+    }
+    else {
+      // kanji-vocab: card.card is SRSCard
+      reviewLogId = await vocabSRS.rateAsync(card.card, rating)
+    }
+
+    // Push to undo stack (capped at MAX_UNDO_DEPTH)
+    setUndoStack(stack => [
+      ...stack.slice(-(MAX_UNDO_DEPTH - 1)),
+      { card, snapshot, reviewLogId, wasRequeued },
+    ])
+
     const isCorrect = rating >= 2
     setStats(s => ({
       ...s,
       correct: isCorrect ? s.correct + 1 : s.correct,
       total: s.total + 1,
       ratingCounts: { ...s.ratingCounts, [rating]: s.ratingCounts[rating] + 1 },
-      wrongCards: rating === 1 ? [...s.wrongCards, card] : s.wrongCards,
+      wrongCards: wasRequeued ? [...s.wrongCards, card] : s.wrongCards,
     }))
 
-    if (card.kind === 'kanji') {
-      kanjiSRS.rate(card.card, rating)
-    }
-    else if (card.kind === 'vocab') {
-      if (customDeckId) {
-        customDeckSRS.rate(card.card, rating)
-      }
-      else {
-        vocabSRS.rate(card.card, rating)
-      }
-    }
-    else {
-      // kanji-vocab: card.card is SRSCard
-      vocabSRS.rate(card.card, rating)
-    }
-
-    const addedToQueue = rating === 1 ? 1 : 0
-    if (rating === 1) {
+    const addedToQueue = wasRequeued ? 1 : 0
+    if (wasRequeued) {
       setQueue(q => [...q, card])
     }
 
@@ -252,6 +273,35 @@ export function useUnifiedSrsSession(
       setCurrentIndex(next)
     }
   }
+
+  async function undo() {
+    if (undoStack.length === 0)
+      return
+
+    const entry = undoStack[undoStack.length - 1]
+    setUndoStack(stack => stack.slice(0, -1))
+
+    // Delete the review_log entry by id
+    if (entry.reviewLogId > 0) {
+      await db.review_log.delete(entry.reviewLogId)
+    }
+
+    // Restore the SRS card to its pre-rating snapshot
+    await upsertSRSCard(entry.snapshot as SRSCard)
+
+    // Remove the re-queued tail entry if the card had been rated Again
+    if (entry.wasRequeued) {
+      setQueue(q => q.slice(0, -1))
+    }
+
+    // Step currentIndex back by 1
+    setCurrentIndex(i => Math.max(0, i - 1))
+
+    // Revert completed phase back to active
+    setPhase(p => (p === 'complete' ? 'active' : p))
+  }
+
+  const canUndo = undoStack.length > 0
 
   const allCards = buildQueue()
   const newCount = allCards.filter(c => c.card.state === 'new').length
@@ -283,6 +333,8 @@ export function useUnifiedSrsSession(
     meaningLanguage,
     startSession,
     handleRate,
+    undo,
+    canUndo,
     isLoading,
     totalDue: allCards.length,
     vocabCount,

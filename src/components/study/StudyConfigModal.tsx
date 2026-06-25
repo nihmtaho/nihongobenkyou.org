@@ -36,7 +36,7 @@ export function StudyConfigModal({
   onConfirm,
   onClose,
 }: StudyConfigModalProps) {
-  const { meaningLanguage } = useSettingsStore()
+  const { meaningLanguage, requestRetention } = useSettingsStore()
 
   const [mode, setMode] = useState<StudyMode>(defaultMode)
   const [cardCount, setCardCount] = useState<CardCountOption>(10)
@@ -179,6 +179,31 @@ export function StudyConfigModal({
             </div>
           </div>
         )}
+
+        {/* Retention target */}
+        <div className="flex flex-col gap-1">
+          <Label className="font-semibold font-[var(--br-mono-font)]">
+            {'Mục tiêu nhớ: '}
+            <span>
+              {Math.round(requestRetention * 100)}
+              %
+            </span>
+          </Label>
+          <input
+            type="range"
+            min={0.70}
+            max={0.97}
+            step={0.01}
+            value={requestRetention}
+            onChange={e => useSettingsStore.setState({ requestRetention: Number(e.target.value) })}
+            className="w-full accent-primary"
+          />
+          <div className="flex justify-between text-[10px] font-[var(--br-mono-font)] text-muted-foreground">
+            <span>70%</span>
+            <span>90% (mặc định)</span>
+            <span>97%</span>
+          </div>
+        </div>
 
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>

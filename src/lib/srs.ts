@@ -1,17 +1,21 @@
-import type { Grade } from 'ts-fsrs'
+import type { FSRS, Grade } from 'ts-fsrs'
 import type { CardState, FSRSResult, SRSCard, SRSRating } from '../types/srs'
 import { fsrs, generatorParameters, State } from 'ts-fsrs'
 
-const f = fsrs(generatorParameters({ enable_fuzz: false, request_retention: 0.9 }))
+export function createFSRS(retention: number): FSRS {
+  return fsrs(generatorParameters({ enable_fuzz: true, request_retention: retention }))
+}
 
-const STATE_MAP: Record<CardState, State> = {
+const f = createFSRS(0.9)
+
+export const STATE_MAP: Record<CardState, State> = {
   new: State.New,
   learning: State.Learning,
   review: State.Review,
   relearning: State.Relearning,
 }
 
-const STATE_REVERSE: Record<State, CardState> = {
+export const STATE_REVERSE: Record<State, CardState> = {
   [State.New]: 'new',
   [State.Learning]: 'learning',
   [State.Review]: 'review',
@@ -65,6 +69,12 @@ export function initFSRSCard(): Pick<SRSCard, 'state' | 'stability' | 'difficult
     last_review: today,
     due: today,
   }
+}
+
+export function computeRetrievability(stability: number, elapsedDays: number): number {
+  if (stability <= 0)
+    return 100
+  return Math.round(0.9 ** (elapsedDays / stability) * 100)
 }
 
 export function formatIntervalPreview(days: number): string {

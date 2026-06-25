@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { JapaneseText } from '@/components/ui/japanese-text'
 import { Separator } from '@/components/ui/separator'
 import { useKnownCards } from '../../hooks/useKnownCards'
 import { AddToDeckDialog } from '../common/AddToDeckDialog'
@@ -78,9 +79,9 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
           <div className="flex flex-col gap-2">
             {item.word && (
               <div className="flex flex-col gap-1">
-                <p className="text-7xl xl:text-8xl font-bold font-[var(--br-jp-font)] text-foreground leading-none break-all">
+                <JapaneseText className="text-7xl xl:text-8xl font-bold text-foreground leading-none break-all">
                   {item.word}
-                </p>
+                </JapaneseText>
                 {item.han_viet && (
                   <span className="font-[var(--br-mono-font)] text-[11px] text-primary uppercase tracking-[0.15em]">
                     {item.han_viet}
@@ -88,10 +89,10 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
                 )}
               </div>
             )}
-            <p className={`font-bold font-[var(--br-jp-font)] leading-none ${item.word ? 'text-3xl text-muted-foreground' : 'text-7xl xl:text-8xl text-foreground'}`}>
+            <JapaneseText className={`font-bold leading-none ${item.word ? 'text-3xl text-muted-foreground' : 'text-7xl xl:text-8xl text-foreground'}`}>
               {item.reading}
-            </p>
-            <p className="font-[var(--br-jp-font)] text-lg text-muted-foreground">{item.romaji}</p>
+            </JapaneseText>
+            <JapaneseText className="text-lg text-muted-foreground">{item.romaji}</JapaneseText>
           </div>
 
           {/* Pitch accent + audio */}
@@ -112,11 +113,11 @@ export function VocabDetailPanel({ item, card, moraPattern, userId, index, total
           {item.examples.length > 0 && (
             <div className="border-l-4 border-primary pl-4">
               <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground mb-2 tracking-wider">EXAMPLE</p>
-              <p className="text-sm font-[var(--br-jp-font)] leading-relaxed">{item.examples[0].ja}</p>
-              <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] mt-1">{item.examples[0].vi}</p>
-              <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] opacity-70">{item.examples[0].en}</p>
+              <p className="text-sm leading-relaxed"><JapaneseText>{item.examples[0].ja}</JapaneseText></p>
+              <p className="text-xs text-muted-foreground mt-1">{item.examples[0].vi}</p>
+              <p className="text-xs text-muted-foreground opacity-70">{item.examples[0].en}</p>
               {item.examples[0].fr && (
-                <p className="text-xs text-muted-foreground font-[var(--br-jp-font)] opacity-70">{item.examples[0].fr}</p>
+                <p className="text-xs text-muted-foreground opacity-70">{item.examples[0].fr}</p>
               )}
             </div>
           )}

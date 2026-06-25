@@ -1,7 +1,8 @@
 import type { StreakData } from '../../db/schema'
 
-import type { CustomVocabItem } from '../../types/custom-deck'
+import type { CustomDeck, CustomVocabItem } from '../../types/custom-deck'
 import type { ReviewLogEntry } from '../../types/review-log'
+import type { SRSCard } from '../../types/srs'
 import type { SyncPackagePayload } from '../../types/sync-package'
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it } from 'vitest'
 
@@ -189,5 +190,111 @@ describe('mergePackageIntoDexie — custom_vocabulary', () => {
     const stored = await db.custom_vocabulary.get('vocab-shared')
     expect(stored).toBeDefined()
     expect(stored?.meaning_vi).toBe('updated')
+  })
+})
+
+function makeSRSCard(userId: string, cardId: string, updatedAt: string): SRSCard {
+  return {
+    userId,
+    cardId,
+    cardType: 'vocab',
+    deckId: null,
+    state: 'review',
+    stability: 4,
+    difficulty: 5,
+    elapsed_days: 1,
+    scheduled_days: 4,
+    reps: 2,
+    lapses: 0,
+    last_review: '2026-06-01',
+    due: '2026-06-05',
+    last_rating: 3,
+    is_known: false,
+    consecutive_correct: 2,
+    pending_sync: false,
+    updated_at: updatedAt,
+  }
+}
+
+function makeCustomDeck(userId: string, id: string, updatedAt: string): CustomDeck {
+  return {
+    id,
+    user_id: userId,
+    title: `Deck ${id}`,
+    description: null,
+    is_active: false,
+    word_count: 0,
+    created_at: updatedAt,
+    updated_at: updatedAt,
+  }
+}
+
+describe('mergePackageIntoDexie — bulk ops', () => {
+  const BULK_UID = 'bulk-test-user'
+
+  it('imports 100 new srs_cards and returns correct imported count', async () => {
+    const cards: SRSCard[] = Array.from({ length: 100 }, (_, i) => makeSRSCard(BULK_UID, `card-${i}`, '2026-06-01T00:00:00.000Z'))
+    const pkg: SyncPackagePayload = {
+      srs_cards: cards,
+      custom_decks: [],
+      custom_vocabulary: [],
+      streaks: [],
+    }
+
+    const imported = await mergePackageIntoDexie(BULK_UID, pkg)
+
+    expect(imported).toBe(100)
+    const stored = await db.srs_cards.filter(c => c.userId === BULK_UID).toArray()
+    expect(stored).toHaveLength(100)
+  })
+
+  it('sets pending_sync: false on all imported srs_cards', async () => {
+    const cards: SRSCard[] = Array.from({ length: 5 }, (_, i) => makeSRSCard(BULK_UID, `ps-card-${i}`, '2026-06-01T00:00:00.000Z'))
+    const pkg: SyncPackagePayload = {
+      srs_cards: cards,
+      custom_decks: [],
+      custom_vocabulary: [],
+      streaks: [],
+    }
+
+    await mergePackageIntoDexie(BULK_UID, pkg)
+
+    const stored = await db.srs_cards.filter(c => c.userId === BULK_UID).toArray()
+    expect(stored.every(c => c.pending_sync === false)).toBe(true)
+  })
+
+  it('skips srs_cards where local is newer than remote', async () => {
+    const localNewer = makeSRSCard(BULK_UID, 'old-remote', '2026-06-10T00:00:00.000Z')
+    await db.srs_cards.put(localNewer)
+
+    const remoteOlder = makeSRSCard(BULK_UID, 'old-remote', '2026-06-01T00:00:00.000Z')
+    const pkg: SyncPackagePayload = {
+      srs_cards: [remoteOlder],
+      custom_decks: [],
+      custom_vocabulary: [],
+      streaks: [],
+    }
+
+    const imported = await mergePackageIntoDexie(BULK_UID, pkg)
+
+    expect(imported).toBe(0)
+    const stored = await db.srs_cards.get([BULK_UID, 'old-remote'])
+    expect(stored?.updated_at).toBe('2026-06-10T00:00:00.000Z')
+  })
+
+  it('imports 100 new custom_decks and returns correct imported count', async () => {
+    const decks: CustomDeck[] = Array.from({ length: 100 }, (_, i) => makeCustomDeck(BULK_UID, `deck-${i}`, '2026-06-01T00:00:00.000Z'))
+    const pkg: SyncPackagePayload = {
+      srs_cards: [],
+      custom_decks: decks,
+      custom_vocabulary: [],
+      streaks: [],
+    }
+
+    const imported = await mergePackageIntoDexie(BULK_UID, pkg)
+
+    expect(imported).toBe(100)
+    const stored = await db.custom_decks.where('user_id').equals(BULK_UID).toArray()
+    expect(stored).toHaveLength(100)
   })
 })

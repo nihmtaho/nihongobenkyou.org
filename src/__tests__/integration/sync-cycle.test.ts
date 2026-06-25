@@ -134,6 +134,18 @@ describe('uploadPendingReviews — concurrency guard', () => {
 
     expect(vi.mocked(insertReviewEvents)).toHaveBeenCalledTimes(1)
   })
+
+  it('concurrent callers share the same in-flight Promise (mutex reference equality)', async () => {
+    await seedPendingEntries(5)
+
+    const p1 = uploadPendingReviews()
+    const p2 = uploadPendingReviews()
+
+    // Both calls must return the exact same Promise object
+    expect(p1).toBe(p2)
+
+    await Promise.all([p1, p2])
+  })
 })
 
 describe('uploadPendingReviews — chunk batching', () => {

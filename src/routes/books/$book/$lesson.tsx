@@ -5,6 +5,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { Skeleton } from '@/components/ui/skeleton'
 import { SRSProgressBar } from '../../../components/common/SRSProgressBar'
 import { VocabStudyModal } from '../../../components/study/VocabStudyModal'
 import { HiddenVocabBadge } from '../../../components/vocabulary/HiddenVocabBadge'
@@ -20,6 +21,18 @@ import { useStudySessionStore } from '../../../stores/studySessionStore'
 
 export const Route = createFileRoute('/books/$book/$lesson')({
   component: LessonPage,
+  errorComponent: ({ error }) => (
+    <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-8">
+      <p className="font-[var(--br-mono-font)] text-destructive uppercase text-sm">Lỗi tải bài học</p>
+      <p className="text-xs font-[var(--br-mono-font)] text-muted-foreground">{error?.message}</p>
+      <a href="/books" className="font-[var(--br-mono-font)] text-xs uppercase underline">Quay lại Books</a>
+    </div>
+  ),
+  pendingComponent: () => (
+    <div className="flex flex-col gap-3 p-4">
+      {Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+    </div>
+  ),
 })
 
 const RETRY_MODES = [

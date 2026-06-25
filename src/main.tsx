@@ -1,9 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createRouter, RouterProvider } from '@tanstack/react-router'
+import { QueryClient } from '@tanstack/react-query'
+import { createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { registerSW } from 'virtual:pwa-register'
-import { Toaster } from '@/components/ui/sonner'
+import { App } from './App'
 import { syncPackage } from './db/package-sync'
 import { db } from './db/schema'
 import { checkForUpdates } from './db/seed'
@@ -14,7 +13,8 @@ import { useAuthStore } from './stores/authStore'
 import { useSettingsStore } from './stores/settingsStore'
 import './app.css'
 
-const PACKAGE_SYNC_INTERVAL_MS = 60_000
+const SYNC_BASE_DELAY_MS = 60_000
+const SYNC_MAX_DELAY_MS = 8 * 60 * 1000
 const UPDATE_CHECK_INTERVAL_MS = 2 * 60 * 60 * 1000
 
 function isSyncAllowed(): boolean {
@@ -23,12 +23,12 @@ function isSyncAllowed(): boolean {
   return !!userId && email !== null && syncEnabled
 }
 
-function triggerSync(): void {
+async function triggerSync(): Promise<void> {
   if (!isSyncAllowed())
     return
   const { userId } = useAuthStore.getState()
-  uploadPendingReviews().catch(() => {})
-  syncPackage(userId!).catch(() => {})
+  await uploadPendingReviews()
+  await syncPackage(userId!)
 }
 
 async function maybeCheckForUpdates(): Promise<void> {
@@ -41,16 +41,34 @@ async function maybeCheckForUpdates(): Promise<void> {
   checkForUpdates().catch(() => {})
 }
 
-window.addEventListener('online', triggerSync)
-setInterval(triggerSync, PACKAGE_SYNC_INTERVAL_MS)
+let syncFailCount = 0
+
+function scheduleNextSync(): void {
+  const delayMs = Math.min(SYNC_BASE_DELAY_MS * (2 ** syncFailCount), SYNC_MAX_DELAY_MS)
+  setTimeout(async () => {
+    try {
+      await triggerSync()
+      syncFailCount = 0
+    }
+    catch {
+      syncFailCount++
+    }
+    scheduleNextSync()
+  }, delayMs)
+}
+
+function resetSyncBackoff(): void {
+  syncFailCount = 0
+}
+
+window.addEventListener('online', resetSyncBackoff)
+window.addEventListener('sync-complete' as keyof WindowEventMap, resetSyncBackoff)
 setInterval(() => checkForUpdates().catch(() => {}), UPDATE_CHECK_INTERVAL_MS)
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible')
     maybeCheckForUpdates()
 })
-
-registerSW({ onOfflineReady() {} })
 
 const queryClient = new QueryClient()
 const router = createRouter({ routeTree })
@@ -69,10 +87,7 @@ async function bootstrap() {
 
   ReactDOM.createRoot(rootElement).render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <Toaster position="top-right" />
-      </QueryClientProvider>
+      <App queryClient={queryClient} router={router} />
     </StrictMode>,
   )
 
@@ -84,3 +99,4 @@ async function bootstrap() {
 }
 
 bootstrap().catch(console.error)
+scheduleNextSync()

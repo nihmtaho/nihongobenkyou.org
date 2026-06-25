@@ -1,20 +1,16 @@
-import type { SRSRating } from '../../types/srs'
 import type { MeaningLanguage } from '../../types/study'
 import type { VocabWithSRS } from '../../types/vocabulary'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { ButtonGroup } from '@/components/ui/button-group'
+import { JapaneseText } from '@/components/ui/japanese-text'
 import { highlightSentence } from '../../lib/sentence-highlight'
 import { AudioButton } from '../vocabulary/AudioButton'
+import { RatingBar } from './shared/RatingBar'
 
 interface SentenceFlashcardProps {
   card: VocabWithSRS
   meaningLanguage: MeaningLanguage
-  onRate: (rating: SRSRating) => void
+  onRate: Parameters<typeof RatingBar>[0]['onRate']
 }
-
-const RATING_VARIANTS = ['destructive', 'warning', 'success', 'info'] as const
-const RATING_LABELS = ['Again', 'Hard', 'Good', 'Easy'] as const
 
 export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFlashcardProps) {
   const [isFlipped, setIsFlipped] = useState(false)
@@ -37,13 +33,13 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
         >
           {!isFlipped
             ? (
-                <span className="text-4xl font-bold" style={{ fontFamily: 'var(--br-jp-font)' }}>
+                <JapaneseText className="text-4xl font-bold">
                   {target}
-                </span>
+                </JapaneseText>
               )
             : (
                 <>
-                  <span className="text-2xl" style={{ fontFamily: 'var(--br-jp-font)' }}>{target}</span>
+                  <JapaneseText className="text-2xl">{target}</JapaneseText>
                   <span className="text-xl font-bold">{meaning}</span>
                   <AudioButton audioFilename={card.audio_filename} vocabId={card.vocab_id} />
                 </>
@@ -64,7 +60,7 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
       >
         {!isFlipped
           ? (
-              <p className="text-xl text-center leading-relaxed" style={{ fontFamily: 'var(--br-jp-font)' }}>
+              <JapaneseText className="text-xl text-center leading-relaxed">
                 {sentenceParts!.length === 1
                   ? sentenceParts![0]
                   : (
@@ -74,13 +70,11 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
                         <span>{sentenceParts![2]}</span>
                       </>
                     )}
-              </p>
+              </JapaneseText>
             )
           : (
               <>
-                <p className="text-base text-center leading-relaxed" style={{ fontFamily: 'var(--br-jp-font)' }}>
-                  {example.vi}
-                </p>
+                <p className="text-base text-center leading-relaxed">{example.vi}</p>
                 <span className="text-lg font-bold text-primary">{meaning}</span>
                 <AudioButton audioFilename={card.audio_filename} vocabId={card.vocab_id} />
               </>
@@ -91,17 +85,5 @@ export function SentenceFlashcard({ card, meaningLanguage, onRate }: SentenceFla
       </div>
       {isFlipped && <RatingBar onRate={onRate} />}
     </div>
-  )
-}
-
-function RatingBar({ onRate }: { onRate: (r: SRSRating) => void }) {
-  return (
-    <ButtonGroup className="w-full">
-      {([1, 2, 3, 4] as SRSRating[]).map(r => (
-        <Button key={r} variant={RATING_VARIANTS[r - 1]} className="flex-1" onClick={() => onRate(r)} aria-label={RATING_LABELS[r - 1].toLowerCase()}>
-          {RATING_LABELS[r - 1]}
-        </Button>
-      ))}
-    </ButtonGroup>
   )
 }
