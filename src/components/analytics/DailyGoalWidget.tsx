@@ -47,22 +47,6 @@ export function DailyGoalWidget({ userId }: DailyGoalWidgetProps) {
 
   return (
     <Card className="p-4 relative overflow-hidden">
-      {/* Confetti overlay — CSS-only keyframe */}
-      <style>
-        {`
-        @keyframes confetti-fall {
-          0%   { opacity: 1; transform: translateY(-100%) rotate(0deg); }
-          100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
-        }
-        .animate-confetti::before {
-          content: '🎊';
-          position: absolute;
-          top: 0; left: 50%;
-          font-size: 2rem;
-          animation: confetti-fall 1.8s ease-in forwards;
-        }
-      `}
-      </style>
       <div
         ref={confettiRef}
         className="absolute inset-0 pointer-events-none"

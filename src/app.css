@@ -114,3 +114,17 @@
     85%, 100% { transform: translateX(var(--marquee-offset, 0px)); }
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes confetti-fall {
+    0%   { opacity: 1; transform: translateY(-100%) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
+  }
+  .animate-confetti::before {
+    content: '🎊';
+    position: absolute;
+    top: 0; left: 50%;
+    font-size: 2rem;
+    animation: confetti-fall 1.8s ease-in forwards;
+  }
+}
