@@ -180,10 +180,10 @@
 <!-- ── STATS ── -->
 <div class="stats-bar">
   <div class="stat-cell"><div class="stat-label">Cải tiến đề xuất</div><div class="stat-value">29</div></div>
-  <div class="stat-cell"><div class="stat-label">Bug / Setting bị bỏ qua</div><div class="stat-value">7</div></div>
-  <div class="stat-cell"><div class="stat-label">Impact HIGH</div><div class="stat-value" style="color:var(--purple)">14</div></div>
-  <div class="stat-cell"><div class="stat-label">Effort Low (quick win)</div><div class="stat-value" style="color:var(--green)">13</div></div>
-  <div class="stat-cell"><div class="stat-label">Khu vực audit</div><div class="stat-value">5</div></div>
+  <div class="stat-cell"><div class="stat-label">Đã hoàn thành</div><div class="stat-value" style="color:var(--green)">29</div></div>
+  <div class="stat-cell"><div class="stat-label">Còn lại</div><div class="stat-value" style="color:var(--green)">0</div></div>
+  <div class="stat-cell"><div class="stat-label">PRs merged</div><div class="stat-value" style="color:var(--blue)">#63–65</div></div>
+  <div class="stat-cell"><div class="stat-label">Hoàn thành</div><div class="stat-value" style="color:var(--green)">✓</div></div>
 </div>
 
 <div class="content">
@@ -486,9 +486,9 @@
   </div>
   <div class="items">
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Highlight nhiều từ vựng trong đoạn đọc</h3>
+        <h3>Highlight nhiều từ vựng trong đoạn đọc<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>ReadingComprehensionCard</code> chỉ highlight 1 target word; các từ đã học khác trong đoạn không có annotation.</div>
         <div class="item-fix">Truyền toàn bộ vocab bài học vào <code>highlightSentence</code>, annotate mỗi từ đã biết với underline + tooltip nghĩa/pitch → biến đoạn đọc thành reading surface phong phú.</div>
         <div class="files"><span class="file-chip">src/components/study/ReadingComprehensionCard.tsx:20</span></div>
@@ -496,9 +496,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Pitch accent trên câu ví dụ</h3>
+        <h3>Pitch accent trên câu ví dụ<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Câu ví dụ trong <code>VocabDetailPanel</code> và <code>KanjiVocabFlipCard</code> render plain text, không pitch/furigana.</div>
         <div class="item-fix">Gắn pitch data vào type <code>Example</code>, render <code>PitchAccentBars</code> cho mỗi ví dụ — hỗ trợ phân biệt minimal pair.</div>
         <div class="files"><span class="file-chip">src/components/vocabulary/VocabDetailPanel.tsx</span><span class="file-chip">src/types/vocabulary.ts</span></div>
@@ -516,9 +516,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>useReviewStats: full-table scan mỗi live-query tick</h3>
+        <h3>useReviewStats: full-table scan mỗi live-query tick<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>computeStats</code> nhận toàn bộ <code>review_log</code> không filter ngày ở DB — user review hàng nghìn lần load mọi row vào memory mỗi tick.</div>
         <div class="item-fix">Thêm tham số <code>after</code> (cutoff 30 ngày) vào Dexie query; tính <code>totalCount</code> all-time riêng bằng <code>.count()</code>.</div>
         <div class="files"><span class="file-chip">src/hooks/useReviewStats.ts</span></div>
@@ -526,9 +526,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>getVocabContainingChars: full scan mỗi lần mở kanji detail</h3>
+        <h3>getVocabContainingChars: full scan mỗi lần mở kanji detail<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>db.vocabulary.toArray()</code> quét toàn bảng rồi filter JS — mỗi lần render <code>KanjiDetailPage</code>. Jank tăng khi dataset lớn (Shokyuu II+).</div>
         <div class="item-fix">Thêm multi-entry index <code>kanji_chars</code> vào bảng vocabulary, fetch related vocab không cần full scan.</div>
         <div class="files"><span class="file-chip">src/db/kanji.ts:73–75</span><span class="file-chip">src/db/schema.ts</span></div>
@@ -536,9 +536,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Leaderboard: Realtime thay polling 60s + view tháng/all-time</h3>
+        <h3>Leaderboard: Realtime thay polling 60s + view tháng/all-time<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>refetchInterval: 60_000</code> chạy vô điều kiện; chỉ có view weekly, không period selector.</div>
         <div class="item-fix">Chuyển sang Supabase Realtime (push khi đổi) thay vì hammer RPC mỗi phút × mọi user. Thêm param <code>period: weekly|monthly|all_time</code> + tab selector.</div>
         <div class="files"><span class="file-chip">src/hooks/useLeaderboard.ts:23</span><span class="file-chip">src/api/leaderboard.ts</span><span class="file-chip">src/routes/_authenticated/leaderboard.tsx</span></div>
@@ -556,9 +556,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Dark mode: hoàn thiện (đang stub "Sắp ra mắt")</h3>
+        <h3>Dark mode: hoàn thiện (đang stub "Sắp ra mắt")<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>DarkModeSection</code> là Switch disabled; <code>app.css</code> có variant <code>dark</code> nhưng <b>không có</b> token override; <code>settingsStore.darkMode</code> không được đọc.</div>
         <div class="item-fix">Thêm bộ token <code>.dark { ... }</code> trong <code>app.css</code>, wire <code>darkMode</code> → <code>documentElement.classList.toggle('dark')</code>, enable switch.</div>
         <div class="files"><span class="file-chip">src/app.css</span><span class="file-chip">src/stores/settingsStore.ts</span><span class="file-chip">src/components/settings/DarkModeSection.tsx</span></div>
@@ -566,9 +566,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Route-level code splitting cho study modes nặng</h3>
+        <h3>Route-level code splitting cho study modes nặng<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Không route nào dùng <code>lazy()</code>; mọi study mode + kanji stroke + leaderboard (Recharts) bundle vào main chunk. Zero <code>React.lazy</code> trong <code>src/</code>.</div>
         <div class="item-fix">Dùng <code>route.lazy()</code> tách review, kanji graph, stroke-order, leaderboard thành async chunk — giảm ~30–40% study-mode code khỏi initial bundle.</div>
         <div class="files"><span class="file-chip">src/routes/_authenticated/study/review.tsx</span><span class="file-chip">src/routes/kanji/$char.stroke.tsx</span></div>
@@ -595,9 +595,9 @@
   </div>
   <div class="items">
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Test cho seed error paths + sync version-conflict</h3>
+        <h3>Test cho seed error paths + sync version-conflict<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Error path của <code>seedDatabase</code> (manifest 404, transaction fail) chưa test; nhánh version-conflict trong <code>syncPackage</code> (re-download + merge) không có test. Đây là 2 invariant ưu tiên cao nhất theo testing.md.</div>
         <div class="item-fix">Thêm test: manifest 404 → <code>SeedError</code>; lesson fail giữa loop → transaction không commit; version conflict → re-download+merge. Dùng fake-indexeddb + MSW.</div>
         <div class="files"><span class="file-chip">src/__tests__/integration/seed.test.ts</span><span class="file-chip">src/__tests__/integration/sync-cycle.test.ts</span></div>
@@ -605,9 +605,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>E2E: offline study flow + anonymous→auth migration</h3>
+        <h3>E2E: offline study flow + anonymous→auth migration<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>offline.spec.ts</code> chỉ test navigation cơ bản, không test critical path: rate offline → <code>pending_sync=true</code> → online → <code>pending_sync=false</code>. Không có E2E cho migration.</div>
         <div class="item-fix">Dùng <code>page.route()</code> giả lập mất mạng, rate card, khôi phục mạng, assert sync hoàn tất. Thêm <code>auth/anonymous-migration.spec.ts</code>.</div>
         <div class="files"><span class="file-chip">e2e/offline.spec.ts</span><span class="file-chip">e2e/auth/anonymous-migration.spec.ts (new)</span></div>
@@ -615,9 +615,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Lớp i18n cho UI shell (hiện hardcode tiếng Việt)</h3>
+        <h3>Lớp i18n cho UI shell (hiện hardcode tiếng Việt)<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Mọi string UI hardcode tiếng Việt inline (~30+ file). <code>settingsStore.language</code> có field nhưng không có lookup layer — người học chọn English vẫn thấy shell tiếng Việt.</div>
         <div class="item-fix">Tách string vào <code>src/lib/i18n.ts</code> (typed <code>Record&lt;Lang, Record&lt;string,string&gt;&gt;</code>, zero-dependency), thay bằng <code>t('key')</code>. Không cần react-i18next.</div>
         <div class="files"><span class="file-chip">src/lib/i18n.ts (new)</span><span class="file-chip">src/stores/settingsStore.ts</span><span class="file-chip">+ ~30 component</span></div>
@@ -634,53 +634,51 @@
   </div>
   <div class="roadmap">
     <div class="roadmap-row">
-      <div class="roadmap-phase" style="color: var(--accent);">Đợt 1<br>Bug Fix<br>(1 sprint)</div>
+      <div class="roadmap-phase" style="color: var(--green);">Đợt 1<br>Bug Fix<br>✓ DONE<br>PR #63</div>
       <div class="roadmap-items">
-        <span class="roadmap-item">custom_vocabulary sync</span>
-        <span class="roadmap-item">Guest migration order</span>
-        <span class="roadmap-item">newCardsPerDay enforce</span>
-        <span class="roadmap-item">getDueCards bypass</span>
-        <span class="roadmap-item">Deck limits enforce</span>
-        <span class="roadmap-item">answer() rating loss</span>
-        <span class="roadmap-item">Push reminderTime</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">custom_vocabulary sync</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Guest migration order</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">newCardsPerDay enforce</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">getDueCards bypass</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Deck limits enforce</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">answer() rating loss</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Push reminderTime</span>
       </div>
     </div>
     <div class="roadmap-row">
-      <div class="roadmap-phase" style="color: var(--accent2);">Đợt 2<br>Core + A11y<br>(1–2 sprint)</div>
+      <div class="roadmap-phase" style="color: var(--green);">Đợt 2<br>Core + A11y<br>✓ DONE<br>PR #64–65</div>
       <div class="roadmap-items">
-        <span class="roadmap-item">FSRS fuzz + retention slider</span>
-        <span class="roadmap-item">Undo rating</span>
-        <span class="roadmap-item">Sync status UI + backoff</span>
-        <span class="roadmap-item">SW update prompt</span>
-        <span class="roadmap-item">lang="ja" + reduced-motion</span>
-        <span class="roadmap-item">errorComponent routes</span>
-        <span class="roadmap-item">AudioButton errors</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">FSRS fuzz + retention slider</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Undo rating</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Sync status UI + backoff</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">SW update prompt</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">lang="ja" + reduced-motion</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">errorComponent routes</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">AudioButton errors</span>
       </div>
     </div>
     <div class="roadmap-row">
-      <div class="roadmap-phase" style="color: var(--yellow);">Đợt 3<br>Polish + Scale<br>(2 sprint)</div>
+      <div class="roadmap-phase" style="color: var(--green);">Đợt 3<br>Polish + Scale<br>✓ DONE<br>PR #65</div>
       <div class="roadmap-items">
-        <span class="roadmap-item">Dark mode</span>
-        <span class="roadmap-item">Code splitting</span>
-        <span class="roadmap-item">Multi-vocab highlight</span>
-        <span class="roadmap-item">Pitch trên ví dụ</span>
-        <span class="roadmap-item">Stats/kanji query perf</span>
-        <span class="roadmap-item">Leaderboard Realtime</span>
-        <span class="roadmap-item">Test seed/sync/E2E</span>
-        <span class="roadmap-item">i18n layer</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Dark mode</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Code splitting</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Multi-vocab highlight</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Pitch trên ví dụ</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Stats/kanji query perf</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Leaderboard Realtime</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">Test seed/sync/E2E</span>
+        <span class="roadmap-item" style="opacity:.6;text-decoration:line-through">i18n layer</span>
       </div>
     </div>
   </div>
 
   <div class="section-header">
     <h2>Tóm Tắt Theo Khu Vực</h2>
-    <span class="count">29 cải tiến · 5 khu vực</span>
+    <span class="count">29/29 hoàn thành · 3 đợt · PR #63, #64, #65</span>
   </div>
   <div class="intro-note" style="border-left-color: var(--green);">
-    <strong>Khuyến nghị:</strong> Làm Đợt 1 (bug fix) trước mọi feature mới — đây là dữ liệu mất / setting không chạy,
-    chi phí thấp, mỗi cái ≤ 1 dòng đến vài giờ. Đợt 2 nâng độ tin cậy &amp; accessibility (nhiều quick-win Low effort,
-    Impact cao). Đợt 3 cho performance &amp; polish khi dataset/scale tăng. Sau đó mới quay lại feature mới trong feature-report.html
-    (Achievement, Grammar, Handwriting...).
+    <strong>✓ Hoàn thành toàn bộ lộ trình cải tiến.</strong> Tất cả 29 mục (7 P0 + 18 P1 + 13 P2) đã được implement qua 3 sprint và merge vào <code>develop</code>.
+    Codebase đã sẵn sàng cho các feature mới trong <code>feature-report.html</code> (Achievement, Grammar, Handwriting...).
   </div>
 
 </div><!-- /content -->
