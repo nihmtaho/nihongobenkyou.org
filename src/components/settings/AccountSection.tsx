@@ -15,11 +15,13 @@ import {
 } from '@/components/ui/responsive-dialog'
 import { deleteAccount, signOut } from '../../api/auth'
 import { db } from '../../db/schema'
+import { useTranslation } from '../../hooks/useTranslation'
 import { useAuthStore } from '../../stores/authStore'
 
 const DELETE_CONFIRM_PHRASE = 'XÓA'
 
 export function AccountSection() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { userId, email } = useAuthStore()
@@ -93,7 +95,7 @@ export function AccountSection() {
     <>
       <Card className="p-4">
         <CardContent className="p-0">
-          <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">TÀI KHOẢN</h2>
+          <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">{t('settings.account.title')}</h2>
           <div className="flex flex-col gap-3">
             <Button
               type="button"
@@ -101,7 +103,7 @@ export function AccountSection() {
               onClick={handleLogout}
               className="w-full font-[var(--br-heading-font)] uppercase"
             >
-              Đăng xuất
+              {t('settings.account.logout')}
             </Button>
             <Button
               type="button"
@@ -109,7 +111,7 @@ export function AccountSection() {
               onClick={handleOpenDeleteModal}
               className="border-destructive text-destructive hover:bg-destructive/10 w-full font-[var(--br-heading-font)] uppercase"
             >
-              Xóa tài khoản
+              {t('settings.account.delete')}
             </Button>
           </div>
         </CardContent>
@@ -119,7 +121,7 @@ export function AccountSection() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="font-[var(--br-heading-font)] text-xl uppercase">
-              XÁC NHẬN XÓA TÀI KHOẢN
+              {t('settings.account.deleteConfirmTitle')}
             </DialogTitle>
           </DialogHeader>
           <p className="text-sm text-foreground/70 mb-4">
@@ -151,7 +153,7 @@ export function AccountSection() {
               onClick={() => setShowDeleteModal(false)}
               disabled={isDeleting}
             >
-              Hủy
+              {t('common.cancel')}
             </Button>
             <Button
               type="button"
@@ -163,7 +165,7 @@ export function AccountSection() {
             >
               {isDeleting
                 ? <Loader2 className="animate-spin h-3 w-3" />
-                : 'Xóa vĩnh viễn'}
+                : t('settings.account.deletePermanent')}
             </Button>
           </DialogFooter>
         </DialogContent>

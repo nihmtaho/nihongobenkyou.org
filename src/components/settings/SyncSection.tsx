@@ -8,10 +8,12 @@ import { Switch } from '@/components/ui/switch'
 import { syncPackage } from '../../db/package-sync'
 import { uploadPendingReviews } from '../../db/sync'
 import { useSyncStatus } from '../../hooks/useSyncStatus'
+import { useTranslation } from '../../hooks/useTranslation'
 import { useAuthStore } from '../../stores/authStore'
 import { useSettingsStore } from '../../stores/settingsStore'
 
 export function SyncSection() {
+  const { t } = useTranslation()
   const { email, userId } = useAuthStore()
   const { syncEnabled } = useSettingsStore()
   const { syncJustCompleted, isSyncing, lastError, pendingCount } = useSyncStatus()
@@ -33,13 +35,13 @@ export function SyncSection() {
     <Card className="p-4">
       <CardContent className="p-0">
         <h2 className="text-xl font-bold uppercase font-[var(--br-heading-font)] mb-4">
-          ĐỒNG BỘ ĐÁM MÂY
+          {t('settings.sync.title')}
         </h2>
         {isRealUser
           ? (
               <div className="flex flex-col gap-3">
                 <Label className="flex items-center justify-between cursor-pointer">
-                  <span className="font-[var(--br-mono-font)] text-sm uppercase">Bật đồng bộ</span>
+                  <span className="font-[var(--br-mono-font)] text-sm uppercase">{t('settings.sync.enable')}</span>
                   <Switch
                     checked={syncEnabled}
                     onCheckedChange={() => useSettingsStore.setState({ syncEnabled: !syncEnabled })}
@@ -60,18 +62,18 @@ export function SyncSection() {
                           ? (
                               <>
                                 <Loader2 className="animate-spin h-3 w-3" />
-                                Đang đồng bộ...
+                                {t('settings.sync.syncing')}
                               </>
                             )
                           : syncJustCompleted
-                            ? '✓ Đã đồng bộ'
-                            : 'Đồng bộ ngay'}
+                            ? t('settings.sync.done')
+                            : t('settings.sync.syncNow')}
                       </Button>
                       {pendingCount > 0 && !isSyncing && (
                         <Badge variant="secondary" className="font-[var(--br-mono-font)] text-[10px]">
                           {pendingCount}
                           {' '}
-                          chờ
+                          {t('settings.sync.pending')}
                         </Badge>
                       )}
                     </div>
@@ -88,10 +90,10 @@ export function SyncSection() {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="font-[var(--br-mono-font)] text-[10px]">
-                    KHÓA
+                    {t('settings.sync.locked')}
                   </Badge>
                   <span className="text-sm text-muted-foreground font-[var(--br-mono-font)]">
-                    Chỉ dành cho tài khoản đã đăng nhập
+                    {t('settings.sync.loginRequired')}
                   </span>
                 </div>
                 <Button
@@ -99,7 +101,7 @@ export function SyncSection() {
                   size="sm"
                   className="font-[var(--br-heading-font)] uppercase self-start mt-1"
                 >
-                  <Link to="/auth/login">Đăng nhập để đồng bộ</Link>
+                  <Link to="/auth/login">{t('settings.sync.loginToSync')}</Link>
                 </Button>
               </div>
             )}

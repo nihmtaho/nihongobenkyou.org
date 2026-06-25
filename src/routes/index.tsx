@@ -11,6 +11,7 @@ import {
   StreakWidget,
 } from '../components/analytics'
 import { useDueCards } from '../hooks/useDueCards'
+import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../stores/authStore'
 
 export const Route = createFileRoute('/')({
@@ -18,6 +19,7 @@ export const Route = createFileRoute('/')({
 })
 
 function HomePage() {
+  const { t } = useTranslation()
   const userId = useAuthStore(s => s.userId) ?? ''
   const { data: dueCards } = useDueCards(userId)
   const dueCount = dueCards?.length ?? 0
@@ -41,7 +43,7 @@ function HomePage() {
                 NIHONGO.
               </h1>
               <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
-                NHẬT NGỮ · HỌC MỖI NGÀY
+                {t('home.tagline')}
               </p>
             </div>
             {/* Settings shortcut — mobile only (bottom dock replaces SETTINGS tab) */}
@@ -49,7 +51,7 @@ function HomePage() {
               asChild
               size="icon-lg"
               className="lg:hidden mt-1"
-              aria-label="Cài đặt"
+              aria-label={t('home.settings')}
             >
               <Link to="/settings">
                 <Settings size={18} strokeWidth={1.75} aria-hidden />
@@ -66,14 +68,14 @@ function HomePage() {
             <Link to="/study" search={{ tab: 'vocab' }}>
               {dueCount > 0
                 ? `ÔN TẬP NGAY · ${dueCount} THẺ`
-                : 'BẮT ĐẦU HỌC'}
+                : t('home.startStudy')}
             </Link>
           </Button>
 
           {/* Divider */}
           <div className="hidden lg:flex items-center gap-3">
             <div className="h-px flex-1 bg-foreground/10" />
-            <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">CHI TIẾT</span>
+            <span className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">{t('home.details')}</span>
             <div className="h-px flex-1 bg-foreground/10" />
           </div>
 
@@ -102,7 +104,7 @@ function HomePage() {
         {/* ── Right column (desktop only) ── */}
         <div className="hidden lg:flex lg:flex-col lg:gap-4 lg:sticky lg:top-8">
           <p className="text-[10px] font-[var(--br-mono-font)] uppercase text-muted-foreground tracking-widest">
-            TIẾN ĐỘ HÔM NAY
+            {t('home.todayProgress')}
           </p>
           <div className="grid grid-cols-2 gap-3">
             <StreakWidget userId={userId} />
@@ -115,21 +117,21 @@ function HomePage() {
               <Link to="/study" search={{ tab: 'vocab' }}>
                 <span>◈</span>
                 {' '}
-                Ôn tập từ vựng
+                {t('home.reviewVocab')}
               </Link>
             </Button>
             <Button variant="outline" size="sm" asChild className="font-[var(--br-mono-font)] justify-start gap-2">
               <Link to="/study/review" search={{ filter: 'kanji' }}>
                 <span className="font-[var(--br-jp-font)]">字</span>
                 {' '}
-                Ôn tập hán tự
+                {t('home.reviewKanji')}
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild className="font-[var(--br-mono-font)] justify-start gap-2 text-muted-foreground">
               <Link to="/books">
                 <span>◫</span>
                 {' '}
-                Khám phá bài học
+                {t('home.exploreLessons')}
               </Link>
             </Button>
           </div>

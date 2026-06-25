@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDailyGoal } from '../../hooks/useDailyGoal'
+import { useTranslation } from '../../hooks/useTranslation'
 import { getLastNDates, getToday } from '../../lib/date-utils'
 import { useSettingsStore } from '../../stores/settingsStore'
 
@@ -10,6 +11,7 @@ interface DailyGoalWidgetProps {
 }
 
 export function DailyGoalWidget({ userId }: DailyGoalWidgetProps) {
+  const { t } = useTranslation()
   const lastConfettiDate = useSettingsStore(s => s.lastConfettiDate)
   const setLastConfettiDate = useSettingsStore(s => s.setLastConfettiDate)
   const confettiRef = useRef<HTMLDivElement>(null)
@@ -55,7 +57,7 @@ export function DailyGoalWidget({ userId }: DailyGoalWidgetProps) {
 
       <CardContent className="p-0 flex flex-col gap-3">
         <p className="text-[11px] font-[var(--br-mono-font)] uppercase text-muted-foreground">
-          MỤC TIÊU
+          {t('goal.label')}
         </p>
 
         {/* Progress bar */}
@@ -73,13 +75,13 @@ export function DailyGoalWidget({ userId }: DailyGoalWidgetProps) {
             /
             {data.goal}
           </span>
-          <span className="text-xs font-[var(--br-mono-font)] text-muted-foreground uppercase">LẦN</span>
+          <span className="text-xs font-[var(--br-mono-font)] text-muted-foreground uppercase">{t('goal.unit')}</span>
         </div>
 
         {/* Completion message */}
         {data.isComplete && (
           <p className="text-xs font-[var(--br-mono-font)] text-green-500 uppercase">
-            🎉 Hoàn thành hôm nay!
+            {t('goal.complete')}
           </p>
         )}
 
