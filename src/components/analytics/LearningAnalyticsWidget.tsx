@@ -2,6 +2,7 @@ import type { SubjectStats } from '../../hooks/useLearningStats'
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
 import { useLearningStats } from '../../hooks/useLearningStats'
+import { useTranslation } from '../../hooks/useTranslation'
 import { formatNextReview } from '../../lib/next-review'
 
 type StatKey = 'new' | 'learning' | 'review' | 'mature'
@@ -18,10 +19,10 @@ interface LegendItem {
 }
 
 const STAT_META: StatMeta[] = [
-  { key: 'new', label: 'CHƯA HỌC' },
-  { key: 'learning', label: 'ĐANG HỌC' },
-  { key: 'review', label: 'ÔN TẬP' },
-  { key: 'mature', label: 'ĐÃ THUỘC' },
+  { key: 'new', label: 'srs.new' },
+  { key: 'learning', label: 'srs.learning' },
+  { key: 'review', label: 'srs.review' },
+  { key: 'mature', label: 'srs.mature' },
 ]
 
 const COUNT_COLORS: Record<StatKey, string> = {
@@ -32,10 +33,10 @@ const COUNT_COLORS: Record<StatKey, string> = {
 }
 
 const LEGEND_ITEMS: LegendItem[] = [
-  { key: 'new', label: 'Chưa học', dotClass: 'bg-secondary border border-foreground/20' },
-  { key: 'learning', label: 'Đang học', dotClass: 'bg-warning' },
-  { key: 'review', label: 'Ôn tập', dotClass: 'bg-info' },
-  { key: 'mature', label: 'Đã thuộc', dotClass: 'bg-success' },
+  { key: 'new', label: 'srs.new.legend', dotClass: 'bg-secondary border border-foreground/20' },
+  { key: 'learning', label: 'srs.learning.legend', dotClass: 'bg-warning' },
+  { key: 'review', label: 'srs.review.legend', dotClass: 'bg-info' },
+  { key: 'mature', label: 'srs.mature.legend', dotClass: 'bg-success' },
 ]
 
 function AnimatedNumber({ value, delay = 0 }: { value: number, delay?: number }) {
@@ -67,6 +68,7 @@ function SubjectRow({
   stats: SubjectStats
   animDelay?: number
 }) {
+  const { t } = useTranslation()
   const { total, learning, review, mature } = stats
   const learningPct = pct(learning, total)
   const reviewPct = pct(review, total)
@@ -115,7 +117,7 @@ function SubjectRow({
               <AnimatedNumber value={stats[key]} delay={animDelay + i * 0.06} />
             </span>
             <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/40 tracking-wide leading-tight mt-0.5">
-              {statLabel}
+              {t(statLabel)}
             </span>
           </div>
         ))}
@@ -123,7 +125,7 @@ function SubjectRow({
 
       {nextReview && (
         <p className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/40 text-right leading-none">
-          ôn tiếp:
+          {t('review.next')}
           {' '}
           {nextReview}
         </p>
@@ -150,6 +152,7 @@ function SkeletonRow() {
 }
 
 export function LearningAnalyticsWidget({ userId }: { userId: string }) {
+  const { t } = useTranslation()
   const { data: stats, isLoading } = useLearningStats(userId)
 
   return (
@@ -166,7 +169,7 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
         {/* Header */}
         <div className="flex items-baseline justify-between gap-4">
           <span className="text-[11px] font-[var(--br-mono-font)] font-bold uppercase tracking-[0.22em] text-foreground">
-            TIẾN ĐỘ HỌC
+            {t('analytics.title')}
           </span>
           {isLoading
             ? <div className="h-2.5 w-28 bg-secondary animate-pulse" />
@@ -174,13 +177,13 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
               <span className="text-[10px] font-[var(--br-mono-font)] text-foreground/40">
                 {stats.vocab.total}
                 {' '}
-                từ vựng
+                {t('unit.vocab')}
                 {' '}
                 ·
                 {' '}
                 {stats.kanji.total}
                 {' '}
-                hán tự
+                {t('unit.kanji')}
               </span>
             )}
         </div>
@@ -188,14 +191,14 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
         {/* Vocabulary section */}
         {isLoading
           ? <SkeletonRow />
-          : stats && <SubjectRow label="TỪ VỰNG" stats={stats.vocab} animDelay={0.15} />}
+          : stats && <SubjectRow label={t('subject.vocab')} stats={stats.vocab} animDelay={0.15} />}
 
         <div className="h-px bg-foreground/10" />
 
         {/* Kanji section */}
         {isLoading
           ? <SkeletonRow />
-          : stats && <SubjectRow label="HÁN TỰ" stats={stats.kanji} animDelay={0.38} />}
+          : stats && <SubjectRow label={t('subject.kanji')} stats={stats.kanji} animDelay={0.38} />}
 
         {/* Legend */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5 border-t border-foreground/10">
@@ -203,7 +206,7 @@ export function LearningAnalyticsWidget({ userId }: { userId: string }) {
             <div key={key} className="flex items-center gap-1.5">
               <span className={`w-2 h-2 inline-block flex-none ${dotClass}`} />
               <span className="text-[9px] font-[var(--br-mono-font)] uppercase text-foreground/40 tracking-wide">
-                {label}
+                {t(label)}
               </span>
             </div>
           ))}

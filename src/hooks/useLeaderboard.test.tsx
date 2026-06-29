@@ -2,13 +2,15 @@ import type { LeaderboardEntry } from '../types/user'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { fetchWeeklyLeaderboard } from '../api/leaderboard'
+import { fetchLeaderboard, subscribeToLeaderboardChanges } from '../api/leaderboard'
 
 import { useLeaderboard } from './useLeaderboard'
 
 vi.mock('../api/leaderboard')
 
-const mockFetch = vi.mocked(fetchWeeklyLeaderboard)
+const mockFetch = vi.mocked(fetchLeaderboard)
+// subscribeToLeaderboardChanges must return a cleanup fn; return a no-op in tests
+vi.mocked(subscribeToLeaderboardChanges).mockReturnValue(() => {})
 
 const MOCK_ENTRIES: LeaderboardEntry[] = [
   { rank: 1, user_id: 'u1', display_name: 'Alice', avatar_url: null, cards_reviewed: 100, is_current_user: false },

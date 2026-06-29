@@ -1,6 +1,7 @@
 import type { StreakData } from '../db/schema'
 import type { ReviewLogEntry } from '../types/review-log'
 
+import { useMemo } from 'react'
 import { db } from '../db/schema'
 import { getTodayUTC } from '../lib/date-utils'
 import { useLiveQuery } from '../lib/use-live-query'
@@ -59,7 +60,7 @@ function buildLast7Dates(today: string): string[] {
   return dates
 }
 
-function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
+function computeStats(entries: ReviewLogEntry[], streak: number, totalCount: number): ReviewStats {
   const today = getTodayUTC()
   const monday = getMondayOfCurrentWeek(today)
   const currentMonth = today.slice(0, 7) // 'YYYY-MM'
@@ -124,7 +125,7 @@ function computeStats(entries: ReviewLogEntry[], streak: number): ReviewStats {
     todayCount,
     weekCount,
     avgPerDay,
-    totalCount: entries.length,
+    totalCount,
     monthCount,
     last7Days,
     ratingDistribution,
@@ -136,12 +137,32 @@ export function useReviewStats(
   userId: string,
   cardType?: 'vocab' | 'kanji' | 'custom_vocab',
 ): { data: ReviewStats | null, isLoading: boolean } {
+  // Query only the last 30 days — avoids full-table scan for large histories.
+  // totalCount is fetched separately via .count() which is O(1) in IndexedDB.
+  const cutoff30 = useMemo(() => {
+    const d = new Date()
+    d.setDate(d.getDate() - 30)
+    return d.toISOString().slice(0, 10)
+  }, [])
+
   const entries = useLiveQuery<ReviewLogEntry[]>(
+    () => {
+      if (!userId)
+        return Promise.resolve([])
+      return db.review_log
+        .where('reviewedAt')
+        .aboveOrEqual(cutoff30)
+        .filter(e => e.userId === userId && (cardType == null || e.cardType === cardType))
+        .toArray()
+    },
+    [userId, cardType, cutoff30],
+  )
+  const totalCount = useLiveQuery<number>(
     () => userId
       ? db.review_log
           .filter(e => e.userId === userId && (cardType == null || e.cardType === cardType))
-          .toArray()
-      : Promise.resolve([]),
+          .count()
+      : Promise.resolve(0),
     [userId, cardType],
   )
   const streaks = useLiveQuery<StreakData[]>(
@@ -152,10 +173,10 @@ export function useReviewStats(
   if (!userId)
     return { data: null, isLoading: false }
 
-  const isLoading = entries === undefined || streaks === undefined
+  const isLoading = entries === undefined || streaks === undefined || totalCount === undefined
   if (isLoading)
     return { data: null, isLoading: true }
 
   const streak = streaks.at(-1)?.current_streak ?? 0
-  return { data: computeStats(entries, streak), isLoading: false }
+  return { data: computeStats(entries, streak, totalCount), isLoading: false }
 }

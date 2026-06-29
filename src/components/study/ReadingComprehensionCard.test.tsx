@@ -51,6 +51,24 @@ const card: VocabWithSRS = {
   consecutive_correct: 0,
 }
 
+/** A second vocab item whose reading appears in the passage. */
+const knownCard: VocabWithSRS = {
+  ...card,
+  vocab_id: 'mnn1_test002',
+  word: null,
+  reading: 'にほんご',
+  meaning_vi: 'tiếng Nhật',
+}
+
+/** A vocab item whose reading does NOT appear in the passage. */
+const absentCard: VocabWithSRS = {
+  ...card,
+  vocab_id: 'mnn1_test003',
+  word: null,
+  reading: 'えいご',
+  meaning_vi: 'tiếng Anh',
+}
+
 describe('readingComprehensionCard', () => {
   it('shows passage text on initial render', () => {
     render(<ReadingComprehensionCard passage={passage} card={card} onRate={vi.fn()} />)
@@ -91,5 +109,45 @@ describe('readingComprehensionCard', () => {
     await user.click(screen.getByRole('button', { name: /xem kết quả/i }))
     await user.click(screen.getByRole('button', { name: /good/i }))
     expect(onRate).toHaveBeenCalledWith(3)
+  })
+
+  it('underlines a known pool word that appears in the passage', () => {
+    render(
+      <ReadingComprehensionCard
+        passage={passage}
+        card={card}
+        vocabPool={[card, knownCard]}
+        onRate={vi.fn()}
+      />,
+    )
+    // にほんご appears in the passage and is in the pool (but not the target)
+    const annotated = screen.getByTitle('にほんご → tiếng Nhật')
+    expect(annotated).toBeTruthy()
+    expect(annotated.textContent).toBe('にほんご')
+  })
+
+  it('does not produce a title span for a pool word absent from the passage', () => {
+    render(
+      <ReadingComprehensionCard
+        passage={passage}
+        card={card}
+        vocabPool={[card, absentCard]}
+        onRate={vi.fn()}
+      />,
+    )
+    expect(screen.queryByTitle(/えいご/)).toBeNull()
+  })
+
+  it('does not annotate the target card as a known word even when it is in the pool', () => {
+    render(
+      <ReadingComprehensionCard
+        passage={passage}
+        card={card}
+        vocabPool={[card]}
+        onRate={vi.fn()}
+      />,
+    )
+    // No title attribute should exist for the target reading
+    expect(screen.queryByTitle(/べんきょうします/)).toBeNull()
   })
 })

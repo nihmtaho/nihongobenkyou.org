@@ -1,7 +1,7 @@
 import type { CustomDeck, CustomVocabItem, ParsedVocabItem } from '../types/custom-deck'
 import { MAX_DECKS_PER_USER, MAX_WORDS_PER_DECK } from '../lib/constants'
 import { db } from './schema'
-import { getSRSCardsForDeck, initSRSCard, migrateSRSCardsUserId } from './srs-cards'
+import { bulkInitSRSCards, getSRSCardsForDeck, migrateSRSCardsUserId } from './srs-cards'
 
 export async function createDeck(
   userId: string,
@@ -102,7 +102,7 @@ export async function addWords(
   // useCustomDeckProgress.started stays in sync with word_count.
   const existingSRS = await getSRSCardsForDeck(userId, deckId)
   if (existingSRS.length > 0) {
-    await Promise.all(words.map(w => initSRSCard(userId, w.id, 'custom_vocab', deckId)))
+    await bulkInitSRSCards(userId, words.map(w => ({ id: w.id, cardType: 'custom_vocab', deckId })))
   }
 }
 

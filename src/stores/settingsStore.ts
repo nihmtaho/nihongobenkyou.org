@@ -21,6 +21,7 @@ interface SettingsState {
   setLastConfettiDate: (date: string | null) => void
   setReminderTime: (time: string) => void
   setDailyTarget: (target: number) => void
+  setDarkMode: (v: boolean) => void
   setNotificationsEnabled: (v: boolean) => void
   setRequestRetention: (retention: number) => void
 }
@@ -46,6 +47,7 @@ export const useSettingsStore = create<SettingsState>()(
       setLastConfettiDate: lastConfettiDate => set({ lastConfettiDate }),
       setReminderTime: reminderTime => set({ reminderTime }),
       setDailyTarget: dailyTarget => set({ dailyTarget }),
+      setDarkMode: darkMode => set({ darkMode }),
       setNotificationsEnabled: notificationsEnabled => set({ notificationsEnabled }),
       setRequestRetention: requestRetention => set({ requestRetention }),
     }),

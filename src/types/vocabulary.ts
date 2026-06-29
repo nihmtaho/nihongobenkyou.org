@@ -5,6 +5,7 @@ export interface Example {
   en: string
   vi: string
   fr?: string
+  pitch_pattern?: ('H' | 'L')[] | null
 }
 
 export type PitchType = 'heiban' | 'atamadaka' | 'nakadaka' | 'odaka' | 'odd' | null
@@ -30,6 +31,7 @@ export interface VocabItem {
   edition?: number[]
   sort_order?: number
   han_viet?: string | null
+  kanji_chars?: string[]
 }
 
 export interface VocabWithSRS extends VocabItem {

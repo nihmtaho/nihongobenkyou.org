@@ -279,9 +279,9 @@
   </div>
   <div class="items">
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Bật FSRS fuzz — tránh "review avalanche"</h3>
+        <h3>Bật FSRS fuzz — tránh "review avalanche"<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>fsrs(generatorParameters({ enable_fuzz: false }))</code> — fuzz tắt. Mọi card review cùng ngày dồn về cùng một ngày tương lai.</div>
         <div class="item-fix">Đổi <code>enable_fuzz: true</code>. Jitter nhỏ trải đều interval, tránh dồn cục review. Một dòng, không ảnh hưởng schema.</div>
         <div class="files"><span class="file-chip">src/lib/srs.ts:5</span></div>
@@ -289,9 +289,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Undo / rollback rating trong session</h3>
+        <h3>Undo / rollback rating trong session<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Rating ghi ngay (<code>upsertSRSCard</code> + <code>review_log.add</code>), không có undo stack. Shortcut <code>⌘1–4</code> dễ bấm nhầm và không gỡ được.</div>
         <div class="item-fix">Lưu snapshot card trước mỗi <code>scheduleFSRS</code>, expose <code>undo()</code> trên <code>useUnifiedSrsSession</code> (xóa log + restore card + lùi index). Shortcut <code>⌘Z</code> + nút Undo trên <code>SrsHeader</code>.</div>
         <div class="files"><span class="file-chip">src/hooks/useSRS.ts</span><span class="file-chip">src/hooks/useUnifiedSrsSession.ts</span><span class="file-chip">src/components/srs/SrsHeader.tsx</span></div>
@@ -299,9 +299,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Cho người dùng chỉnh <code>request_retention</code></h3>
+        <h3>Cho người dùng chỉnh <code>request_retention</code><span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>request_retention: 0.9</code> và <code>KNOWN_MIN_*</code> hardcode (đã có drift giữa branch). Anki cho phép user chỉnh — đây là affordance FSRS chuẩn.</div>
         <div class="item-fix">Đưa các tham số vào <code>settingsStore</code>, dùng factory tạo lại instance FSRS khi đổi retention. Slider trong <code>StudyConfigModal</code>.</div>
         <div class="files"><span class="file-chip">src/lib/srs.ts</span><span class="file-chip">src/hooks/useSRS.ts</span><span class="file-chip">src/components/study/StudyConfigModal.tsx</span></div>
@@ -309,9 +309,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Hiển thị retrievability (% nhớ)</h3>
+        <h3>Hiển thị retrievability (% nhớ)<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>stability</code> được lưu mỗi card nhưng không bao giờ hiện ra UI. <code>RatingBar</code> chỉ hiện interval kế tiếp.</div>
         <div class="item-fix">Thêm helper <code>computeRetrievability(stability, elapsed)</code> (<code>0.9^(elapsed/stability)</code>), hiện badge <code>%</code> trên <code>SrsHeader</code> — đóng vòng phản hồi "vì sao card này đến hôm nay".</div>
         <div class="files"><span class="file-chip">src/lib/srs.ts</span><span class="file-chip">src/components/srs/SrsHeader.tsx</span></div>
@@ -319,9 +319,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Shortcut rating: <code>1–4</code> trần thay vì <code>⌘1–4</code></h3>
+        <h3>Shortcut rating: <code>1–4</code> trần thay vì <code>⌘1–4</code><span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Rating cần modifier — phi chuẩn (Anki dùng phím trần). Mỗi mode tự <code>addEventListener</code> rải rác.</div>
         <div class="item-fix">Đổi sang phím <code>1–4</code> trần, gate theo <code>phase==='reviewing'</code>. Gom vào hook <code>useStudyKeyboard(phase, handlers)</code> dùng chung mọi mode.</div>
         <div class="files"><span class="file-chip">src/components/study/shared/RatingBar.tsx</span><span class="file-chip">src/hooks/useUnifiedSrsSession.ts</span></div>
@@ -329,9 +329,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Gom logic review-log trùng lặp + sửa <code>bookSource</code> hardcode</h3>
+        <h3>Gom logic review-log trùng lặp + sửa <code>bookSource</code> hardcode<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>useSRS</code> và <code>useCustomDeckVocabSRS</code> có block <code>review_log.add</code> gần như giống hệt. <code>bookSource</code> hardcode <code>'minna_shokyuu_1'</code> — sai cho sách tương lai (Minna II...), làm hỏng analytics theo sách.</div>
         <div class="item-fix">Tách helper <code>writeReviewLog(card, rating, result)</code>. Đọc <code>book_source</code> từ bảng <code>vocabulary</code> (đã có trên <code>VocabWithSRS</code>) thay vì hardcode.</div>
         <div class="files"><span class="file-chip">src/hooks/useSRS.ts</span><span class="file-chip">src/hooks/useCustomDeckVocabSRS.ts</span><span class="file-chip">src/db/review-log.ts (new)</span></div>
@@ -348,9 +348,9 @@
   </div>
   <div class="items">
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Hiện trạng thái sync cho người dùng (đang sync / lỗi / pending)</h3>
+        <h3>Hiện trạng thái sync cho người dùng (đang sync / lỗi / pending)<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>useSyncStatus</code> chỉ expose <code>syncJustCompleted</code>. Không có <code>isSyncing</code>, <code>lastError</code>, hay số card pending. <code>SyncSection</code> có state riêng chỉ cho nút manual.</div>
         <div class="item-fix">Mở rộng <code>useSyncStatus</code> emit/consume <code>sync-start</code> / <code>sync-error</code>, trả <code>{ syncJustCompleted, isSyncing, lastError }</code>. Badge pending từ live-query <code>srs_cards.where('pending_sync').equals(1).count()</code>.</div>
         <div class="files"><span class="file-chip">src/hooks/useSyncStatus.ts</span><span class="file-chip">src/db/sync.ts</span><span class="file-chip">src/components/settings/SyncSection.tsx</span></div>
@@ -358,9 +358,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Exponential backoff cho sync retry</h3>
+        <h3>Exponential backoff cho sync retry<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>setInterval(triggerSync, 60s)</code> chạy vô điều kiện; lỗi network/sync bị nuốt im lặng → hammer Supabase mỗi 60s kể cả khi backend chết.</div>
         <div class="item-fix">Đếm số lần fail liên tiếp, backoff 60s→2m→4m→8m (cap). Reset khi <code>sync-complete</code> hoặc <code>online</code>.</div>
         <div class="files"><span class="file-chip">src/main.tsx:45</span><span class="file-chip">src/db/sync.ts</span><span class="file-chip">src/db/package-sync.ts</span></div>
@@ -368,9 +368,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>SW update prompt không hiện — chiến lược 'prompt' chưa hoàn chỉnh</h3>
+        <h3>SW update prompt không hiện — chiến lược 'prompt' chưa hoàn chỉnh<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> SW đăng ký với <code>registerType: 'prompt'</code> nhưng callback <code>onNeedRefresh</code> rỗng — người dùng không biết có bản mới, phải hard-reload thủ công.</div>
         <div class="item-fix">Implement <code>onNeedRefresh</code> hiện toast (reuse sonner) với action "Tải lại để cập nhật" gọi <code>updateSW()</code>. Một component.</div>
         <div class="files"><span class="file-chip">src/main.tsx:53</span><span class="file-chip">vite.config.ts:14</span></div>
@@ -378,9 +378,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Mutex Promise thay cho boolean <code>isSyncing</code></h3>
+        <h3>Mutex Promise thay cho boolean <code>isSyncing</code><span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>isSyncing</code> là boolean module-scope; hai caller đồng thời (nút manual + <code>window.online</code>) chia sẻ một guard, drop call thay vì queue.</div>
         <div class="item-fix">Thay bằng mutex dựa Promise (<code>syncPromise</code>): caller thứ hai await promise đang chạy thay vì bị skip → serialise đúng.</div>
         <div class="files"><span class="file-chip">src/db/sync.ts:17</span><span class="file-chip">src/db/package-sync.ts:98</span></div>
@@ -388,9 +388,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Merge sync O(n) read → bulkGet/bulkPut</h3>
+        <h3>Merge sync O(n) read → bulkGet/bulkPut<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>mergePackageIntoDexie</code> gọi <code>db.srs_cards.get()</code> tuần tự cho từng remote card — 1000+ read tuần tự trong một transaction cho user lớn.</div>
         <div class="item-fix">Bulk-fetch trước bằng <code>bulkGet([...])</code> → <code>Map</code> lookup → merge → <code>bulkPut</code>. Gộp O(n) read thành 2 thao tác bulk.</div>
         <div class="files"><span class="file-chip">src/db/package-sync.ts:51–92</span></div>
@@ -398,9 +398,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>PWA icon: tách <code>any</code> và <code>maskable</code></h3>
+        <h3>PWA icon: tách <code>any</code> và <code>maskable</code><span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Cùng một PNG khai báo <code>purpose: 'any maskable'</code> — maskable cần safe-zone padding, làm icon hiển thị nhỏ/méo ở context khác (Lighthouse flag).</div>
         <div class="item-fix">Tách 2 asset: một không padding cho <code>any</code>, một safe-zone-padded cho <code>maskable</code>.</div>
         <div class="files"><span class="file-chip">vite.config.ts:59–60</span></div>
@@ -417,9 +417,9 @@
   </div>
   <div class="items">
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Thêm <code>lang="ja"</code> cho text tiếng Nhật + <code>lang</code> trên &lt;html&gt;</h3>
+        <h3>Thêm <code>lang="ja"</code> cho text tiếng Nhật + <code>lang</code> trên &lt;html&gt;<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Text tiếng Nhật render bằng <code>--br-jp-font</code> nhưng không có <code>lang="ja"</code>; <code>&lt;html&gt;</code> cũng không set <code>lang</code>. Screen reader đọc kanji/kana bằng giọng Việt/Anh → vô nghĩa.</div>
         <div class="item-fix">Set <code>lang</code> trên <code>&lt;html&gt;</code> (RootLayout) và <code>lang="ja"</code> trên mọi element tiếng Nhật. Wrapper <code>&lt;JapaneseText&gt;</code> để enforce nhất quán.</div>
         <div class="files"><span class="file-chip">src/routes/__root.tsx</span><span class="file-chip">src/components/study/*</span><span class="file-chip">src/components/vocabulary/*</span></div>
@@ -427,9 +427,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>Tôn trọng <code>prefers-reduced-motion</code> (Framer + skeleton)</h3>
+        <h3>Tôn trọng <code>prefers-reduced-motion</code> (Framer + skeleton)<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> ~12 component <code>motion.*</code> không check <code>useReducedMotion()</code>; <code>Skeleton</code> dùng <code>animate-pulse</code> vô điều kiện. Vi phạm rule trong frontend-design.md.</div>
         <div class="item-fix"><code>&lt;MotionConfig reducedMotion="user"&gt;</code> ở root cho Framer; đổi skeleton sang <code>motion-safe:animate-pulse</code> (một ký tự).</div>
         <div class="files"><span class="file-chip">src/main.tsx</span><span class="file-chip">src/components/ui/skeleton.tsx:5</span><span class="file-chip">src/components/study/FlipCard.tsx</span></div>
@@ -437,9 +437,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>errorComponent / pendingComponent cho route quan trọng</h3>
+        <h3>errorComponent / pendingComponent cho route quan trọng<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> Cả 23 route chỉ định nghĩa <code>component</code>, không có <code>errorComponent</code>/<code>pendingComponent</code>. <code>SeedError</code>/<code>SyncError</code> propagate tới React fallback gốc (không có) → màn trắng.</div>
         <div class="item-fix">Thêm <code>errorComponent</code> tối thiểu cho <code>__root</code>, <code>study/review</code>, <code>books/$book/$lesson</code>; <code>pendingComponent</code> với Skeleton tránh flash màn trắng.</div>
         <div class="files"><span class="file-chip">src/routes/__root.tsx</span><span class="file-chip">src/routes/_authenticated/study/review.tsx</span><span class="file-chip">src/routes/books/$book/$lesson.tsx</span></div>
@@ -447,9 +447,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>AudioButton: xử lý lỗi audio + nút tốc độ</h3>
+        <h3>AudioButton: xử lý lỗi audio + nút tốc độ<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>Howl</code> không có <code>onloaderror</code>/<code>onplayerror</code> — file 404 hoặc autoplay bị chặn làm nút kẹt <code>isPlaying=true</code> vĩnh viễn. <code>rate</code> là prop ẩn, không có UI.</div>
         <div class="item-fix">Thêm error callback reset state + icon "audio unavailable". Thêm toggle tốc độ 0.5x/1x cạnh nút play (quan trọng cho listening/pitch).</div>
         <div class="files"><span class="file-chip">src/components/vocabulary/AudioButton.tsx</span></div>
@@ -457,9 +457,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>ARIA cho PitchAccentBars &amp; StrokeOrderAnimation</h3>
+        <h3>ARIA cho PitchAccentBars &amp; StrokeOrderAnimation<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> PitchAccentBars render thanh H/L thuần hình, không <code>aria-label</code>/tên pattern. StrokeOrderAnimation SVG không <code>role</code>/<code>aria-label</code> — screen reader nhận SVG vô cấu trúc.</div>
         <div class="item-fix">PitchBars: <code>aria-label="Pitch: heiban — L H H H"</code>. SVG stroke: <code>role="img"</code> + <code>aria-label="Stroke order cho {char}: {n} nét"</code>.</div>
         <div class="files"><span class="file-chip">src/components/vocabulary/PitchAccentBars.tsx</span><span class="file-chip">src/components/kanji/StrokeOrderAnimation.tsx</span></div>
@@ -467,9 +467,9 @@
       <div class="badges"><span class="pill ef-low">Effort: Low</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p1">
+    <div class="item p1 done">
       <div class="item-body">
-        <h3>StrokeOrderAnimation: SVG responsive</h3>
+        <h3>StrokeOrderAnimation: SVG responsive<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> SVG hardcode <code>width="200" height="200"</code> — undersized trên desktop, tràn container trên phone nhỏ. Logic animation dựa <code>getTotalLength</code> nên độc lập độ phân giải.</div>
         <div class="item-fix">Bỏ width/height cố định, dùng <code>width="100%"</code> + <code>aspect-ratio:1</code> (viewBox đã có hệ tọa độ). Zero thay đổi logic animation.</div>
         <div class="files"><span class="file-chip">src/components/kanji/StrokeOrderAnimation.tsx:218–244</span></div>
@@ -506,9 +506,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-high">Impact: HIGH</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>StreakWidget: dùng useLiveQuery thay useQuery</h3>
+        <h3>StreakWidget: dùng useLiveQuery thay useQuery<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>useStreak</code> dùng <code>useQuery</code> (one-shot); review trong session ghi <code>db.streaks</code> nhưng widget không refresh tới khi invalidate thủ công → stale.</div>
         <div class="item-fix">Thay bằng <code>useLiveQuery</code> (như <code>useDailyGoal</code> đã làm) → widget react tức thì.</div>
         <div class="files"><span class="file-chip">src/hooks/useStreak.ts:8</span><span class="file-chip">src/components/analytics/StreakWidget.tsx</span></div>
@@ -546,9 +546,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Import deck lớn: bulkPut thay Promise.all</h3>
+        <h3>Import deck lớn: bulkPut thay Promise.all<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>addWords</code> gọi <code>Promise.all(words.map(initSRSCard))</code> — 500 put riêng lẻ ngoài transaction cho import CSV 500 từ.</div>
         <div class="item-fix">Helper <code>bulkInitSRSCards</code> dùng <code>bulkPut</code> 1 thao tác, pre-check tồn tại bằng <code>anyOf().count()</code> → O(n) round-trip còn 2.</div>
         <div class="files"><span class="file-chip">src/db/srs-cards.ts</span><span class="file-chip">src/db/custom-decks-local.ts:96</span></div>
@@ -576,9 +576,9 @@
       <div class="badges"><span class="pill ef-med">Effort: Med</span><span class="pill im-med">Impact: Med</span></div>
     </div>
 
-    <div class="item p2">
+    <div class="item p2 done">
       <div class="item-body">
-        <h3>Confetti keyframe: chuyển inline &lt;style&gt; vào app.css</h3>
+        <h3>Confetti keyframe: chuyển inline &lt;style&gt; vào app.css<span class="tag-done">DONE</span></h3>
         <div class="item-now"><b>Hiện tại:</b> <code>DailyGoalWidget</code> nhúng raw <code>&lt;style&gt;@keyframes confetti-fall&gt;</code> trong JSX — React re-insert mỗi render; vi phạm rule "mọi style ở app.css".</div>
         <div class="item-fix">Đưa keyframe vào <code>app.css</code>, component chỉ apply class <code>.animate-confetti</code> có điều kiện.</div>
         <div class="files"><span class="file-chip">src/components/analytics/DailyGoalWidget.tsx:51–65</span><span class="file-chip">src/app.css</span></div>

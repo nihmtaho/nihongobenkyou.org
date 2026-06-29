@@ -11,7 +11,11 @@ export function PitchAccentBars({ pattern, kana }: PitchAccentBarsProps) {
   const morae = splitIntoMorae(kana)
 
   return (
-    <div className="flex items-end gap-px">
+    <div
+      className="flex items-end gap-px"
+      role="img"
+      aria-label={`Pitch pattern for ${kana}: ${pattern.join(' ')}`}
+    >
       {pattern.map((tone, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <div key={`mora-${i}`} className="flex flex-col items-center gap-[2px]">

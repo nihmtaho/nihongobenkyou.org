@@ -71,6 +71,16 @@ export async function getKanjiByChars(chars: string[]): Promise<KanjiItem[]> {
 }
 
 export async function getVocabContainingChars(chars: string[]): Promise<VocabItem[]> {
-  const all = await db.vocabulary.toArray()
-  return all.filter(v => v.word != null && chars.some(c => v.word!.includes(c)))
+  if (chars.length === 0)
+    return []
+  const results = await Promise.all(
+    chars.map(c => db.vocabulary.where('kanji_chars').equals(c).toArray()),
+  )
+  const seen = new Set<string>()
+  return results.flat().filter((v) => {
+    if (seen.has(v.vocab_id))
+      return false
+    seen.add(v.vocab_id)
+    return true
+  })
 }

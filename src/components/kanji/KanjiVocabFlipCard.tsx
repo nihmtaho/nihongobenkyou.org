@@ -202,6 +202,11 @@ export function KanjiVocabFlipCard({ card, hanVietMap, meaningLanguage, onRate }
                       >
                         {ex.vi}
                       </p>
+                      {ex.pitch_pattern != null && (
+                        <div className="mt-1">
+                          <PitchAccentBars pattern={ex.pitch_pattern} kana={card.reading} />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
