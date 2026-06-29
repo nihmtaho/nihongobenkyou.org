@@ -16203,6 +16203,7 @@ lesson-26:
     romaji: mimasu
     meaning:
       en: check, take a look at
+      vi: xem, kiểm tra
       fr: jeter un coup d'œil, examiner, regarder
   - id:
       - 26
@@ -16216,6 +16217,7 @@ lesson-26:
     romaji: sagashimasu
     meaning:
       en: look for, search
+      vi: tìm kiếm
       fr: chercher
   - id:
       - 26
@@ -16229,6 +16231,7 @@ lesson-26:
     romaji: okuremasu [jikanni~]
     meaning:
       en: be late [for an appointment, etc.]
+      vi: đến trễ [so với giờ hẹn]
       fr: être en retard [au rendez-vous, à la réunion, etc.]
   - id:
       - 26
@@ -16242,6 +16245,7 @@ lesson-26:
     romaji: mani aimasu [jikanni~]
     meaning:
       en: be in time [for an appointment, etc.]
+      vi: kịp giờ [hẹn]
       fr: être à l'heure [au rendez-vous, à la réunion, etc.]
   - id:
       - 26
@@ -16254,6 +16258,7 @@ lesson-26:
     romaji: yarimasu
     meaning:
       en: do
+      vi: làm, thực hiện
       fr: faire
   - id:
       - 26
@@ -16266,6 +16271,7 @@ lesson-26:
     romaji: hiroimasu
     meaning:
       en: pick up
+      vi: nhặt lên
       fr: ramasser
   - id:
       - 26
@@ -16279,6 +16285,7 @@ lesson-26:
     romaji: renrakushimasu
     meaning:
       en: contact, get in touch with
+      vi: liên lạc
       fr: contacter
   - id:
       - 26
@@ -16292,6 +16299,7 @@ lesson-26:
     romaji: kibunga ii
     meaning:
       en: feel well
+      vi: cảm thấy khỏe, cảm thấy tốt trong người
       fr: se sentir bien
   - id:
       - 26
@@ -16305,6 +16313,7 @@ lesson-26:
     romaji: kibunga warui
     meaning:
       en: feel ill
+      vi: cảm thấy không khỏe, cảm thấy khó chịu trong người
       fr: ne pas se sentir bien
   - id:
       - 26
@@ -16318,6 +16327,7 @@ lesson-26:
     romaji: undōkai
     meaning:
       en: athletic meeting, sports day
+      vi: hội thao, ngày hội thể thao
       fr: journée dédiée au sport
   - id:
       - 26
@@ -16330,6 +16340,7 @@ lesson-26:
     romaji: bon'odori
     meaning:
       en: Bon Festival dance
+      vi: điệu múa Bon (lễ hội Obon)
       fr: danse bon (danse traditionnelle pour la fête d'o-bon)
   - id:
       - 26
@@ -16341,6 +16352,7 @@ lesson-26:
     romaji: furiimāketto
     meaning:
       en: flea market
+      vi: chợ đồ cũ
       fr: marché aux puces
   - id:
       - 26
@@ -16354,6 +16366,7 @@ lesson-26:
     romaji: basho
     meaning:
       en: place
+      vi: địa điểm, nơi chốn
       fr: endroit, lieu, place
   - id:
       - 26
@@ -16366,6 +16379,7 @@ lesson-26:
     romaji: boranteia
     meaning:
       en: volunteer
+      vi: tình nguyện viên
       fr: volontaire, bénévole, bénévolat
   - id:
       - 26
@@ -16378,6 +16392,7 @@ lesson-26:
     romaji: saifu
     meaning:
       en: wallet, purse
+      vi: ví tiền
       fr: portefeuille, porte-monnaie
   - id:
       - 26
@@ -16390,6 +16405,7 @@ lesson-26:
     romaji: gomi
     meaning:
       en: garbage, rubbish, dust
+      vi: rác
       fr: ordures, déchets, poussière
   - id:
       - 26
@@ -16402,6 +16418,7 @@ lesson-26:
     romaji: kokkaigijidō
     meaning:
       en: the Diet Building
+      vi: Tòa nhà Quốc hội (Nhật Bản)
       fr: Palais de la Diète
   - id:
       - 26
@@ -16414,6 +16431,7 @@ lesson-26:
     romaji: heijitsu
     meaning:
       en: weekday
+      vi: ngày thường (không phải cuối tuần)
       fr: jour ouvrable
   - id:
       - 26
@@ -16427,6 +16445,7 @@ lesson-26:
     romaji: ~ben
     meaning:
       en: ～ dialect
+      vi: tiếng địa phương ~, phương ngữ ~
       fr: dialecte de ～
   - id:
       - 26
@@ -16440,6 +16459,7 @@ lesson-26:
     romaji: kondo
     meaning:
       en: next time, another time
+      vi: lần tới, dịp khác
       fr: la prochaine fois, une autre fois
   - id:
       - 26
@@ -16452,6 +16472,7 @@ lesson-26:
     romaji: zuibun
     meaning:
       en: very, pretty
+      vi: khá, rất
       fr: très, vraiment
   - id:
       - 26
@@ -16465,6 +16486,7 @@ lesson-26:
     romaji: chokusetsu
     meaning:
       en: directly
+      vi: trực tiếp
       fr: directement
   - id:
       - 26
@@ -16477,6 +16499,7 @@ lesson-26:
     romaji: itsudemo
     meaning:
       en: any time
+      vi: bất cứ lúc nào
       fr: n'importe quand, toujours
   - id:
       - 26
@@ -16489,6 +16512,7 @@ lesson-26:
     romaji: dokodemo
     meaning:
       en: anywhere
+      vi: bất cứ đâu, ở đâu cũng được
       fr: n'importe où, partout
   - id:
       - 26
@@ -16501,6 +16525,7 @@ lesson-26:
     romaji: daredemo
     meaning:
       en: anybody
+      vi: bất cứ ai, ai cũng được
       fr: n'importe qui, tout le monde
   - id:
       - 26
@@ -16514,6 +16539,7 @@ lesson-26:
     romaji: nandemo
     meaning:
       en: anything
+      vi: bất cứ thứ gì, cái gì cũng được
       fr: quoi que ce soit, tout
   - id:
       - 26
@@ -16526,6 +16552,7 @@ lesson-26:
     romaji: konna ~
     meaning:
       en: ～ like this
+      vi: ~ như thế này, loại ~ này
       fr: comme ceci
   - id:
       - 26
@@ -16538,6 +16565,7 @@ lesson-26:
     romaji: sonna ~
     meaning:
       en: ～ like that (near the listener)
+      vi: ~ như thế đó (gần người nghe), loại ~ đó
       fr: comme cela (près de l'interlocuteur)
   - id:
       - 26
@@ -16550,6 +16578,7 @@ lesson-26:
     romaji: anna ~
     meaning:
       en: ~ like that (far from both the speaker and the listener)
+      vi: ~ như thế kia (xa cả người nói lẫn người nghe), loại ~ kia
       fr: comme cela (loin du locuteur et de l'interlocuteur)
   - id:
       - 26
@@ -16562,6 +16591,7 @@ lesson-26:
     romaji: edoasutoa
     meaning:
       en: fictitious store
+      vi: Cửa hàng Edo (tên cửa hàng hư cấu)
       fr: magasin fictif
   - id:
       - 26
@@ -16575,6 +16605,7 @@ lesson-26:
     romaji: katazukimasu [nimotsuga~]
     meaning:
       en: '[boxes] be put in order, tidy up'
+      vi: được dọn gọn gàng, ngăn nắp [đồ đạc/thùng hộp]
       fr: '[les affaires] être rangées, [les cartons de déménagement] être déballés et rangés'
   - id:
       - 26
@@ -16588,6 +16619,7 @@ lesson-26:
     romaji: dashimasu [gomiwo~]
     meaning:
       en: put out [the rubbish]
+      vi: đem ra [rác]
       fr: déposer [les ordures], sortir [la poubelle]
   - id:
       - 26
@@ -16600,6 +16632,7 @@ lesson-26:
     romaji: moeru gomi
     meaning:
       en: burnable rubbish
+      vi: rác đốt được
       fr: déchets incinérables
   - id:
       - 26
@@ -16613,6 +16646,7 @@ lesson-26:
     romaji: okiba
     meaning:
       en: place where something is put
+      vi: nơi để đồ
       fr: dépôt, emplacement réservé à quelque chose (ordures, bicyclettes, etc.)
   - id:
       - 26
@@ -16626,6 +16660,7 @@ lesson-26:
     romaji: yoko
     meaning:
       en: side
+      vi: bên cạnh, cạnh
       fr: côté
   - id:
       - 26
@@ -16639,6 +16674,7 @@ lesson-26:
     romaji: bin
     meaning:
       en: bottle
+      vi: chai, lọ (thủy tinh)
       fr: bouteille
   - id:
       - 26
@@ -16652,6 +16688,7 @@ lesson-26:
     romaji: kan
     meaning:
       en: can
+      vi: lon (kim loại)
       fr: boîte en métal, canette
   - id:
       - 26
@@ -16664,6 +16701,7 @@ lesson-26:
     romaji: gasu
     meaning:
       en: gas
+      vi: ga, khí đốt
       fr: gaz
   - id:
       - 26
@@ -16677,6 +16715,7 @@ lesson-26:
     romaji: ~gaisha
     meaning:
       en: ～ company
+      vi: công ty ~
       fr: compagnie de ～
   - id:
       - 26
@@ -16690,6 +16729,7 @@ lesson-26:
     romaji: uchū
     meaning:
       en: space, universe
+      vi: vũ trụ
       fr: univers, espace
   - id:
       - 26
@@ -16702,6 +16742,7 @@ lesson-26:
     romaji: ~sama
     meaning:
       en: Mr. ～/Ms. ～ (respectful equivalent of ～さん)
+      vi: ~ (kính ngữ của さん, dùng trong văn viết trang trọng)
       fr: Monsieur/Madame/Mademoiselle ～ (terme de respect équivalent à ～さん)
   - id:
       - 26
@@ -16715,6 +16756,7 @@ lesson-26:
     romaji: uchūsen
     meaning:
       en: spaceship
+      vi: tàu vũ trụ
       fr: vaisseau spatial
   - id:
       - 26
@@ -16728,6 +16770,7 @@ lesson-26:
     romaji: kowai
     meaning:
       en: be afraid of
+      vi: đáng sợ, sợ hãi
       fr: avoir peur
   - id:
       - 26
@@ -16740,6 +16783,7 @@ lesson-26:
     romaji: uchūsutēshon
     meaning:
       en: space station
+      vi: trạm vũ trụ
       fr: station spatiale
   - id:
       - 26
@@ -16752,6 +16796,7 @@ lesson-26:
     romaji: chigaimasu
     meaning:
       en: be different
+      vi: khác, không giống
       fr: être différent
   - id:
       - 26
@@ -16765,6 +16810,7 @@ lesson-26:
     romaji: uchūhikōshi
     meaning:
       en: astronaut
+      vi: phi hành gia
       fr: astronaute, cosmonaute
   - id:
       - 26
@@ -16777,6 +16823,7 @@ lesson-26:
     romaji: hoshideakihiko
     meaning:
       en: Japanese astronaut (1968-)
+      vi: Hoshide Akihiko (phi hành gia Nhật Bản, sinh năm 1968)
       fr: astronaute japonais (1968-)
   - id:
       - 26
@@ -16789,6 +16836,7 @@ lesson-26:
     romaji: sankashimasu [pāteiini~]
     meaning:
       en: attend [a party]
+      vi: tham gia [bữa tiệc]
       fr: participer [à une soirée]
   - id:
       - 26
@@ -16801,6 +16849,7 @@ lesson-26:
     romaji: mōshikomimasu
     meaning:
       en: apply for, enter for
+      vi: đăng ký, nộp đơn tham gia
       fr: s'inscrire à, souscrire pour
   - id:
       - 26
@@ -16813,6 +16862,7 @@ lesson-26:
     romaji: tsugōga ii
     meaning:
       en: convenient (concerning time)
+      vi: thuận tiện (về thời gian)
       fr: convenir à qn. (concernant le temps)
   - id:
       - 26
@@ -16825,6 +16875,7 @@ lesson-26:
     romaji: tsugōga warui
     meaning:
       en: inconvenient (regarding time)
+      vi: không thuận tiện (về thời gian)
       fr: ne pas convenir à qn. (concernant le temps)
   - id:
       - 26
@@ -16837,6 +16888,7 @@ lesson-26:
     romaji: shinbunsha
     meaning:
       en: newspaper publishing company, newspaper office
+      vi: tòa soạn báo, công ty báo chí
       fr: bureau du journal, agence de presse
   - id:
       - 26
@@ -16849,6 +16901,7 @@ lesson-26:
     romaji: jūdō
     meaning:
       en: judo
+      vi: nhu đạo (Judo)
       fr: judo
   - id:
       - 26
@@ -16860,6 +16913,7 @@ lesson-26:
     romaji: NHK
     meaning:
       en: Nippon Hoso Kyokai (broadcasting company)
+      vi: NHK (Đài phát thanh truyền hình Nhật Bản)
       fr: Nippon Hoso Kyokai (Radiodiffusion-Télévision Japonaise)
   - id:
       - 26
@@ -16872,6 +16926,7 @@ lesson-26:
     romaji: kodomono hi
     meaning:
       en: Children's Day
+      vi: Ngày Thiếu nhi (lễ Tết Thiếu nhi Nhật Bản, 5/5)
       fr: Fête des enfants
   - id:
       - 26
@@ -16884,6 +16939,7 @@ lesson-26:
     romaji: moemasu [gomiga~]
     meaning:
       en: '[trash] burn'
+      vi: cháy, bốc cháy [rác]
       fr: '[des ordures] brûler, se consumer'
   - id:
       - 26
@@ -16896,6 +16952,7 @@ lesson-26:
     romaji: gessuikin
     meaning:
       en: Monday, Wednesday and Friday
+      vi: Thứ Hai, Thứ Tư và Thứ Sáu
       fr: Lundi, Mercredi, Vendredi
   - id:
       - 26
@@ -16908,6 +16965,7 @@ lesson-26:
     romaji: '[o] yu'
     meaning:
       en: hot water
+      vi: nước nóng
       fr: eau chaude
   - id:
       - 26
@@ -16920,6 +16978,7 @@ lesson-26:
     romaji: komattanā.
     meaning:
       en: What shall I do?
+      vi: Khổ quá, biết làm sao bây giờ.
       fr: C'est ennuyeux./Que faire?
   - id:
       - 26
@@ -16932,6 +16991,7 @@ lesson-26:
     romaji: denshimēru
     meaning:
       en: electronic mail
+      vi: thư điện tử, email
       fr: courrier électronique
   - id:
       - 26
@@ -16944,6 +17004,7 @@ lesson-26:
     romaji: betsuno
     meaning:
       en: another
+      vi: khác, cái/loại khác
       fr: autre
   - id:
       - 26
@@ -16956,6 +17017,7 @@ lesson-26:
     romaji: doitakao
     meaning:
       en: Japanese astronaut (1955-)
+      vi: Doi Takao (phi hành gia Nhật Bản, sinh năm 1955)
       fr: astronaute japonais (1955-)
 lesson-27:
   - id:
@@ -16970,6 +17032,7 @@ lesson-27:
     romaji: kaimasu
     meaning:
       en: keep (a pet), raise (an animal)
+      vi: nuôi (thú cưng), chăn nuôi (động vật)
       fr: avoir, élever (un animal)
   - id:
       - 27
@@ -16983,6 +17046,7 @@ lesson-27:
     romaji: hashirimasu [michiwo~]
     meaning:
       en: run, drive [along a road]
+      vi: chạy, lái [dọc theo con đường]
       fr: courir, rouler [sur la route]
   - id:
       - 27
@@ -16996,6 +17060,7 @@ lesson-27:
     romaji: miemasu [yamaga~]
     meaning:
       en: '[a mountain] can be seen'
+      vi: có thể nhìn thấy [núi]
       fr: '[une montagne] se voir'
   - id:
       - 27
@@ -17009,6 +17074,7 @@ lesson-27:
     romaji: kikoemasu [otoga~]
     meaning:
       en: '[a sound] can be heard'
+      vi: có thể nghe thấy [âm thanh]
       fr: '[un bruit] s''entendre'
   - id:
       - 27
@@ -17022,6 +17088,7 @@ lesson-27:
     romaji: dekimasu [michiga~]
     meaning:
       en: '[a road] be made, be completed, come into existence'
+      vi: "[con đường] được xây dựng xong, hoàn thành, xuất hiện"
       fr: '[une route] être construite, être faite, être achevée, être prête'
   - id:
       - 27
@@ -17035,6 +17102,7 @@ lesson-27:
     romaji: hirakimasu [kyōshitsuwo~]
     meaning:
       en: set up [a class], open, hold
+      vi: mở [lớp học], tổ chức
       fr: organiser [une classe]
   - id:
       - 27
@@ -17047,6 +17115,7 @@ lesson-27:
     romaji: shinpai [na]
     meaning:
       en: worried, anxious
+      vi: lo lắng, bất an
       fr: inquiet
   - id:
       - 27
@@ -17059,6 +17128,7 @@ lesson-27:
     romaji: petto
     meaning:
       en: pet
+      vi: thú cưng
       fr: animal de compagnie
   - id:
       - 27
@@ -17072,6 +17142,7 @@ lesson-27:
     romaji: tori
     meaning:
       en: bird
+      vi: chim
       fr: oiseau
   - id:
       - 27
@@ -17085,6 +17156,7 @@ lesson-27:
     romaji: koe
     meaning:
       en: voice
+      vi: giọng nói
       fr: voix
   - id:
       - 27
@@ -17098,6 +17170,7 @@ lesson-27:
     romaji: nami
     meaning:
       en: wave
+      vi: sóng (biển)
       fr: vague
   - id:
       - 27
@@ -17111,6 +17184,7 @@ lesson-27:
     romaji: hanabi
     meaning:
       en: fireworks
+      vi: pháo hoa
       fr: feux d'artifice
   - id:
       - 27
@@ -17124,6 +17198,7 @@ lesson-27:
     romaji: dōgu
     meaning:
       en: tool, instrument, equipment
+      vi: dụng cụ, công cụ, thiết bị
       fr: outil, ustensile, instrument, équipement
   - id:
       - 27
@@ -17136,6 +17211,7 @@ lesson-27:
     romaji: kuriiningu
     meaning:
       en: (dry) cleaning, laundry
+      vi: giặt khô, giặt ủi
       fr: nettoyage, blanchissage
   - id:
       - 27
@@ -17149,6 +17225,7 @@ lesson-27:
     romaji: ie
     meaning:
       en: house, home
+      vi: nhà, ngôi nhà
       fr: maison, foyer
   - id:
       - 27
@@ -17161,6 +17238,7 @@ lesson-27:
     romaji: manshon
     meaning:
       en: condominium, apartment house, blocks of flats
+      vi: chung cư, căn hộ cao cấp
       fr: appartement, immeuble résidentiel
   - id:
       - 27
@@ -17172,6 +17250,7 @@ lesson-27:
     romaji: kitchin
     meaning:
       en: kitchen
+      vi: nhà bếp, bếp
       fr: cuisine
   - id:
       - 27
@@ -17185,6 +17264,7 @@ lesson-27:
     romaji: ~kyōshitsu
     meaning:
       en: ～ class
+      vi: lớp học ～
       fr: cours de ～, classe de ～
   - id:
       - 27
@@ -17197,6 +17277,7 @@ lesson-27:
     romaji: pāteiirūmu
     meaning:
       en: party room
+      vi: phòng tiệc
       fr: salle de réception
   - id:
       - 27
@@ -17209,6 +17290,7 @@ lesson-27:
     romaji: kata
     meaning:
       en: person (respectful of ひと)
+      vi: người (cách nói lịch sự hơn ひと)
       fr: personne (terme de respect équivalent à ひと)
   - id:
       - 27
@@ -17222,6 +17304,7 @@ lesson-27:
     romaji: ~go
     meaning:
       en: after ～ (duration of time)
+      vi: sau ～ (khoảng thời gian)
       fr: après ～, dans ～ (durée de temps)
   - id:
       - 27
@@ -17234,6 +17317,7 @@ lesson-27:
     romaji: ~shika
     meaning:
       en: only ～ (used with negatives)
+      vi: chỉ ～ (dùng với phủ định)
       fr: ne ～ que, seulement (s'emploie avec une négation)
   - id:
       - 27
@@ -17246,6 +17330,7 @@ lesson-27:
     romaji: hokano
     meaning:
       en: other
+      vi: khác, cái khác
       fr: autre
   - id:
       - 27
@@ -17258,6 +17343,7 @@ lesson-27:
     romaji: hakkiri
     meaning:
       en: clearly
+      vi: rõ ràng
       fr: clairement
   - id:
       - 27
@@ -17270,6 +17356,7 @@ lesson-27:
     romaji: kagu
     meaning:
       en: furniture
+      vi: đồ nội thất
       fr: meuble
   - id:
       - 27
@@ -17283,6 +17370,7 @@ lesson-27:
     romaji: hondana
     meaning:
       en: bookcase
+      vi: đèn điện
       fr: étagère à livres, bibliothèque
   - id:
       - 27
@@ -17295,6 +17383,7 @@ lesson-27:
     romaji: itsuka
     meaning:
       en: one day, some day
+      vi: ý nghĩa
       fr: un jour
   - id:
       - 27
@@ -17308,6 +17397,7 @@ lesson-27:
     romaji: tatemasu
     meaning:
       en: build
+      vi: muốn (dùng cho vật)
       fr: construire
   - id:
       - 27
@@ -17320,6 +17410,7 @@ lesson-27:
     romaji: subarashii
     meaning:
       en: wonderful
+      vi: thực sự, thật sự
       fr: merveilleux, magnifique, admirable
   - id:
       - 27
@@ -17333,6 +17424,7 @@ lesson-27:
     romaji: kodomotachi
     meaning:
       en: children
+      vi: náo nhiệt, sầm uất
       fr: enfants
   - id:
       - 27
@@ -17346,6 +17438,7 @@ lesson-27:
     romaji: daisuki [na]
     meaning:
       en: like very much
+      vi: yên tĩnh, thanh bình
       fr: aimer beaucoup, favori
   - id:
       - 27
@@ -17359,6 +17452,7 @@ lesson-27:
     romaji: shujinkō
     meaning:
       en: hero, heroine
+      vi: rộng, rộng rãi
       fr: héro, héroïne
   - id:
       - 27
@@ -17372,6 +17466,7 @@ lesson-27:
     romaji: katachi
     meaning:
       en: shape
+      vi: hẹp, chật (nói về nơi chốn)
       fr: forme
   - id:
       - 27
@@ -17385,6 +17480,7 @@ lesson-27:
     romaji: fushigi [na]
     meaning:
       en: fantastic, mysterious
+      vi: tiện lợi
       fr: mystérieux, étrange, curieux
   - id:
       - 27
@@ -17397,6 +17493,7 @@ lesson-27:
     romaji: poketto
     meaning:
       en: pocket
+      vi: bất tiện
       fr: poche
   - id:
       - 27
@@ -17410,6 +17507,7 @@ lesson-27:
     romaji: tatoeba
     meaning:
       en: for example
+      vi: gần
       fr: par exemple
   - id:
       - 27
@@ -17423,6 +17521,7 @@ lesson-27:
     romaji: tsukemasu
     meaning:
       en: attach, put on
+      vi: xa
       fr: attacher, mettre
   - id:
       - 27
@@ -17436,6 +17535,7 @@ lesson-27:
     romaji: jiyūni
     meaning:
       en: freely
+      vi: an toàn
       fr: librement, en toute liberté
   - id:
       - 27
@@ -17449,6 +17549,7 @@ lesson-27:
     romaji: sora
     meaning:
       en: sky
+      vi: nguy hiểm
       fr: ciel
   - id:
       - 27
@@ -17462,6 +17563,7 @@ lesson-27:
     romaji: tobimasu
     meaning:
       en: fly
+      vi: tuyệt vời, xuất sắc
       fr: voler
   - id:
       - 27
@@ -17475,6 +17577,7 @@ lesson-27:
     romaji: mukashi
     meaning:
       en: old times, ancient times
+      vi: nghiêm khắc, khắt khe
       fr: ancien temps, autrefois
   - id:
       - 27
@@ -17488,6 +17591,7 @@ lesson-27:
     romaji: jibun
     meaning:
       en: oneself
+      vi: bãi đậu xe
       fr: soi-même
   - id:
       - 27
@@ -17501,6 +17605,7 @@ lesson-27:
     romaji: shōrai
     meaning:
       en: future
+      vi: bờ biển
       fr: avenir, futur
   - id:
       - 27
@@ -17513,6 +17618,7 @@ lesson-27:
     romaji: doraemon
     meaning:
       en: name of a cartoon character
+      vi: núi
       fr: nom d'un personnage d'une bande dessinée
   - id:
       - 27
@@ -17525,6 +17631,7 @@ lesson-27:
     romaji: torimasu [yasumiwo~]
     meaning:
       en: take [a holiday]
+      vi: thị trấn, thành phố, khu phố
       fr: prendre [un congé]
   - id:
       - 27
@@ -17537,6 +17644,7 @@ lesson-27:
     romaji: keshiki
     meaning:
       en: scenery, view
+      vi: tầng ～
       fr: paysage, vue
   - id:
       - 27
@@ -17549,6 +17657,7 @@ lesson-27:
     romaji: hiruma
     meaning:
       en: daytime
+      vi: phòng khách, phòng ăn và ～ phòng ngủ
       fr: jour, journée
   - id:
       - 27
@@ -17561,6 +17670,7 @@ lesson-27:
     romaji: jidōhanbaiki
     meaning:
       en: vending machine
+      vi: cấm nuôi thú cưng
       fr: distributeur automatique
   - id:
       - 27
@@ -17573,6 +17683,7 @@ lesson-27:
     romaji: tsūshinhanbai
     meaning:
       en: mail order, mail-order sales
+      vi: mới xây
       fr: vente par correspondance
   - id:
       - 27
@@ -17585,6 +17696,7 @@ lesson-27:
     romaji: daidokoro
     meaning:
       en: kitchen
+      vi: chuyển nhà
       fr: cuisine
   - id:
       - 27
@@ -17596,6 +17708,7 @@ lesson-27:
     romaji: hotondo
     meaning:
       en: almost all (in affirmative sentences), hardly, scarcely (in negative sentences)
+      vi: có kế hoạch, có lịch hẹn
       fr: presque, à peu près (dans une phrase affirmative), ne pas presque, peu (dans une phrase négative)
   - id:
       - 27
@@ -17608,6 +17721,7 @@ lesson-27:
     romaji: kansaikūkō
     meaning:
       en: Kansai International Airport
+      vi: nếu
       fr: Aéroport International du Kansai
   - id:
       - 27
@@ -17620,6 +17734,7 @@ lesson-27:
     romaji: akihabara
     meaning:
       en: name of a shopping district in Tokyo with many electrical stores
+      vi: khác một chút, không hẳn vậy
       fr: nom du quartier commerçant à Tokyo groupant beaucoup de magasins de produits électriques
   - id:
       - 27
@@ -17632,6 +17747,7 @@ lesson-27:
     romaji: izu
     meaning:
       en: peninsula in Shizuoka Prefecture
+      vi: Hẹn gặp lại.
       fr: péninsule dans la préfecture de Shizuoka
   - id:
       - 27
@@ -17644,6 +17760,7 @@ lesson-27:
     romaji: nichiyōdaiku
     meaning:
       en: Sunday carpenter
+      vi: trường dạy tiếng Nhật
       fr: bricoleur
   - id:
       - 27
@@ -17656,6 +17773,7 @@ lesson-27:
     romaji: yume
     meaning:
       en: 'dream (～を みます : have a dream)'
+      vi: ngày xưa, thời trước
       fr: 'rêve (～を みます : rêver, faire un rêve)'
   - id:
       - 27
@@ -17668,6 +17786,7 @@ lesson-27:
     romaji: manga
     meaning:
       en: cartoon, comic strip
+      vi: công viên
       fr: bande dessinée, comique, dessin animé
   - id:
       - 27
@@ -17679,6 +17798,7 @@ lesson-27:
     romaji: robotto
     meaning:
       en: robot
+      vi: đặt chỗ, đặt trước
       fr: robot
 lesson-28:
   - id:
@@ -17693,6 +17813,7 @@ lesson-28:
     romaji: uremasu [panga~]
     meaning:
       en: '[bread] sell, be sold'
+      vi: bán được [bánh mì ~]
       fr: '[Le pain] se vendre'
   - id:
       - 28
@@ -17706,6 +17827,7 @@ lesson-28:
     romaji: odorimasu
     meaning:
       en: dance
+      vi: nhảy múa
       fr: danser
   - id:
       - 28
@@ -17718,6 +17840,7 @@ lesson-28:
     romaji: kamimasu
     meaning:
       en: chew, bite
+      vi: nhai, cắn
       fr: mâcher, mordre
   - id:
       - 28
@@ -17731,6 +17854,7 @@ lesson-28:
     romaji: erabimasu
     meaning:
       en: choose
+      vi: càng nhiều càng tốt, hết sức có thể
       fr: choisir
   - id:
       - 28
@@ -17744,6 +17868,7 @@ lesson-28:
     romaji: kayoimasu [daigakuni~]
     meaning:
       en: go to and from [university]
+      vi: từ từ, thong thả
       fr: fréquenter, aller régulièrement à [l'université]
   - id:
       - 28
@@ -17756,6 +17881,7 @@ lesson-28:
     romaji: memoshimasu
     meaning:
       en: take a memo
+      vi: tin tưởng
       fr: noter, prendre note
   - id:
       - 28
@@ -17768,6 +17894,7 @@ lesson-28:
     romaji: majime [na]
     meaning:
       en: serious
+      vi: bối rối, gặp khó khăn
       fr: sérieux
   - id:
       - 28
@@ -17781,6 +17908,7 @@ lesson-28:
     romaji: nesshin [na]
     meaning:
       en: earnest
+      vi: trống (chỗ ngồi, phòng ~), còn trống
       fr: enthousiaste, assidu
   - id:
       - 28
@@ -17794,6 +17922,7 @@ lesson-28:
     romaji: erai
     meaning:
       en: great, admirable
+      vi: được cứu, được giúp đỡ
       fr: admirable, grand
   - id:
       - 28
@@ -17806,6 +17935,7 @@ lesson-28:
     romaji: chōdo ii
     meaning:
       en: proper, just right
+      vi: bị đánh cắp
       fr: juste, approprié, comme il faut
   - id:
       - 28
@@ -17818,6 +17948,7 @@ lesson-28:
     romaji: keshiki
     meaning:
       en: scenery, view
+      vi: đủ, đủ rồi
       fr: paysage, vue
   - id:
       - 28
@@ -17830,6 +17961,7 @@ lesson-28:
     romaji: biyōin
     meaning:
       en: hair salon
+      vi: còn lại, dư lại
       fr: salon de coiffure
   - id:
       - 28
@@ -17842,6 +17974,7 @@ lesson-28:
     romaji: daidokoro
     meaning:
       en: kitchen
+      vi: thay đổi, biến đổi
       fr: cuisine
   - id:
       - 28
@@ -17855,6 +17988,7 @@ lesson-28:
     romaji: keiken
     meaning:
       en: 'experience (～が あります : be experienced, ～を します : experience)'
+      vi: tiền tiết kiệm
       fr: 'expérience (～が あります : avoir une expérience, ～を します : faire une expérience)'
   - id:
       - 28
@@ -17868,6 +18002,7 @@ lesson-28:
     romaji: chikara
     meaning:
       en: power
+      vi: vé (tàu, xe, máy bay...)
       fr: force
   - id:
       - 28
@@ -17881,6 +18016,7 @@ lesson-28:
     romaji: ninki
     meaning:
       en: 'popularity (［がくせいに］～が あります : be popular [with students])'
+      vi: sự nổi tiếng, độ phổ biến
       fr: 'popularité (［がくせいに］～が あります : être populaire [chez les étudiants])'
   - id:
       - 28
@@ -17894,6 +18030,7 @@ lesson-28:
     romaji: katachi
     meaning:
       en: form, shape
+      vi: nhật ký
       fr: forme
   - id:
       - 28
@@ -17907,6 +18044,7 @@ lesson-28:
     romaji: iro
     meaning:
       en: colour
+      vi: bão (typhoon)
       fr: couleur
   - id:
       - 28
@@ -17920,6 +18058,7 @@ lesson-28:
     romaji: aji
     meaning:
       en: taste
+      vi: tai nạn giao thông
       fr: goût
   - id:
       - 28
@@ -17932,6 +18071,7 @@ lesson-28:
     romaji: gamu
     meaning:
       en: chewing gum
+      vi: tôi (văn phong trang trọng)
       fr: chewing-gum
   - id:
       - 28
@@ -17945,6 +18085,7 @@ lesson-28:
     romaji: shinamono
     meaning:
       en: goods
+      vi: anh ấy, bạn trai
       fr: article, marchandise
   - id:
       - 28
@@ -17958,6 +18099,7 @@ lesson-28:
     romaji: nedan
     meaning:
       en: price
+      vi: cô ấy, bạn gái
       fr: prix
   - id:
       - 28
@@ -17971,6 +18113,7 @@ lesson-28:
     romaji: kyūryō
     meaning:
       en: salary
+      vi: thời gian, giờ giấc (cụ thể)
       fr: salaire
   - id:
       - 28
@@ -17983,6 +18126,7 @@ lesson-28:
     romaji: bōnasu
     meaning:
       en: bonus
+      vi: đón, ra đón
       fr: bonus
   - id:
       - 28
@@ -17994,6 +18138,7 @@ lesson-28:
     romaji: gēmu
     meaning:
       en: (computer) game
+      vi: nuôi dưỡng, nuôi lớn
       fr: jeu, jeu sur l'ordinateur
   - id:
       - 28
@@ -18007,6 +18152,7 @@ lesson-28:
     romaji: bangumi
     meaning:
       en: programme
+      vi: máy xử lý văn bản
       fr: programme, émission
   - id:
       - 28
@@ -18019,6 +18165,7 @@ lesson-28:
     romaji: dorama
     meaning:
       en: drama
+      vi: máy tính cá nhân
       fr: drame, série (télévisée), feuilleton
   - id:
       - 28
@@ -18032,6 +18179,7 @@ lesson-28:
     romaji: kashu
     meaning:
       en: singer
+      vi: sự cố gắng, nỗ lực
       fr: chanteur
   - id:
       - 28
@@ -18045,6 +18193,7 @@ lesson-28:
     romaji: shōsetsu
     meaning:
       en: novel
+      vi: mục tiêu
       fr: roman
   - id:
       - 28
@@ -18058,6 +18207,7 @@ lesson-28:
     romaji: shōsetsuka
     meaning:
       en: novelist
+      vi: bí quyết, mẹo
       fr: romancier
   - id:
       - 28
@@ -18070,6 +18220,7 @@ lesson-28:
     romaji: ~ka
     meaning:
       en: '-er, -ist, etc. (e.g. painter, novelist)'
+      vi: nhiệt tình, hăng hái
       fr: '-eur, -cien, etc. (suffixe indiquant une personne qui pratique un métier artistique, etc. Ex. danseur, musicien)'
   - id:
       - 28
@@ -18082,6 +18233,7 @@ lesson-28:
     romaji: ~ki
     meaning:
       en: ～ machine
+      vi: chắc chắn, nhất định
       fr: '-eur, machine à ～ (suffixe indiquant une machine. Ex. aspirateur, machine à laver)'
   - id:
       - 28
@@ -18095,6 +18247,7 @@ lesson-28:
     romaji: musuko
     meaning:
       en: (my) son
+      vi: trước tiên, đầu tiên
       fr: (mon) fils
   - id:
       - 28
@@ -18108,6 +18261,7 @@ lesson-28:
     romaji: musukosan
     meaning:
       en: (someone else's) son
+      vi: ～ (từ đếm cho vật nhỏ)
       fr: fils (de quelqu'un d'autre)
   - id:
       - 28
@@ -18121,6 +18275,7 @@ lesson-28:
     romaji: musume
     meaning:
       en: (my) daughter
+      vi: hiển thị, chỉ báo
       fr: (ma) fille
   - id:
       - 28
@@ -18134,6 +18289,7 @@ lesson-28:
     romaji: musumesan
     meaning:
       en: (someone else's) daughter
+      vi: quan trọng
       fr: fille (de quelqu'un d'autre)
   - id:
       - 28
@@ -18147,6 +18303,7 @@ lesson-28:
     romaji: jibun
     meaning:
       en: oneself
+      vi: lần này
       fr: soi-même
   - id:
       - 28
@@ -18160,6 +18317,7 @@ lesson-28:
     romaji: shōrai
     meaning:
       en: future
+      vi: lạ, kỳ lạ, buồn cười
       fr: avenir, futur
   - id:
       - 28
@@ -18172,6 +18330,7 @@ lesson-28:
     romaji: shibaraku
     meaning:
       en: a little while
+      vi: đồ bỏ quên, vật bị bỏ quên
       fr: un petit moment, un certain temps
   - id:
       - 28
@@ -18184,6 +18343,7 @@ lesson-28:
     romaji: taitei
     meaning:
       en: usually, mostly
+      vi: đồ đánh rơi, vật thất lạc
       fr: la plupart du temps, d'habitude
   - id:
       - 28
@@ -18196,6 +18356,7 @@ lesson-28:
     romaji: soreni
     meaning:
       en: in addition
+      vi: điện thoại di động
       fr: en plus, de plus
   - id:
       - 28
@@ -18208,6 +18369,7 @@ lesson-28:
     romaji: sorede
     meaning:
       en: and so
+      vi: ngày nghỉ, ngày lễ
       fr: ainsi, c'est pourquoi
   - id:
       - 28
@@ -18221,6 +18383,7 @@ lesson-28:
     romaji: '[chotto] onegaiga arundesuga.'
     meaning:
       en: I have a [small] favor to ask.
+      vi: hai ngày, ngày mùng 2
       fr: J'ai un [petit] service à vous demander.
   - id:
       - 28
@@ -18233,6 +18396,7 @@ lesson-28:
     romaji: jitsuwa
     meaning:
       en: as a matter of fact
+      vi: hàng tháng, mỗi tháng
       fr: en fait
   - id:
       - 28
@@ -18246,6 +18410,7 @@ lesson-28:
     romaji: kaiwa
     meaning:
       en: conversation
+      vi: hàng năm, mỗi năm
       fr: conversation
   - id:
       - 28
@@ -18257,6 +18422,7 @@ lesson-28:
     romaji: uun
     meaning:
       en: well, let me see, hmm...
+      vi: đúng như kế hoạch, đúng dự định
       fr: eh bien, voyons, euh
   - id:
       - 28
@@ -18270,6 +18436,7 @@ lesson-28:
     romaji: oshirase
     meaning:
       en: notice
+      vi: ví dụ
       fr: annonce, information
   - id:
       - 28
@@ -18282,6 +18449,7 @@ lesson-28:
     romaji: sankashimasu
     meaning:
       en: participate, join, attend
+      vi: nhân tiện, à này
       fr: participer
   - id:
       - 28
@@ -18295,6 +18463,7 @@ lesson-28:
     romaji: hinichi
     meaning:
       en: date
+      vi: kết quả học tập, điểm số
       fr: date
   - id:
       - 28
@@ -18308,6 +18477,7 @@ lesson-28:
     romaji: do
     meaning:
       en: Saturday
+      vi: tất nhiên, dĩ nhiên
       fr: samedi
   - id:
       - 28
@@ -18321,6 +18491,7 @@ lesson-28:
     romaji: taiikukan
     meaning:
       en: gymnasium
+      vi: nghiêm khắc, khắt khe
       fr: gymnase
   - id:
       - 28
@@ -18334,6 +18505,7 @@ lesson-28:
     romaji: muryō
     meaning:
       en: free of charge
+      vi: tự do, không bị ràng buộc
       fr: gratuit
   - id:
       - 28
@@ -18346,6 +18518,7 @@ lesson-28:
     romaji: sasoimasu
     meaning:
       en: invite, ask someone to join
+      vi: tách ra, giữ khoảng cách
       fr: inviter qqn. à faire qqch./proposer à qqn. de faire qqch. ensemble
   - id:
       - 28
@@ -18357,6 +18530,7 @@ lesson-28:
     romaji: ibento
     meaning:
       en: event
+      vi: sự hướng dẫn, chỉ đạo
       fr: manifestation (culturelle, sportive, etc.)
   - id:
       - 28
@@ -18369,6 +18543,7 @@ lesson-28:
     romaji: chigaimasu
     meaning:
       en: be different
+      vi: lỗi, sai lầm
       fr: différer, être différent de
   - id:
       - 28
@@ -18381,6 +18556,7 @@ lesson-28:
     romaji: yasashii
     meaning:
       en: gentle, kind
+      vi: thêm một lần nữa
       fr: doux, gentil
   - id:
       - 28
@@ -18393,6 +18569,7 @@ lesson-28:
     romaji: shūkan
     meaning:
       en: custom
+      vi: giống nhau, cùng loại
       fr: coutume, habitude
   - id:
       - 28
@@ -18405,6 +18582,7 @@ lesson-28:
     romaji: kanrinin
     meaning:
       en: janitor
+      vi: rất, vô cùng (thân mật)
       fr: concierge
   - id:
       - 28
@@ -18416,6 +18594,7 @@ lesson-28:
     romaji: hōmusutei
     meaning:
       en: homestay
+      vi: từ bây giờ trở đi, sau này
       fr: séjour dans une famille
   - id:
       - 28
@@ -18427,6 +18606,7 @@ lesson-28:
     romaji: oshaberishimasu
     meaning:
       en: chat
+      vi: thế nào đó, kiểu gì đó (thân mật)
       fr: bavarder
 lesson-29:
   - id:
@@ -18441,6 +18621,7 @@ lesson-29:
     romaji: akimasu [doaga~]
     meaning:
       en: '[a door] open'
+      vi: "[cửa] mở"
       fr: '[une porte] s''ouvrir'
   - id:
       - 29
@@ -18454,6 +18635,7 @@ lesson-29:
     romaji: shimarimasu [doaga~]
     meaning:
       en: '[a door] close, shut'
+      vi: "[cửa] đóng lại"
       fr: '[une porte] se fermer'
   - id:
       - 29
@@ -18467,6 +18649,7 @@ lesson-29:
     romaji: tsukimasu [denkiga~]
     meaning:
       en: '[a light] come on, be turned on'
+      vi: "[đèn] bật sáng, được bật lên"
       fr: '[une lumière] s''allumer'
   - id:
       - 29
@@ -18480,6 +18663,7 @@ lesson-29:
     romaji: kiemasu [denkiga~]
     meaning:
       en: '[a light] go off'
+      vi: "[đèn] tắt, bị tắt đi"
       fr: '[une lumière] s''éteindre'
   - id:
       - 29
@@ -18493,6 +18677,7 @@ lesson-29:
     romaji: kowaremasu [isuga~]
     meaning:
       en: '[a chair] break'
+      vi: bị hỏng, bị vỡ
       fr: '[une chaise] (se) casser'
   - id:
       - 29
@@ -18506,6 +18691,7 @@ lesson-29:
     romaji: waremasu [koppuga~]
     meaning:
       en: '[a glass] break, smash'
+      vi: bị gãy, bị bẻ gãy
       fr: '[un verre] (se) casser'
   - id:
       - 29
@@ -18519,6 +18705,7 @@ lesson-29:
     romaji: oremasu [kiga~]
     meaning:
       en: '[a tree] break, snap'
+      vi: bị rách, bị xé
       fr: '[un arbre] (se) casser, se briser'
   - id:
       - 29
@@ -18532,6 +18719,7 @@ lesson-29:
     romaji: yaburemasu [kamiga~]
     meaning:
       en: '[paper] tear'
+      vi: bị bẩn, trở nên dơ
       fr: '[un papier] se déchirer'
   - id:
       - 29
@@ -18545,6 +18733,7 @@ lesson-29:
     romaji: yogoremasu [fukuga~]
     meaning:
       en: '[clothes] get dirty'
+      vi: qua đời, mất
       fr: '[un vêtement] se salir'
   - id:
       - 29
@@ -18558,6 +18747,7 @@ lesson-29:
     romaji: tsukimasu [pokettoga~]
     meaning:
       en: '[a pocket] be attached'
+      vi: dừng lại, ngừng
       fr: '[une poche] être fixée, appliquée'
   - id:
       - 29
@@ -18571,6 +18761,7 @@ lesson-29:
     romaji: hazuremasu [botanga~]
     meaning:
       en: '[a button] be undone'
+      vi: được sửa chữa, khỏi bệnh
       fr: '[un bouton] se défaire'
   - id:
       - 29
@@ -18584,6 +18775,7 @@ lesson-29:
     romaji: tomarimasu [kurumaga~]
     meaning:
       en: '[a car] stop, park'
+      vi: thay đổi
       fr: '[une voiture] s''arrêter, stationner'
   - id:
       - 29
@@ -18596,6 +18788,7 @@ lesson-29:
     romaji: machigaemasu
     meaning:
       en: make a mistake
+      vi: xây dựng, kiến tạo
       fr: se tromper
   - id:
       - 29
@@ -18609,6 +18802,7 @@ lesson-29:
     romaji: otoshimasu
     meaning:
       en: drop, loose
+      vi: làm, sản xuất
       fr: laisser tomber, laisser tomber, perdre
   - id:
       - 29
@@ -18622,6 +18816,7 @@ lesson-29:
     romaji: kakarimasu [kagiga~]
     meaning:
       en: be locked
+      vi: mua
       fr: être fermé [à clé]
   - id:
       - 29
@@ -18633,6 +18828,7 @@ lesson-29:
     romaji: fukimasu
     meaning:
       en: wipe
+      vi: kéo
       fr: essuyer
   - id:
       - 29
@@ -18645,6 +18841,7 @@ lesson-29:
     romaji: torikaemasu
     meaning:
       en: change
+      vi: lấy ra, đưa ra
       fr: changer
   - id:
       - 29
@@ -18657,6 +18854,7 @@ lesson-29:
     romaji: katazukemasu
     meaning:
       en: put (things) in order, tidy up
+      vi: bỏ vào, đưa vào
       fr: ranger, mettre en ordre
   - id:
       - 29
@@ -18670,6 +18868,7 @@ lesson-29:
     romaji: '[o] sara'
     meaning:
       en: plate, dish
+      vi: thắng, chiến thắng
       fr: assiette
   - id:
       - 29
@@ -18682,6 +18881,7 @@ lesson-29:
     romaji: '[o] chawan'
     meaning:
       en: (rice) bowl
+      vi: thua, thất bại
       fr: bol
   - id:
       - 29
@@ -18694,6 +18894,7 @@ lesson-29:
     romaji: koppu
     meaning:
       en: glass (vessel)
+      vi: buổi hòa nhạc, concert
       fr: verre, gobelet
   - id:
       - 29
@@ -18706,6 +18907,7 @@ lesson-29:
     romaji: garasu
     meaning:
       en: glass (material)
+      vi: dàn âm thanh stereo
       fr: verre (matière)
   - id:
       - 29
@@ -18719,6 +18921,7 @@ lesson-29:
     romaji: fukuro
     meaning:
       en: bag
+      vi: máy điều hòa không khí
       fr: sac
   - id:
       - 29
@@ -18731,6 +18934,7 @@ lesson-29:
     romaji: shorui
     meaning:
       en: documents, paper
+      vi: công tắc
       fr: papiers, documents
   - id:
       - 29
@@ -18744,6 +18948,7 @@ lesson-29:
     romaji: eda
     meaning:
       en: branch, twig
+      vi: bếp gas
       fr: branche, rameau
   - id:
       - 29
@@ -18757,6 +18962,7 @@ lesson-29:
     romaji: ekiin
     meaning:
       en: station attendant
+      vi: máy giặt
       fr: agent de gare
   - id:
       - 29
@@ -18769,6 +18975,7 @@ lesson-29:
     romaji: kōban
     meaning:
       en: police box
+      vi: tủ lạnh
       fr: poste de police
   - id:
       - 29
@@ -18780,6 +18987,7 @@ lesson-29:
     romaji: supiichi
     meaning:
       en: 'speech (～を します : give/make a speech)'
+      vi: futon (chăn đệm trải sàn kiểu Nhật)
       fr: 'discours (～を します : faire un discours)'
   - id:
       - 29
@@ -18792,6 +19000,7 @@ lesson-29:
     romaji: henji
     meaning:
       en: 'reply, answer (～を します : reply, answer)'
+      vi: cửa sổ
       fr: 'réponse (～を します : répondre)'
   - id:
       - 29
@@ -18805,6 +19014,7 @@ lesson-29:
     romaji: osakini dōzo.
     meaning:
       en: After you./Go ahead, please
+      vi: hộp, thùng
       fr: Après vous./Je vous suis.
   - id:
       - 29
@@ -18817,6 +19027,7 @@ lesson-29:
     romaji: genjimonogatari
     meaning:
       en: '''The Tale of Genji'' (a novel written by Murasaki Shikibu in the Heian Era)'
+      vi: hành lý, đồ đạc
       fr: '"Le Dit du Genji" (roman écrit par Murasaki Shikibu à l''époque de Heian.)'
   - id:
       - 29
@@ -18830,6 +19041,7 @@ lesson-29:
     romaji: imano densha
     meaning:
       en: the train which has just left
+      vi: pin
       fr: le train qui vient de partir
   - id:
       - 29
@@ -18843,6 +19055,7 @@ lesson-29:
     romaji: wasuremono
     meaning:
       en: things left behind, lost property
+      vi: bóng đèn
       fr: objet oublié, objet perdu
   - id:
       - 29
@@ -18855,6 +19068,7 @@ lesson-29:
     romaji: konokurai
     meaning:
       en: about this (big)
+      vi: chiếu tatami (thảm sàn kiểu Nhật)
       fr: (grand) comme ça
   - id:
       - 29
@@ -18868,6 +19082,7 @@ lesson-29:
     romaji: ~gawa
     meaning:
       en: ～ side
+      vi: shoji (cửa giấy trượt kiểu Nhật)
       fr: côté ～
   - id:
       - 29
@@ -18880,6 +19095,7 @@ lesson-29:
     romaji: poketto
     meaning:
       en: pocket
+      vi: thủy tinh, kính
       fr: poche
   - id:
       - 29
@@ -18893,6 +19109,7 @@ lesson-29:
     romaji: ~ hen
     meaning:
       en: around ～, ～ about
+      vi: tiền gas, hóa đơn gas
       fr: à peu près ～, environ ～ (indiquant l'endroit approximatif)
   - id:
       - 29
@@ -18906,6 +19123,7 @@ lesson-29:
     romaji: oboete imasen.
     meaning:
       en: I don't remember.
+      vi: tiền điện, hóa đơn điện
       fr: Je ne me souviens pas.
   - id:
       - 29
@@ -18919,6 +19137,7 @@ lesson-29:
     romaji: amidana
     meaning:
       en: overhead rack
+      vi: tiền nước, hóa đơn nước
       fr: filet à bagages
   - id:
       - 29
@@ -18932,6 +19151,7 @@ lesson-29:
     romaji: tashika
     meaning:
       en: I'm pretty sure
+      vi: Xin chào. (lời chào buổi chiều)
       fr: si j'ai bonne mémoire
   - id:
       - 29
@@ -18944,6 +19164,7 @@ lesson-29:
     romaji: '[ā,] yokatta.'
     meaning:
       en: '[Oh,] that''s great!/Thank goodness! (used to express a feeling of relief)'
+      vi: khá, tương đối, đáng kể
       fr: '[Ah] c''est formidable./[Ouf] je suis rassuré. (expression utilisée pour exprimer le sentiment de soulagement)'
   - id:
       - 29
@@ -18957,6 +19178,7 @@ lesson-29:
     romaji: shinjuku
     meaning:
       en: name of a station/district in Tokyo
+      vi: sắp đến lúc rồi, gần đến giờ rồi
       fr: nom d'une gare/nom d'un quartier à Tokyo
   - id:
       - 29
@@ -18970,6 +19192,7 @@ lesson-29:
     romaji: jishin
     meaning:
       en: earthquake
+      vi: có lẽ, chắc là
       fr: tremblement de terre, séisme
   - id:
       - 29
@@ -18983,6 +19206,7 @@ lesson-29:
     romaji: kabe
     meaning:
       en: wall
+      vi: chắc chắn, nhất định
       fr: mur
   - id:
       - 29
@@ -18996,6 +19220,7 @@ lesson-29:
     romaji: hari
     meaning:
       en: hands (of a clock)
+      vi: có thể, biết đâu chừng
       fr: aiguille (d'une montre)
   - id:
       - 29
@@ -19009,6 +19234,7 @@ lesson-29:
     romaji: sashimasu
     meaning:
       en: point
+      vi: cuối cùng cũng, rốt cuộc
       fr: indiquer, marquer, désigner
   - id:
       - 29
@@ -19022,6 +19248,7 @@ lesson-29:
     romaji: ekimae
     meaning:
       en: the area in front of the station
+      vi: khá (dùng với câu phủ định, nghĩa là 'vẫn chưa', 'mãi không')
       fr: zone en face de la gare
   - id:
       - 29
@@ -19035,6 +19262,7 @@ lesson-29:
     romaji: taoremasu
     meaning:
       en: fall down
+      vi: vào khoảng thời gian này, giờ này
       fr: s'écrouler
   - id:
       - 29
@@ -19048,6 +19276,7 @@ lesson-29:
     romaji: nishi
     meaning:
       en: west
+      vi: đàng hoàng, đúng cách, chỉn chu
       fr: ouest
   - id:
       - 29
@@ -19060,6 +19289,7 @@ lesson-29:
     romaji: ~no hou
     meaning:
       en: direction of ～
+      vi: đột nhiên, bất ngờ
       fr: côté de ～, direction de ～
   - id:
       - 29
@@ -19072,6 +19302,7 @@ lesson-29:
     romaji: moemasu
     meaning:
       en: burn
+      vi: nếu
       fr: brûler
   - id:
       - 29
@@ -19083,6 +19314,7 @@ lesson-29:
     romaji: repōtā
     meaning:
       en: reporter
+      vi: nhưng, tuy nhiên
       fr: reporter, envoyé spécial
   - id:
       - 29
@@ -19095,6 +19327,7 @@ lesson-29:
     romaji: komimasu [michiga~]
     meaning:
       en: '[a road] get crowded'
+      vi: nhưng mà, tuy nhiên
       fr: '[la rue] être encombrée (de voitures)'
   - id:
       - 29
@@ -19107,6 +19340,7 @@ lesson-29:
     romaji: sukimasu [michiga~]
     meaning:
       en: '[a road] get empty'
+      vi: lại, một lần nữa
       fr: '[la rue] se vider'
   - id:
       - 29
@@ -19119,6 +19353,7 @@ lesson-29:
     romaji: saifu
     meaning:
       en: wallet, purse
+      vi: bưu điện
       fr: portefeuille, porte-monnaie
   - id:
       - 29
@@ -19131,6 +19366,7 @@ lesson-29:
     romaji: kono hen
     meaning:
       en: this neighborhood, around here
+      vi: phía tây, hướng tây
       fr: près d'ici, par ici, dans les environs
   - id:
       - 29
@@ -19143,6 +19379,7 @@ lesson-29:
     romaji: yotsuya
     meaning:
       en: name of a station in Tokyo
+      vi: phía đông, hướng đông
       fr: nom d'une gare à Tokyo
   - id:
       - 29
@@ -19155,6 +19392,7 @@ lesson-29:
     romaji: hō
     meaning:
       en: direction
+      vi: Kagawa (tỉnh Kagawa)
       fr: direction
   - id:
       - 29
@@ -19167,6 +19405,7 @@ lesson-29:
     romaji: sannomiya
     meaning:
       en: name of a place in Kobe
+      vi: Hakata (khu vực trong thành phố Fukuoka)
       fr: nom d'un endroit à Kobe
 lesson-30:
   - id:
@@ -19180,6 +19419,7 @@ lesson-30:
     romaji: harimasu
     meaning:
       en: put up, post, paste
+      vi: dán, treo (lên bảng, tường)
       fr: afficher, coller
   - id:
       - 30
@@ -19193,6 +19433,7 @@ lesson-30:
     romaji: kakemasu
     meaning:
       en: hang
+      vi: treo (lên tường, móc)
       fr: accrocher
   - id:
       - 30
@@ -19206,6 +19447,7 @@ lesson-30:
     romaji: kazarimasu
     meaning:
       en: display, decorate
+      vi: trưng bày, trang trí
       fr: décorer, mettre
   - id:
       - 30
@@ -19219,6 +19461,7 @@ lesson-30:
     romaji: narabemasu
     meaning:
       en: arrange, line up
+      vi: xếp hàng, sắp xếp
       fr: disposer, ranger, aligner
   - id:
       - 30
@@ -19232,6 +19475,7 @@ lesson-30:
     romaji: uemasu
     meaning:
       en: plant
+      vi: gói (quà, đồ vật)
       fr: planter
   - id:
       - 30
@@ -19245,6 +19489,7 @@ lesson-30:
     romaji: modoshimasu
     meaning:
       en: return, put ～ back
+      vi: buộc, trói
       fr: remettre
   - id:
       - 30
@@ -19257,6 +19502,7 @@ lesson-30:
     romaji: matomemasu
     meaning:
       en: put ～ together, put ～ in shape, sum up
+      vi: dọn dẹp, sắp xếp gọn gàng
       fr: faire (ses bagages), rassembler, mettre en ordre, résumer, finir
   - id:
       - 30
@@ -19269,6 +19515,7 @@ lesson-30:
     romaji: shimaimasu
     meaning:
       en: put (things) away
+      vi: vứt đi, bỏ đi
       fr: ranger, mettre qqch. dans
   - id:
       - 30
@@ -19282,6 +19529,7 @@ lesson-30:
     romaji: kimemasu
     meaning:
       en: decide
+      vi: tái chế
       fr: décider, choisir
   - id:
       - 30
@@ -19295,6 +19543,7 @@ lesson-30:
     romaji: yoshūshimasu
     meaning:
       en: prepare one's lesson
+      vi: cầm, xách, mang
       fr: préparer sa leçon
   - id:
       - 30
@@ -19308,6 +19557,7 @@ lesson-30:
     romaji: fukushūshimasu
     meaning:
       en: review one's lesson
+      vi: gửi
       fr: réviser sa leçon
   - id:
       - 30
@@ -19320,6 +19570,7 @@ lesson-30:
     romaji: sonomamani shimasu
     meaning:
       en: leave thing as they are
+      vi: nhờ (giúp đỡ), yêu cầu
       fr: laisser tel quel, laisser comme ça
   - id:
       - 30
@@ -19333,6 +19584,7 @@ lesson-30:
     romaji: jugyō
     meaning:
       en: class
+      vi: đưa, trao (tận tay)
       fr: classe, cours
   - id:
       - 30
@@ -19346,6 +19598,7 @@ lesson-30:
     romaji: kōgi
     meaning:
       en: lecture
+      vi: cho mượn
       fr: cours, conférence
   - id:
       - 30
@@ -19358,6 +19611,7 @@ lesson-30:
     romaji: miiteingu
     meaning:
       en: meeting
+      vi: mượn
       fr: réunion
   - id:
       - 30
@@ -19371,6 +19625,7 @@ lesson-30:
     romaji: yotei
     meaning:
       en: plan, schedule
+      vi: chọn, lựa chọn
       fr: programme, plan
   - id:
       - 30
@@ -19384,6 +19639,7 @@ lesson-30:
     romaji: oshirase
     meaning:
       en: notice
+      vi: đổi, thay đổi
       fr: annonce, information
   - id:
       - 30
@@ -19395,6 +19651,7 @@ lesson-30:
     romaji: gaidobukku
     meaning:
       en: guidebook
+      vi: chào hỏi
       fr: guide (touristique)
   - id:
       - 30
@@ -19407,6 +19664,7 @@ lesson-30:
     romaji: karendā
     meaning:
       en: calendar
+      vi: quà tặng
       fr: calendrier
   - id:
       - 30
@@ -19419,6 +19677,7 @@ lesson-30:
     romaji: posutā
     meaning:
       en: poster
+      vi: bánh kẹo, đồ ăn vặt
       fr: poster
   - id:
       - 30
@@ -19432,6 +19691,7 @@ lesson-30:
     romaji: yoteihyō
     meaning:
       en: schedule
+      vi: ruy băng
       fr: programme, tableau de planning
   - id:
       - 30
@@ -19445,6 +19705,7 @@ lesson-30:
     romaji: gomibako
     meaning:
       en: trash can, dustbin
+      vi: hộp
       fr: poubelle, corbeille à papier
   - id:
       - 30
@@ -19458,6 +19719,7 @@ lesson-30:
     romaji: ningyō
     meaning:
       en: doll
+      vi: túi, bao
       fr: poupée
   - id:
       - 30
@@ -19471,6 +19733,7 @@ lesson-30:
     romaji: kabin
     meaning:
       en: vase
+      vi: giấy
       fr: vase
   - id:
       - 30
@@ -19484,6 +19747,7 @@ lesson-30:
     romaji: kagami
     meaning:
       en: mirror
+      vi: dây (buộc)
       fr: miroir, glace
   - id:
       - 30
@@ -19497,6 +19761,7 @@ lesson-30:
     romaji: hikidashi
     meaning:
       en: drawer
+      vi: băng dính, băng keo
       fr: tiroir
   - id:
       - 30
@@ -19510,6 +19775,7 @@ lesson-30:
     romaji: genkan
     meaning:
       en: front door, porch, entrance hall
+      vi: quả bóng
       fr: vestibule, entrée
   - id:
       - 30
@@ -19523,6 +19789,7 @@ lesson-30:
     romaji: rōka
     meaning:
       en: corridor, hallway
+      vi: tennis
       fr: couloir
   - id:
       - 30
@@ -19536,6 +19803,7 @@ lesson-30:
     romaji: kabe
     meaning:
       en: wall
+      vi: golf
       fr: mur
   - id:
       - 30
@@ -19549,6 +19817,7 @@ lesson-30:
     romaji: ike
     meaning:
       en: pond
+      vi: trượt tuyết
       fr: étang, bassin
   - id:
       - 30
@@ -19562,6 +19831,7 @@ lesson-30:
     romaji: motono tokoro
     meaning:
       en: original place
+      vi: đi bộ đường dài (hiking)
       fr: place initiale, à sa place
   - id:
       - 30
@@ -19575,6 +19845,7 @@ lesson-30:
     romaji: mawari
     meaning:
       en: round, around
+      vi: bài (bộ bài tây)
       fr: circonférence, autour, alentours
   - id:
       - 30
@@ -19588,6 +19859,7 @@ lesson-30:
     romaji: mannaka
     meaning:
       en: center
+      vi: truyện tranh (manga)
       fr: milieu, centre
   - id:
       - 30
@@ -19601,6 +19873,7 @@ lesson-30:
     romaji: sumi
     meaning:
       en: corner
+      vi: côn trùng, sâu bọ
       fr: coin
   - id:
       - 30
@@ -19613,6 +19886,7 @@ lesson-30:
     romaji: mada
     meaning:
       en: still
+      vi: thiên nhiên
       fr: encore, toujours
   - id:
       - 30
@@ -19624,6 +19898,7 @@ lesson-30:
     romaji: ryukku
     meaning:
       en: rucksack
+      vi: không khí
       fr: sac à dos
   - id:
       - 30
@@ -19636,6 +19911,7 @@ lesson-30:
     romaji: hijōbukuro
     meaning:
       en: emergency kit
+      vi: vườn, sân
       fr: sac de survie
   - id:
       - 30
@@ -19648,6 +19924,7 @@ lesson-30:
     romaji: hijōji
     meaning:
       en: emergency
+      vi: lối vào, cửa chính
       fr: (en) cas d'urgence
   - id:
       - 30
@@ -19660,6 +19937,7 @@ lesson-30:
     romaji: seikatsushimasu
     meaning:
       en: live
+      vi: tường
       fr: vivre
   - id:
       - 30
@@ -19672,6 +19950,7 @@ lesson-30:
     romaji: kaijūdentō
     meaning:
       en: torch, flashlight
+      vi: giá, kệ
       fr: lampe de torche
   - id:
       - 30
@@ -19683,6 +19962,7 @@ lesson-30:
     romaji: ~toka, ~toka
     meaning:
       en: ～, ～, and so on
+      vi: gương
       fr: ～, ～, entre autres/～, ～, par exemple
   - id:
       - 30
@@ -19696,6 +19976,7 @@ lesson-30:
     romaji: marui
     meaning:
       en: round
+      vi: ghế sofa
       fr: rond
   - id:
       - 30
@@ -19708,6 +19989,7 @@ lesson-30:
     romaji: aru ~
     meaning:
       en: one ～, a certain ～
+      vi: rèm cửa
       fr: un ～, un certain ～
   - id:
       - 30
@@ -19720,6 +20002,7 @@ lesson-30:
     romaji: yumewo mimasu
     meaning:
       en: dream
+      vi: chăn (mỏng)
       fr: faire un rêve
   - id:
       - 30
@@ -19732,6 +20015,7 @@ lesson-30:
     romaji: ureshii
     meaning:
       en: glad, happy
+      vi: báo (tờ báo)
       fr: content
   - id:
       - 30
@@ -19745,6 +20029,7 @@ lesson-30:
     romaji: iya [na]
     meaning:
       en: hateful, disagreeable
+      vi: vội vàng, hối hả
       fr: ne pas aimer, déplaisant
   - id:
       - 30
@@ -19757,6 +20042,7 @@ lesson-30:
     romaji: suruto
     meaning:
       en: and, then
+      vi: cẩn thận, lịch sự
       fr: alors
   - id:
       - 30
@@ -19770,6 +20056,7 @@ lesson-30:
     romaji: mega samemasu
     meaning:
       en: wake up
+      vi: xin lỗi, cho hỏi (lời xin lỗi hoặc thu hút sự chú ý)
       fr: se réveiller
   - id:
       - 30
@@ -19782,6 +20069,7 @@ lesson-30:
     romaji: katazukemasu
     meaning:
       en: put things in order, tidy up
+      vi: nhìn này!, kìa! (thán từ)
       fr: ranger, mettre qch. en ordre
   - id:
       - 30
@@ -19794,6 +20082,7 @@ lesson-30:
     romaji: shirasemasu
     meaning:
       en: inform
+      vi: vậy thì, trong trường hợp đó
       fr: informer
   - id:
       - 30
@@ -19806,6 +20095,7 @@ lesson-30:
     romaji: sōdanshimasu
     meaning:
       en: consult, discuss
+      vi: mời (khi đưa thứ gì đó cho người khác)
       fr: consulter, discuter
   - id:
       - 30
@@ -19818,6 +20108,7 @@ lesson-30:
     romaji: okosan
     meaning:
       en: (someone else's) child
+      vi: cảm ơn rất nhiều
       fr: enfant (de qn. d'autre)
   - id:
       - 30
@@ -19830,6 +20121,7 @@ lesson-30:
     romaji: annaisho
     meaning:
       en: guide book
+      vi: thật sự, thực sự
       fr: guide
   - id:
       - 30
@@ -19842,6 +20134,7 @@ lesson-30:
     romaji: kōban
     meaning:
       en: police box
+      vi: đẹp, sạch sẽ
       fr: poste de police
   - id:
       - 30
@@ -19853,6 +20146,7 @@ lesson-30:
     romaji: ~hodo
     meaning:
       en: about ～
+      vi: vui, thú vị
       fr: environ ～, à peu près ～
   - id:
       - 30
@@ -19865,6 +20159,7 @@ lesson-30:
     romaji: gokurōsama.
     meaning:
       en: Thank you for your hard work. (used by a superior or older person to express appreciation for a subordinate's work)
+      vi: ngon
       fr: Merci. (lit. Merci de la peine que vous vous êtes donnée. expression utilisée par un supérieur à un inférieur pour le remercier de ses efforts)
   - id:
       - 30
@@ -19877,6 +20172,7 @@ lesson-30:
     romaji: kibō
     meaning:
       en: hope, request
+      vi: nổi tiếng
       fr: souhait, désir
   - id:
       - 30
@@ -19889,6 +20185,7 @@ lesson-30:
     romaji: nanika gokibōga arimasuka.
     meaning:
       en: Do you have any requests?
+      vi: to, lớn
       fr: Y a-t-il qch. que vous désiriez faire?
   - id:
       - 30
@@ -19900,6 +20197,7 @@ lesson-30:
     romaji: myūjikaru
     meaning:
       en: musical
+      vi: nhỏ, bé
       fr: comédie musicale
   - id:
       - 30
@@ -19911,6 +20209,7 @@ lesson-30:
     romaji: sorewa iidesune.
     meaning:
       en: That's a good idea./That sounds nice.
+      vi: cao, đắt (tiền)
       fr: C'est une bonne idée.
   - id:
       - 30
@@ -19922,6 +20221,7 @@ lesson-30:
     romaji: burōdouei
     meaning:
       en: Broadway
+      vi: rẻ, không đắt
       fr: Broadway
   - id:
       - 30
@@ -19934,6 +20234,7 @@ lesson-30:
     romaji: tsuki
     meaning:
       en: moon
+      vi: mới
       fr: lune
   - id:
       - 30
@@ -19946,6 +20247,7 @@ lesson-30:
     romaji: chikyū
     meaning:
       en: earth
+      vi: cũ
       fr: terre, globe
 lesson-31:
   - id:
@@ -19960,6 +20262,7 @@ lesson-31:
     romaji: tsuzukemasu
     meaning:
       en: continue
+      vi: tiếp tục
       fr: continuer
   - id:
       - 31
@@ -19973,6 +20276,7 @@ lesson-31:
     romaji: mitsukemasu
     meaning:
       en: find
+      vi: tìm thấy
       fr: trouver, retrouver
   - id:
       - 31
@@ -19985,6 +20289,7 @@ lesson-31:
     romaji: torimasu [yasumiwo~]
     meaning:
       en: take [a holiday]
+      vi: lấy, nghỉ [nghỉ phép]
       fr: prendre [un congé]
   - id:
       - 31
@@ -19998,6 +20303,7 @@ lesson-31:
     romaji: ukemasu [shikenwo~]
     meaning:
       en: take [an examination]
+      vi: trở về, quay về
       fr: passer [un examen]
   - id:
       - 31
@@ -20010,6 +20316,7 @@ lesson-31:
     romaji: mōshikomimasu
     meaning:
       en: apply for, enter for
+      vi: di chuyển, chuyển động
       fr: souscrire, s'inscrire
   - id:
       - 31
@@ -20023,6 +20330,7 @@ lesson-31:
     romaji: kyūkeishimasu
     meaning:
       en: take a break, take a rest
+      vi: cẩn thận, chú ý
       fr: se reposer, faire une pause
   - id:
       - 31
@@ -20036,6 +20344,7 @@ lesson-31:
     romaji: renkyū
     meaning:
       en: consecutive holidays
+      vi: thông báo, báo tin
       fr: série de jours fériés
   - id:
       - 31
@@ -20049,6 +20358,7 @@ lesson-31:
     romaji: sakubun
     meaning:
       en: essay, composition
+      vi: nhờ vả, yêu cầu (ai đó giúp đỡ)
       fr: composition, rédaction
   - id:
       - 31
@@ -20061,6 +20371,7 @@ lesson-31:
     romaji: happyō
     meaning:
       en: 'announcement, presentation (～します : announce)'
+      vi: hướng tới, nhắm đến
       fr: 'présentation, annonce (～します : présenter un exposé, annoncer)'
   - id:
       - 31
@@ -20074,6 +20385,7 @@ lesson-31:
     romaji: tenrankai
     meaning:
       en: exhibition
+      vi: giấc mơ, ước mơ
       fr: exposition
   - id:
       - 31
@@ -20087,6 +20399,7 @@ lesson-31:
     romaji: kekkonshiki
     meaning:
       en: wedding ceremony
+      vi: suy nghĩ, ý tưởng
       fr: cérémonie de mariage, noce
   - id:
       - 31
@@ -20100,6 +20413,7 @@ lesson-31:
     romaji: '[o] sōshiki'
     meaning:
       en: funeral
+      vi: kế hoạch, lịch trình
       fr: cérémonie funèbre, funérailles
   - id:
       - 31
@@ -20113,6 +20427,7 @@ lesson-31:
     romaji: shiki
     meaning:
       en: ceremony
+      vi: cảm xúc, tâm trạng
       fr: cérémonie
   - id:
       - 31
@@ -20126,6 +20441,7 @@ lesson-31:
     romaji: honsha
     meaning:
       en: head office
+      vi: sự tự tin
       fr: siège social
   - id:
       - 31
@@ -20139,6 +20455,7 @@ lesson-31:
     romaji: shiten
     meaning:
       en: branch office
+      vi: nỗi lo lắng, phiền muộn
       fr: succursale
   - id:
       - 31
@@ -20152,6 +20469,7 @@ lesson-31:
     romaji: kyōkai
     meaning:
       en: church
+      vi: bí mật
       fr: église
   - id:
       - 31
@@ -20165,6 +20483,7 @@ lesson-31:
     romaji: daigakuin
     meaning:
       en: graduate school
+      vi: sức mạnh, năng lực
       fr: école doctorante (master et doctorat)
   - id:
       - 31
@@ -20178,6 +20497,7 @@ lesson-31:
     romaji: dōbutsuen
     meaning:
       en: zoo
+      vi: lý do, ý nghĩa
       fr: zoo
   - id:
       - 31
@@ -20191,6 +20511,7 @@ lesson-31:
     romaji: onsen
     meaning:
       en: hot spring, spa
+      vi: vừa vặn, đúng (chính xác)
       fr: station thermale, eaux thermales
   - id:
       - 31
@@ -20203,6 +20524,7 @@ lesson-31:
     romaji: kaeri
     meaning:
       en: return
+      vi: đúng như dự đoán, xét cho cùng (dù sao cũng vậy)
       fr: retour
   - id:
       - 31
@@ -20215,6 +20537,7 @@ lesson-31:
     romaji: okosan
     meaning:
       en: (someone else's) child
+      vi: mãi mãi, suốt, liên tục
       fr: enfant (de quelqu'un d'autre)
   - id:
       - 31
@@ -20227,6 +20550,7 @@ lesson-31:
     romaji: '-gō'
     meaning:
       en: (train number, typhoon number, etc.)
+      vi: ngày càng, càng lúc càng
       fr: n° － (numéro de train, de typhon, etc.)
   - id:
       - 31
@@ -20240,6 +20564,7 @@ lesson-31:
     romaji: ~no hou
     meaning:
       en: place toward ～, direction of ～
+      vi: dần dần, từ từ
       fr: côté de ～, direction de ～
   - id:
       - 31
@@ -20252,6 +20577,7 @@ lesson-31:
     romaji: zutto
     meaning:
       en: the whole time
+      vi: tệ hại, kinh khủng
       fr: tout le temps, longtemps
   - id:
       - 31
@@ -20263,6 +20589,7 @@ lesson-31:
     romaji: bari
     meaning:
       en: Bali (Indonesian island)
+      vi: quan trọng, quý giá
       fr: Bali (île d'Indonésie)
   - id:
       - 31
@@ -20275,6 +20602,7 @@ lesson-31:
     romaji: pikaso
     meaning:
       en: Pablo Picasso, Spanish painter (1881-1973)
+      vi: khó, khó khăn
       fr: Pablo Picasso, peintre espagnol (1881-1973)
   - id:
       - 31
@@ -20286,6 +20614,7 @@ lesson-31:
     romaji: nozomi
     meaning:
       en: 'name of a Shinkansen train (～４２号 : Nozomi Superexpress No.42)'
+      vi: dễ, đơn giản
       fr: 'nom d''un Shinkansen (～４２号 : Super Express Nozomi n°42)'
   - id:
       - 31
@@ -20298,6 +20627,7 @@ lesson-31:
     romaji: shinkōbe
     meaning:
       en: name of a station in Hyogo prefecture
+      vi: cảm thấy hồi hộp, căng thẳng
       fr: nom d'une gare dans la préfecture du Hyogo
   - id:
       - 31
@@ -20311,6 +20641,7 @@ lesson-31:
     romaji: nokorimasu
     meaning:
       en: remain, be left, stay behind
+      vi: khóc
       fr: rester
   - id:
       - 31
@@ -20323,6 +20654,7 @@ lesson-31:
     romaji: nyūgakushiken
     meaning:
       en: entrance examination
+      vi: cười
       fr: concours d'entrée
   - id:
       - 31
@@ -20336,6 +20668,7 @@ lesson-31:
     romaji: tsukini
     meaning:
       en: per month
+      vi: tức giận, nổi giận
       fr: par mois
   - id:
       - 31
@@ -20349,6 +20682,7 @@ lesson-31:
     romaji: mura
     meaning:
       en: village
+      vi: ngạc nhiên, giật mình
       fr: village
   - id:
       - 31
@@ -20362,6 +20696,7 @@ lesson-31:
     romaji: sotsugyōshimasu
     meaning:
       en: graduate
+      vi: cảm thấy nhẹ nhõm, yên tâm
       fr: sortir de l'école, finir ses études
   - id:
       - 31
@@ -20375,6 +20710,7 @@ lesson-31:
     romaji: eigakan
     meaning:
       en: movie theater, cinema
+      vi: thất vọng
       fr: (salle de) cinéma
   - id:
       - 31
@@ -20388,6 +20724,7 @@ lesson-31:
     romaji: iya [na]
     meaning:
       en: hateful, disagreeable
+      vi: sự hối tiếc
       fr: ne pas aimer, déplaisant
   - id:
       - 31
@@ -20401,6 +20738,7 @@ lesson-31:
     romaji: sora
     meaning:
       en: sky
+      vi: kế hoạch, dự án
       fr: ciel
   - id:
       - 31
@@ -20414,6 +20752,7 @@ lesson-31:
     romaji: tojimasu
     meaning:
       en: close
+      vi: cuộc sống, sinh hoạt
       fr: fermer
   - id:
       - 31
@@ -20427,6 +20766,7 @@ lesson-31:
     romaji: tokai
     meaning:
       en: city
+      vi: công việc, việc làm
       fr: ville
   - id:
       - 31
@@ -20440,6 +20780,7 @@ lesson-31:
     romaji: kodomotachi
     meaning:
       en: children
+      vi: kết quả
       fr: enfants
   - id:
       - 31
@@ -20453,6 +20794,7 @@ lesson-31:
     romaji: jiyūni
     meaning:
       en: freely
+      vi: lý do, nguyên nhân
       fr: librement, en toute liberté
   - id:
       - 31
@@ -20465,6 +20807,7 @@ lesson-31:
     romaji: hajimarimasu [shikiga~]
     meaning:
       en: '[a ceremony] begin, start'
+      vi: mục đích, mục tiêu
       fr: '[une cérémonie] commencer'
   - id:
       - 31
@@ -20477,6 +20820,7 @@ lesson-31:
     romaji: nyūgakushimasu [daigakuni~]
     meaning:
       en: enter [a university]
+      vi: môi trường, hoàn cảnh xung quanh
       fr: entrer [dans une université]
   - id:
       - 31
@@ -20489,6 +20833,7 @@ lesson-31:
     romaji: shussekishimasu [kaigini~]
     meaning:
       en: attend [a meeting]
+      vi: xã hội
       fr: assister, participer [à une réunion]
   - id:
       - 31
@@ -20501,6 +20846,7 @@ lesson-31:
     romaji: okyaku [san]
     meaning:
       en: visitor, guest, customer, client
+      vi: cơ hội
       fr: visiteur, invité, hôte, client
   - id:
       - 31
@@ -20513,6 +20859,7 @@ lesson-31:
     romaji: dareka
     meaning:
       en: somebody
+      vi: thường xuyên, nhiều lần
       fr: quelqu'un
   - id:
       - 31
@@ -20525,6 +20872,7 @@ lesson-31:
     romaji: uenokōen
     meaning:
       en: Ueno Park (in Tokyo)
+      vi: hiếm khi, ít khi
       fr: Parc d'Ueno (à Tokyo)
   - id:
       - 31
@@ -20537,6 +20885,7 @@ lesson-31:
     romaji: futsūno
     meaning:
       en: ordinary, common, usual
+      vi: hầu hết, gần như, phần lớn
       fr: ordinaire, usuel
   - id:
       - 31
@@ -20548,6 +20897,7 @@ lesson-31:
     romaji: intānetto
     meaning:
       en: Internet
+      vi: không dễ dàng, khó mà (dùng với phủ định)
       fr: Internet
   - id:
       - 31
@@ -20560,6 +20910,7 @@ lesson-31:
     romaji: sekaijū
     meaning:
       en: all over the world
+      vi: hoàn toàn không, chẳng chút nào (dùng với phủ định)
       fr: le monde entier
   - id:
       - 31
@@ -20572,6 +20923,7 @@ lesson-31:
     romaji: atsumarimasu
     meaning:
       en: gather
+      vi: vô tình, lỡ tay (làm điều gì không cố ý)
       fr: se réunir, s'assembler
   - id:
       - 31
@@ -20584,6 +20936,7 @@ lesson-31:
     romaji: utsukushii
     meaning:
       en: beautiful
+      vi: nhất định, chắc chắn (không thất bại)
       fr: beau
   - id:
       - 31
@@ -20596,6 +20949,7 @@ lesson-31:
     romaji: shizen
     meaning:
       en: nature
+      vi: chắc chắn, hẳn là
       fr: nature
   - id:
       - 31
@@ -20607,6 +20961,7 @@ lesson-31:
     romaji: subarashisa
     meaning:
       en: goodness, virtue
+      vi: có lẽ, chắc là
       fr: splendeur, excellence, magnificence
   - id:
       - 31
@@ -20619,6 +20974,7 @@ lesson-31:
     romaji: kiga tsukimasu
     meaning:
       en: notice, become aware of
+      vi: có lẽ, hẳn là (mang sắc thái suy đoán)
       fr: s'apercevoir de, remarquer
 lesson-32:
   - id:
@@ -20633,6 +20989,7 @@ lesson-32:
     romaji: undōshimasu
     meaning:
       en: (take) exercise
+      vi: tập thể dục, vận động
       fr: faire du sport, faire de l'exercice
   - id:
       - 32
@@ -20646,6 +21003,7 @@ lesson-32:
     romaji: seikōshimasu
     meaning:
       en: succeed
+      vi: thành công
       fr: réussir
   - id:
       - 32
@@ -20659,6 +21017,7 @@ lesson-32:
     romaji: shippaishimasu [shikenni~]
     meaning:
       en: fail [an examination]
+      vi: thất bại [trong kỳ thi]
       fr: échouer [à un examen]
   - id:
       - 32
@@ -20672,6 +21031,7 @@ lesson-32:
     romaji: gōkakushimasu [shikenni~]
     meaning:
       en: pass [an examination]
+      vi: làm thêm giờ, tăng ca
       fr: réussir [(à) un examen]
   - id:
       - 32
@@ -20685,6 +21045,7 @@ lesson-32:
     romaji: yamimasu [amega~]
     meaning:
       en: '[rain] stop'
+      vi: đi công tác
       fr: '[la pluie] cesser'
   - id:
       - 32
@@ -20698,6 +21059,7 @@ lesson-32:
     romaji: haremasu
     meaning:
       en: clear up
+      vi: đến muộn (đi làm, đi học, v.v.)
       fr: s'éclaircir
   - id:
       - 32
@@ -20711,6 +21073,7 @@ lesson-32:
     romaji: kumorimasu
     meaning:
       en: get cloudy
+      vi: tham khảo ý kiến, thảo luận
       fr: se couvrir, s'assombrir
   - id:
       - 32
@@ -20724,6 +21087,7 @@ lesson-32:
     romaji: tsuzukimasu [netsuga~]
     meaning:
       en: '[high temperature/fever] continue'
+      vi: điều tra, tra cứu
       fr: '[la fièvre] persister'
   - id:
       - 32
@@ -20736,6 +21100,7 @@ lesson-32:
     romaji: hikimasu [kazewo~]
     meaning:
       en: catch [a cold]
+      vi: thu thập, tập hợp
       fr: attraper [un rhume], prendre [froid]
   - id:
       - 32
@@ -20749,6 +21114,7 @@ lesson-32:
     romaji: hiyashimasu
     meaning:
       en: cool
+      vi: so sánh
       fr: rafraîchir
   - id:
       - 32
@@ -20761,6 +21127,7 @@ lesson-32:
     romaji: komimasu [michiga~]
     meaning:
       en: '[a road] get crowded'
+      vi: chuyển đổi, thay thế
       fr: '[la rue] se remplir de monde'
   - id:
       - 32
@@ -20773,6 +21140,7 @@ lesson-32:
     romaji: sukimasu [michiga~]
     meaning:
       en: '[a road] get less crowded'
+      vi: tiến triển tốt, diễn ra suôn sẻ
       fr: '[la rue] se vider de monde'
   - id:
       - 32
@@ -20785,6 +21153,7 @@ lesson-32:
     romaji: demasu [shiaini~]
     meaning:
       en: participate [in the match]
+      vi: bắt đầu
       fr: participer [à un match]
   - id:
       - 32
@@ -20797,6 +21166,7 @@ lesson-32:
     romaji: demasu [pāteiini~]
     meaning:
       en: attend [a party]
+      vi: nghỉ việc, từ chức
       fr: assister [à une soirée]
   - id:
       - 32
@@ -20810,6 +21180,7 @@ lesson-32:
     romaji: muriwo shimasu
     meaning:
       en: overdo things
+      vi: xin việc làm, tìm được việc làm
       fr: forcer
   - id:
       - 32
@@ -20823,6 +21194,7 @@ lesson-32:
     romaji: jūbun [na]
     meaning:
       en: enough, sufficient
+      vi: lương, tiền lương
       fr: suffisant, assez
   - id:
       - 32
@@ -20835,6 +21207,7 @@ lesson-32:
     romaji: okashii
     meaning:
       en: strange, funny
+      vi: tiền thưởng (bonus)
       fr: bizarre, étrange, drôle
   - id:
       - 32
@@ -20847,6 +21220,7 @@ lesson-32:
     romaji: urusai
     meaning:
       en: noisy
+      vi: nguyên liệu, vật liệu
       fr: bruyant
   - id:
       - 32
@@ -20859,6 +21233,7 @@ lesson-32:
     romaji: sensei
     meaning:
       en: doctor
+      vi: bản đồ
       fr: docteur
   - id:
       - 32
@@ -20871,6 +21246,7 @@ lesson-32:
     romaji: yakedo
     meaning:
       en: 'burning (～を します : get burned)'
+      vi: tài liệu, dữ liệu, số liệu
       fr: 'brûlure (～を します : se brûler)'
   - id:
       - 32
@@ -20883,6 +21259,7 @@ lesson-32:
     romaji: kega
     meaning:
       en: 'injury (～を します : get injured)'
+      vi: báo cáo
       fr: 'blessure (～を します : se blesser)'
   - id:
       - 32
@@ -20895,6 +21272,7 @@ lesson-32:
     romaji: seki
     meaning:
       en: 'cough (～を します／～が でます : have a cough)'
+      vi: đồ thị, biểu đồ
       fr: 'toux (～を します／～が でます : tousser)'
   - id:
       - 32
@@ -20907,6 +21285,7 @@ lesson-32:
     romaji: infuruenza
     meaning:
       en: influenza
+      vi: bài báo, tin tức
       fr: grippe
   - id:
       - 32
@@ -20920,6 +21299,7 @@ lesson-32:
     romaji: sora
     meaning:
       en: sky
+      vi: nửa năm, sáu tháng
       fr: ciel
   - id:
       - 32
@@ -20933,6 +21313,7 @@ lesson-32:
     romaji: taiyō
     meaning:
       en: sun
+      vi: nhiều, rất nhiều
       fr: soleil
   - id:
       - 32
@@ -20946,6 +21327,7 @@ lesson-32:
     romaji: hoshi
     meaning:
       en: star
+      vi: một chút, một ít (thân mật)
       fr: étoile
   - id:
       - 32
@@ -20959,6 +21341,7 @@ lesson-32:
     romaji: kaze
     meaning:
       en: wind
+      vi: một chút, một ít
       fr: vent
   - id:
       - 32
@@ -20972,6 +21355,7 @@ lesson-32:
     romaji: higashi
     meaning:
       en: east
+      vi: đủ, đầy đủ
       fr: est
   - id:
       - 32
@@ -20985,6 +21369,7 @@ lesson-32:
     romaji: nishi
     meaning:
       en: west
+      vi: không đủ, thiếu
       fr: ouest
   - id:
       - 32
@@ -20998,6 +21383,7 @@ lesson-32:
     romaji: minami
     meaning:
       en: south
+      vi: không lắm, không mấy
       fr: sud
   - id:
       - 32
@@ -21011,6 +21397,7 @@ lesson-32:
     romaji: kita
     meaning:
       en: north
+      vi: hoàn toàn không, không chút nào
       fr: nord
   - id:
       - 32
@@ -21023,6 +21410,7 @@ lesson-32:
     romaji: kokusai~
     meaning:
       en: international ～
+      vi: hơn nữa, nhiều hơn
       fr: ～ international
   - id:
       - 32
@@ -21036,6 +21424,7 @@ lesson-32:
     romaji: suidō
     meaning:
       en: faucet, tap, water supply
+      vi: vẫn còn, chưa
       fr: eau courante
   - id:
       - 32
@@ -21048,6 +21437,7 @@ lesson-32:
     romaji: enjin
     meaning:
       en: engine
+      vi: "rồi, đã (xong rồi); nữa (phủ định: không còn nữa)"
       fr: moteur
   - id:
       - 32
@@ -21060,6 +21450,7 @@ lesson-32:
     romaji: chiimu
     meaning:
       en: team
+      vi: đúng, vừa đúng, chính xác
       fr: équipe
   - id:
       - 32
@@ -21073,6 +21464,7 @@ lesson-32:
     romaji: kon'ya
     meaning:
       en: this evening
+      vi: cuối cùng cũng, rốt cuộc cũng (sau nhiều cố gắng)
       fr: ce soir
   - id:
       - 32
@@ -21086,6 +21478,7 @@ lesson-32:
     romaji: yūgata
     meaning:
       en: late afternoon
+      vi: cuối cùng, rốt cuộc (kết quả sau quá trình dài)
       fr: soir, fin d'après-midi
   - id:
       - 32
@@ -21098,6 +21491,7 @@ lesson-32:
     romaji: mae
     meaning:
       en: a time in the past, before
+      vi: bằng cách nào đó, dù sao cũng
       fr: avant, il y a
   - id:
       - 32
@@ -21111,6 +21505,7 @@ lesson-32:
     romaji: osoku
     meaning:
       en: late (time)
+      vi: không thể làm gì được, không sao cả
       fr: tard
   - id:
       - 32
@@ -21123,6 +21518,7 @@ lesson-32:
     romaji: konnani
     meaning:
       en: this (much, etc.)
+      vi: ngay, ngay lập tức
       fr: autant que ceci, tellement
   - id:
       - 32
@@ -21135,6 +21531,7 @@ lesson-32:
     romaji: sonnani
     meaning:
       en: that (much, etc.) (concerning a matter related to the listener)
+      vi: nhiều thế này, đến mức này
       fr: autant que ceci, tellement (à propos de qqch. ou qqn. concernant l'interlocuteur)
   - id:
       - 32
@@ -21147,6 +21544,7 @@ lesson-32:
     romaji: annani
     meaning:
       en: that (much, etc.) (concerning a matter not related to the speaker or the listener)
+      vi: nhiều thế đó, đến mức đó (gần)
       fr: autant que ceci, tellement (à propos de qqch. ou qqn. qui ne concerne ni le locuteur ni l'interlocuteur)
   - id:
       - 32
@@ -21158,6 +21556,7 @@ lesson-32:
     romaji: yōroppa
     meaning:
       en: Europe
+      vi: nhiều thế đó, đến mức đó (xa)
       fr: Europe
   - id:
       - 32
@@ -21171,6 +21570,7 @@ lesson-32:
     romaji: genki
     meaning:
       en: vigour
+      vi: dù nhiều đến đâu, dù thế nào
       fr: vitalité, entrain, moral
   - id:
       - 32
@@ -21184,6 +21584,7 @@ lesson-32:
     romaji: i
     meaning:
       en: stomach
+      vi: hết sức có thể, càng nhiều càng tốt
       fr: estomac
   - id:
       - 32
@@ -21196,6 +21597,7 @@ lesson-32:
     romaji: sutoresu
     meaning:
       en: stress
+      vi: tuyệt đối không, không bao giờ
       fr: stress
   - id:
       - 32
@@ -21208,6 +21610,7 @@ lesson-32:
     romaji: sorewa ikemasenne.
     meaning:
       en: I'm sorry to hear that.
+      vi: một mình, tự mình
       fr: C'est bien embêtant...
   - id:
       - 32
@@ -21221,6 +21624,7 @@ lesson-32:
     romaji: hoshiuranai
     meaning:
       en: horoscope
+      vi: cùng nhau, cùng với
       fr: horoscope
   - id:
       - 32
@@ -21234,6 +21638,7 @@ lesson-32:
     romaji: oushiza
     meaning:
       en: Taurus
+      vi: từ từ, thong thả
       fr: le Taureau
   - id:
       - 32
@@ -21247,6 +21652,7 @@ lesson-32:
     romaji: hatarakisugi
     meaning:
       en: overworking
+      vi: nhanh, sớm
       fr: surcharge de travail
   - id:
       - 32
@@ -21260,6 +21666,7 @@ lesson-32:
     romaji: komarimasu
     meaning:
       en: be in trouble, have a problem
+      vi: trông có vẻ vui, có vẻ thú vị
       fr: avoir des ennuis, être en difficulté
   - id:
       - 32
@@ -21273,6 +21680,7 @@ lesson-32:
     romaji: takarakuji
     meaning:
       en: lottery
+      vi: trông có vẻ khó
       fr: loterie
   - id:
       - 32
@@ -21286,6 +21694,7 @@ lesson-32:
     romaji: atarimasu [takarakujiga~]
     meaning:
       en: win [a lottery]
+      vi: trông có vẻ ngon
       fr: gagner [à la loterie]
   - id:
       - 32
@@ -21299,6 +21708,7 @@ lesson-32:
     romaji: kenkō
     meaning:
       en: health
+      vi: trông có vẻ vất vả, có vẻ khó khăn
       fr: santé
   - id:
       - 32
@@ -21312,6 +21722,7 @@ lesson-32:
     romaji: ren'ai
     meaning:
       en: romantic love
+      vi: có vẻ tốt
       fr: amour
   - id:
       - 32
@@ -21325,6 +21736,7 @@ lesson-32:
     romaji: koibito
     meaning:
       en: sweetheart, boyfriend, girlfriend
+      vi: dễ hiểu
       fr: amoureux, amoureuse, petit(e) ami(e)
   - id:
       - 32
@@ -21336,6 +21748,7 @@ lesson-32:
     romaji: rakkiiaitemu
     meaning:
       en: something lucky
+      vi: khó hiểu
       fr: objet porte-chance
   - id:
       - 32
@@ -21348,6 +21761,7 @@ lesson-32:
     romaji: ishi
     meaning:
       en: stone
+      vi: dễ làm
       fr: pierre
   - id:
       - 32
@@ -21360,6 +21774,7 @@ lesson-32:
     romaji: modorimasu
     meaning:
       en: return
+      vi: khó làm
       fr: retourner, rentrer
   - id:
       - 32
@@ -21372,6 +21787,7 @@ lesson-32:
     romaji: fukimasu [kazega~]
     meaning:
       en: '[wind] blow'
+      vi: dễ sử dụng
       fr: '[le vent] souffler'
   - id:
       - 32
@@ -21384,6 +21800,7 @@ lesson-32:
     romaji: naorimasu [byōkiga~]
     meaning:
       en: recover from [sickness], get well
+      vi: khó sử dụng
       fr: '[une maladie] guérir'
   - id:
       - 32
@@ -21396,6 +21813,7 @@ lesson-32:
     romaji: naorimasu [koshōga~]
     meaning:
       en: be fixed, be repaired
+      vi: dễ sinh sống, thuận tiện để ở
       fr: '[une panne] être réparée'
   - id:
       - 32
@@ -21408,6 +21826,7 @@ lesson-32:
     romaji: shinpai [na]
     meaning:
       en: worried, anxious
+      vi: khó sinh sống, bất tiện để ở
       fr: anxieux, soucieux, inquiet
   - id:
       - 32
@@ -21420,6 +21839,7 @@ lesson-32:
     romaji: tsuki
     meaning:
       en: moon
+      vi: dễ đọc
       fr: lune
   - id:
       - 32
@@ -21431,6 +21851,7 @@ lesson-32:
     romaji: moshikashitara
     meaning:
       en: possibly, perhaps
+      vi: khó đọc
       fr: peut-être, il se pourrait que
   - id:
       - 32
@@ -21442,6 +21863,7 @@ lesson-32:
     romaji: orinpikku
     meaning:
       en: Olympic Games
+      vi: dễ mặc
       fr: jeux Olympiques
   - id:
       - 32
@@ -21453,6 +21875,7 @@ lesson-32:
     romaji: yukkuri shimasu
     meaning:
       en: take one's time
+      vi: khó mặc
       fr: prendre son temps, se reposer
   - id:
       - 32
@@ -21465,6 +21888,7 @@ lesson-32:
     romaji: '[o] kanemochi'
     meaning:
       en: rich person
+      vi: tuyệt vời, ghê gớm, kinh khủng
       fr: riche
 lesson-33:
   - id:
@@ -21479,6 +21903,7 @@ lesson-33:
     romaji: nigemasu
     meaning:
       en: run away
+      vi: bỏ chạy, trốn thoát
       fr: fuir, se sauver
   - id:
       - 33
@@ -21492,6 +21917,7 @@ lesson-33:
     romaji: sawagimasu
     meaning:
       en: make a noise
+      vi: gây ồn ào, làm náo loạn
       fr: faire du bruit
   - id:
       - 33
@@ -21504,6 +21930,7 @@ lesson-33:
     romaji: akiramemasu
     meaning:
       en: give up
+      vi: từ bỏ, bỏ cuộc
       fr: abandonner, renoncer
   - id:
       - 33
@@ -21517,6 +21944,7 @@ lesson-33:
     romaji: nagemasu
     meaning:
       en: throw
+      vi: quyết định
       fr: lancer, jeter
   - id:
       - 33
@@ -21530,6 +21958,7 @@ lesson-33:
     romaji: mamorimasu
     meaning:
       en: keep, follow, obey
+      vi: suy nghĩ, cân nhắc
       fr: maintenir, respecter, observer
   - id:
       - 33
@@ -21542,6 +21971,7 @@ lesson-33:
     romaji: hajimarimasu [shikiga~]
     meaning:
       en: '[a ceremony] begin, start'
+      vi: yêu cầu, tìm kiếm
       fr: '[une cérémonie] commencer'
   - id:
       - 33
@@ -21554,6 +21984,7 @@ lesson-33:
     romaji: shussekishimasu [kaigini~]
     meaning:
       en: attend [a meeting]
+      vi: nói (dạng khiêm tốn của 言います)
       fr: assister [à une réunion]
   - id:
       - 33
@@ -21567,6 +21998,7 @@ lesson-33:
     romaji: tsutaemasu
     meaning:
       en: convey
+      vi: có mặt, ở đây (dạng khiêm tốn của います)
       fr: transmettre (un message)
   - id:
       - 33
@@ -21580,6 +22012,7 @@ lesson-33:
     romaji: chūishimasu [kurumani~]
     meaning:
       en: be careful [of the cars]
+      vi: đi, đến (dạng khiêm tốn)
       fr: faire attention [aux voitures]
   - id:
       - 33
@@ -21593,6 +22026,7 @@ lesson-33:
     romaji: hazushimasu [sekiwo~]
     meaning:
       en: be away [from one's desk]
+      vi: làm (dạng khiêm tốn của します)
       fr: quitter (temporairement) [son poste de travail], s'absenter (momentanément)
   - id:
       - 33
@@ -21605,6 +22039,7 @@ lesson-33:
     romaji: modorimasu
     meaning:
       en: come back, return
+      vi: nhận (dạng khiêm tốn của もらいます)
       fr: revenir
   - id:
       - 33
@@ -21617,6 +22052,7 @@ lesson-33:
     romaji: arimasu [denwaga~]
     meaning:
       en: have [a telephone call]
+      vi: thưa, nói (dạng khiêm tốn rất lịch sự)
       fr: recevoir [un coup de téléphone]
   - id:
       - 33
@@ -21628,6 +22064,7 @@ lesson-33:
     romaji: risaikurushimasu
     meaning:
       en: recycle
+      vi: nói (dạng kính ngữ của 言います)
       fr: recycler
   - id:
       - 33
@@ -21640,6 +22077,7 @@ lesson-33:
     romaji: dame [na]
     meaning:
       en: no good, not permitted, impossible
+      vi: có mặt, đi, đến (dạng kính ngữ)
       fr: pas bon, impossible, sans espoir, ne pas être permis
   - id:
       - 33
@@ -21652,6 +22090,7 @@ lesson-33:
     romaji: onaji
     meaning:
       en: same
+      vi: ăn, uống (dạng kính ngữ)
       fr: le/la même
   - id:
       - 33
@@ -21665,6 +22104,7 @@ lesson-33:
     romaji: keisatsu
     meaning:
       en: police (station)
+      vi: làm (dạng kính ngữ của します)
       fr: police, commissariat de police
   - id:
       - 33
@@ -21678,6 +22118,7 @@ lesson-33:
     romaji: seki
     meaning:
       en: seat
+      vi: cho, tặng (dạng kính ngữ của くれます)
       fr: place, siège
   - id:
       - 33
@@ -21690,6 +22131,7 @@ lesson-33:
     romaji: māku
     meaning:
       en: mark, symbol
+      vi: biết (dạng kính ngữ)
       fr: symbole, signe
   - id:
       - 33
@@ -21702,6 +22144,7 @@ lesson-33:
     romaji: bōru
     meaning:
       en: ball
+      vi: tự giới thiệu bản thân
       fr: balle, ballon
   - id:
       - 33
@@ -21714,6 +22157,7 @@ lesson-33:
     romaji: shimekiri
     meaning:
       en: deadline
+      vi: Rất vui được làm quen, Mong được chỉ bảo
       fr: dernier délai
   - id:
       - 33
@@ -21727,6 +22171,7 @@ lesson-33:
     romaji: kisoku
     meaning:
       en: regulation, rule
+      vi: trưởng phòng
       fr: règle, réglement, code
   - id:
       - 33
@@ -21739,6 +22184,7 @@ lesson-33:
     romaji: kiken
     meaning:
       en: Danger
+      vi: trưởng bộ phận, trưởng phòng ban
       fr: Danger
   - id:
       - 33
@@ -21752,6 +22198,7 @@ lesson-33:
     romaji: shiyōkinshi
     meaning:
       en: Do Not Use
+      vi: giám đốc công ty, tổng giám đốc
       fr: Usage interdit
   - id:
       - 33
@@ -21765,6 +22212,7 @@ lesson-33:
     romaji: tachiirikinshi
     meaning:
       en: Keep Out
+      vi: khách hàng, khách mời
       fr: Entrée interdite
   - id:
       - 33
@@ -21777,6 +22225,7 @@ lesson-33:
     romaji: jokō
     meaning:
       en: Go Slow
+      vi: mọi người, nhiều người
       fr: Ralentir
   - id:
       - 33
@@ -21790,6 +22239,7 @@ lesson-33:
     romaji: iriguchi
     meaning:
       en: entrance
+      vi: tất cả mọi người, toàn bộ
       fr: entrée
   - id:
       - 33
@@ -21803,6 +22253,7 @@ lesson-33:
     romaji: deguchi
     meaning:
       en: exit
+      vi: những người/thứ khác, phần còn lại
       fr: sortie
   - id:
       - 33
@@ -21816,6 +22267,7 @@ lesson-33:
     romaji: hijōguchi
     meaning:
       en: emergency exit
+      vi: ở đâu, cái nào (dạng lịch sự của どこ)
       fr: sortie de secours
   - id:
       - 33
@@ -21829,6 +22281,7 @@ lesson-33:
     romaji: muryō
     meaning:
       en: Free of Charge
+      vi: Xin hỏi quý vị là ai? (cách hỏi rất lịch sự)
       fr: gratuit
   - id:
       - 33
@@ -21841,6 +22294,7 @@ lesson-33:
     romaji: waribiki
     meaning:
       en: Discount
+      vi: nếu anh/chị không ngại
       fr: réduction
   - id:
       - 33
@@ -21853,6 +22307,7 @@ lesson-33:
     romaji: nomihōdai
     meaning:
       en: All You Can Drink
+      vi: nhờ ơn anh/chị (câu xã giao cảm ơn)
       fr: boissons à volonté
   - id:
       - 33
@@ -21866,6 +22321,7 @@ lesson-33:
     romaji: shiyōchū
     meaning:
       en: In Use
+      vi: a-lô (khi nghe điện thoại)
       fr: en cours d'utilisation, occupé
   - id:
       - 33
@@ -21878,6 +22334,7 @@ lesson-33:
     romaji: boshūchū
     meaning:
       en: Applications Wanted
+      vi: con về rồi; ngay bây giờ
       fr: appel à candidatures
   - id:
       - 33
@@ -21891,6 +22348,7 @@ lesson-33:
     romaji: ~chū
     meaning:
       en: '-ing'
+      vi: Chào mừng trở về (đáp lại ただいま)
       fr: en cours de ～
   - id:
       - 33
@@ -21903,6 +22361,7 @@ lesson-33:
     romaji: dōiu ~
     meaning:
       en: what (kind of ～)
+      vi: Xin phép vào nhà (câu nói khi đến nhà người khác)
       fr: quel, quelle sorte de ～
   - id:
       - 33
@@ -21914,6 +22373,7 @@ lesson-33:
     romaji: ikura [~demo]
     meaning:
       en: however ～, even if ～
+      vi: Cảm ơn đã đãi bữa ngon (nói sau khi ăn xong)
       fr: même si ～, aussi ～ que
   - id:
       - 33
@@ -21926,6 +22386,7 @@ lesson-33:
     romaji: mō
     meaning:
       en: (not) any longer (used with negatives)
+      vi: kính ngữ (tiếng Nhật lịch sự)
       fr: ne plus (utilisé avec une négation)
   - id:
       - 33
@@ -21938,6 +22399,7 @@ lesson-33:
     romaji: ato ~
     meaning:
       en: ～ left
+      vi: thể lịch sự (丁寧語)
       fr: encore ～, il reste ～
   - id:
       - 33
@@ -21949,6 +22411,7 @@ lesson-33:
     romaji: ~hodo
     meaning:
       en: about ～
+      vi: thể tôn kính (尊敬語)
       fr: environ ～
   - id:
       - 33
@@ -21962,6 +22425,7 @@ lesson-33:
     romaji: chūshaihan
     meaning:
       en: parking violation
+      vi: thể khiêm nhường (謙譲語)
       fr: infraction à une interdiction de stationner
   - id:
       - 33
@@ -21975,6 +22439,7 @@ lesson-33:
     romaji: bakkin
     meaning:
       en: fine
+      vi: danh thiếp
       fr: amende
   - id:
       - 33
@@ -21987,6 +22452,7 @@ lesson-33:
     romaji: jishin
     meaning:
       en: earthquake
+      vi: lời chào hỏi, chào hỏi
       fr: tremblement de terre, séisme
   - id:
       - 33
@@ -21999,6 +22465,7 @@ lesson-33:
     romaji: okimasu
     meaning:
       en: happen
+      vi: cúi đầu chào (kiểu chào của người Nhật)
       fr: arriver, se produire
   - id:
       - 33
@@ -22011,6 +22478,7 @@ lesson-33:
     romaji: tasukeaimasu
     meaning:
       en: help each other
+      vi: trang phục, cách ăn mặc
       fr: s'entraider
   - id:
       - 33
@@ -22022,6 +22490,7 @@ lesson-33:
     romaji: motomoto
     meaning:
       en: originally
+      vi: hành động, cử chỉ
       fr: originairement
   - id:
       - 33
@@ -22034,6 +22503,7 @@ lesson-33:
     romaji: kanashii
     meaning:
       en: sad
+      vi: trường hợp, tình huống
       fr: triste
   - id:
       - 33
@@ -22045,6 +22515,7 @@ lesson-33:
     romaji: motto
     meaning:
       en: more
+      vi: trước tiên, đầu tiên
       fr: plus, davantage
   - id:
       - 33
@@ -22056,6 +22527,7 @@ lesson-33:
     romaji: aisatsu
     meaning:
       en: 'greeting, address (～を します : greet, give an address)'
+      vi: thêm một lần nữa
       fr: 'salut, présentation, mots de bienvenue (～を します : saluer, se présenter, dire les mots de bienvenue)'
   - id:
       - 33
@@ -22068,6 +22540,7 @@ lesson-33:
     romaji: aite
     meaning:
       en: the other person
+      vi: phía ~, hướng về ~
       fr: interlocuteur, l'autre personne
   - id:
       - 33
@@ -22080,6 +22553,7 @@ lesson-33:
     romaji: kimochi
     meaning:
       en: feeling
+      vi: từ ngữ, ngôn ngữ
       fr: sentiment
   - id:
       - 33
@@ -22092,6 +22566,7 @@ lesson-33:
     romaji: agemasu
     meaning:
       en: raise, lift up
+      vi: chuẩn bị, sắp xếp
       fr: lever, augmenter
   - id:
       - 33
@@ -22104,6 +22579,7 @@ lesson-33:
     romaji: sagemasu
     meaning:
       en: lower, pull down
+      vi: đầu tiên, ban đầu
       fr: baisser, abaisser
   - id:
       - 33
@@ -22115,6 +22591,7 @@ lesson-33:
     romaji: fuaito
     meaning:
       en: fight
+      vi: cuối cùng, sau cùng
       fr: Allez-y!/Courage!
   - id:
       - 33
@@ -22127,6 +22604,7 @@ lesson-33:
     romaji: sentakuki
     meaning:
       en: washing machine
+      vi: mười nghìn (10.000)
       fr: machine à laver
   - id:
       - 33
@@ -22139,6 +22617,7 @@ lesson-33:
     romaji: ~ki
     meaning:
       en: ～ machine
+      vi: một trăm triệu (100.000.000)
       fr: machine à ～
   - id:
       - 33
@@ -22151,6 +22630,7 @@ lesson-33:
     romaji: honjitsukyūgyō
     meaning:
       en: closed today
+      vi: một nghìn tỷ (1.000.000.000.000)
       fr: fermé aujourd'hui
   - id:
       - 33
@@ -22163,6 +22643,7 @@ lesson-33:
     romaji: eigyōchū
     meaning:
       en: open for business
+      vi: số, thứ tự
       fr: ouvert
   - id:
       - 33
@@ -22174,6 +22655,7 @@ lesson-33:
     romaji: soryā
     meaning:
       en: well
+      vi: đất nước, quốc gia
       fr: eh bien, alors
   - id:
       - 33
@@ -22186,6 +22668,7 @@ lesson-33:
     romaji: ~inai
     meaning:
       en: within ～
+      vi: nhà nghiên cứu
       fr: dans les ～, en moins de ～
   - id:
       - 33
@@ -22198,6 +22681,7 @@ lesson-33:
     romaji: denpō
     meaning:
       en: telegram
+      vi: nhân viên công ty
       fr: télégramme
   - id:
       - 33
@@ -22210,6 +22694,7 @@ lesson-33:
     romaji: hitobito
     meaning:
       en: people
+      vi: công chức nhà nước
       fr: gens
   - id:
       - 33
@@ -22222,6 +22707,7 @@ lesson-33:
     romaji: kyūyō
     meaning:
       en: urgent business
+      vi: bác sĩ
       fr: affaire urgente
   - id:
       - 33
@@ -22234,6 +22720,7 @@ lesson-33:
     romaji: uchimasu [denpōwo~]
     meaning:
       en: send [a telegram]
+      vi: y tá, điều dưỡng viên
       fr: envoyer [un télégramme]
   - id:
       - 33
@@ -22246,6 +22733,7 @@ lesson-33:
     romaji: denpōdai
     meaning:
       en: telegram charge
+      vi: luật sư
       fr: frais de télégramme
   - id:
       - 33
@@ -22257,6 +22745,7 @@ lesson-33:
     romaji: dekirudake
     meaning:
       en: as much as possible
+      vi: giáo viên, giảng viên
       fr: autant que possible, le plus ～ possible
   - id:
       - 33
@@ -22269,6 +22758,7 @@ lesson-33:
     romaji: mijikaku
     meaning:
       en: shortly, briefly
+      vi: kỹ sư
       fr: court, brièvement
   - id:
       - 33
@@ -22280,6 +22770,7 @@ lesson-33:
     romaji: mata
     meaning:
       en: and
+      vi: nhà thiết kế, designer
       fr: et
   - id:
       - 33
@@ -22292,6 +22783,7 @@ lesson-33:
     romaji: tatoeba
     meaning:
       en: for example
+      vi: đầu bếp
       fr: par exemple
   - id:
       - 33
@@ -22304,6 +22796,7 @@ lesson-33:
     romaji: kitoku
     meaning:
       en: in a critical condition
+      vi: nhiếp ảnh gia, quay phim
       fr: dans un état critique, dans un état alarmant
   - id:
       - 33
@@ -22316,6 +22809,7 @@ lesson-33:
     romaji: omoi byōki
     meaning:
       en: serious illness
+      vi: rất nhiều quý vị (cách nói lịch sự)
       fr: maladie grave
   - id:
       - 33
@@ -22328,6 +22822,7 @@ lesson-33:
     romaji: asu
     meaning:
       en: tomorrow
+      vi: đến thăm, hỏi (dạng khiêm tốn)
       fr: demain
   - id:
       - 33
@@ -22340,6 +22835,7 @@ lesson-33:
     romaji: rusu
     meaning:
       en: absence
+      vi: nhìn, xem (dạng khiêm tốn)
       fr: absence
   - id:
       - 33
@@ -22352,6 +22848,7 @@ lesson-33:
     romaji: rusuban
     meaning:
       en: looking after the house during the owner's absence
+      vi: mượn (dạng khiêm tốn)
       fr: garde d'une maison
   - id:
       - 33
@@ -22364,6 +22861,7 @@ lesson-33:
     romaji: '[o] iwai'
     meaning:
       en: celebration
+      vi: nhận (dạng khiêm tốn rất lịch sự)
       fr: célébration, fête
   - id:
       - 33
@@ -22376,6 +22874,7 @@ lesson-33:
     romaji: nakunarimasu
     meaning:
       en: pass away, die
+      vi: làm ~ (mẫu tiền tố khiêm tốn お~します)
       fr: décéder, mourir
   - id:
       - 33
@@ -22388,6 +22887,7 @@ lesson-33:
     romaji: kanashimi
     meaning:
       en: sorrow, sadness
+      vi: làm ~ (mẫu tiền tố khiêm tốn ご~します, dùng cho từ Hán-Nhật)
       fr: tristesse, chagrin
   - id:
       - 33
@@ -22400,6 +22900,7 @@ lesson-33:
     romaji: riyōshimasu
     meaning:
       en: use
+      vi: làm ~ (mẫu tiền tố kính ngữ お~になります)
       fr: utiliser, profiter de
 lesson-34:
   - id:
@@ -22414,6 +22915,7 @@ lesson-34:
     romaji: migakimasu [hawo~]
     meaning:
       en: brush [one's teeth], polish
+      vi: đánh (răng), đánh bóng
       fr: se brosser [les dens], astiquer, polir, cirer
   - id:
       - 34
@@ -22427,6 +22929,7 @@ lesson-34:
     romaji: kumitatemasu
     meaning:
       en: assemble
+      vi: lắp ráp
       fr: monter, assembler
   - id:
       - 34
@@ -22440,6 +22943,7 @@ lesson-34:
     romaji: orimasu
     meaning:
       en: bend, fold, break, snap
+      vi: gấp, bẻ, bẻ gãy
       fr: plier, casser (en deux)
   - id:
       - 34
@@ -22453,6 +22957,7 @@ lesson-34:
     romaji: kiga tsukimasu [wasuremononi~]
     meaning:
       en: notice, become aware of [things left behind]
+      vi: may, khâu
       fr: s'apercevoir [que l'on a oublié quelque chose]
   - id:
       - 34
@@ -22465,6 +22970,7 @@ lesson-34:
     romaji: tsukemasu [shūyuwo~]
     meaning:
       en: put [in soy sauce]
+      vi: đan, bện
       fr: mettre [de la sauce de soja]
   - id:
       - 34
@@ -22478,6 +22984,7 @@ lesson-34:
     romaji: mitsukarimasu [kagiga~]
     meaning:
       en: '[a key] be found'
+      vi: đào (đất)
       fr: '[la clé] être retrouvée'
   - id:
       - 34
@@ -22491,6 +22998,7 @@ lesson-34:
     romaji: shitsumonshimasu
     meaning:
       en: ask a question
+      vi: gõ, đập, đánh
       fr: poser une question
   - id:
       - 34
@@ -22503,6 +23011,7 @@ lesson-34:
     romaji: sashimasu [kasawo~]
     meaning:
       en: put up [an umbrella]
+      vi: cắt
       fr: tenir [un parapluie]
   - id:
       - 34
@@ -22515,6 +23024,7 @@ lesson-34:
     romaji: supōtsukurabu
     meaning:
       en: sports club
+      vi: đập vỡ, tách (trứng, v.v.)
       fr: club de sport
   - id:
       - 34
@@ -22527,6 +23037,7 @@ lesson-34:
     romaji: '[o] shiro'
     meaning:
       en: castle
+      vi: trộn, khuấy
       fr: château
   - id:
       - 34
@@ -22540,6 +23051,7 @@ lesson-34:
     romaji: setsumeisho
     meaning:
       en: explanatory pamphlet, instruction book
+      vi: đun sôi (nước)
       fr: notice, manuel d'utilisation
   - id:
       - 34
@@ -22553,6 +23065,7 @@ lesson-34:
     romaji: zu
     meaning:
       en: figure, drawing
+      vi: chiên ngập dầu
       fr: figure, tracé
   - id:
       - 34
@@ -22566,6 +23079,7 @@ lesson-34:
     romaji: sen
     meaning:
       en: line
+      vi: nướng, nướng vỉ, chiên
       fr: ligne
   - id:
       - 34
@@ -22579,6 +23093,7 @@ lesson-34:
     romaji: yajirushi
     meaning:
       en: arrow (sign)
+      vi: luộc, nấu, hầm
       fr: flèche (symbole)
   - id:
       - 34
@@ -22592,6 +23107,7 @@ lesson-34:
     romaji: kuro
     meaning:
       en: black (noun)
+      vi: hấp
       fr: noir (nom)
   - id:
       - 34
@@ -22605,6 +23121,7 @@ lesson-34:
     romaji: shiro
     meaning:
       en: white (noun)
+      vi: xào
       fr: blanc (nom)
   - id:
       - 34
@@ -22618,6 +23135,7 @@ lesson-34:
     romaji: aka
     meaning:
       en: red (noun)
+      vi: bột nhào, bột lỏng
       fr: rouge (nom)
   - id:
       - 34
@@ -22631,6 +23149,7 @@ lesson-34:
     romaji: ao
     meaning:
       en: blue (noun)
+      vi: độ dính, độ kết dính
       fr: bleu (nom)
   - id:
       - 34
@@ -22644,6 +23163,7 @@ lesson-34:
     romaji: kon
     meaning:
       en: navy blue, dark blue (noun)
+      vi: cán mỏng bột
       fr: bleu marine, bleu foncé (nom)
   - id:
       - 34
@@ -22657,6 +23177,7 @@ lesson-34:
     romaji: kiiro
     meaning:
       en: yellow (noun)
+      vi: lật úp, lật ngược
       fr: jaune (nom)
   - id:
       - 34
@@ -22670,6 +23191,7 @@ lesson-34:
     romaji: chairo
     meaning:
       en: brown (noun)
+      vi: nắp, nắp đậy
       fr: marron, brun (nom)
   - id:
       - 34
@@ -22682,6 +23204,7 @@ lesson-34:
     romaji: shōyu
     meaning:
       en: soya, soy sauce
+      vi: nồi, chảo (sâu lòng)
       fr: sauce de soja
   - id:
       - 34
@@ -22694,6 +23217,7 @@ lesson-34:
     romaji: sōsu
     meaning:
       en: sauce, Worcestershire sauce
+      vi: chảo (tráng, chiên)
       fr: sauce Worcestershire, sauce (sauce blanche, sauce tomate, etc.)
   - id:
       - 34
@@ -22706,6 +23230,7 @@ lesson-34:
     romaji: okyaku [san]
     meaning:
       en: visitor, guest, customer, client
+      vi: tô, bát lớn
       fr: client, visiteur, invité
   - id:
       - 34
@@ -22718,6 +23243,7 @@ lesson-34:
     romaji: ~ka ~
     meaning:
       en: ～ or ～
+      vi: cá bào khô (cá ngừ bào)
       fr: ～ ou ～
   - id:
       - 34
@@ -22730,6 +23256,7 @@ lesson-34:
     romaji: yūbe
     meaning:
       en: last night
+      vi: nước tương (xì dầu)
       fr: hier soir
   - id:
       - 34
@@ -22742,6 +23269,7 @@ lesson-34:
     romaji: sakki
     meaning:
       en: a short while ago
+      vi: miso (tương đậu nành lên men)
       fr: tout à l'heure, il y a un instant
   - id:
       - 34
@@ -22755,6 +23283,7 @@ lesson-34:
     romaji: sadō
     meaning:
       en: tea ceremony
+      vi: dashi (nước dùng Nhật Bản)
       fr: cérémonie du thé
   - id:
       - 34
@@ -22768,6 +23297,7 @@ lesson-34:
     romaji: ochawo tatemasu
     meaning:
       en: make (green) tea (at a tea ceremony)
+      vi: đường
       fr: faire du thé (dans la cérémonie du thé)
   - id:
       - 34
@@ -22781,6 +23311,7 @@ lesson-34:
     romaji: sakini
     meaning:
       en: first, ahead
+      vi: muối
       fr: avant, d'abord
   - id:
       - 34
@@ -22794,6 +23325,7 @@ lesson-34:
     romaji: nosemasu
     meaning:
       en: place on, load onto
+      vi: tiêu
       fr: poser, mettre, charger
   - id:
       - 34
@@ -22806,6 +23338,7 @@ lesson-34:
     romaji: korede iidesuka.
     meaning:
       en: Is this all right?
+      vi: rượu sake (rượu gạo Nhật Bản)
       fr: Est-ce que c'est bien comme ça?
   - id:
       - 34
@@ -22819,6 +23352,7 @@ lesson-34:
     romaji: nigai
     meaning:
       en: bitter
+      vi: mirin (rượu sake ngọt dùng trong nấu ăn)
       fr: amer
   - id:
       - 34
@@ -22832,6 +23366,7 @@ lesson-34:
     romaji: oyakodonburi
     meaning:
       en: a bowl of cooked rice with chicken and egg
+      vi: sôi lăn tăn, sôi liu riu
       fr: grand bol de riz recouvert avec du poulet et des œufs cuits dans une sauce
   - id:
       - 34
@@ -22845,6 +23380,7 @@ lesson-34:
     romaji: zairyō
     meaning:
       en: material, ingredient
+      vi: sôi sùng sục, réo sôi
       fr: ingrédients, matériaux
   - id:
       - 34
