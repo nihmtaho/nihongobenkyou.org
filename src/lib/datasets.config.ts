@@ -26,7 +26,7 @@ export const datasets: DatasetConfig[] = [
     subtitle: 'みんなの日本語 初級II',
     description: 'Giáo trình tiếng Nhật sơ cấp II — bài 26–50',
     type: 'vocab',
-    source_file: 'dataset/minna-no-ds.yaml',
+    source_file: 'dataset/minna-no-ds-2.yaml',
     lesson_key_prefix: 'lesson',
     lesson_range: [26, 50],
     jlpt_level: 4,
